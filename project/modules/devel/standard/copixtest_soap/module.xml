@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="copixtest_soap" description="Tests de disponibilité sur des serveurs SOAP"
+  			icon="|img/icon/url.png" />
+ </general>
+<dependencies>
+	<dependency name="copixtest" kind="module" />
+	<dependency name="soap" kind="extension" />
+</dependencies>
+</moduledefinition>

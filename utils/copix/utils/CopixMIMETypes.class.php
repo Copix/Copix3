@@ -25,6 +25,8 @@ class CopixMIMETypes {
 			$pExt = substr ($pExt, 1);
 		}
 		switch ($pExt){
+			case 'json':
+				return 'application/json';
 			case 'pdf':
 				return 'application/pdf';
 			case 'ai':
@@ -89,7 +91,6 @@ class CopixMIMETypes {
 			case 'xpm':
 				return 'image/x-xpixmap';
 			case 'zip':
-				return 'multipart/x-zip';
 			case 'gz':
 			case 'gzip':
 				return 'multipart/x-gzip';
@@ -669,5 +670,4 @@ class CopixMIMETypes {
 	public static function getFromFileName ($pFileName){
 		return self::getFromExtension (CopixFile::extractFileExt ($pFileName));
 	}
-}  
-?>
+}

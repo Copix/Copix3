@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+  <general>
+    <default name="communet_final" longdescription="Modèle Proof of Concept/Best practices de Copix. Version finale" description="Communet version finale" icon="|img/icon/tutorial.png" />
+	<group id="tutos" captioni18n="copix:copixmodule.group.tutos" />
+  </general>
+</moduledefinition>

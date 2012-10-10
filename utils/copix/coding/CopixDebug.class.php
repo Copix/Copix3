@@ -68,6 +68,11 @@ class CopixDebug {
 	const FR_STRING = 9;
 	
 	/**
+	 * Noms des éléments dans la déclaration, pour le formatage de _getFormated
+	 */
+	const FR_DECLARATION = 10;
+	
+	/**
 	 * Value de variable / constante / propriété, pour le formatage de _getFormated
 	 */
 	const FR_VALUE = 11;
@@ -225,6 +230,10 @@ class CopixDebug {
 		if (!self::$formatReturn) {
 			return ($pType == self::FR_STRING) ? "'" . $pStr . "'" : $pStr;
 		}
+		$isUtf8 = (utf8_encode(utf8_decode($pStr)) == $pStr);
+		if(!$isUtf8){
+			$pStr = utf8_encode($pStr);
+		}
 		
 		$str = htmlentities ($pStr, ENT_COMPAT, 'UTF-8');
 		switch ($pType) {
@@ -239,6 +248,7 @@ class CopixDebug {
 			case self::FR_VAR : return '<font color="#663300">' . $str . '</font>'; break;
 			case self::FR_INT : return '<font color="green">' . $str . '</font>'; break;
 			case self::FR_STRING : return '<font color="blue">\'' . $str . '\'</font>'; break;
+			case self::FR_DECLARATION : return '<b>' . $str . '</b>'; break;
 			case self::FR_VALUE : return '<font color="green">' . $str . '</font>'; break;
 			case self::FR_FUNCTIONNAME : return '<b>' . $str . '</b>'; break;
 			case self::FR_BOOLEAN : return '<b>' . $str . '</b>'; break;
@@ -273,12 +283,13 @@ class CopixDebug {
 	 * @return string
 	 */
 	private static function _varDump ($pVar, $pShowType = null) {
+		
 		$endLine = self::_getEndLine ();
 		$dump = null;
 		$dumpSpaces = self::_getSpaces (self::$_dumpSpaces);
 		$declarationSpaces = self::_getSpaces (self::$_declarationSpaces);
 		$showType = (($pShowType === null && self::$_isReflect) || $pShowType);
-		
+				
 		if (is_resource ($pVar)) {
 			$dump .= self::_getFormated ('resource ', self::FR_TYPE);
 			$dump .= self::_getFormated (get_resource_type ($pVar), self::FR_VALUE);
@@ -287,6 +298,7 @@ class CopixDebug {
 			$dump = self::_dump ($pVar);
 			
 		} else if (is_string ($pVar)) {
+			
 			if ($showType) {
 				$dump .= self::_getFormated ('string[' . strlen ($pVar) . '] ', self::FR_TYPE);
 			}
@@ -333,15 +345,18 @@ class CopixDebug {
 		$dumpSpaces = self::_getSpaces (self::$_dumpSpaces);
 		$declarationSpaces = self::_getSpaces (self::$_declarationSpaces);
 		
-		$dump[0] = self::_getFormated ('array', self::FR_KEYWORD) . '[' . count ($pArray) . '] (';
+		$dump[0] = self::_getFormated ('array', self::FR_DECLARATION) . '[' . count ($pArray) . '] (';
 		if ($pIsJustDeclaration) {
 			return $dump[0] . '...)';
 		} else if (count ($pArray) == 0) {
 			return $dump[0] . ')';
 		}
-		
+			
 		foreach ($pArray as $key => $value) {
-			$dump[] = $dumpSpaces . self::_varDump ($key) . ' = ' . self::_varDump ($value);
+			$index = count ($dump);
+			$type = (is_string ($key)) ? self::FR_STRING : self::FR_INT;
+			$dump[$index] = $dumpSpaces . self::_getFormated ($key, $type) . ' = ';
+			$dump[$index] .= self::_varDump ($value);
 		}
 		$dump[] = $declarationSpaces . ')';
 		
@@ -356,29 +371,13 @@ class CopixDebug {
 	 */
 	private static function _getObjectVars ($pObject) {
 		if (!is_object ($pObject)) {
-			return self::_getFormated ('Invalid variable type : "' . gettype ($pObject) . '"', self::FR_ERROR);
+			return self::_getFormated ('Invalid variable type : "object"', self::FR_ERROR);
 		}
 		
 		$export = var_export ($pObject, true);
-		$varsStr = preg_replace ('/([a-zA-Z0-9_]+)::__set_state\(/', 'new CopixObjectVars (\'\\1\', ', $export);
+		$varsStr = preg_replace ('/([a-zA-Z0-9\\\_]+)::__set_state\(/', 'new CopixObjectVars (\'\\1\', ', $export);
 		require_once (CopixFile::extractFilePath (__FILE__) . 'CopixObjectVars.class.php');
 		return eval ('return ' . $varsStr . ';');
-	}
-	
-	/**
-	 * Retourne le _getFormated de l'accès d'une classe ou d'une propriété
-	 *
-	 * @param Reflection $pReflect Reflectionclass ou ReflectionProperty dont on veut avoir l'accès
-	 * @return string
-	 */
-	private static function _getAccess ($pReflect) {
-		if ($pReflect->isPrivate ()) {
-			return self::_getFormated ('private', self::FR_KEYWORD);
-		} else if ($pReflect->isProtected ()) {
-			return self::_getFormated ('protected', self::FR_KEYWORD);
-		} else {
-			return self::_getFormated ('public', self::FR_KEYWORD);
-		}
 	}
 	
 	/**
@@ -388,99 +387,25 @@ class CopixDebug {
 	 * @param boolean $pIsJustDeclaration Indique si on ne veut que la déclaration ou le dump complet
 	 */
 	private static function _objectDump ($pObject, $pIsJustDeclaration) {
+		$reflect = ($pObject instanceof CopixObjectVars) ? $pObject : self::_getObjectVars ($pObject);
 		$vars = array ();
 		$dumpSpaces = self::_getSpaces (self::$_dumpSpaces);
 		$declarationSpaces = self::_getSpaces (self::$_declarationSpaces);
-		$class = ($pObject instanceof CopixObjectVars) ? $pObject->getObjectName () : get_class ($pObject);
-		$classVars = get_class_vars ($class);
-		
-		// si c'est un reflect que l'on veut, on instancie plus d'objets et on change quelques déclarations
-		if (self::$_isReflect) {
-			$reflect = new ReflectionClass ($class);
-			$staticProperties = $reflect->getStaticProperties ();
-			// bien laisser le require pour ne pas utiliser l'autoloader
-			if (!class_exists ('CopixPHPDoc')) {
-				require_once (dirname (__FILE__) . '/CopixPHPDoc.class.php');
-			}
-			
-			// recherche du fichier qui contient la déclaration
-			$file = str_replace ('\\', '/', $reflect->getFileName ());
-			$arFileDirs = explode ('/', $file);
-			$countFileDirs = count ($arFileDirs);
-			if ($countFileDirs > 4) {
-				 $fileDir =
-				 	'(...)/' .
-				 	$arFileDirs[$countFileDirs - 3] . '/' .
-				 	$arFileDirs[$countFileDirs - 2] . '/' .
-				 	$arFileDirs[$countFileDirs - 1];
-			} else {
-				$fileDir = $file;
-			}
-			
-			// déclaration de l'objet
-			$objectDeclaration = ($reflect->isFinal ()) ? self::_getFormated ('final', self::FR_KEYWORD) . ' ' : null;
-			$objectDeclaration .= ($reflect->isAbstract ()) ? self::_getFormated ('abstract', self::FR_KEYWORD) . ' ' : null;
-			$objectDeclaration .= ($reflect->isInterface ()) ? self::_getFormated ('interface', self::FR_KEYWORD) . ' ' : self::_getFormated ('object', self::FR_KEYWORD) . ' ';
-			$objectDeclaration .= $class;
-			$parent = $reflect->getParentClass ();
-			if ($parent) {
-				$objectDeclaration .= ' ' . self::_getFormated ('extends', self::FR_KEYWORD) . ' ' . $parent->name;
-			}
-			$interfaces = $reflect->getInterfaces ();
-			if (count ($interfaces) > 0) {
-				$declaration .= ' ' . self::_getFormated ('implements', self::FR_KEYWORD) . ' ' .implode (', ', array_keys ($interfaces));
-			}
-			$objectDeclaration .= ' (' . self::_getFormated ($fileDir, self::FR_FILENAME) . ')';
-			
-		// si on ne veut qu'un dump simple
-		} else {
-			$objectDeclaration = self::_getFormated ('object', self::FR_KEYWORD) . ' ' . $class . ' (';
-		}
-		
-		if ($pIsJustDeclaration) {
-			return $objectDeclaration . '...)';
-		}
-		
-		$objectsVars = ($pObject instanceof CopixObjectVars) ? $pObject : self::_getObjectVars ($pObject);
 		
 		// propriétés
-		$properties = $objectsVars->getVars ();
-		ksort ($properties);
-		//echo '<pre>';
-		foreach ($properties as $name => $value) {
-			$access = null;
-			$type = null;
-			
-			if (self::$_isReflect) {
-				// si la propriété a été ajoutée en dehors de la définition de la classe, une exception est levée
-				$property = null;
-				$parse = array ();
-				try {
-					$property = $reflect->getProperty ($name);
-					if (($phpDoc = $property->getDocComment ()) !== false) {
-						$parse = CopixPHPDoc::parse ($phpDoc);
-						if (isset ($parse['comment'])) {
-							$vars[] = $dumpSpaces . self::_getFormated ('// ' . implode (' ', $parse['comment']), self::FR_COMMENT);
-						}
-					}
-					$access = self::_getAccess ($property) . ' ';
-					$realType = (isset ($parse['var'][0])) ? $parse['var'][0] : gettype ($value);
-					$type = self::_getFormated ($realType, self::FR_TYPE) . ' ';
-				} catch (Exception $e) {}
-			}
-			
-			$vars[] = $dumpSpaces . $access . $type . self::_getFormated ('$' . $name, self::FR_VAR) . ' = ' . self::_varDump ($value, false);
+		foreach ($reflect->getVars () as $name => $value) {
+			$vars[] = $dumpSpaces . self::_getFormated ('$' . $name, self::FR_VAR) . ' = ' . self::_varDump ($value);
 		}
-		//echo '</pre>';
-		//exit ();
 		
+		sort ($vars);
 		$dump = array ();
+		$name = ($pObject instanceof CopixObjectVars) ? $pObject->getObjectName () : get_class ($pObject);
 		if (count ($vars) > 0) {
-			$dump[] = $objectDeclaration;
+			$dump[] = self::_getFormated ('object', self::FR_KEYWORD) . ' ' . $name . ' (';
 			$dump = array_merge ($dump, $vars);
 			$dump[] = $declarationSpaces . ')';
 		} else {
-			$dump[] = $objectDeclaration . ')';
+			$dump[] = self::_getFormated ('object', self::FR_KEYWORD) . ' ' . $name . ' ()';
 		}
 		return implode ("\n", $dump);
 	}
@@ -527,13 +452,13 @@ class CopixDebug {
 		$declaration = ($reflection->isFinal ()) ? self::_getFormated ('final', self::FR_KEYWORD) . ' ' : null;
 		$declaration .= ($reflection->isAbstract ()) ? self::_getFormated ('abstract', self::FR_KEYWORD) . ' ' : null;
 		$declaration .= ($reflection->isInterface ()) ? self::_getFormated ('interface', self::FR_KEYWORD) . ' ' : self::_getFormated ('object', self::FR_KEYWORD) . ' ';
-		$declaration .= $class;
+		$declaration .= self::_getFormated ($class, self::FR_DECLARATION);
 		if ($parent) {
-			$declaration .= ' ' . self::_getFormated ('extends', self::FR_KEYWORD) . ' ' . $parent->name;
+			$declaration .= ' ' . self::_getFormated ('extends', self::FR_KEYWORD) . ' ' . self::_getFormated ($parent->name, self::FR_DECLARATION);
 		}
 		$interfaces = $reflection->getInterfaces ();
 		if (count ($interfaces) > 0) {
-			$declaration .= ' ' . self::_getFormated ('implements', self::FR_KEYWORD) . ' ' . implode (', ', array_keys ($interfaces));
+			$declaration .= ' ' . self::_getFormated ('implements', self::FR_KEYWORD) . ' ' . self::_getFormated (implode (', ', array_keys ($interfaces)), self::FR_DECLARATION);
 		}
 		$dump[0] = $declaration . ' (' . self::_getFormated ($fileDir, self::FR_FILENAME) . ')';
 		
@@ -901,6 +826,7 @@ class CopixDebug {
 		} else if (is_array ($pVar)) {
 			$toReturn = self::_arrayDump ($pVar, $isJustDeclaration);
 		} else {
+			
 			$toReturn = self::_varDump ($pVar, $isJustDeclaration);
 		}
 		
@@ -920,11 +846,12 @@ class CopixDebug {
 	 * @param mixed $pVar Variable
 	 */
 	public static function var_dump ($pVar) {
-		self::$_isReflect = false;
+		
 		// on met -1 car self::_dump fera un +1, donc mettra l'index à 0
 		self::$_dumpIndex = -1;
 		foreach (func_get_args () as $arg) {
 			$dump = self::_dump ($arg);
+			 
 			self::_outputFormatted ($dump);
 		}
 	}
@@ -935,26 +862,32 @@ class CopixDebug {
 	 * @param mixed $pVar Variable
 	 * @return string
 	 */
-	public static function getDump ($pVar) {
+	public static function getDump ($pVar, $pFormatReturn = true) {
 		// on met -1 car self::_dump fera un +1, donc mettra l'index à 0
+		$exFormat = self::$formatReturn;
+		self::$formatReturn = $pFormatReturn;
 		self::$_dumpIndex = -1;
-		return self::_dump ($pVar);
+		$dump = self::_dump ($pVar);
+		if ($pFormatReturn) {
+			$dump = '<pre style="margin: 0px; padding: 0px;">' . $dump . '</pre>';
+		}
+		self::$formatReturn = $exFormat;
+		return $dump;
 	}
 	
 	/**
-	 * Affiche le contenu détaillé d'une variable, si plusieurs variables sont passées plusieurs reflect seront affichés
+	 * Affiche les propriétés et méthodes d'un objet
 	 *
-	 * @param mixed $pVar Variable
+	 * @param mixed $pVar Variable dont on veut les informations
+	 * @param boolean $pReturn Indique si on veut retourner le résultat, ou l'afficher directement
+	 * @param boolean $pFormat Indique si on veut formater le résultat, ou avoir un texte brut
+	 * @return string
 	 */
-	private static function reflect ($pVar) {
+	/*public static function reflect ($pVar, $pReturn = false, $pFormat = true) {
 		self::$_isReflect = true;
-		// on met -1 car self::_dump fera un +1, donc mettra l'index à 0
-		self::$_dumpIndex = -1;
-		foreach (func_get_args () as $arg) {
-			$dump = self::_dump ($arg);
-			self::_outputFormatted ($dump);
-		}
-	}
+		self::var_dump ($pVar, $pReturn, $pFormat);
+		self::$_isReflect = false;
+	}*/
 	
 	/**
 	 * Affiche un debug_backtrace en formattant le retour
@@ -981,13 +914,20 @@ class CopixDebug {
 			$alternate = '';
 			foreach ($debug as $index => $infos) {
 				$output .= '<tr ' . $alternate . ' valign="top">';
-				$output .= '<td style="border: solid 1px black;"><span title="' . htmlspecialchars ($infos['file'] . ':' . $infos['line']) . '">';
+				$output .= '<td style="border: solid 1px black;">';
+				$showSpan = (isset ($infos['file']) && isset ($infos['line']));
+				if ($showSpan) {
+					$output .= '<span title="' . htmlspecialchars ($infos['file'] . ':' . $infos['line']) . '">';
+				}
 				if (isset ($infos['class'])) {
 					$output .= $infos['class'] . '::';
 				}
 				$output .= '<strong>' . $infos['function'] . ' ()</strong>';
-				$output .= '</span></td>';
-				$output .= '<td style="max-height: 200; border: solid 1px black;"><pre>';
+				if ($showSpan) {
+					$output .= '</span>';
+				}
+				$output .= '</td>';
+				$output .= '<td style="max-height: 200; border: solid 1px black;"><pre style="margin: 0px; padding: 0px;">';
 				$output .= self::getDump ($infos['args']);
 				$output .= '</pre></td>';
 				$output .= '</tr>';
@@ -1054,7 +994,7 @@ class CopixDebug {
 			// Chemins à ignorer
 			$ignorePaths = array (
 				__FILE__,
-				COPIX_CORE_PATH . 'shortcuts.lib.php',
+				COPIX_PATH . 'core/shortcuts.lib.php',
 				COPIX_TEMP_PATH
 			);
 			if (is_array ($pIgnorePaths)) {
@@ -1064,7 +1004,7 @@ class CopixDebug {
 			// Construit la regex pour vérifier les chemins
 			$regex = array ();
 			foreach ($ignorePaths as $path) {
-				$regex[] = preg_quote (CopixConfig::getRealPath ($path), '/');
+				$regex[] = preg_quote (CopixFile::getRealPath ($path), '/');
 			}
 			$pathRegex = '/^(' . implode ('|', $regex) . ')/i';
 			

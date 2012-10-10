@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="tab_copix" longdescription="Tutorial pour expliquer le nouveau système CopixTabActiongroup." description="Tutorial CopixTabActionGroup" icon="|img/icon/tutorial.png" />
+  <group id="tutos" captioni18n="copix:copixmodule.group.tutos" />
+ </general>
+</moduledefinition>

@@ -1,0 +1,284 @@
+#HeadingElementInformationDiv {
+	
+	float: right;
+	width: 350px
+}
+
+#HeadingElementInformationDiv img{
+	vertical-align: middle;
+}
+                                
+#HeadingElementInformationsPanel {
+	background-color: #fff;
+	display: none;
+	border: 1px solid #ccc;
+}
+
+table.HeadingElementsMenuContainer {
+	margin: auto;
+}
+
+table.HeadingElementsMenuContainer td.HeadingElementsMenuItem {
+	width: 75px;
+	vertical-align: bottom;
+	text-align: center;
+}
+
+table.HeadingElementsMenuContainer a {
+	padding-top:5px;
+	display:block;
+
+}
+
+table.HeadingElementsMenuContainer a:hover {
+	opacity : 0.8;
+}
+
+.headingelementtypechooser{
+	
+}
+
+table.HeadingElementPreview {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+table.HeadingElementPreview td {
+	text-align: center;
+	width: 64px;
+}
+
+a.toggler:link, a.toggler:visited, a.toggler:active {
+	color:#FFFFFF;
+	display:block;
+	font-weight:bold;
+	margin:0;
+	padding:0;
+	text-decoration:none;
+	background-image: url({copixresource path="heading|img/togglers/expand.png"});
+	background-repeat: no-repeat;
+	background-position: right;
+}
+a.togglerCollapse:link, a.togglerCollapse:visited, a.togglerCollapse:active {
+	background-image: url({copixresource path="heading|img/togglers/collapse.png"});
+}
+
+div.togglerCollapse {
+	background-color: #176F9F;
+	/* effet d'ombre */
+	-moz-box-shadow: 0px 1px 5px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 5px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 5px #000; /* Opera 10.5, IE 9.0 */
+	filter:  progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+div.togglerContainer {
+	height: 20px;
+	background-color: #64a2c6;
+	margin: 1px 0px 0px 0px;
+	padding: 2px 0px 0px 2px;
+	vertical-align: middle;
+	display: inline-block;
+	width: 100%;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+span.togglerTitle {
+	vertical-align: middle;
+	display: inline-block;
+	padding-left: 5px;
+}
+
+.elementContent {
+	margin: 8px 5px 5px 5px;
+}
+
+.handle {
+	cursor: move;
+	width: 16px;
+	height: 25px;
+	margin: auto;
+	float: left;
+}
+.handle img{
+    float:left;
+    margin:5px 0 0;
+}
+
+.tableMenus td{
+	padding:4px 4px 4px 4px;
+}
+
+.inputMenu {
+	width: 15px;
+	text-align: right; 
+	padding: 0px;
+	margin-bottom: 1px;
+}
+
+.longInputMenu{
+	width: 99%;
+	padding: 0px;
+	margin-bottom: 1px;
+}
+
+.titleHeadingMenu{
+	background-color: #DBDFC9;
+	padding: 2px 5px 2px 5px;
+	margin-bottom: 7px;
+	font-weight: bold;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	/* effet d'ombre */
+	-moz-box-shadow: 0px 1px 5px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 5px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 5px #000; /* Opera 10.5, IE 9.0 */
+	filter:  progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+.trParentHeading {
+	background-color: #DBDFC9;
+}
+
+.CopixTable tr.trSelectedElement,
+.CopixTable tr.trSelectedElement:hover{
+	background-color: #A7B0BF;
+}
+
+.ElementIndicator {
+	border-color:white white white #A7B0BF;
+	border-style:solid;
+	border-width:10px 0 10px 15px;
+	height:0;
+	line-height:0;
+	position:absolute;
+	top:0;
+	width:50;
+}
+
+#headingElementInformationForm input.text, 
+#headingElementInformationForm select,
+#headingElementInformationForm textarea{
+	padding: 0;
+	margin: 1px;
+}
+
+.divMenuPosition{
+	border:2px solid #FF5F5F;
+	border-style:dashed;
+	opacity: 0.8;
+	background: #FFFFFF;	
+	position: absolute;
+	text-align: center;
+	z-index: 50;
+}
+
+.divMenuPosition span{
+	opacity: 1;
+	font-size:16px;
+	font-stretch:2px;
+	font-weight:bold;
+	letter-spacing: 2px;
+	color: #000000;
+}
+
+.comment_hei {
+	width: 99%;
+}
+
+#headingElementInformationFormSaverDiv{
+	text-align: center;
+	display: none;
+}
+
+td.display_list {
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;
+}
+
+td.display_advanced {
+	
+}
+
+.elementInformations {
+	font-size: 10px;
+	color: #8a8989;
+	
+}
+
+.status0 {
+	color: blue;
+}
+.status1 {
+
+}
+.status2 {
+	color: orange;
+}
+.status3 {
+	color: green;
+}
+.status4 {
+	color: gray;
+}
+.status5 {
+
+}
+
+.elementChild{
+	background-image: url("../img/headingadmin.gif");
+    background-position: -108px 50%;
+    background-repeat: no-repeat;	
+    height: 100%;
+    overflow: hidden;
+    margin: 0 auto;
+    width: 18px;
+}
+
+.elementLastChild{
+    background-image: url("../img/headingadmin.gif");
+    background-position: -18px 50%;
+    background-repeat: no-repeat;
+    height: 100%;
+    overflow: hidden;
+    margin: 0 auto;
+    width: 18px;
+}
+
+.cmsAdminElementTable .childTree{
+	padding-top: 0;	
+	padding-bottom: 0;
+}
+
+.cmsAdminElementTable td{
+	height : 26px;	
+}
+
+.HeadingClipBoard {
+	background-color: #ecd09e;
+	border: solid 1px #946b25;
+	color: #88601a;
+	padding: 3px 5px 3px 5px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.HeadingClipBoardTitle {
+	color: #946b25;
+	font-size: 14px;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+button.image{
+	border: none;
+	background: none;
+	cursor: pointer;
+}

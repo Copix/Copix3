@@ -24,4 +24,3 @@ function smarty_modifier_datetimei18n ($string, $format="") {
    }
    return (($date = CopixDateTime::yyyymmddhhiissToText ($string)) !== false) ? $date : $string;
 }
-?>

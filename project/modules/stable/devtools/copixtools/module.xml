@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="copixtools" version="0.0.1" longdescriptioni18n="module.longdescription" descriptioni18n="module.description" icon="|img/icon/copixtools.png"  />
+		<group id="devTools" captioni18n="copix:copixmodule.group.devTools" />
+	</general>
+	<admin groupid="devtools" groupcaptioni18n="module.group" groupicon="|img/icon/copixtools.png">
+		<link url="copixtools|session|" captioni18n="module.link.session" credentials="basic:admin" icon="copixtools|img/icon/session.png" />
+		<link url="copixtools|classpath|" captioni18n="module.link.classpaths" credentials="basic:admin" icon="copixtools|img/icon/copixclasspath.png" />
+		<link url="copixtools|i18n|" caption="Edit I18N keys" credentials="basic:admin" icon="copixtools|img/icon/i18n.gif" />		
+	</admin>
+</moduledefinition>

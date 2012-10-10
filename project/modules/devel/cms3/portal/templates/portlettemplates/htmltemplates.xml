@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+	<template>
+		<name>Simple</name>
+		<description>HTML simple</description>
+		<image>default.jpg</image>
+		<tpl>portal|portlettemplates/default.html.tpl</tpl>
+	</template>
+</templates>

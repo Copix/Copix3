@@ -1,0 +1,288 @@
+.portlet {
+	background: #fff;
+	position: relative;
+	height: auto !important;
+	height: 30px;
+	min-height: 30px;
+}
+
+.draggable {
+	border: 1px dashed #E7E7E7;
+}
+
+.beingDragged {
+	z-index: 1000;
+	/* background: #ffe; */
+	border: 1px dotted #000;
+	-webkit-box-shadow: 2px 2px 20px #666;
+	-moz-box-shadow: 2px 2px 20px #666;
+	box-shadow: 2px 2px 20px #666;
+}
+.indicator {
+	border: 1px dashed red;
+}
+
+.ajoutPortlet,
+.dropPossibleTarget {
+	background: #DFDFDF;
+}
+
+.ajoutPortlet img {
+	vertical-align: middle;
+}
+
+/* Styles pour les liens d'édition des portlets */
+.portlet.hover .editPortlet,
+.portlet:hover .editPortlet {
+	display: block;
+	float: right;
+}
+
+/* La barre d'outils en standard */
+.editPortlet {
+	vertical-align: middle;
+	position: absolute;
+	display: none;
+	top:0;
+	right:0;
+	border: 1px solid #CCC;
+	background: white;
+	padding:1px;
+	z-index: 10;
+	-webkit-box-shadow: 2px 2px 8px #666;
+	-moz-box-shadow: 2px 2px 8px #666;
+	box-shadow: 2px 2px 8px #666;
+}
+
+/* Les liens de la barre d'outils lorsqu'elle est survolée */
+
+/* La barre d'outils lorsqu'elle est survolée*/
+.editPortlet a:focus,
+.editPortlet a:hover {	
+	opacity : 0.78;
+}
+
+.editPortlet a {
+	right: 0;
+	top: 0;
+	padding: 1px;
+	opacity : 1;
+}
+
+.dragHandle {
+   cursor : move;
+}
+
+fieldset{
+	border:1px #ccc solid;
+}
+
+legend{
+	color:#ccc;
+}
+
+.portletOptions {
+	background:#F0F0F0;
+	margin:0px 0px 1px 0px;
+}
+
+.portletOptions img{
+	vertical-align: middle;	
+}
+
+.headForm{
+	padding:2px;
+	color:#C97729;
+	font-size:0.9em;
+}
+
+.portletMenu img{
+	vertical-align: middle;	
+}
+
+.pageMenu{
+	padding:3px;
+	margin-bottom:2px;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	border:1px #ccc solid;
+}
+
+.pageMenu img{
+	vertical-align: top;
+}
+
+.pageMenu a{
+	opacity : 0.85;
+}
+
+.pageMenu a:hover{
+	opacity : 1;
+}
+
+.TemplateChooser{
+	border:none;
+	border-collapse:collapse;
+	margin: 5px;
+	width: 100%;
+}
+.TemplateChooser .image {
+	padding-right: 30px;
+}
+
+.displayPortlet{
+	clear:both;
+}
+/* popup information avec une scrollbar */
+.scrollable{
+    height:280px;
+    overflow-x: hidden;
+    overflow-y:scroll;
+}
+
+.templateChooserpopupinfo {
+	background-color:#EFEFEF;
+	border:1px solid grey;
+	padding:0;
+	height:280px;
+    overflow-x: hidden;
+    overflow-y:scroll;
+}
+
+.addPortletPreviewPopupInformation,
+.addPortletPopupInformation{
+	background-color:#EFEFEF;
+	border:1px solid #ccc;
+	text-align: left;
+	font-family:Arial,Helvetica,"Liberation Sans",FreeSans,sans-serif;
+	font-size:12px;
+	line-height:1.5;
+}
+
+.addPortletPopupInformation{
+	width: 370px;
+	z-index:50 !important;
+}
+
+.addPortletPreviewPopupInformation{
+	z-index:51 !important;
+}
+
+.addPortletPopupInformation ul{
+	list-style: none none;
+	margin: 2px;
+	padding: 0;
+}
+
+.addPortletMenuTable,
+.addPortletTable{
+	width: 100%;
+	border-collapse: collapse;
+	margin: 0;
+}
+
+.addPortletPreview{
+	text-decoration: underline;	
+}
+
+.addPortletPreviewPopupInformation td,
+.addPortletPopupInformation td{
+	font-family:Arial,Helvetica,"Liberation Sans",FreeSans,sans-serif;
+	font-size:12px;
+	line-height:1.5;
+	padding:1px;
+}
+
+.addPortletTable tr:hover {
+	background-color: #DFDFDF;
+}
+
+.articleBloc,
+.fileBloc{	
+	border:dotted 1px #ccc; 
+	margin:5px; 	
+	overflow:hidden;
+}
+
+.articleBloc:hover,
+.fileBloc:hover{
+	background-color: #EFEFEF;
+}
+
+.fileDoc{
+	height:90px;
+}
+
+.articleBloc,
+.fileBlocMulti{	
+	border:dotted 1px #ccc; 
+	margin:5px; 	
+	overflow:hidden;
+}
+
+.articleBloc:hover,
+.fileBlocMulti:hover{
+	background-color: #EFEFEF;
+}
+
+.fileBlocMulti{
+	float:left;
+	height:140px;
+}
+
+.thumbArticle,
+.thumbImage,
+.thumbDocument{
+	margin:5px 5px 4px 5px;
+	text-align:center;
+}
+
+.thumbDocument{
+	min-height: 55px;
+}
+
+.thumbArticle{
+	text-align:left;
+	margin : 0px;
+}
+
+.optionsFile{
+	border-top:dotted 1px #ccc; 
+	min-width:110px;
+	text-align: center;
+	padding-top:2px;
+	height:100%;
+	background-color: #DFDFDF
+}
+
+.optionsFile img{
+	vertical-align:middle;	
+}
+
+.optionContent{
+		background-color:#e0e7ef;
+		color:#006871;
+		width: 100%;
+		height: 100%;
+		padding: 5px;
+		display:none;
+}
+.optionBloc{ 
+	margin:5px;
+	background-color: #efefef;
+}
+
+.optionBloc .optionBlocTitle{
+	cursor: pointer;
+	font-size:1.1em;
+	font-weight:bold;
+	background-color: #176f9f;
+	color: #fff;
+	text-align: center;
+}
+
+.optionBlocContent{
+	padding: 3px;
+}

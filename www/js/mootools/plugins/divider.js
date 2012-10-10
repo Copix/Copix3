@@ -12,7 +12,7 @@
     'order' -> first (default) or last, modify algorithm
 */ 
 
-Element.extend({
+Element.implement({
     divide: function (options,onlyresize){
    	   options = $merge({
         	cols: 2,
@@ -32,7 +32,7 @@ Element.extend({
 	        var size = this.getSize();
 	        var percent = (100 / options.cols).toInt() - 2;
 	 
-	        var w = size.size.x / options.cols - (options.padding * (options.cols - 1)).toInt();
+	        var w = size.x / options.cols - (options.padding * (options.cols - 1)).toInt();
 	 
 	        if (options.border){
 	            options.padding /= 2;
@@ -44,11 +44,11 @@ Element.extend({
 	        //reinit size now
 	        size = element.getSize();
 	        if (options.correct){
-	            options.correct = size.size.y * (options.correct.toInt()/100);
+	            options.correct = size.y * (options.correct.toInt()/100);
 	        }
 	 
 	        //the best height for columns
-	        var bestH = size.size.y/options.cols;
+	        var bestH = size.y/options.cols;
 	 
 	        var div = new Element('div').injectAfter(element.id);
 	        var column = new Element('div').injectInside(div).setStyles({
@@ -72,7 +72,7 @@ Element.extend({
 	                el.injectInside(column);
 	            }
 	 
-	            if(column.getSize().size.y>bestH && i<options.cols-1){
+	            if(column.getSize().y>bestH && i<options.cols-1){
 	                column = new Element('div').setStyles({
 	                    'width': percent+"%",//w+"px",
 	                    'float': 'left',
@@ -95,7 +95,7 @@ Element.extend({
 	        });
 	 
 	        //this.empty();
-	        this.setHTML(div.innerHTML);
+	        this.set('html', div.innerHTML);
 	 
 	        //remove temporary elements
 	        div.remove();
@@ -104,7 +104,7 @@ Element.extend({
  		else{
 		 	//console.log('resize')
 	 		var size = this.getSize();
-	 		var bestH = size.size.y/options.cols;
+	 		var bestH = size.y/options.cols;
  		}
         //and now, we refine sizes
         var acceptableError = bestH * options.correct; // ~ 10% 
@@ -114,12 +114,12 @@ Element.extend({
             var maxh = 0;
             cols = this.getChildren();
             cols.each(function (el,i){
-                if(maxh<el.getSize().size.y){
-                    maxh=el.getSize().size.y
+                if(maxh<el.getSize().y){
+                    maxh=el.getSize().y
                 }
                 //el = new Element(el);
                 /*if(i<cols.length-1){
-                    diff = el.getSize().size.y.toInt() - cols[i+1].getSize().size.y.toInt()
+                    diff = el.getSize().y.toInt() - cols[i+1].getSize().y.toInt()
                     while((diff>0  && diff>acceptableError) || (diff<0 && diff>acceptableError)){
                         var children = el.getChildren()
                         if(window.ie){
@@ -128,7 +128,7 @@ Element.extend({
                         }else{
                              children[children.length-1].injectBefore(cols[i+1].getChildren()[0]);
                         }
-                        diff = el.getSize().size.y.toInt() - cols[i+1].getSize().size.y.toInt()
+                        diff = el.getSize().y.toInt() - cols[i+1].getSize().y.toInt()
                     }
                 }*/
             });

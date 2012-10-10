@@ -37,8 +37,4 @@ class CopixFieldMultipleSelect extends CopixAbstractField implements ICopixField
 		}
 	}
 	
-    public function fillFromRequest ($pName, $pDefault = null, $pValue = null) {
-		return _request ($pName, null);
-	}
-	
 }

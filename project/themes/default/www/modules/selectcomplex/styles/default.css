@@ -1,0 +1,17 @@
+.selectcomplex_box {
+	background: #FFF;
+	border:1px solid #4B4D46;
+	float:left;
+	padding:0px 3px;
+	
+}
+.selectcomplex_box_focus {
+	background: #868E74;
+	color: #FFF;
+}
+
+.selectcomplex:hover .selectcomplex_box {
+	border:1px solid #AA2314;
+	background: #868E74;
+	color: #FFF;
+}

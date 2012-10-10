@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS cms_headings;
+DROP TABLE IF EXISTS cms_links;
+DROP TABLE IF EXISTS cms_headingelementinformations_menus;
+DROP TABLE IF EXISTS cms_headingelementinformations_credentials;
+DROP TABLE IF EXISTS cms_headingelementinformations;
+DROP TABLE IF EXISTS cms_sitemaps_links;
+DROP TABLE IF EXISTS cms_sitemaps;
+DROP TABLE IF EXISTS cms_actions;
+DROP TABLE IF EXISTS cms_actions_extras;
+DROP TABLE IF EXISTS cms_actions_profiles;
+DROP TABLE IF EXISTS cms_actions_users;
+DROP TABLE IF EXISTS cms_headingelementinformations_linkedelements;

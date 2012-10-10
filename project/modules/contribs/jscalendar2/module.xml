@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="jscalendar2" version="0.1.0" 
+		         descriptioni18n="jscalendar2.description"
+		         longdescriptioni18n="jscalendar2.longdescription" 
+		         icon="|img/icon/jscalendar2.png" />
+	</general>
+</moduledefinition>

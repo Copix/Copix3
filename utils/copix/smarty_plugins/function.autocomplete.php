@@ -29,5 +29,3 @@ function smarty_function_autocomplete($params, $me) {
         return _tag ('autocomplete', $params);
     }
 }
-
-?>

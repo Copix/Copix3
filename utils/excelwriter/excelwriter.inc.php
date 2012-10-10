@@ -284,7 +284,7 @@ EOH;
 	}
 
 	function printOut() {
-		return new CopixActionReturn(COPIX_AR_DOWNLOAD_CONTENT, $this->data, $this->filename, "application/vnd.ms-excel");
+		return _arContent( $this->data, array ('content-type' => CopixMIMETypes::getFromExtension ('.xls'), 'filename' => $this->filename));
 	}
 	
 	function getData() {

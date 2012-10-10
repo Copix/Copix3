@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<moduledefinition>
- <general>
-  <default name="crud_i18n" longdescriptioni18n="crud.longdescription" descriptioni18n="crud.description"  icon="tutorial.png"  />
- </general>
-</moduledefinition>

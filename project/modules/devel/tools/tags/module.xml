@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+    <general>
+        <default name="tags" descriptioni18n="tags.moduledescription" 
+                 longdescriptioni18n="tags.longdescription" icon="|img/icon/tags.gif" />
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+    </general>
+	<credentials>
+	    <credential name="edition">
+	    	<value name="moderateur" level="1" />
+	    	<value name="administrateur" level="2"/>
+		</credential>
+	</credentials>
+    <admin>
+    <group id="tools" captioni18n="Tools">
+        <link url="admin|default" captioni18n="tags.adminlink" credentials="basic:admin" />
+    </group>
+    </admin>
+	<registry>
+		<entry id="ElementInformations">
+			<type zoneid="tags|TagsInformations" mode="advanced" />
+		</entry>
+	</registry>
+</moduledefinition>

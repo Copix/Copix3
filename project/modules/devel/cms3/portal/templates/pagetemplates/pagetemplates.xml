@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Pleine page</name>
+		<image>100.visuel.page.png</image>
+		<tpl>100.visuel.page.tpl</tpl>
+	</template>
+	<template>
+		<name>2 colonnes égales</name>
+		<image>50_50.visuel.page.png</image>
+		<tpl>50_50.visuel.page.tpl</tpl>
+	</template>
+	<template>
+		<name>2 colonnes 1/3 2/3</name>
+		<image>40_60.visuel.page.png</image>
+		<tpl>40_60.visuel.page.tpl</tpl>
+	</template>
+	<template>
+		<name>2 colonnes 2/3 1/3</name>
+		<image>60_40.visuel.page.png</image>
+		<tpl>60_40.visuel.page.tpl</tpl>
+	</template>
+	<template>
+		<name>3 colonnes égales</name>
+		<image>33_33_33.visuel.page.png</image>
+		<tpl>33_33_33.visuel.page.tpl</tpl>
+	</template>
+	<template>
+		<name>4 colonnes égales</name>
+		<image>25_25_25_25.visuel.page.png</image>
+		<tpl>25_25_25_25.visuel.page.tpl</tpl>
+	</template>
+	<template>
+		<name>1 colonne puis 2 colonnes égales puis 1 colonne</name>
+		<image>100_50_50_100.visuel.page.png</image>
+		<tpl>100_50_50_100.visuel.page.tpl</tpl>
+	</template>
+	<template>
+		<name>1 colonne puis 2 colonnes 1/3 2/3 puis 1 colonne</name>
+		<image>100_40_60_100.visuel.page.png</image>
+		<tpl>100_40_60_100.visuel.page.tpl</tpl>
+	</template>
+	<template>
+		<name>1 colonne puis 2 colonnes 2/3 1/3 puis 1 colonne</name>
+		<image>100_60_40_100.visuel.page.png</image>
+		<tpl>100_60_40_100.visuel.page.tpl</tpl>
+	</template>
+	<template>
+		<name>1 colonne puis 3 colonnes égales puis 1 colonne</name>
+		<image>100_33_33_33_100.visuel.page.png</image>
+		<tpl>100_33_33_33_100.visuel.page.tpl</tpl>
+	</template>
+	<template>
+		<name>1 colonne puis 4 colonnes égales puis 1 colonne</name>
+		<image>100_25_25_25_25_100.visuel.page.png</image>
+		<tpl>100_25_25_25_25_100.visuel.page.tpl</tpl>
+	</template>
+	<template>
+		<name>1 colonne puis 3 colonnes 1/4 1/2 1/4 puis 1 colonne</name>
+		<image>100_25_50_25_100.visuel.page.png</image>
+		<tpl>100_25_50_25_100.visuel.page.tpl</tpl>
+	</template>
+</templates>

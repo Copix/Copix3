@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="crud_i18n" longdescriptioni18n="crud.longdescription" descriptioni18n="crud.description"  icon="|img/icon/tutorial.png"  />
+  <group id="tutos" captioni18n="copix:copixmodule.group.tutos" />
+ </general>
+ <admin>
+  <link url="crud||" captioni18n="crud.title.list" />
+ </admin> 
+</moduledefinition>

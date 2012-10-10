@@ -24,5 +24,3 @@ function smarty_function_copixtips($params, $me) {
         return _tag ('copixtips', $params);
     }
 }
-
-?>

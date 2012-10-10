@@ -1,6 +1,8 @@
+var ie6 = (Browser.Engine.trident && Browser.Engine.version <= 4) ? true : false;
 var CopixWindow = new Class ({
 	options: {},
 	div: null,
+	modaldiv : null,
 	sync:false,
 	isOpen:false,
 	ajax: null,
@@ -10,32 +12,43 @@ var CopixWindow = new Class ({
 		if (!this.div) {
 			throw ("CopixWindow : The element ["+id+"] must exists");
 		}
+		this.options = options;
 		
 		this.div.injectInside(document.body);
-		this.div.setStyle('position','absolute');
-		
-		this.options = options;
+        // position:fixed; n'existe pas sous IE6
+		if(this.options.fixed == true && !ie6){
+            this.div.setStyle ('position','fixed');
+        }else {
+            this.div.setStyle ('position','absolute');
+        }
 		this.namespace = this.options.namespace;
 		
 		this.div.addEvent('display', this.display.bind(this));
 		this.div.addEvent('close', this.close.bind(this));
 		
 		this.div.addEvent('mousedown', this.focus.bind(this));
-		
 		if (this.options.clicker) {
 			this.clicker = $(this.options.clicker);
 			if (this.clicker) {
 				this.clicker.addEvent ('click', function () {
 					this.display ();
-					this.placeRelativeButVisible (this.clicker);
+					if (this.options.center) {
+						this.placeCenter ();
+					} else {
+						this.placeRelativeButVisible (this.clicker);
+					}
 					return false;
 				}.bind(this));
 				this.div.addEvent('sync', function () {
-					this.placeRelativeButVisible (this.clicker);
+					if (this.options.center) {
+						this.placeCenter ();
+					} else {
+						this.placeRelativeButVisible (this.clicker);
+					}
 				}.bind(this));
 			}
 		}
-		
+
 		this.dragOptions = {'onDrag':this.div.fixdivUpdate.bind(this.div)};
 		if (this.options.dragSelector) {
 			this.dragOptions.handle = this.div.getElement (this.options.dragSelector);
@@ -44,28 +57,39 @@ var CopixWindow = new Class ({
 			}
 		}
 		
-		
-		this.div.makeDraggable(this.dragOptions);
-		
+		if (this.options.canDrag) {
+			this.div.makeDraggable(this.dragOptions);
+		}
 	},
 	place: function (x,y) {
 		scrollTop  = 0;
 		scrollLeft = 0;
-		if (this.options.position != 'absolute') {
-	    	scrollTop = (document.documentElement.scrollTop) ? document.documentElement.scrollTop : document.body.scrollTop;
-			scrollLeft = (document.documentElement.scrollLeft) ? document.documentElement.scrollLeft : document.body.scrollLeft;
-	    }
+	    
+		if(this.options.fixed == true){
+            var browserWindowSize = window.getSize();
+            var elementSize = this.div.getSize();
+            x = (browserWindowSize.x / 2) - (elementSize.x / 2);
+            y = (browserWindowSize.y / 2) - (elementSize.y / 2);
+        }else{
+            if (this.options.position != 'absolute') {
+                scrollTop = (document.documentElement.scrollTop) ? document.documentElement.scrollTop : document.body.scrollTop;
+                scrollLeft = (document.documentElement.scrollLeft) ? document.documentElement.scrollLeft : document.body.scrollLeft;
+            }
+
+            x = (x || this.options.x+scrollTop  || '0');
+            y = (y || this.options.y+scrollLeft || '0');
+        }
+        this.div.setStyles({
+            'top' : y,
+            'left': x
+        });
+        this.div.fixdivUpdate ();
+	},
+	placeCenter: function () {
+		scrollTop = (document.documentElement.scrollTop) ? document.documentElement.scrollTop : document.body.scrollTop;
+		scrollLeft = (document.documentElement.scrollLeft) ? document.documentElement.scrollLeft : document.body.scrollLeft;
+		this.place ((window.getSize().x-this.div.getSize().x)/2+scrollTop, ((window.getSize().y-this.div.getSize().y)/2+scrollLeft));
 		
-	    x = (x || this.options.x+scrollTop  || '0');
-	    y = (y || this.options.y+scrollLeft || '0');
-	    
-	     
-	    
-	    this.div.setStyles({
-	        'top' : y,
-	        'left': x
-	    });
-	    this.div.fixdivUpdate ();
 	},
 	placeRelativeButVisible: function (element) {
 
@@ -73,23 +97,23 @@ var CopixWindow = new Class ({
 		scrollLeft = (document.documentElement.scrollLeft) ? document.documentElement.scrollLeft : document.body.scrollLeft;
 	
 		x = element.getPosition().x;
-		y = element.getPosition().y+element.getSize().size.y;
+		y = element.getPosition().y+element.getSize().y;
 		
 		
 		
-		tempx = (element.getPosition().x+element.getSize().size.x)-this.div.getSize().size.x;
-		tempy = element.getPosition().y-this.div.getSize().size.y;
+		tempx = (element.getPosition().x+element.getSize().x)-this.div.getSize().x;
+		tempy = element.getPosition().y-this.div.getSize().y;
 		
 		
-		if (x+this.div.getSize().size.x-scrollLeft > window.getSize().size.x && (tempx-scrollLeft) > 0) {
+		if (x+this.div.getSize().x-scrollLeft > window.getSize().x && (tempx-scrollLeft) > 0) {
 			x=tempx;
-		} else if (x+this.div.getSize().size.x-scrollLeft > window.getSize().size.x && (tempx-scrollLeft) < 0) {
+		} else if (x+this.div.getSize().x-scrollLeft > window.getSize().x && (tempx-scrollLeft) < 0) {
 			x=scrollLeft;
 		}
 
-		if (y+this.div.getSize().size.y-scrollTop > window.getSize().size.y && (tempy-scrollTop) > 0) {
+		if (y+this.div.getSize().y-scrollTop > window.getSize().y && (tempy-scrollTop) > 0) {
 			y=tempy;
-		} else if (y+this.div.getSize().size.y-scrollTop > window.getSize().size.y && (tempy-scrollTop) < 0) {
+		} else if (y+this.div.getSize().y-scrollTop > window.getSize().y && (tempy-scrollTop) < 0) {
 			y=scrollTop;
 		}
 		this.place (x,y);
@@ -104,6 +128,9 @@ var CopixWindow = new Class ({
 			}.bind(this));
 			return this;
 		}
+		if(this.options.modal){
+			this.showmodal();
+		}
 		this.div.setStyle('display','');
 		this.place ();
 		this.div.fixdivShow();
@@ -114,6 +141,9 @@ var CopixWindow = new Class ({
 	close: function () {
 		this.div.setStyle('display','none');
 		this.div.fixdivHide ();
+		if(this.options.modal){
+			this.hidemodal();
+		}
 		this.unfocus ();
 		this.isOpen=false;
 	},
@@ -141,7 +171,32 @@ var CopixWindow = new Class ({
 		this.div.fixdivUpdate ();
 	},
 	destroy: function () {
-        this.div.remove();
+		if (this.div != undefined) {
+			this.div.destroy();
+		}
+	},
+	showmodal:function(){
+		if (this.modaldiv == null){
+			this.modaldiv = new Element('div', {'id':this.div.id + '_copixwindow_modaldiv', 'class':'copixwindow_modaldiv'});
+			this.modaldiv.injectInside(document.body);
+			if (this.options.modalclose){
+				this.modaldiv.addEvent('click', function(){
+					this.close();
+				}.bind(this));
+			}
+		}
+		this.modaldiv.setStyles({'display':''
+					,'width':'100%'
+                    ,'height':'100%'
+                    ,'top': 0
+                    ,'left':0
+                    ,'position':'fixed'
+                    ,'text-align':'center'
+                    ,'zIndex':998
+							});
+	},
+	hidemodal:function(){
+		this.modaldiv.setStyle ('display', 'none');
 	}
 
 });
@@ -150,13 +205,19 @@ CopixClass.implement({
     windows: new Array(),
     focus: new Array (),
     duringFocus:false,
-	register_copixwindow: function (id, params) {
-		if (this.windows[id]) {
-		     this.windows[id].destroy();
-		     delete(this.windows[id]);
+	register_copixwindow: function (id, params, domready) {
+		if (domready){		
+			window.addEvent('domready', function(){
+				return Copix.register_copixwindow (id, params, false);
+			});
+		} else {
+			if (this.windows[id]) {
+			     this.windows[id].destroy();
+			     delete(this.windows[id]);
+			}
+		    this.windows[id] = new CopixWindow(id, params);
+		    return this.windows[id];
 		}
-	    this.windows[id] = new CopixWindow(id, params);
-	    return this.windows[id];
 	},
 	get_copixwindow: function (id) {
 		if (!this.windows[id]) {

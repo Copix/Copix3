@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="developerbar" version="1.1.0" description="Barre d'outils pour les développeurs" longdescription="Affiche une barre avec des informations sur les requêtes, les temps d'execution, les logs, les variables serveurs, etc." icon="|icons/icon_developerbar.png" />
+		<group id="devTools" captioni18n="copix:copixmodule.group.devTools" />
+	</general>
+
+	<parameters>
+		<parameter name="credentialShow" caption="Droit d'affichage" description="Chaine de droit à tester pour vérifier si on peut afficher la barre." />
+	</parameters>
+
+	<userpreferences>
+		<group caption="Générale">
+			<preference name="showLastOpened" caption="Afficher le dernier onglet ouvert" default="1" type="bool" />
+			<preference
+				name="dumpFunction" caption="Fonction de dump" default="_dump"
+				type="select" listValues="_dump=>_dump;var_dump=>var_dump;print_r=>print_r;var_export=>var_export"
+				descriptioni18n="developerbar.parameter.dumpFunction"
+			/>
+			<preference name="positionX" caption="Position en X" default="5" type="int" />
+			<preference name="positionY" caption="Position en Y" default="5" type="int" />
+			<preference name="positioning" caption="Position" default="absolute" type="select" listValues="absolute=>Flottante;fixed=>Fixe" />
+		</group>
+		<group caption="Variables">
+			<preference name="varsEnabled" caption="Activé" default="1" type="bool" />
+			<preference name="varsAjax" caption="Charger en ajax" default="1" type="bool" />
+		</group>
+		<group caption="Mémoire">
+			<preference name="memoryEnabled" caption="Activé" default="1" type="bool" descriptioni18n="developerbar.parameter.memoryEnabled" />
+		</group>
+		<group caption="Temps d'exécution">
+			<preference name="timersEnabled" caption="Activé" default="1" type="bool" />
+		</group>
+		<group caption="Requêtes">
+			<preference name="querysEnabled" caption="Activé" default="1" type="bool" />
+			<preference name="querysFormat" caption="Formater l'affichage" default="1" type="bool" descriptioni18n="developerbar.parameter.querysFormat" />
+			<preference name="querysAjax" caption="Charger en ajax" default="1" type="bool" />
+		</group>
+		<group caption="Logs">
+			<preference name="logsEnabled" caption="Activé" default="1" type="bool" />
+			<preference name="logsAjax" caption="Charger en ajax" default="1" type="bool" />
+		</group>
+		<group caption="Erreurs">
+			<preference name="errorsEnabled" caption="Activé" default="1" type="bool" />
+			<preference name="errorsAjax" caption="Charger en ajax" default="1" type="bool" />
+		</group>
+	</userpreferences>
+	
+	<logs>
+		<strategies>
+			<strategy class="developerbar|developerbarlog" caption="DevelopperBar" />
+		</strategies>
+	</logs>
+</moduledefinition>

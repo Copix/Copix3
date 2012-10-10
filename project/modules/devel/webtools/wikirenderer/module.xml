@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="wikirenderer" description="Wiki Renderer" />
+	</general>
+	<admin>
+		<link caption="Gérer les wiki components" url="wikirenderer||AdminComponents" credentials='basic:admin' />
+	</admin>
+</moduledefinition>	

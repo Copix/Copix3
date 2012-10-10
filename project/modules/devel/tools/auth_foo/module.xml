@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="auth_foo"  />
+	</general>
+
+	<userhandlers>
+		<userhandler name="foouserhandler" required="false" caption="Utilisateur de dev" />
+	</userhandlers>
+
+	<grouphandlers>
+		<grouphandler name="foogrouphandler" caption="Groupe de dev" />
+	</grouphandlers>
+
+	<credentialhandlers>
+		<credentialhandler name="foocredentialhandler" caption="Droits de dev" stopOnSuccess="true" stopOnFailure="false" />
+	</credentialhandlers>
+</moduledefinition>

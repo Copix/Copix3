@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+	<default name="cleaner" descriptioni18n="cleaner.description" longdescriptioni18n="cleaner.longdescription"/>
+	<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+	</general>
+	<parameters>
+		<parameter name="cleanedDirectory" captioni18n="cleaner.parameter.cleanedDirectory" default="" />
+	</parameters>
+	<admin>
+		<link url="cleaner|cleaner|" captioni18n="cleaner.title" credentials="basic:admin"></link>
+	</admin>
+</moduledefinition>

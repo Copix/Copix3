@@ -29,7 +29,7 @@ class CopixLock implements ICopixLock {
 	 *
 	 * @var array
 	 */
-    static private $_arLock = array ();
+    private static $_arLock = array ();
     
     /**
      * Génère une clé string depuis un objet complexe

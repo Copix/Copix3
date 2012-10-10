@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="logreader" version="0.0.1"
+			longdescription="Permet de lire des fichiers de log (type Linux), et de faire un log d etype 'errors' avec les nouvelles entrées."
+			description="Lecture des logs type Linux" icon="|img/logreader.png"  />
+		<group id="devTools" captioni18n="copix:copixmodule.group.devTools" />
+	</general>
+	<parameters>
+		<parameter name="logNewLines" caption="Loger les nouvelles lignes" default="0" type="bool" />
+	</parameters>
+	<admin groupid="devtools" groupcaption="Outils de développement" groupicon="|img/copixtools.png">
+		<link url="logreader||" caption="Fichiers de log" credentials="basic:admin" icon="logreader|img/logreader.png" />
+	</admin>
+</moduledefinition>

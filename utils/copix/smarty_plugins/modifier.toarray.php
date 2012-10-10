@@ -26,4 +26,3 @@ function smarty_modifier_toarray ($string) {
 	}
 	return $array;
 }
-?>

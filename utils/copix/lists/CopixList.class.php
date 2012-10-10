@@ -11,10 +11,10 @@
 
 /*
  * CopixList
- *
+ * @package copix
+ * @subpackage lists
  */
 class CopixList {
-	
 	private $_id = null;
 
 	private $_formid = null;
@@ -36,6 +36,7 @@ class CopixList {
 	private $_datasource = null;
 	
 	private $_currentTemplate = null;
+
 	private $_currentContext = null;
 	
 	private $_conditions = array ();
@@ -133,21 +134,26 @@ class CopixList {
 	 * @return string Le HTML
 	 */
 	public function getTable ($pTemplate = 'copix:/templates/copixlist.php') {
-
+		
 		if ($pTemplate != 'copix:/templates/copixlist.php') {
 			$this->_currentTemplate = $pTemplate;
-			$this->_currentContext = CopixContext::get();
+		}
+		$this->_currentContext = CopixContext::get();
+		
+		if ($this->_currentTemplate != null) {
+			$pTemplate = $this->_currentTemplate;
+			CopixContext::push ($this->_currentContext);
 		}
 		
 		if ($this->_formid != null) {
 			$form = _form ($this->_formid);
 			$form->addConditions ($this->getDatasource ());
 		}
-
+		
 		$this->addConditions ($this->getDatasource());
-
+		
 		$tpl = new CopixTpl ();
-
+		
 		//Récupère le résultats de la recherche
 		try {
 			$results = $this->find ();
@@ -157,27 +163,20 @@ class CopixList {
 		}
 
 		
-				
+
 		//On récupère la liste des champs du datasource pour faire le mapping des colonnes
 		if ($this->_mapping == null) {
     		$this->_mapping = array ();
-    		if (is_array($this->_datasource->getFields ())) {
-	            foreach ($this->_datasource->getFields () as $key=>$result) {
-	                $this->_mapping[$result->name] = $result->fieldName;
-	            }
-    		}
+            foreach ($this->getDatasource()->getFields () as $key=>$result) {
+                $this->_mapping[$result->name] = $result->fieldName;
+            }
 		}
 		$tpl->assign ('class', 'CopixTable');
 		$tpl->assign ('mapping', $this->_mapping);
 		$tpl->assign ('results', $results);
 		$tpl->assign ('idlist', $this->_id);
 		
-
-		if ($this->_currentTemplate != null) {
-			$pTemplate = $this->_currentTemplate;
-			CopixContext::push ($this->_currentContext);
-		}
-
+		
 		$toReturn = $tpl->fetch ($pTemplate);
 		if ($this->_currentTemplate != null) {
 		    CopixContext::pop();
@@ -202,10 +201,6 @@ class CopixList {
 		}
 		$result = $this->getDatasource ()->find ($this->_currentPage-1);
 		$this->_nbPage = $this->getDatasource()->getNbPage ();
-		if (($this->_nbPage !=0) && $this->_nbPage < $this->_currentPage) {
-		    $this->_currentPage = $this->_nbPage;
-		    $result = $this->getDatasource ()->find ($this->_currentPage-1);
-		}
 		return $result;
 	}
 	
@@ -229,8 +224,6 @@ class CopixList {
 			case 'last':
 				$this->_currentPage = $this->_nbPage;
 				break;
-			case 'self':
-				break;
 			default:
 				$this->_currentPage = 1;
 				
@@ -250,7 +243,6 @@ class CopixList {
 	}
 	
 	public function getHTML ($pTemplate = 'copix:/templates/copixlist.php', $pMaj = true) {
-	    _tag ('mootools');
 		CopixHTMLHeader::addJSLink(_resource('js/taglib/copixlist.js'));
 		CopixHTMLHeader::addJSDOMReadyCode(
 		"
@@ -284,7 +276,4 @@ class CopixList {
 	public function getNbPage () {
 		return  $this->_nbPage;
 	}
-        public function setCurrentTemplate($pTemplate){
-            $this->_currentTemplate = $pTemplate;
-        }
 }

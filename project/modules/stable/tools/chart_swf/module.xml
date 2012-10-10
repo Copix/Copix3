@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<moduledefinition>
+ <general>
+  <default name="chart_swf" descriptioni18n="module.description" longdescriptioni18n="module.longdescription"  icon="|img/icon/chart.png"  />
+  <group id="tools" captioni18n="copix:copixmodule.group.tools" />
+ </general> 
+ <dependencies>
+  <dependency name="chart" kind="module"/>
+ </dependencies>
+ <parameters>
+  <parameter name="license" default="" caption="License Id" />
+ </parameters>
+</moduledefinition>

@@ -53,7 +53,7 @@ ElementMover = new Class({
 });
 
 
-Element.extend({
+Element.implement({
 	changeLocation: function(options){ 
 		options.source = this;
 		return new ElementMover(options);	

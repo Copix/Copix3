@@ -117,7 +117,7 @@ class CopixDBConnectionPDO_PgSQL extends CopixDBPDOConnection {
 			if ($val->type == 'bool') {
 					$fieldDescription->type = 'int';
 			}			
-			
+
 			if($fieldDescription->pk && $val->atthasdef && preg_match("/nextval\('([^']+)'(::regclass)?\)/i", $val->adsrc, $parts)) {
 				$fieldDescription->type = 'autoincrement';
 				$fieldDescription->auto = true;
@@ -143,7 +143,7 @@ class CopixDBConnectionPDO_PgSQL extends CopixDBPDOConnection {
 	 * @return bool
 	 */
 	public static function isAvailable (){
-		if (!class_exists ('PDO')){
+		if (!class_exists ('PDO', false)){
 			return false;
 		}
 		return in_array ('pgsql', PDO::getAvailableDrivers ());

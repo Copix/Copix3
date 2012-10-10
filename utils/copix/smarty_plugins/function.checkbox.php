@@ -29,4 +29,3 @@ function smarty_function_checkbox($params, &$me) {
       return _tag ('checkbox', $params);
    }
 }
-?>

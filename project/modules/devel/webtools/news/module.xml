@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="news" />
+	</general>
+	<credentials>
+	    <credential name="Voir" />
+	    <credential name="Ecrire" />
+	    <credential name="EcrireWiki" />
+	    <credential name="EcrireWysiwyg" />
+	</credentials>
+	<dependencies>
+		<dependency name="syndication" kind="module" />
+		<dependency name="tags" kind="module" />
+	</dependencies>
+</moduledefinition>

@@ -13,18 +13,10 @@
  * @subpackage	taglib
  */
 class TemplateTagJSSubmitForm extends CopixTemplateTag {
-    public function process($params) {
+    public function process($pContent = null) {
         static $_init = false;
-
-        if (!isset ($params['href'])){
-            throw new CopixTemplateTagException("[smarty jssubmitform] Missing href parameter");
-            return;
-        }
-
-        if (!isset ($params['form'])){
-            throw new CopixTemplateTagException("[smarty jssubmitform] Missing form parameter");
-            return;
-        }
+    	$params = $this->getParams ();
+        $this->assertParams ('href', 'form');
 
         if (! $_init){
             $jsCode = 'function doSubmitForm (pUrl, formId) {
@@ -41,5 +33,3 @@ class TemplateTagJSSubmitForm extends CopixTemplateTag {
         return $toReturn;
     }
 }
-
-?>

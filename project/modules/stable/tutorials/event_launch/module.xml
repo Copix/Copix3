@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="event_launch" description="[Tutoriel] Exemples de lancement d'évènements dans Copix" icon="|img/icon/tutorial.png"  />
+  <group id="tutos" captioni18n="copix:copixmodule.group.tutos" />
+ </general>
+</moduledefinition>

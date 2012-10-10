@@ -15,4 +15,3 @@
 function smarty_function_showdiv ($pParams, &$smarty) {
 	return _tag ('showdiv', $pParams);
 }
-?>

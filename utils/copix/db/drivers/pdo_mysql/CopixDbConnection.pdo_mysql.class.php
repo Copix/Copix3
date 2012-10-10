@@ -4,7 +4,7 @@
  * @subpackage 	db
  * @author		Croës Gérald
  * @copyright	2001-2006 CopixTeam
- * @link		http://copix.org
+ * @link			http://copix.org
  * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
  */
 
@@ -14,14 +14,46 @@
  * @subpackage	db
  */
 class CopixDBConnectionPDO_MySQL extends CopixDBPDOConnection {
+	/**
+	 * Indique si la connexion est prête à être utilisée ou non
+	 *
+	 * @var boolean
+	 */
+	private $_ready = false;
+	
+	/**
+	 * Le charset qui sera utilisé pour la connexion
+	 *
+	 * @var string
+	 */
+	private $_charset;
+	
     /**
      * Constructeur
      * @param	CopixDBProfile	$pProfil	le profil de connexion à utiliser pour se connecter à la base de donées.
      */
     public function __construct ($pProfil) {
         parent::__construct ($pProfil);
-		$parts['charset'] = $this->_convertCharset (isset ($parts['charset']) ? $parts['charset'] : CopixI18N::getCharset ());
-		$this->doQuery ('SET CHARACTER SET '.$parts['charset']);
+		$this->_charset = $this->_convertCharset (CopixI18N::getCharset ());
+    }
+
+    /**
+     * Lancement de la requête
+     * 
+     * Surcharge pour préparer le bon charset uniquement si nécessaire (première connexion)
+     *
+     * @param string $pQueryString
+     * @param array $pParameters
+     * @param int $pOffset
+     * @param int $pCount
+     * @return array
+     */
+    public function doQuery ($pQueryString, $pParameters = array (), $pOffset = null, $pCount = null){
+    	if ($this->_ready === false){
+			parent::doQuery ('SET CHARACTER SET '.$this->_charset);
+			$this->_ready = true;   		
+    	}
+    	return parent::doQuery ($pQueryString, $pParameters, $pOffset, $pCount);
     }
 
     /**
@@ -60,7 +92,7 @@ class CopixDBConnectionPDO_MySQL extends CopixDBPDOConnection {
    	 * Retourne la liste des tables (en minuscule) connues de la base (en fonction de l'utilisateur)
    	 * @return   array	liste des noms de table
    	 */
-    public function getTableList () {
+    public function getTableList ($pFullDetail = false) {
         $results   = $this->doQuery ('SHOW TABLES');
         if (count ($results) == 0) {
             return array();
@@ -69,7 +101,33 @@ class CopixDBConnectionPDO_MySQL extends CopixDBPDOConnection {
         $fieldName = $fieldName[0];
         $toReturn = array ();
         foreach ($results as $table){
-            $toReturn[] = $table->$fieldName;
+            $toReturn[$table->$fieldName] = $pFullDetail ? _rppo (array ('name'=>$table->$fieldName)) : $table->$fieldName;
+        }
+        if ($pFullDetail){
+    		$connectionStrings = $this->getProfile ()->getConnectionStringParts ();
+    		$tables = array_keys ($toReturn);	
+    		foreach ($tables as $tableName){
+	        	$fullInformations = $this->doQuery ("
+					SELECT c.table_schema, u.referenced_table_name, u.referenced_column_name, u.table_schema, u.table_name, u.column_name
+ 						FROM information_schema.table_constraints AS c
+						JOIN information_schema.key_column_usage AS u
+						USING ( constraint_schema, constraint_name )
+					WHERE c.constraint_type = 'FOREIGN KEY'
+						AND u.referenced_table_schema = :database_name
+						AND u.table_name = :table_name
+						ORDER BY c.table_schema, u.referenced_table_name, u.referenced_column_name, u.table_schema, u.table_name, u.column_name", array (':database_name'=>$connectionStrings['dbname'], ':table_name'=>$tableName));
+	        	foreach ($fullInformations as $information){
+	        		$toReturn[$tableName]['FOREIGN KEY'][] = $information;
+	        	}
+    		}
+    		foreach ($tables as $tableName){
+    			$toReturn[$tableName]['FIELDS'] = $this->getFieldList ($tableName);    			
+    		}
+    		foreach ($tables as $tableName){
+    			//On concatène car le bind ne semble pas fonctionner pour ce genre de requêtes.
+    			//on ne craint pas le sql injection du fait que les résultats sont alimentés par la base elle même.
+    			$toReturn[$tableName]['INDEX'] = $this->doQuery ('SHOW INDEX FROM `'.$tableName.'`');
+    		}    		
         }
         return $toReturn;
     }
@@ -95,19 +153,19 @@ class CopixDBConnectionPDO_MySQL extends CopixDBPDOConnection {
             $field->primary = (strtolower ($val->Key) == 'pri');
             $field->isAutoIncrement = strtolower ($val->Extra) == 'auto_increment';
 
-            if (preg_match('/^(set|enum)\((.+)\)$/i', $type, $tmp)){
+            if (preg_match('@^(set|enum)\((.+)\)$@i', $type, $tmp)){
                 $type   = $tmp[1];
-                $length = substr(preg_replace('/([^,])\'\'/', '\\1\\\'', ',' . $tmp[2]), 1);
+                $length = substr(preg_replace('"([^,])\'\'"', '\\1\\\'', ',' . $tmp[2]), 1);
             } else {
                 $length = $type;
-                $type   = chop(preg_replace('/\\(.*\\)/i', '', $type));
+                $type   = chop(preg_replace('@\\(.*\\)@i', '', $type));
                 if (!empty($type)) {
                     if (strpos($length, 'unsigned') !== false) {
                     	$length = substr($length, strpos($length, '(') + 1);
                     	$length = str_replace(') unsigned', '', trim ($length));
                     } else {
-                    	$length = preg_replace("/^$type\(/i", '', $length);
-                    	$length = preg_replace('/\)$/i', '', trim ($length));
+                    	$length = preg_replace("#^$type\(#i", '', $length);
+                    	$length = preg_replace('#\)$#i', '', trim ($length));
                     }                    
                 }
                 if ($length == $type) {
@@ -120,20 +178,20 @@ class CopixDBConnectionPDO_MySQL extends CopixDBPDOConnection {
             $field->caption  = $field->name;
             $field->required = ($val->Null != 'YES') ? 'yes' : 'no';
             $arType = array ('bool'=>'int', 'int'=>'int', 'tinyint'=>'int',  'smallint'=>'int', 'mediumint'=>'int', 'bigint'=>'numeric', 'int unsigned'=>'int', 'tinyint unsigned'=>'int','smallint unsigned'=>'int','mediumint unsigned'=>'int', 'bigint unsigned'=>'numeric',
-            'double'=>'float', 'decimal'=>'float', 'float'=>'float', 'numeric'=>'float', 'real'=>'float', 'char'=>'varchar', 'tinyblob'=>'varchar',
-            'blob'=>'varchar', 'tinytext'=>'varchar', 'text'=>'string', 'mediumblob'=>'varchar', 'mediumtext'=>'varchar', 'longblob'=>'varchar', 'longtext'=>'varchar',
+            'double'=>'float', 'decimal'=>'float', 'float'=>'float', 'float unsigned'=>'float', 'numeric'=>'float', 'real'=>'float', 'char'=>'varchar', 'tinyblob'=>'string',
+            'blob'=>'string', 'tinytext'=>'varchar', 'text'=>'string', 'mediumblob'=>'string', 'mediumtext'=>'varchar', 'longblob'=>'string', 'longtext'=>'varchar',
             'date'=>'date', 'datetime'=>'datetime', 'time'=>'time',
             'varchar'=>'varchar', 'timestamp'=>'datetime');
             if (isset ($arType[$field->type])) {
                 $field->type = $arType[$field->type];
             } else {
-                throw new CopixException ('Unknow field : ' . $field);
+				$extras = array ('field' => $field, 'table' => $pTableName, 'fields_types' => $arType);
+                throw new CopixException ('Unknow field type : ' . $field->type, 0, $extras);
             }
 
             if ($field->isAutoIncrement && $field->type == 'int') {
                 $field->type = 'autoincrement';
             }
-            
             if ($field->isAutoIncrement && $field->type == 'numeric'){
                 $field->type = 'bigautoincrement';
             }
@@ -144,7 +202,7 @@ class CopixDBConnectionPDO_MySQL extends CopixDBPDOConnection {
             	$field->maxlength = 0;
             	foreach ($arLength  as $length) {
             		$field->maxlength += $length;
-            	}
+            }
                 $field->maxlength += (count ($arLength)-1);
             }
             
@@ -174,7 +232,7 @@ class CopixDBConnectionPDO_MySQL extends CopixDBPDOConnection {
      * @return bool
      */
    	public static function isAvailable () {
-   	    if (!class_exists ('PDO')){
+   	    if (!class_exists ('PDO', false)){
    	        return false;
    	    }
    	    return in_array ('mysql', PDO::getAvailableDrivers ());

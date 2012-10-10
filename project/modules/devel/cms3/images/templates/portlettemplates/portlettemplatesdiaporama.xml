@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+    <template>
+		<name>Diaporama classique</name>
+		<description>Défilement d'images avec vignettes horizontales ou verticales</description>
+		<tpl>images|portlettemplates/slideshow.portlet.php</tpl>
+        <options>
+        <chooser type="elementchooser" id="erzre"/>
+        	<!-- options de base -->
+        	<groupDiaporama type="bloc" title="Options de base">
+	            <slideshowwidth type="inputtext" id="slideshowwidth" desc="Largeur du diaporama : " suffix="px" value="500" size="5"/>
+	            <slideshowheight type="inputtext" id="slideshowheight" desc="Hauteur du diaporama : " suffix="px" value="375" size="5"/>
+	            <displayThumb type="inputradio" id="displayThumb"  desc="Afficher les vignettes : " enum="oui,non" value="oui"/>
+	            <thumbwidth type="inputtext" id="thumbwidth" desc="Largeur des vignettes : " suffix="px" value="80" size="5"/>
+	            <thumbheight type="inputtext" id="thumbheight" desc="Hauteur des vignettes : " suffix="px" value="53" size="5"/>
+	            <thumbside type="inputradio" id="thumbside"  desc="Position des vignettes : " enum="horizontal,vertical" value="horizontal"/>
+	            <slideController type="inputradio" id="slideController"  desc="Afficher ou non la barre de contrôle : " enum="oui,non" value="oui"/>
+            </groupDiaporama>
+			<groupTime type="bloc" title="Durées">
+				<slideshowDelay type="inputtext" id="slideshowDelay" desc="Temps ou les images seront affichées : " suffix="ms" value="3000" size="5"/>
+	            <slideshowDuration type="inputtext" id="slideshowDuration" desc="Durée des transitions : " suffix="ms" value="1000" size="5"/>
+			</groupTime>
+            <!-- Apparence -->
+           <groupApparence type="bloc" title="Apparence des images">
+	            <centerImages type="inputradio" id="centerImages"  desc="Centrer les images : " enum="oui,non" value="oui"/>
+	            <displayCaption type="inputradio" id="displayCaption"  desc="Afficher les noms des images : " enum="oui,non" value="oui"/>
+	            <slideResize type="inputradio" id="slideResize"  desc="Redimentionner les images pour tenir toute la largeur : " enum="oui,non" value="non"/>
+            </groupApparence>
+
+            <!-- Controles -->
+            <groupControls type="bloc" title="Controles du diaporama">
+	            <controllerTransition type="inputradio" id="controllerTransition"  desc="Utiliser les transitions lors de la navigation avec le contrôleur : " enum="oui,non" value="oui"/>
+	            <slideLoop type="inputradio" id="slideLoop"  desc="Boucler sur le diaporama : " enum="oui,non" value="oui"/>
+	            <slideAutoStart type="inputradio" id="slideAutoStart"  desc="Démarrer automatiquement le diaporama: " enum="oui,non" value="oui"/>
+	            <slideRandom type="inputradio" id="slideRandom"  desc="Lire le diaporama dans un ordre alléatoire : " enum="oui,non" value="non"/>
+            </groupControls>
+        </options>
+	</template>
+	<template>
+		<name>Défilement images avec zoom</name>
+		<description>Diaporama avec zoom (au clic sur l'image)</description>
+		<tpl>images|portlettemplates/slideshowzoom.portlet.php</tpl>
+        <options>
+        	<!-- options de base -->
+        	<groupDiaporama type="bloc" title="Options de base">
+	            <slideshowwidth type="inputtext" id="slideshowwidth" desc="Largeur du diaporama : " suffix="px" value="500" size="5"/>
+	            <slideshowheight type="inputtext" id="slideshowheight" desc="Hauteur du diaporama : " suffix="px" value="375" size="5"/>
+	            <displayThumb type="inputradio" id="displayThumb"  desc="Afficher les vignettes : " enum="oui,non" value="oui"/>
+	            <thumbwidth type="inputtext" id="thumbwidth" desc="Largeur des vignettes : " suffix="px" value="80" size="5"/>
+	            <thumbheight type="inputtext" id="thumbheight" desc="Hauteur des vignettes : " suffix="px" value="53" size="5"/>
+	            <thumbside type="inputradio" id="thumbside"  desc="Position des vignettes : " enum="horizontal,vertical" value="horizontal"/>
+	            <slideController type="inputradio" id="slideController"  desc="Afficher ou non la barre de contrôle : " enum="oui,non" value="oui"/>
+            </groupDiaporama>
+			<groupTime type="bloc" title="Durées">
+				<slideshowDelay type="inputtext" id="slideshowDelay" desc="Temps ou les images seront affichées : " suffix="ms" value="3000" size="5"/>
+	            <slideshowDuration type="inputtext" id="slideshowDuration" desc="Durée des transitions : " suffix="ms" value="1000" size="5"/>
+			</groupTime>
+            <!-- Apparence -->
+           <groupApparence type="bloc" title="Apparence des images">
+	            <centerImages type="inputradio" id="centerImages"  desc="Centrer les images : " enum="oui,non" value="oui"/>
+	            <displayCaption type="inputradio" id="displayCaption"  desc="Afficher les noms des images : " enum="oui,non" value="oui"/>
+	            <slideResize type="inputradio" id="slideResize"  desc="Redimentionner les images pour tenir toute la largeur : " enum="oui,non" value="non"/>
+            </groupApparence>
+
+            <!-- Controles -->
+            <groupControls type="bloc" title="Controles du diaporama">
+	            <controllerTransition type="inputradio" id="controllerTransition"  desc="Utiliser les transitions lors de la navigation avec le contrôleur : " enum="oui,non" value="oui"/>
+	            <slideLoop type="inputradio" id="slideLoop"  desc="Boucler sur le diaporama : " enum="oui,non" value="oui"/>
+	            <slideAutoStart type="inputradio" id="slideAutoStart"  desc="Démarrer automatiquement le diaporama: " enum="oui,non" value="oui"/>
+	            <slideRandom type="inputradio" id="slideRandom"  desc="Lire le diaporama dans un ordre alléatoire : " enum="oui,non" value="non"/>
+            </groupControls>
+        </options>
+	</template>
+	<template>
+		<name>Diaporama zoom panoramique</name>
+		<description>Diaporama avec effets de zoom et de panoramique</description>
+		<tpl>images|portlettemplates/slideshowkenburns.portlet.php</tpl>
+        <options>
+        	<!-- options de base -->
+        	<groupDiaporama type="bloc" title="Options de base">
+	            <slideshowwidth type="inputtext" id="slideshowwidth" desc="Largeur du diaporama : " suffix="px" value="500" size="5"/>
+	            <slideshowheight type="inputtext" id="slideshowheight" desc="Hauteur du diaporama : " suffix="px" value="375" size="5"/>
+	            <displayThumb type="inputradio" id="displayThumb"  desc="Afficher les vignettes : " enum="oui,non" value="oui"/>
+	            <thumbwidth type="inputtext" id="thumbwidth" desc="Largeur des vignettes : " suffix="px" value="80" size="5"/>
+	            <thumbheight type="inputtext" id="thumbheight" desc="Hauteur des vignettes : " suffix="px" value="53" size="5"/>
+	            <thumbside type="inputradio" id="thumbside"  desc="Position des vignettes : " enum="horizontal,vertical" value="horizontal"/>
+	            <slideController type="inputradio" id="slideController"  desc="Afficher ou non la barre de contrôle : " enum="oui,non" value="oui"/>
+            </groupDiaporama>
+			<groupTime type="bloc" title="Durées">
+				<slideshowDelay type="inputtext" id="slideshowDelay" desc="Temps ou les images seront affichées : " suffix="ms" value="3000" size="5"/>
+	            <slideshowDuration type="inputtext" id="slideshowDuration" desc="Durée des transitions : " suffix="ms" value="1000" size="5"/>
+			</groupTime>
+            <!-- Apparence -->
+           <groupApparence type="bloc" title="Apparence des images">
+	            <centerImages type="inputradio" id="centerImages"  desc="Centrer les images : " enum="oui,non" value="oui"/>
+	            <displayCaption type="inputradio" id="displayCaption"  desc="Afficher les noms des images : " enum="oui,non" value="oui"/>
+	            <slideResize type="inputradio" id="slideResize"  desc="Redimentionner les images pour tenir toute la largeur : " enum="oui,non" value="non"/>
+            </groupApparence>
+
+            <!-- Controles -->
+            <groupControls type="bloc" title="Controles du diaporama">
+	            <controllerTransition type="inputradio" id="controllerTransition"  desc="Utiliser les transitions lors de la navigation avec le contrôleur : " enum="oui,non" value="oui"/>
+	            <slideLoop type="inputradio" id="slideLoop"  desc="Boucler sur le diaporama : " enum="oui,non" value="oui"/>
+	            <slideAutoStart type="inputradio" id="slideAutoStart"  desc="Démarrer automatiquement le diaporama: " enum="oui,non" value="oui"/>
+	            <slideRandom type="inputradio" id="slideRandom"  desc="Lire le diaporama dans un ordre alléatoire : " enum="oui,non" value="non"/>
+            </groupControls>
+            
+			<!-- Effet panoramique -->
+			<groupPanoramic type="bloc" title="Effets panoramiques">
+				<slideZoom type="inputtext" id="slideZoom" desc="Pourcentage(s) de zoom à appliquer :" suffix="%" value="100" size="5"/>
+				<slidePan type="inputtext" id="slidePan" desc="Pourcentage(s) sur le quel on va se déplacer:" suffix="%" value="100" size="5"/>
+            </groupPanoramic>
+             <!-- 
+	
+	//'zoom' =>  '0', // pour le KenBurns, pourcentage de zoom à appliquer sur l'image
+	//'pan' => [0, 20] // offset en pourcentage sur le quel on va se déplacer
+             -->
+            
+        </options>
+	</template>
+</templates>

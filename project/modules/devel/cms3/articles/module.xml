@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="articles" version="1.2.0" description="Gestion d'articles" icon="|img/icone_articles.png" />
+		<group id="cms3" captioni18n="heading|heading.group.caption" />
+	</general>
+	<parameters>
+		<parameter name="redirect" caption="Rediriger sur la rubrique parente et erreur 301 si on accède directement à l'article"
+			default="0" />
+	</parameters>
+	<dependencies>
+		<dependency name="heading" kind="module" version="1.6.4" />
+	</dependencies>
+	<registry>
+	 <entry id="HeadingElement">
+		<type id="article" caption="Article" 
+	  					image="articles|img/articles.png" 
+	  					icon="articles|img/icon_articles.png" 
+	         			classid="articles|articleservices" 
+	         			adminurl="articles|admin|prepareEdit"
+	         			fronturl="articles|articlefront::default" 
+	         			canrss="true"/>
+	 </entry>
+	 <entry id="Portlet">
+		<type id="article" group="element" description="Cette portlet permet d'afficher vos articles." caption="Article" portlettype="PortletArticle" icon="articles|img/portleticon_articles.png"
+			/> 
+	 </entry>
+     <entry id="ModuleTables">
+        <table name="articles" />
+     </entry>
+     <entry id="ModuleDirectories">
+        <directory name="articles" />
+     </entry>
+	</registry>
+	<userpreferences>
+        <group id="headingNotification" caption="Notification">
+            <preference name="articleNotification" caption="Article" default="0" type="bool" description="Donne la possibilité d'envoyer une notification par mail lorsqu'un article est publié." />
+        </group>
+	</userpreferences>
+	<updates>
+		<update from="1" to="1.0.0" script="doNothing" />
+		<update from="1.0.0" to="1.1.0" script="1_0_0_to_1_1_0" />
+		<update from="1.1.0" to="1.2.0" script="1_1_0_to_1_2_0" />
+	</updates>
+</moduledefinition>

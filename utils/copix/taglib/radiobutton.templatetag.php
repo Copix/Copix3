@@ -1,12 +1,12 @@
 <?php
 /**
-* @package		copix
-* @subpackage	taglib
-* @author		Gérald Croës
-* @copyright	2000-2006 CopixTeam
-* @link			http://www.copix.org
-* @license  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
-*/
+ * @package    copix
+ * @subpackage taglib
+ * @author     Gérald Croës
+ * @copyright  CopixTeam
+ * @link       http://www.copix.org
+ * @license    http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ */
 
 /**
  * Génération d'une boite de saisie pour les dates
@@ -27,59 +27,69 @@ class TemplateTagRadioButton extends CopixTemplateTag {
 	 * 	values : tableau contenant les valeurs à afficher
 	 * 	extra : autres paramètres en extra
 	 */
-   public function process ($pParams, $pContent=null){
+	public function process ($pContent=null){
+		$toReturn = '';
+		$pParams = $this->getParams ();
+		extract ($pParams);
+
 		//input check
-		if (empty ($pParams['name'])) {
-			throw new CopixTemplateTagException ("[plugin radiobutton] parameter 'name' cannot be empty");
-		}
-		if (empty ($pParams['values'])){
+		$this->assertParams ('name');
+		if (empty ($values)){
 			$values = array ();
 		}
 
-		if ((!is_array ($pParams['values'])) && ! ($pParams['values'] instanceof Iterator)) {
-			$pParams['values'] = (array)$pParams['values'];
+		if ((!is_array ($values)) && ! ($values instanceof Iterator)){
+			$values = (array) $values;
 		}
 
-		$pParams['id'] = $this->getParam ('id', $pParams['name']);
-		$pParams['selected'] = $this->getParam ('selected', null);
-		$pParams['extra'] = $this->getParam ('extra', null);
-		$pParams['separator'] = $this->getParam ('separator', '&nbsp;&nbsp;');
-	
-		if (!empty ($pParams['objectMap'])) {
-			$tab = explode (';', $pParams['objectMap']);
-			if (count ($tab) != 2) {
+		if(empty ($id)){
+			$id = $name;
+		}
+		if (empty ($selected)){
+			$selected = null;
+		}
+
+		if (!empty ($objectMap)){
+			$tab = explode (';', $objectMap);
+			if (count ($tab) != 2){
 				throw new CopixTemplateTagException ("[plugin radiobutton] parameter 'objectMap' must looks like idProp;captionProp");
 			}
-			$idProp = $tab[0];
+			$idProp      = $tab[0];
 			$captionProp = $tab[1];
 		}
-	  
-		//each of the values.
-		$radios = array ();
-		if (empty ($pParams['objectMap'])) {
-			foreach ($pParams['values'] as $key => $caption) {
-				$radios[] = array (
-					'selected' => ((array_key_exists ('selected', $pParams)) && ($key == $pParams['selected'])) ? ' checked="checked" ' : '',
-					'id' => $pParams['id'] . '_' . $key,
-					'caption' => _copix_utf8_htmlentities ($caption),
-					'value' => $key
-				);
-			}
-		//if given an object mapping request.
-		} else {
-			foreach ($pParams['values'] as $object) {
-				$radios[] = array (
-					'selected' => ((array_key_exists('selected', $pParams)) && ($object->$idProp == $pParams['selected'])) ? ' checked="checked" ' : '',
-					'id' => $pParams['id'] . '_' . $object->$idProp,
-					'caption' => _copix_utf8_htmlentities ($object->$captionProp),
-					'value' => $object->$idProp
-				);
-			}
+		if (empty ($extra)){
+			$extra = '';
 		}
 
-		$tpl = new CopixTPL ();
-		$tpl->assign ('params', $pParams);
-		$tpl->assign ('radios', $radios);
-		return $tpl->fetch ('default|taglib/radiobutton.php');
+		if (empty ($separator)) {
+			$separator = '&nbsp;&nbsp;';
+		}
+		 
+		//each of the values.
+		if (empty ($objectMap)){
+			$index = 0;
+			foreach ($values  as $key => $caption) {
+				$selectedString = ((array_key_exists('selected', $pParams)) && ($key == $selected)) ? ' checked="checked" ' : '';
+				$idRadio = $id .'_'. preg_replace('"\W"', '_', $key); // pour éviter un identifiant invalide
+				$toReturn .= '<input type="radio" id="'.$idRadio.'" name="'.$name.'" '.$extra.' value="'.$key.'"'.$selectedString.' /><label for="'.$idRadio.'"> ' . _copix_utf8_htmlentities ($caption).'</label>';
+				if ($index < count ($values) - 1) {
+					$toReturn .= $separator;
+				}
+				$index++;
+			}
+		// if given an object mapping request.
+		} else {
+			$index = 0;
+			foreach ($values  as $object) {
+				$selectedString = ((array_key_exists('selected', $pParams)) && ($object->$idProp == $selected)) ? ' checked="checked" ' : '';
+				$idRadio = $id.'_'.preg_replace('"\W"', '_', $object->$idProp); // pour éviter un identifiant invalide
+				$toReturn .= '<input type="radio" id="'.$idRadio.'" name="'.$name.'" '.$extra.' value="'.$object->$idProp.'"'.$selectedString.' /><label for="'.$idRadio.'"> ' . _copix_utf8_htmlentities ($object->$captionProp).'</label>';
+				if ($index < count ($values) - 1) {
+					$toReturn .= $separator;
+				}
+				$index++;
+			}
+		}
+		return $toReturn;
 	}
 }

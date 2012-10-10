@@ -13,7 +13,8 @@
  * @subpackage	taglib
  */
 class TemplateTagLinkBar extends CopixTemplateTag {
-    public function process($pParams) {
+    public function process ($pContent = null) {
+    	$pParams = $this->getParams ();
         extract($pParams);
         if (empty ($pageNum)){
         	$pageNum = 1;
@@ -87,4 +88,3 @@ class TemplateTagLinkBar extends CopixTemplateTag {
         return $toReturn;
     }
 }
-?>

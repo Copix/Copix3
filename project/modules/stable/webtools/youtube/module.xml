@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="youtube" description="Vidéos Youtube" icon="|img/youtube.ico" version="1.0.0" />
+		<group id="webTools" captioni18n="copix:copixmodule.group.webTools" />
+	</general>
+</moduledefinition>

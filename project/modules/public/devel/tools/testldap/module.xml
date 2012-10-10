@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<moduledefinition>
-	<general>
-		<default name="test_ldap" description="test ldap" longdescription="test ldap"/>
-	</general>
-</moduledefinition>

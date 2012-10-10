@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default version="1.0.0" icon="|img/feed.png" name="feed" longdescriptioni18n="global.module.longdescription" descriptioni18n="global.module.description" />
+		<group id="webTools" captioni18n="copix:copixmodule.group.webTools" />
+	</general>
+	<admin>
+		<link url="feed|example|" captioni18n="admin.link.flux" credentials="basic:admin" icon="feed|img/feed.png" />
+	</admin>
+	<parameters>
+		<parameter name="defaultType" captioni18n="global.param.defaultType" default="RSS_2_0" type="select" listValues="RSS_1_0=>RSS 1.0;RSS_2_0=>RSS 2.0;ATOM_1_0=>Atom 1.0" />
+		<group captioni18n="parameters.group.eventContent">
+			<parameter name="eventContentEnabled" captioni18n="global.param.eventContentEnabled" type="bool" default="0" descriptioni18n="global.param.eventContentEnabledDescription" />
+			<parameter name="feedtitle" captioni18n="global.param.feedtitle" default="RSS" />
+			<parameter name="feeddesc" captioni18n="global.param.feeddesc" default="RSS description" />
+			<parameter name="author" captioni18n="global.param.feedauthor" default="Your name" />
+			<parameter name="email" captioni18n="global.param.feedmail" default="Your e-mail" />
+			<parameter name="site" captioni18n="global.param.feedsite" default="You website" />
+		</group>
+	</parameters>
+	<events>
+		<listeners>
+			<listener name="feed">
+				<event name="BeforeIndexing" />
+				<event name="Content" />
+			</listener>
+		</listeners>
+	</events>
+</moduledefinition>

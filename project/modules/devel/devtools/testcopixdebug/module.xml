@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="testcopixdebug" description="Tests pour CopixDebug" />
+		<group id="devTools" captioni18n="copix:copixmodule.group.devTools" />
+	</general>
+	<admin>
+  		<link url="testcopixdebug||" caption="Tester CopixDebug::object_dump"></link>
+ 	</admin>
+</moduledefinition>

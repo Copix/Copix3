@@ -1,0 +1,84 @@
+/*
+	cwcrop - css file . modify as needed
+	
+	More information here: http://www.chipwreck.de/blog/software/cwcrop/
+	@author Mario Fischer <http://www.chipwreck.de/blog/>
+*/
+ 
+#imgouter,
+.imgouter {
+	position: relative; border: none;
+	z-index: 200;
+}
+
+#imglayer,
+.imglayer {
+	background-color: transparent; background-repeat: no-repeat; opacity: 0.5; cursor: default;
+	filter:alpha(opacity=50); /* IE 6-7 Trash */
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; /* IE8 Trash */
+	z-index: 300;	
+}	
+
+#cropframe,
+.cropframe {
+	position: absolute; width: 40px; height: 40px; left: 0px; top: 0px; padding: 0px; border: 1px dashed #333; background-repeat: no-repeat;
+	-border-image: url('../img/ants.gif') 1 repeat repeat;
+	-webkit-border-image: url('../img/ants.gif') 1 repeat repeat;
+	-moz-border-image: url('../img/ants.gif') 1 repeat repeat;
+	z-index: 999;		
+}
+
+#cropframe.active,
+.cropframe.active {
+	border: 1px dashed #fff;
+}
+
+#cropinfo,
+.cropinfo {
+	background-color: #ccc;	opacity: 0.5; top: 0px; left: 0px; height: 32px; position: absolute;
+	filter:alpha(opacity=50); /* IE 6-7 Trash */
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; /* IE8 Trash */	
+	z-index: 600;
+}
+
+#cropdims,
+.cropdims {
+	color: #000; padding: 6px 5px; margin-left: 32px; font-size: 12px;
+	z-index: 500; font-family: sans-serif;
+}
+
+#cropbtn,
+.cropbtn {
+	background-image:url('../img/crop.gif'); background-repeat: no-repeat;
+	position: absolute; left: 0px; height: 32px; width: 32px; cursor: pointer !important;
+	z-index: 800;
+}
+
+#cropbtn:hover,
+.cropbtn:hover {
+	background-color: black;
+}
+
+#draghandle,
+.cropdraghandle {
+	background-color: transparent; top: 0; left: 0; width: 100%; height: 100%; margin: 0px; position: absolute; cursor: move;
+	z-index: 90;
+}
+
+.resizeHandle,
+.cropResizeHandle {
+	z-index: 40; opacity: 0.9;
+	filter:alpha(opacity=90); /* IE 6-7 Trash */
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=90)"; /* IE8 Trash */
+	background-color: #FFB55F;
+	border:1px solid #000000;
+	position: absolute;	margin: 0px; height: 7px; width: 7px;		
+	left: 100%;	top: 100%;		
+	cursor: se-resize;
+}
+
+#resizeHandleXY,
+.cropResizeHandleXY {
+	left: 100%;	top: 100%;		
+	cursor: se-resize;
+}

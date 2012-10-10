@@ -1,0 +1,134 @@
+@CHARSET "UTF-8";
+
+body, th, td {
+ font: normal 13px verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;
+}
+
+h1, h2, h3, h4 {
+ font-family: arial,verdana,'Bitstream Vera Sans',helvetica,sans-serif;
+ font-weight: bold;
+ letter-spacing: -0.018em;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+	background-color:    #868e74;   ;
+}
+
+#banner{
+	background-color:   #4b4d46; ;
+	margin: 0px;
+}
+
+/* The title */
+#banner h1 {
+	position: absolute;
+	top: 0px; 
+	right: 10px;
+	text-align: right;
+	color: #ffffff;
+	font-size: 16pt !important;
+}
+
+#searchengine {
+	position: absolute;
+	top: 70px; 
+	right: 10px;
+	text-align: right;
+	color: #ffffff;
+	font-size: 16pt !important;
+}
+
+#maincontent{
+	margin: 10px;
+	margin-bottom: 0px;
+	border: 1px solid #000;
+	background-color: #FFF;
+	padding: 5px;
+	border-bottom: 0px;	
+}
+
+#maincontent h2, #maincontent h3, #maincontent h4{
+	padding-top: 5px;
+	color:   #b60000; ;
+}
+#maincontent h2 { font-size: 18px; margin: .15em 1em 0 0 }
+#maincontent h3 { font-size: 16px }
+#maincontent h4 { font-size: 14px }
+
+#footer{
+	margin: 0px;
+	margin-left: 10px;
+	margin-right: 10px;
+
+	color: white;
+	text-align: center;
+	font-weight: bold;
+	background-color:   #4b4d46; ;
+	padding-bottom: 12px;
+	padding-top: 4px;
+	border: 1px solid #000;
+	border-top: 0px;
+}
+
+#footer a{
+	color: white;
+}
+
+#footer a:hover{
+	background:none;
+	color: white;
+}
+
+/* Navigation */
+#menu ul { font-size: 10px; list-style: none; margin: 0; text-align: right; margin-top: -15px; }
+#menu li {
+ border-right: 1px solid #d7d7d7;
+ display: inline;
+ padding: 0 .75em;
+ white-space: nowrap;
+}
+#menu li.last { border-right: none }
+
+img{
+	border: none;
+}
+
+a{
+	color: #c97729;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+a:visited{
+}
+
+a:hover{
+	color: #FF0000;
+}
+
+input[type=text],input[type=password],input[type=listbox],textarea{
+	border: 1px solid   #4b4d46; ;
+	margin: 1px;
+}
+
+input[type=text]:focus,input[type=password]:focus,input[type=listbox]:focus{
+	background-color:   #868e74; ;
+	color: white;
+}
+
+input[type=text]:hover,input[type=password]:hover,input[type=listbox]:hover{
+	background-color:   #868e74; ;
+	color: white;
+	border: 1px solid   #AA2314; 
+}
+
+#selectcomplex_language_form {
+	left:10px;
+	position:absolute;
+	top:119px;
+}
+* html #selectcomplex_language_form, * +html #selectcomplex_language_form  {
+	top:122px;
+}

@@ -1,0 +1,100 @@
+.developerBar {
+	position: absolute;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-right: 5px;
+	border: solid 1px black;
+	background-color: white;
+	z-index: 999;
+	cursor: move;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	font-family: "Verdana","Sans","LucidaGrande","Arial","Helvetica","sans-serif";
+	font-size: 9pt;
+	white-space: nowrap;
+	/* effet d'ombre */
+	-moz-box-shadow: 0px 1px 5px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 5px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 5px #000; /* Opera 10.5, IE 9.0 */
+	filter:  progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+.developerBarGroupSave, .developerBarGroupTimers, .developerBarGroupQuerys, .developerBarGroupVars,
+.developerBarGroupLogs, .developerBarGroupMemory, .developerBarGroupErrors,
+.developerBarUserPreferences, .developerBarClearTemp {
+	cursor: pointer;
+	background-repeat: no-repeat;
+	background-position: 5px 3px;
+	height: 50px;
+	padding-left: 25px;
+	padding-top: 3px;
+	padding-bottom:3px;
+	padding-right: 5px;
+	line-height: 16px;
+}
+
+.developerBarUserPreferences {
+	padding-left: 21px;
+	background-image: url({copixresource path="developerbar|icons/preferences.png"});
+}
+
+.developerBarClearTemp {
+	padding-left: 21px;
+	background-image: url({copixresource path="developerbar|icons/cleartemp.png"});
+}
+
+.developerBarGroupSave {
+	background-image: url({copixresource path="developerbar|icons/save.png"});
+}
+
+.developerBarGroupTimers {
+	background-image: url({copixresource path="developerbar|icons/timer.png"});
+}
+
+.developerBarGroupQuerys {
+	background-image: url({copixresource path="developerbar|icons/database.png"});
+}
+
+.developerBarGroupVars {
+	padding-left: 21px;
+	background-image: url({copixresource path="developerbar|icons/server.png"});
+}
+
+.developerBarGroupLogs {
+	background-image: url({copixresource path="developerbar|icons/log.png"});
+}
+
+.developerBarGroupMemory {
+	background-image: url({copixresource path="developerbar|icons/memory.png"});
+}
+
+.developerBarGroupErrors {
+	background-image: url({copixresource path="developerbar|icons/error.png"});
+}
+
+.developerBarGroupSeparator {
+	border: solid 1px #CCC;
+}
+
+.developerBarContent {
+	z-index: 999;
+	position: absolute;
+	border: solid 1px black;
+	padding: 5px;
+	background-color: white;
+	display: none;
+}
+
+.developerBarQueryKeyWord {
+	font-weight: bold;
+}
+
+.developerBarQueryString {
+	color: blue;
+}
+
+.developerBarQueryNumber {
+	color: green;
+}

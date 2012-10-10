@@ -18,4 +18,3 @@ function smarty_function_error ($params, $me) {
 		return _tag ('error', $params);
 	}
 }
-?>

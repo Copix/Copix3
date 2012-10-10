@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default
+			name="edituser"
+			longdescription="Tutorial commenté pour expliquer comment créer un formulaire de modifications des informations de l'utilisateur connecté"
+			description="Tutorial pour l'édition des informations de l'utilisateur connecté"
+			icon="|img/icon/tutorial.png"
+		/>
+		<group id="tutos" captioni18n="copix:copixmodule.group.tutos" />
+	</general>
+	<admin>
+		<link url="edituser||" caption="Edition des informations de l'utilisateur connecté" />
+	</admin>
+</moduledefinition>

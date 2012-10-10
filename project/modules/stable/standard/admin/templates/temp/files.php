@@ -1,0 +1,1 @@
+<?php echo $ppo->count . ' (' . _filter ('OctetsToText')->get ($ppo->size) . ')' ?>

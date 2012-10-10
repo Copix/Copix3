@@ -24,4 +24,3 @@ function smarty_modifier_hour_format($string, $format="%H:%i:%s") {
    $seconds = strlen ($string) == 6 ? substr ($string, 4, 2) : 0;
    return str_replace (array ('%H', '%i', '%s'), array ($hour, $minute, $seconds), $format);
 }
-?>

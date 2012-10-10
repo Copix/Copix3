@@ -27,4 +27,3 @@ function smarty_function_jssubmitform($params, $me) {
       return _tag ('jssubmitform', $params);
    }
 }
-?>

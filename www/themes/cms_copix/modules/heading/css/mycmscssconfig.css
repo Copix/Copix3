@@ -1,0 +1,48 @@
+/**
+ * Cette feuille de style est appelée aprés tous 
+ * les autres appels de feuille de style du CMS.
+ *
+ * Surchargée dans un thème elle permet de 
+ * redéfinir les styles du cms en fonction du thème
+ */
+ 
+#HeadingElementInformationsPanel {
+	background-color:#FFFFFF;
+	border:1px solid #CCCCCC;
+	display:none;
+	padding:2px;
+}
+
+.toggler,
+a.toggler:link,
+a.toggler:visited,
+a.toggler:active {
+	min-height: 19px;
+	border-bottom: 1px solid #6F6F6F;
+	display: block;
+	padding: 0px;
+	margin: 0px;
+	background-color: #464C54;
+	color: #fff;
+	text-decoration: none;
+	
+}
+
+div.togglerContainer {
+	background:none;
+	font-size:13px;
+	border-top:1px solid #CCCCCC;
+	padding:0;
+}
+
+#tableOptions{
+	margin: 0;
+	width: auto;
+}
+
+.portletMenu {
+background:none repeat-x scroll left center #A83D1B;
+color:#FFFFFF;
+padding:2px;
+}
+

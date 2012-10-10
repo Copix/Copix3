@@ -26,4 +26,3 @@ function smarty_function_favicon ($params, &$me) {
     }
     CopixHTMLHeader::addFavIcon ($src);
 }
-?>

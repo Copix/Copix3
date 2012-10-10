@@ -9,22 +9,18 @@
  */
 
 /**
- * Enter description here...
  *
  */
 class TemplateTagTabGroup extends CopixTemplateTag  {
-
-	public function process ($pParams, $pContent=null){
-	
+	public function process ($pContent=null){
 		$tabGroupId = $this->getParam('id', uniqid('tab'));
-		$tabs = $this->requireParam('tabs', null, array());		
+		$tabs = $this->requireParam('tabs', null, 'array');		
 		$groupClass = $this->getParam('groupClass', '');
 		$tabClass = $this->getParam('tabClass', '');
-		$selectedClass = $this->getParam('selectedClass', 'tabSelected');
+		$selectedClass = $this->getParam('selectedClass', 'CopixTabSelected');
 		$onSelect = $this->getParam('onSelect', null, 'string');
 		$onUnselect = $this->getParam('onUnselect', null, 'string');
 		$default = $this->getParam('default');
-		$this->validateParams();
 
 		if($default && !isset($tabs[$default])) { 
 			_log('[tag tabgroup] invalid default for tabgroup '.$tabGroupId.': '.$default, 'errors');
@@ -33,7 +29,7 @@ class TemplateTagTabGroup extends CopixTemplateTag  {
 		
 		$toReturn = array();
 		
-		$toReturn[] = sprintf('<div class="tabGroup %s" id="%s">', $groupClass, $tabGroupId);
+		$toReturn[] = sprintf('<div class="CopixTabGroup %s" id="%s">', $groupClass, $tabGroupId);
 		
 		$tabIds = array();
 		$tabKeys = array();
@@ -45,7 +41,7 @@ class TemplateTagTabGroup extends CopixTemplateTag  {
 			$elementIds[$key] = $tabId;
 			$tabIndexes[$key] = $i++;
 			$toReturn[] = sprintf(
-				'<span class="tabCaption %s %s" id="%s">%s</span>', 
+				'<span class="CopixTab %s %s" id="%s">%s</span>', 
 				$tabClass,
 				($key == $default) ? $selectedClass : '',
 				$tabId,
@@ -80,7 +76,4 @@ class TemplateTagTabGroup extends CopixTemplateTag  {
 		return implode("\n", $toReturn);
 		
 	}
-	
 }
-
-?>

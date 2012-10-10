@@ -117,6 +117,3 @@ function smarty_modifier_html_substr($string, $length, $addstring="")
 		return ( $string );
 	}
 }
-
-
-?>

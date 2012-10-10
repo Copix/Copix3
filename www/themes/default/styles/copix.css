@@ -1,0 +1,316 @@
+@CHARSET "UTF-8";
+
+.popupInformation {
+   background-color: #fff;
+   border:2px solid #000;
+   padding:3px;
+   position:absolute;
+	box-shadow: 2px 2px 8px #666;
+	-moz-box-shadow: 2px 2px 8px #666;
+	-webkit-box-shadow: 2px 2px 8px #666;
+}
+
+.popupInformation ul {
+	padding: 2px;
+	margin: 2px;
+	list-style-type : none;
+}
+
+/*****************COPIX WINDOW*************/
+/*
+ @copixwindow fenêtres pseudo modales javascript
+Structure HTML :
+<div class="copixwindow unfocus"> <!-- unfocus est ajouté quand plusieurs fenêtres sont visibles simultanément -->
+	<div class="copixwindow_title"></div>
+	<div class="copixwindow_content"></div>
+</div>
+*/
+/**************************************************/
+.copixwindow {
+	background-color: #fff;
+	border-color: #CCC;
+	border-style: solid;
+	border-width: 1px;
+	position: absolute;
+	text-align: left;
+	padding-bottom: 5px;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	font-family:Arial,Helvetica,"Liberation Sans",FreeSans,sans-serif;
+	font-size:12px;
+	line-height:1.5;
+	box-shadow: 2px 2px 8px #666;
+	-moz-box-shadow: 2px 2px 8px #666;
+	-webkit-box-shadow: 2px 2px 8px #666;
+}
+.copixwindow_title {
+	-moz-border-radius-topleft:3px;
+	-moz-border-radius-topright:3px;
+	height: auto;
+	padding: 3px 5px 0 5px;
+	border-bottom: 1px solid #CCC;
+	color: #FFF;
+	font-weight: bold;
+	cursor: move;
+	background-color:#327AC7;
+	background-position:left center;
+	background-repeat:repeat-x;
+	background-image: url('..img/copixwindow_background.png');
+}
+.copixwindow_content {
+	background-color: #fff;
+	padding: 3px;
+	min-width: 400px;
+	overflow: auto;
+}
+
+.copixwindow.unfocus {
+	opacity:0.65;
+}
+
+.copixwindow_modaldiv{
+	background-color:black;
+	opacity:0.3;
+    filter: alpha(opacity=30); /* IE 7 and Earlier */
+    /* Next 2 lines IE8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
+}
+
+.unfocus {
+	border-color: #bebebe;
+}
+/**************************************************/
+
+.errorMessage {
+   border: 2px solid #aa0000;
+   margin: 5px;
+}
+.errorMessage h1 {
+   background-color: #792206;
+   background-image:url('../img/titre_rouge.gif');
+   background-repeat:no-repeat;
+   background-position: top right;
+   color: #fff;
+   text-align: center;
+   font-size: 1em;
+   margin-top: 0;
+}
+
+.CopixTable {
+   margin-left: 5px;
+   width: 98%;
+  
+   border:3px solid #4b4d46;
+   border-collapse:collapse;
+}
+.CopixVerticalTable {
+   margin-left: 5px;
+   width: 98%;
+   border:3px solid #4b4d46;
+   border-collapse:collapse;
+}
+
+.CopixVerticalTable th {
+   text-align: left;
+   background-color: #4b4d46;
+   color: #fff;
+   border: 1px solid #fff;
+}
+
+.CopixVerticalTable tr:hover {
+   background-color:#C6CeB4;
+}
+
+.CopixTable tr:hover {
+   background-color:#C6CeB4;
+}
+
+.CopixTable thead {
+    background-color:#4b4d46;
+}
+
+.CopixTable thead th {
+   background-color:transparent;
+   text-align: left;
+}
+
+.CopixTable tr th {
+   text-align: left;
+   background-color:#4b4d46;
+   height:25px;
+   color: #fff;
+}
+
+.CopixTable td {
+   height:25px;
+}
+
+.CopixTable th a,.CopixTable th a:visited {
+   color: #fff;
+   text-decoration: none;   
+}
+
+.alternate {
+   background-color: #ecefda;
+}
+
+.resizable{
+	padding-bottom: 24px;
+	padding-right: 20px;
+	background-image: url(../img/modules/wiki/resize.png);
+	background-position: bottom right;
+	background-repeat: no-repeat;
+}
+
+.moocolumn {
+	padding-right : 4px;
+}
+
+.moocolumn2 {
+	padding-left : 4px;
+	border-left : 1px dotted #AEAEAE;
+}
+
+/* CopixForms */
+.copixforms_error {
+	color:red;
+}
+
+/* AutoCompleter */
+div.autocompleter-loading {
+	float:					left;
+	clear:					right;
+	background:				#fff url('../images/spinner.gif') no-repeat center;
+	width:					50px;
+	height:					16px;
+}
+
+ul.autocompleter-choices {
+	position:				absolute;
+	margin:					0;
+	padding:				0;
+	list-style:				none;
+	border:					1px solid #eee;
+	background-color:		white;
+	border-right-color:		#ddd;
+	border-bottom-color:	#ddd;
+	text-align:				left;
+	font-family:			Verdana, Geneva, Arial, Helvetica, sans-serif;
+	z-index:				50;
+	overflow:auto;
+	min-height:150px;
+}
+
+ul.autocompleter-choices li {
+	position:				relative;
+	padding:				0.1em 1.5em 0.1em 1em;
+	cursor:					pointer;
+	font-weight:			normal;
+	font-size:				1em;
+}
+
+ul.autocompleter-choices li.autocompleter-selected {
+	background-color:		#444;
+	color:					#fff;
+}
+
+ul.autocompleter-choices span.autocompleter-queried {
+	font-weight:			bold;
+}
+
+ul.autocompleter-choices li.autocompleter-selected span.autocompleter-queried {
+	color:					#9FCFFF;
+}
+
+/** Calendar **/
+div.calContainer {
+	width:auto;
+	height:auto;
+	border :0px;
+	display: inline;	
+}
+div.calBackgroud {
+	background-color: #c0c0c0;
+	border: 2px outset white;
+}
+table.calendar  {
+	background-color: #c0c0c0;
+}
+
+.calendar th {
+	background-color: #eee;
+	border: 1px solid #c0c0c0;
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 8pt;
+	text-align: center;
+}
+.calendar tr {
+	background-color: #c0c0c0;
+}
+.calendar tr.calendar_header {
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+.calendar td {
+	color: #000;
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 8pt;
+}
+.calendar td.calendar_day {
+	background-color: #eee;
+}
+
+.calendar td.calendar_noday {
+	background-color: #fff;
+}
+
+.required {
+	color: red;
+}
+
+.CopixTab {
+	border: solid 2px #6597B0;
+	padding: 1px 5px 1px 5px;
+	cursor: pointer;
+}
+
+.CopixTabSelected {
+	border: solid 2px #6597B0;
+	background-color: #b0e2ff;
+}
+
+th.help {
+	width: 1px;
+}
+
+.button {
+	background-color: #ededed;
+	margin: 2px 2px 2px 2px;
+	padding: 2px 2px;
+	color: black;
+	border: solid 1px black;
+	cursor: pointer;
+}
+
+.button:hover {
+	color: blue;
+	border: solid 1px blue;
+	-moz-box-shadow: 0px 1px 5px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 5px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 5px #000; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+.buttonDown {
+	background-color: #dbdbdb;
+}
+
+.button img {
+	vertical-align: middle;
+}

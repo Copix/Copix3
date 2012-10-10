@@ -56,7 +56,7 @@ function smarty_function_html_radios($params, &$smarty)
         switch($_key) {
             case 'name':
             case 'separator':
-                $$_key = _toString($_val);
+                $$_key = (string)$_val;
                 break;
 
             case 'checked':

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default
+			name="sqldesigner"
+			descriptioni18n="module.description"
+			longdescriptioni18n="module.longdescription"
+			icon="|img/icon/sqldesigner.png"
+			version="0.0.1"
+		/>
+		<group id="devTools" captioni18n="copix:copixmodule.group.devTools" />
+	</general>
+	<admin>
+  		<link url="sqldesigner||" captioni18n="module.link.create"></link>
+  		<link url="sqldesigner||load" captioni18n="module.link.load"></link>
+ 	</admin>
+</moduledefinition>

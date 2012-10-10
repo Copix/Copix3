@@ -1,0 +1,466 @@
+/****Theme gris par défaut***/
+body {
+    font: 9pt "Verdana","Sans","LucidaGrande","Arial","Helvetica","sans-serif";
+    background-image: url("../img/bluelines/background.png");
+}
+
+.cmsbloc_title{
+	background-image: none;
+	background-color:#176F9F;
+	background-position:left center;
+	background-repeat:repeat-x;
+}
+
+.bannertop{
+    background: #DEEDF6; /* old browsers */
+	background: -moz-linear-gradient(top, #DEEDF6 0%, #F2F8FC 100%); /* firefox */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#DEEDF6), color-stop(100%,#F2F8FC)); /* webkit */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#DEEDF6', endColorstr='#F2F8FC',GradientType=0 ); /* ie */
+	border-bottom: 1px solid #6597B0;
+}
+
+.bannerbottom h1 {
+    color: #2C25C4;
+    font-size: 1.5em;
+}
+
+#banner #login {
+    color: #000;
+}
+
+#banner #login a {
+    color: #444;
+}
+
+#banner #login a:hover {
+    color: #000;
+}
+
+#navigation li a {
+    color: #444;
+}
+
+#navigation .current a {
+    color: #000;
+    border-top: 1px solid #6597B0;
+    border-left: 1px solid #6597B0;
+    border-right: 1px solid #6597B0;
+    margin-top: 3px;
+}
+
+#navigation .current a:hover {
+    color: #000;
+}
+
+#navigation li a:hover {
+    color: #000;
+}
+
+.wrapper {
+    background-image: none;
+    cursor: default;
+    font: 9pt "Verdana","Sans","LucidaGrande","Arial","Helvetica","sans-serif";
+    margin: 0;
+    padding: 0;
+}
+
+#footer {
+    background: none;
+    clear: both;
+    font-weight: bold;
+    padding-top: 40px;
+    text-align: center;
+}
+
+a {
+    color: #2F5778;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #FF0000;
+}
+
+.CopixTable {
+    -moz-border-radius: 5px 5px 5px 5px;
+    border: 1px solid #6597B0;
+    border-spacing: 0;
+    width: 100%;
+    border-collapse: inherit;
+}
+
+.CopixTable tr th, .CopixTable thead th, .CopixTable thead th tr {
+	background : none;
+    background-color: #7BB0C1;
+    border-right: 1px solid white;
+    color: #FFFFFF;
+    height: 25px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: left;
+}
+
+h2 {
+    background-image: url("../img/bluelines/title_underline.png");
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    font-size: 11pt;
+    height: 22px;
+    margin-bottom: 10px;
+    margin-top: 18px;
+}
+
+/* Tableau en mode vertical (les th sont dans la colonne de gauche */
+.CopixVerticalTable {
+   width: 100%;
+   border: 1px solid #6597B0;
+   border-spacing: 0px;
+   -webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border-collapse: inherit;
+}
+
+.CopixVerticalTable tr th, .CopixVerticalTable thead th, .CopixVerticalTable thead tr th {
+	background : none;
+   text-align: left;
+   background-color: #7BB0C1;
+   color: #ffffff;
+   border-bottom: 1px solid #ffffff;
+   padding: 5px;
+}
+
+.CopixVerticalTable th.last {
+	border-bottom: none;
+}
+
+/** th contenant une erreur pour les tableaux de classe CopixVerticalTable */
+.CopixVerticalTable th.error {
+	background-color: #F98282;
+	border-bottom: 1px solid #ffffff;
+	color: #8F1919;
+}
+
+.CopixVerticalTable td {
+	padding: 3px;
+}
+
+.CopixVerticalTable td.action {
+	width: 18px;
+	text-align: center;
+}
+
+.cmsAdminElementTable tr {
+    border-bottom: none !important;
+}
+
+/* Seconde couleur pour les fonds des tr, utilisé une ligne sur deux */
+.alternate {
+   background-color: #F3F8FA;
+}
+
+.CopixVerticalTable tr:hover, .CopixTable tr:hover {
+   background-color:#E0EFF4;
+}
+
+/* Style à vérifier  */
+.resizable{
+	padding-bottom: 24px;
+	padding-right: 20px;
+	background-position: bottom right;
+	background-repeat: no-repeat;
+}
+
+.copixwindow {
+	background-color: #fff;
+	border-color: #353535;
+	border-style: solid;
+	border-width: 2px;
+	position: absolute;
+	text-align: left;
+	padding-bottom: 5px;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	font-family:Arial,Helvetica,"Liberation Sans",FreeSans,sans-serif;
+	font-size:12px;
+	line-height:1.5;
+	box-shadow: 2px 2px 8px #666;
+	-moz-box-shadow: 2px 2px 8px #666;
+	-webkit-box-shadow: 2px 2px 8px #666;
+	z-index: 80 !important;
+}
+.copixwindow_title {
+	-moz-border-radius-topleft:3px;
+	-moz-border-radius-topright:3px;
+	height: auto;
+	padding: 3px 5px 0 5px;
+	border-bottom: 1px solid black;
+	color: #FFF;
+	font-weight: bold;
+	cursor: move;
+	background-color:#327AC7;
+	background-position:left center;
+	background-repeat:repeat-x;
+	background-image: url({copixresource path="bluelines|img/copixwindow_background.png"});
+}
+.copixwindow_content {
+	background-color: #fff;
+	padding: 10px;
+	min-width: 400px;
+	overflow: auto;
+}
+
+.copixwindow.unfocus {
+	opacity:0.65;
+}
+
+.unfocus {
+	border-color: #bebebe;
+}
+
+.CopixTable tr.trSelectedElement, .CopixTable tr.trSelectedElement:hover, .spanSelectedElement {
+	background : none;
+    background-color: #CDE3EC !important;
+    color: #000000;
+}
+
+a.toggler:link, a.toggler:visited, a.toggler:active {
+	color:#FFFFFF;
+	display:block;
+	font-weight:bold;
+	margin:0;
+	padding:0;
+	text-decoration:none;
+}
+
+div.togglerContainer {
+	height: 20px;
+	background : none;
+	background-color: #64a2c6;
+	margin: 1px 0px 0px 0px;
+	padding: 2px 0px 0px 2px;
+	vertical-align: middle;
+	display: inline-block;
+	width: 100%;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+div.togglerCollapse {
+	background-image : none;
+	background-color: #176F9F;
+	/* effet d'ombre */
+	-moz-box-shadow: 0px 1px 5px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 5px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 5px #000; /* Opera 10.5, IE 9.0 */
+	filter:  progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+span.togglerTitle {
+	vertical-align: middle;
+	display: inline-block;
+	padding-left: 5px;
+}
+
+.elementContent {
+	margin: 8px 5px 5px 5px;
+}
+
+.handle {
+	cursor: move;
+	width: 16px;
+	height: 25px;
+	margin: auto;
+	float: left;
+}
+.handle img{
+    float:left;
+    margin:5px 0 0;
+}
+
+.tableMenus td{
+	padding:4px 4px 4px 4px;
+}
+
+.inputMenu {
+	width: 15px;
+	text-align: right; 
+	padding: 0px;
+	margin-bottom: 1px;
+}
+
+.longInputMenu{
+	width: 99%;
+	padding: 0px;
+	margin-bottom: 1px;
+}
+
+.titleHeadingMenu{
+	background-color: #DBDFC9;
+	padding: 2px 5px 2px 5px;
+	margin-bottom: 7px;
+	font-weight: bold;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	/* effet d'ombre */
+	-moz-box-shadow: 0px 1px 5px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 5px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 5px #000; /* Opera 10.5, IE 9.0 */
+	filter:  progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+.trParentHeading {
+	background-color: #DBDFC9;
+}
+
+.CopixTable tr.trSelectedElement,
+.CopixTable tr.trSelectedElement:hover{
+	background-color: #A7B0BF;
+}
+
+.ElementIndicator {
+	border-color:white white white #A7B0BF;
+	border-style:solid;
+	border-width:10px 0 10px 15px;
+	height:0;
+	line-height:0;
+	position:absolute;
+	top:0;
+	width:50;
+}
+
+#headingElementInformationForm input.text, 
+#headingElementInformationForm select,
+#headingElementInformationForm textarea{
+	padding: 0;
+	margin: 1px;
+}
+
+.divMenuPosition{
+	border:2px solid #FF5F5F;
+	border-style:dashed;
+	opacity: 0.8;
+	background: #FFFFFF;	
+	position: absolute;
+	text-align: center;
+	z-index: 50;
+}
+
+.divMenuPosition span{
+	opacity: 1;
+	font-size:16px;
+	font-stretch:2px;
+	font-weight:bold;
+	letter-spacing: 2px;
+	color: #000000;
+}
+
+.comment_hei {
+	width: 99%;
+}
+
+#headingElementInformationFormSaverDiv{
+	text-align: center;
+	display: none;
+}
+
+td.display_list {
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;
+}
+
+td.display_advanced {
+	
+}
+
+.elementInformations {
+	font-size: 10px;
+	color: #8a8989;
+	
+}
+
+.status0 {
+	color: blue;
+}
+.status1 {
+
+}
+.status2 {
+
+}
+.status3 {
+	color: green;
+}
+.status4 {
+	color: gray;
+}
+.status5 {
+
+}
+
+.HeadingClipBoard {
+	background-color: #ecd09e;
+	border: solid 1px #946b25;
+	color: #88601a;
+	padding: 3px 5px 3px 5px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.HeadingClipBoardTitle {
+	color: #946b25;
+	font-size: 14px;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+.button {
+	background: none; 
+    -moz-border-radius: 3px 3px 3px 3px;
+    background-color: #EDEDED;
+    border: 1px solid black;
+    color: black;
+    cursor: pointer;
+    margin: 2px;
+    padding: 2px;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+}
+
+.button:hover {
+	color: blue;
+	border: solid 1px blue;
+	-moz-box-shadow: 0px 1px 3px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 3px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 3px #000; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+.portletMenu {
+    background: none repeat-x scroll left center #176F9F;
+    color: #FFFFFF;
+    padding: 2px;
+}
+
+.trSelectedElement .status3 {
+    color: green;
+}
+
+.trSelectedElement .status0 {
+    color: blue;
+}
+
+.bannerbottom .search a {
+	color: #2F5778;
+}

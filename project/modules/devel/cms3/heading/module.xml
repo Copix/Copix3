@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition version="1">
+	<general>
+		<default name="heading" version="1.6.7" description="Base du CMS" />
+		<group id="cms3" captioni18n="heading|heading.group.caption" />
+	</general>
+	<parameters>
+		<parameter name="site_id" caption="Identifiant unique du site" default="principal" />
+		<parameter name="headingelementmenu" caption="Identifiant des menus actifs" default="MAIN,FOOTER,LEFT_1" />
+		<parameter name="useCache" caption="Activer le cache HeadingCache" default="1" type="bool" />
+		<group caption="Elément archivé">
+			<parameter name="urlSearch" caption="Adresse de recherche" default="" description="Adresse du lien de recherche lorsqu'on veut voir un élément archivé.&lt;br />N'indiquer que le début de l'adresse, sans les paramètres." />
+			<parameter name="paramsSearch" caption="Paramètres de recherche" default="" description="Paramètres du lien de recherche lorsqu'on veut voir un élément archivé.&lt;br />%CAPTION% sera remplacé par le titre de l'élément.&lt;br />Exemple : criteria=%CAPTION%" />
+			<parameter name="seoArchivePolitic" caption="Politique de referencement sur les éléments archivés" default="410" description="Indiquer le numéro de l'erreur HTTP qui sera utilisé quand on affichera une page archivée : 404, 410, 301." />
+			<parameter name="seoArchivePoliticRedirect" caption="Adresse de redirection si l'erreur indiquée est 301" default="" description="Adresse de redirection si l'erreur indiquée est 301." />
+		</group>
+        <group caption="Référencement">
+			<parameter name="robotsActivated" caption="Activer le contrôle de l'exploration et de l'indexation par les moteurs de recherche (balise meta robots)" default="1" type="bool" />
+			<parameter name="cleanupURLs" caption="Retirer les accents et caractères spéciaux à l'enregistrement des URLs" default="1" type="bool" />
+        </group>
+		<group caption="Thème">
+			<parameter name="cmstheme" caption="Theme utilisé pour afficher le CMS" default="cms3_admin" />
+			<parameter name="usecmstheme" caption="Utilisation du theme configuré pour le CMS" default="1" type="bool" />
+			<parameter name="useDefinedThemeForAdmin" caption="Thème du site pour l'admin" default="0" type="bool" description="Indique si dans la partie admin, on doit utiliser le thème définit pour la rubrique en cours." />
+			<parameter name="useDefinedThemeForPage" caption="Thème du site pour l'édition de page" default="1" type="bool" description="Indique si dans la partie admin, on doit utiliser le thème définit pour la rubrique en cours lors de l'édition d'une page." />
+        </group>
+	</parameters>
+	<admin>
+		<group id="cms3" caption="CMS" icon="heading|img/icon_cms3.png">
+			<link url="heading|dashboard|" caption="Tableau de bord" credentials="cms:read@0" icon="|img/home.png" bigicon="|img/home_big.png" />
+			<link url="heading|element|" caption="Contenu" credentials="cms:read@0" icon="|img/content.png" bigicon="|img/content_big.png" />
+			<link url="heading|menueditor|" caption="Edition des menus" credentials="basic:admin" icon="|img/togglers/menu.png" bigicon="|img/menueditor.png"/>
+			<link url="heading|actionslogs|" caption="Historique" credentials="basic:admin" icon="|img/actionslogs.png" />
+			<link url="heading|seo|EditElements" caption="Référencement" credentials="cms:write@0"  icon="|img/seo.png" bigicon="|img/seo_big.png" />
+			<link url="heading|advancedsearch|showElements" caption="Recherche" credentials="cms:write@0"  icon="|img/advancedsearch.png" bigicon="|img/advancedsearch_big.png" />
+			<link url="heading|SiteMap|" caption="Sitemap" credentials="cms:write@0" icon="|img/sitemap.jpg" bigicon="|img/sitemap_big.jpg" />
+			<link url="heading|repair|findDeadLinks" caption="Liens morts" credentials="cms:write@0" icon="|img/generalicons/deadlink.png" bigicon="|img/generalicons/deadlink_big.png" />
+		</group>
+		<group id="cms3_repair" caption="CMS - Réparation" icon="heading|img/icon_cms3.png">
+			<link url="heading|repair|fillHierarchy" caption="Reconstruire la hierarchie" credentials="basic:admin" icon="|img/generalicons/hierarchy.png" />
+			<link url="heading|repair|findGhosts" caption="Eléments fantômes" credentials="basic:admin" icon="|img/generalicons/ghosts.gif" />
+		</group>
+	</admin>
+	<registry>
+		<entry id="ElementInformations">
+			<type zoneid="heading|HeadingInformations" />
+		</entry>
+		<entry id="HeadingElement">
+			<type id="heading" caption="Dossier"
+				image="heading|img/headings.png" icon="heading|img/icon_headings.png"
+				classid="heading|headingservices"
+				adminurl="heading|admin|prepareEdit"
+				fronturl="heading|headingfront::default" 
+				canrss="true" />
+
+			<type id="link" caption="Lien" image="heading|img/links.png"
+				icon="heading|img/icon_links.png" classid="heading|linkservices"
+				adminurl="heading|adminLink|prepareEdit"
+				fronturl="heading|linkfront::default" 
+				canrss="true"/>
+		</entry>
+		<entry id="CMSWysiwygParser">
+			<parser name="LinkWysiwygParser" />
+		</entry>
+	     <entry id="ModuleTables">
+	        <table name="cms_headings" />
+	        <table name="cms_headingelementinformations" />
+	        <table name="cms_links" />
+	        <table name="cms_headingelementinformations_menus" />
+	        <table name="cms_headingelementinformations_credentials" />
+	     </entry>
+	     <entry id="Portlet">
+			<type
+				id="sitemap"
+				group="element"
+				description="Cette portlet permet d'insérer un sitemap dans une page."
+				caption="Sitemap"
+				portlettype="PortletSitemap"
+				icon="heading|img/togglers/used.png"
+			/>
+		</entry>
+		<entry id="HeadingElementConfig">
+			<type id="headingelementconfig" />
+		</entry>
+	</registry>
+	<events>
+		<listeners>
+			<listener name="heading">
+				<event name="ListContent" />
+				<event name="cms_display" />
+			</listener>
+			<listener name="CMSActions">
+				<event name="cms_action" />
+			</listener>
+		</listeners>
+	</events>
+	<credentialhandlers>
+		<credentialhandler name='headingelementcredentialhandler'
+			stopOnSuccess='true' stopOnFailure='false'>
+			<handle name='cms' />
+		</credentialhandler>
+	</credentialhandlers>
+	<urlhandlers>
+		<urlhandler name="urlhandlerheading" />
+	</urlhandlers>
+	<userpreferences>
+		<group id="headingNavigation" caption="Navigation">
+			<preference name="cms_mode" caption="Mode d'affichage" default="advanced" type="select" listValues="advanced=>Avancé;simple=>Simple" />
+			<preference name="defaultDisplay" caption="Affichage" default="list" type="select" listValues="advanced=>Détails;thumbnail=>Miniatures;list=>Liste" />
+			<preference name="thumbnailHeight" caption="Hauteur miniatures" default="80" type="int" />
+			<preference name="thumbnailWidth" caption="Largeur miniatures" default="80" type="int" />
+			<preference name="defaultSort" caption="Tri" default="1" type="select" listValues="1=>Ordre d'affichage;2=>Type;3=>Libellé;4=>Statut" />
+			<preference name="showDevelopper" caption="Section développeurs" default="0" type="bool" />
+		</group>
+		<group id="headingHeadings" caption="Rubriques">
+			<preference name="redirectCreateHeading" caption="Après création" default="2" type="select" listValues="1=>Entrer dans la rubrique;2=>Retour rubrique précédente" />
+		</group>
+        <group id="headingNotification" caption="Notification">
+            <preference name="linkNotification" caption="Lien" default="0" type="bool" description="Donne la possibilité d'envoyer une notification par mail lorsqu'un lien est publié." />
+        </group>
+		<group id="headingDashboard" caption="Tableau de bord">
+			<preference name="dashBoardColumns" caption="Colonnes" default="2" type="select" listValues="1=>1;2=>2" />
+			<preference name="dashBoardShowPublishs" caption="Bloc publications" default="1" type="bool" />
+			<preference name="dashBoardShowDrafts" caption="Bloc brouillons" default="1" type="bool" />
+			<preference name="dashBoardShowHistory" caption="Bloc dernières actions" default="1" type="bool" />
+			<preference name="dashBoardShowNavigation" caption="Bloc navigation" default="1" type="bool" />
+			<preference name="dashBoardShowBookmarks" caption="Bloc favoris" default="1" type="bool" />
+			<preference name="dashBoardShowStats" caption="Bloc statistiques" default="1" type="bool" />
+		</group>
+	</userpreferences>
+	<updates>
+		<update from="1" to="1.0.0" script="doNothing" />
+		<update from="1.0.0" to="1.1.0" script="1_0_0_to_1_1_0" />
+		<update from="1.1.0" to="1.2.0" script="1_1_0_to_1_2_0" />
+		<update from="1.2.0" to="1.3.0" script="1_2_0_to_1_3_0" />
+		<update from="1.3.0" to="1.4.0" script="1_3_0_to_1_4_0" />
+		<update from="1.4.0" to="1.5.0" script="1_4_0_to_1_5_0" />
+		<update from="1.5.0" to="1.6.0" script="1_5_0_to_1_6_0" />
+		<update from="1.6.0" to="1.6.1" script="1_6_0_to_1_6_1" />
+		<update from="1.6.1" to="1.6.2" script="1_6_1_to_1_6_2" />
+		<update from="1.6.2" to="1.6.3" script="1_6_2_to_1_6_3" />
+		<update from="1.6.3" to="1.6.4" script="1_6_3_to_1_6_4" />
+		<update from="1.6.4" to="1.6.5" script="1_6_4_to_1_6_5" />
+		<update from="1.6.5" to="1.6.6" script="1_6_5_to_1_6_6" />
+		<update from="1.6.6" to="1.6.7" script="1_6_6_to_1_6_7" />
+	</updates>
+	<logs>
+		<strategies>
+			<strategy class="heading|HeadingActionsService" caption="Actions du CMS" />
+		</strategies>
+		<types>
+			<type id="cms_action" caption="Actions du CMS" />
+		</types>
+	</logs>
+</moduledefinition>

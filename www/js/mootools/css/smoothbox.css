@@ -19,9 +19,18 @@ height: 100%
 	color: #333333;
 }
 
-#TB_secondLine {
+#TB_ImageCount, #TB_Navigation {
 	font: 10px Arial, Helvetica, sans-serif;
 	color:#666666;
+	margin: 5px 15px 10px 15px;
+}
+
+#TB_Navigation {
+	float: right;
+}
+
+#TB_ImageCount {
+	float: left;
 }
 
 #TB_window a:link {color: #666666;}
@@ -40,31 +49,33 @@ height: 100%
 
 #TB_window {
 	position: absolute;
-	background: #fff;
+	background: #ffffff;
 	z-index: 102;
-	color:#000;
+	color:#000000;
 	border: 4px solid #525252;
 	text-align:left;
 }
 
-#TB_window img {
+#TB_window #TB_Image {
 	display:block;
 	margin: 15px 0 0 15px;
-	border-right: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
-	border-top: 1px solid #666;
-	border-left: 1px solid #666;
+	border: 1px solid #666;
+}
+
+#TB_ImageDiv {
+	clear: both;
 }
 
 #TB_caption{
 	height:25px;
-	padding:7px 30px 10px 25px;
+	padding:5px 0px 0px 15px;
 	float:left;
+	font-size: 14px;
+	font-weight: bold;
 }
 
 #TB_closeWindow{
-	height:25px;
-	padding:11px 25px 10px 0;
+	padding: 5px 13px 0px 0;
 	float:right;
 }
 
@@ -113,7 +124,6 @@ height: 100%
 	left: 0;
 	background-color:#fff;
 	border:none;
-	visibility: visible !important; /* Pour surcharger le visibility: hidden rajouté par JS mais introuvable dans le fichier */
 }
 
 #TB_iframeContent{

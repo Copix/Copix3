@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="blog" descriptioni18n="blog.moduledescription"
+			longdescriptioni18n="blog.longdescription" />
+	</general>
+	<dependencies>
+		<dependency name="wikirender" kind="module" />
+		<dependency name="trackback" kind="module" />
+	</dependencies>
+	<parameters>
+		<parameter name="write" captioni18n="blog.parameter.write" default="admin" />
+		<parameter name="perpage" captioni18n="blog.parameter.perpage" default="5" />
+		<parameter name="maxfontsize" captioni18n="blog.parameter.maxfontsize" default="16" />
+		<parameter name="minfontsize" captioni18n="blog.parameter.minfontsize" default="8" />
+		<parameter name="titlepage" captioni18n="blog.parameter.titlepage" default="Blog" />
+		<parameter name="titlebar" captioni18n="blog.parameter.titlebar" default="Blog" />
+	</parameters>
+	<admin>
+  		<link url="blog|admin|" captioni18n="blog.admin.page" credentials="basic:admin"></link>
+  		<link url="blog|admin|newticket" captioni18n="blog.new.ticket" credentials="basic:admin"></link>
+ 	</admin>
+	<events>
+	 <listeners>
+	  <listener name="blog">
+        <event name="ListContent" />	   
+	  </listener>
+	 </listeners>
+	</events>
+</moduledefinition>

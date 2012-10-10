@@ -1,0 +1,12 @@
+/****Theme gris par défaut***/
+#navigation .limenu img{
+    display: none;
+}
+
+#navigation a {
+    padding: 6px 12px 0;
+}
+
+.bannerbottom .search a {
+	color: #7F0F14;
+}

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<moduledefinition>
-	<general>
-		<default name="documentation" descriptioni18n="module.description" longdescriptioni18n="module.longdescription"></default>
-	</general>
-	<admin>
-		<link url="classtowiki|towiki" captioni18n="module.link.classtowiki" credential="basic:admin" />
-	</admin>
-</moduledefinition>

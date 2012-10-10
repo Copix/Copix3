@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="i18ndb"
+		         version="1.0.0"
+		         descriptioni18n="i18ndb.moduledescription" 
+		         longdescriptioni18n="i18ndb.longdescription" 
+		         icon="|img/icon/i18ndb.png" />
+		<group id="standard" captioni18n="copix:copixmodule.group.standard" />
+	</general>
+	
+	<i18nhandlers>
+		<i18nhandler name="i18nDBHandler" order="1" captioni18n="i18ndb|i18ndb.handlercaption" />
+	</i18nhandlers>
+</moduledefinition>

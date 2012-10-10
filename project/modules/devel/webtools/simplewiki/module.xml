@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="simplewiki" description="[Test] Simple wiki" longdescription="Ce module permet de tester les implémentations du projet Wiki"  />
+	</general>
+	<dependencies>
+		<dependency name="wikirenderer" kind="module" />
+		<dependency name="tracwikicomponents" kind="module" />
+		<dependency name="wiki" kind="module" />
+	</dependencies>
+</moduledefinition>

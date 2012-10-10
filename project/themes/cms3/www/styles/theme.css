@@ -1,0 +1,268 @@
+@CHARSET "UTF-8";
+
+* {
+ font-family: 'Trebuchet MS',Arial,sans-serif;
+ font-size:13px;
+ line-height:1.5;
+}
+
+p {
+	font: normal 'Trebuchet MS',Arial,sans-serif;
+}
+
+h1, h2, h3, h4 {
+ font-weight: bold;
+ letter-spacing: -0.018em;
+ color:   #542B33;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    color : #444444;
+}
+
+/********BANNER*******/
+/**************************************************/
+#log{
+	padding: 1px 5px;
+	float:right;
+	text-align: right;
+	background-color: white;
+	border-left : 1px solid #E1E5E8;
+	border-right : 1px solid #E1E5E8;
+	border-bottom : 1px solid #E1E5E8;
+	-moz-border-radius:0 0 5px 5px;
+	-webkit-border-radius:0 0 5px 5px; /* Saf3-4 */
+	border-radius: 0 0 5px 5px; /* Opera 10.5, IE9, Saf5, Chrome */
+	position: absolute;
+	top:-1px;
+	right: 0;
+}
+
+#log img{
+	vertical-align: middle;	
+}
+
+#banner{
+	padding-top: 5px;
+}
+
+.fonddegrade{		
+	background : #E4EDF6 url(../img/handler_strong.png) repeat center center;
+}
+
+.bannertop{
+	height:80px;
+	text-align:left;
+	/*background:-moz-radial-gradient(left 40px , circle , #E4EDF6 100px, #E3E3E3 1000px) repeat scroll 0 0 transparent;*/
+	/*background : url(../img/herbe.png) repeat bottom center;*/
+	border-top: 1px solid #E1E5E8;
+}
+
+.bannertop h1{
+	font-size: 0pt;
+	padding: 5px 0 0;
+	color: #89B02C;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+.bannertop span{
+	font-size: 0pt;
+	color:#4C2F36;
+}
+.bannerbottom{
+	background-image: -moz-linear-gradient(top, #ACCCEA, #A3C1DE); /* FF3.6 */
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #ACCCEA),color-stop(1, #A3C1DE)); /* Saf4+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#ACCCEA', EndColorStr='#A3C1DE'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#ACCCEA', EndColorStr='#A3C1DE')"; /* IE8 */
+	border-bottom: 1px solid #98B2CD;
+	border-top: 1px solid #98B2CD;
+	
+}
+
+.bannertop .contentsize{
+	position: relative;	
+}
+
+/* Navigation */
+.menuDiv{
+	position: relative;
+	height: 40px;
+}
+
+#menu {
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    bottom: -1px;
+	left:-6px;
+}
+
+#menu li {
+    float: left;
+    margin-right:3px;
+    border: 1px solid #98B2CD;
+    	
+    -moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	-webkit-border-radius: 5px 5px 0 0; /* Saf3-4 */
+	border-radius: 5px 5px 0 0; /* Opera 10.5, IE9, Saf5, Chrome */
+    
+    background-image: -moz-linear-gradient(top, #FFF, #E4EDF6); /* FF3.6 */
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #FFF),color-stop(1, #E4EDF6)); /* Saf4+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#FFF', EndColorStr='#E4EDF6'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#FFF', EndColorStr='#E4EDF6')"; /* IE8 */
+	
+	padding:4px 15px 2px 15px;
+}
+
+#menu a {
+    color: #444444;
+	letter-spacing : 0.05em;
+	font-weight: normal;
+	opacity : 0.4;
+}
+
+#menu a:hover {
+    opacity : 1;
+}
+
+#menu li.current {
+	background:#FFF;
+    border-bottom: 1px solid #FFF;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	-webkit-border-radius-topleft: 5px; /* Saf3-4 */
+	-webkit-border-radius-topright: 5px; /* Saf3-4 */
+	border-radius-topleft: 5px; /* Opera 10.5, IE9, Saf5, Chrome */
+	border-radius-topright: 5px; /* Opera 10.5, IE9, Saf5, Chrome */
+	
+}
+#menu li.current a{
+	opacity : 1;
+}
+
+#menu img{
+	vertical-align: top;	
+	margin-right: 2px;
+}
+	
+.wrappermenu{
+	margin-top : -34px;	
+	height : 25px;
+}
+
+/*******CONTENT*********/
+/**************************************************/
+
+.contentsize{
+	width: 90%;
+	min-width: 960px;
+	max-width:1140px;
+	margin: 0 auto;
+}
+
+
+.wrapper{
+	padding : 5px;
+	text-align: left;
+	min-height: 500px;
+	background-color: white;
+	border-left: 1px solid #D6D6D6;
+	border-right: 1px solid #D6D6D6;
+	border-bottom : 1px solid #D6D6D6;
+	-moz-border-radius:0 0 5px 5px;
+	-webkit-border-radius: 0 0 5px 5px; /* Saf3-4 */
+	border-radius: 0 0 5px 5px; /* Opera 10.5, IE9, Saf5, Chrome */
+}
+
+#maincontent{	    
+    background-image: -moz-linear-gradient(top, #FFF, #E4EDF6); /* FF3.6 */
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #FFF),color-stop(1, #E4EDF6)); /* Saf4+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#FFF', EndColorStr='#E4EDF6'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#FFF', EndColorStr='#E4EDF6')"; /* IE8 */
+	background-color:   #FFF;
+	text-align: center;
+}
+
+#maincontent h1 { font-size: 1.5em; }
+#maincontent h2, #maincontent h3, #maincontent h4{
+	padding-top: 5px;
+	color:   #89B02C; ;
+}
+#maincontent h2 { font-size: 1.2em;color: #542B33; }
+#maincontent h3 { font-size: 1em }
+#maincontent h4 { font-size: 0.9em }
+
+#footer{
+	text-align: center;
+	font-weight: bold;
+	padding-top: 4px;
+	clear: both;
+	height : 200px;
+	background:-moz-radial-gradient(center 40px , circle , #FFFFFF 100px, #E3E3E3, #D0D0D0 700px) repeat scroll 0 0 transparent;
+		background : #E2EDF3 url(../img/fond_fleur.png) no-repeat center bottom;
+}
+
+
+/*****************************************************/
+img{
+	border: none;
+}
+
+a{
+	color: #333B3F;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+a:visited{
+}
+
+a:hover{
+	color: #8F1113;
+}
+
+input[type=text],input[type=password],input[type=listbox],textarea{
+	border: 1px solid   #ccc; ;
+	margin: 1px;
+}
+
+input[type=text]:focus,input[type=password]:focus,input[type=listbox]:focus{
+	background-color:   #E6E9E9; ;
+}
+
+input[type=text]:hover,input[type=password]:hover,input[type=listbox]:hover{
+	/*background-color:   #E0EAEF; 
+	border: 1px solid   #ccc;*/ 
+}
+
+
+
+/* @actions : tableau avec liste d'actions en colonnes */
+/**************************************************/
+td.action {
+	vertical-align: middle;
+	text-align: center;
+	padding: 1px;
+}
+
+td.action a:link,
+td.action a:visited {
+	display: block;
+}
+/* Success, notice and error boxes
+-------------------------------------------------------------- */
+
+.error,
+.notice, 
+.success    { padding: .8em; margin-bottom: 1em; border: 2px solid #ddd; }
+
+.error      { background: #FBE3E4; color: #8a1f11; border-color: #FBC2C4; }
+.notice     { background: #FFF6BF; color: #514721; border-color: #FFD324; }
+.success    { background: #E6EFC2; color: #264409; border-color: #C6D880; }
+.error a    { color: #8a1f11; }
+.notice a   { color: #514721; }
+.success a  { color: #264409; }

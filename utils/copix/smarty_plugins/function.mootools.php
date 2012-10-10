@@ -15,4 +15,3 @@
 function smarty_function_mootools ($pParams, &$smarty) {
    _tag ('mootools', $pParams);
 }
-?>

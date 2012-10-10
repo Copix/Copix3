@@ -11,11 +11,4 @@
  * Classe de base pour les tests Copix from scratch
  */
 class CopixTest extends PHPUnit_Framework_TestCase {
-	/**
-	 * Constructeur
-	 */
-	public function __construct (){
-		parent::__construct ();
-	}
 }
-?>

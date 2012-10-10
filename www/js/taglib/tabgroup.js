@@ -8,9 +8,10 @@ CopixClass.implement({
 		if(options.defaultTab !== undefined && options.defaultTab > options.tabs.length) {
 			throw ("invalid default: "+options.defaultTab);
 		}
-		
+
 		var unselectTab = function(tabId, tabElement) {
 			tabElement.removeClass(options.selectedClass);
+			$ (tabId).setStyle ('display', 'none');
 			tabGroup.fireEvent('tabUnselected', tabId);
 		}
 		
@@ -18,10 +19,11 @@ CopixClass.implement({
 			if(tabElement.hasClass(options.selectedClass)) {
 				return;
 			}
-			$ES('.'+options.selectedClass, tabGroup).each(function(tabElement){
+			$(options.id).getElements('.'+options.selectedClass).each(function(tabElement){
 				tabElement.fireEvent('unselect');
 			});
 			tabElement.addClass(options.selectedClass);
+			$ (tabId).setStyle ('display', 'block');
 			tabGroup.fireEvent('tabSelected', tabId);
 		};
 		
@@ -50,7 +52,11 @@ CopixClass.implement({
 			}
 			this.queueEvent(tabGroup, ['tabSelected', options.tabs[options.defaultTab]]);
 		}
-		
+
+		for (x = 0; x < options.tabs.length; x++) {
+			$ (options.tabs[x]).setStyle ('display', (options.defaultTab != x) ? 'none' : 'block');
+		}
+
 		return tabGroup;
 	}
 });

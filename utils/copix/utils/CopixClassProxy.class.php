@@ -36,16 +36,32 @@ abstract class CopixClassProxy {
    	 * @return mixed
    	 */
    	public function __call ($pName, $pArgs){
-   		return call_user_func_array (array ($this->getRemoteObject (), $pName), $pArgs);   		
+   		$this->_beforeRemoteAction ();
+   		try {
+   			$toReturn = call_user_func_array (array ($this->getRemoteObject (), $pName), $pArgs);
+   		}catch (Exception $e){
+   			$this->_afterRemoteAction ();
+   			throw $e;
+   		}
+   		$this->_afterRemoteAction ();   		
+   		return $toReturn;   		
    	}
-   	
+
    	/**
    	 * Récupération des propriétés dans l'objet cible
    	 * @param	string	$pName	Le nom de la propriété à récupérer
    	 * @return 	mixed	valeur de la propriété
    	 */
    	public function __get ($pName){
-   		return $this->getRemoteObject ()->$pName;
+   		$this->_beforeRemoteAction ();
+   		try {
+   			$toReturn = $this->getRemoteObject ()->$pName;
+   		}catch (Exception $e){
+   			$this->_afterRemoteAction ();
+   			throw $e;   			
+   		}
+   		$this->_afterRemoteAction ();
+   		return $toReturn;
    	}
    	
    	/**
@@ -54,9 +70,16 @@ abstract class CopixClassProxy {
    	 * @param	mixed	$pValue	la valeur de l'objet
    	 */
    	public function __set ($pName, $pValue){
-   		$this->getRemoteObject ()->$pName = $pValue;
+   		$this->_beforeRemoteAction ();
+   		try {
+   			$this->getRemoteObject ()->$pName = $pValue;
+   		}catch (Exception $e){
+   			$this->_afterRemoteAction ();
+   			throw $e;
+   		}
+   		$this->_afterRemoteAction ();
    	}
-   	
+
    	/**
    	 * Indique si une propriété existe sur l'objet
    	 *
@@ -64,15 +87,34 @@ abstract class CopixClassProxy {
    	 * @return boolean
    	 */
    	public function __isset ($pName){
-   		return isset ($this->getRemoteObject ()->$pName);
+   		$this->_beforeRemoteAction ();
+   		try {
+	   		$toReturn = isset ($this->getRemoteObject ()->$pName);
+   		}catch (Exception $e){
+   			$this->_afterRemoteAction ();
+   			throw $e;   			
+   		}
+   		$this->_afterRemoteAction ();
+   		return $toReturn;
    	}
    	
    	/**
    	 * Retourne l'objet qui fait l'objet du proxy
    	 * @return object
    	 */
-   	public function getRemoteObject (){
+   	public function & getRemoteObject (){
    		return $this->_object;
    	}
+   	
+   	/**
+   	 * Actions a réaliser avant de récupérer l'objet
+   	 */
+   	protected function _beforeRemoteAction (){
+   	}
+   	
+   	/**
+   	 * Actions a réaliser après avoir récupéré l'objet en question
+   	 */
+   	protected function _afterRemoteAction (){
+   	}
 }
-?>

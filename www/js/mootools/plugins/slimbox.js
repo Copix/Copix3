@@ -165,8 +165,8 @@ var Lightbox = {
 			this.image.style.width = this.bottom.style.width = this.preload.width+'px';
 			this.image.style.height = this.prevLink.style.height = this.nextLink.style.height = this.preload.height+'px';
 
-			this.caption.setHTML(this.images[this.activeImage][1] || '');
-			this.number.setHTML((this.images.length == 1) ? '' : 'Image '+(this.activeImage+1)+' of '+this.images.length);
+			this.caption.set('html', this.images[this.activeImage][1] || '');
+			this.number.set('html', (this.images.length == 1) ? '' : 'Image '+(this.activeImage+1)+' of '+this.images.length);
 
 			if (this.activeImage) this.preloadPrev.src = this.images[this.activeImage-1][0];
 			if (this.activeImage != (this.images.length - 1)) this.preloadNext.src = this.images[this.activeImage+1][0];

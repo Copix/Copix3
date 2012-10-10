@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Default</name>
+		<description>Template simple</description>
+		<tpl>document|portlettemplates/default.document.tpl</tpl>
+	</template>
+	<template>
+		<name>Taille</name>
+		<description>Template simple avec affichage de taille</description>
+		<tpl>document|portlettemplates/size.document.tpl</tpl>
+	</template>
+	<template>
+		<name>colonne</name>
+		<description>Template simple</description>
+		<tpl>document|portlettemplates/simple.document.tpl</tpl>
+	</template>
+</templates>

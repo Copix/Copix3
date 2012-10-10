@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <themedefinition>
-	<name>Copix 3</name>
-	<author>Patrice Ferlet</author>
-	<website>http://www.metal3d.org/</website>
-	<description>Le thème de la génération Copix 3</description>
+	<name>Copix 3 - Site</name>
+	<author>Croës Gérald - Patrice Ferlet</author>
+	<website>http://gcroes.com/</website>
+	<description>Thème du site Copix</description>
+	<image>copix.png</image>
 </themedefinition>

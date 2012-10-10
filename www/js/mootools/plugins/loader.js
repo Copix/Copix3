@@ -1,4 +1,4 @@
-CopixLoader = new Class ({
+var loader = new Class ({
 	div:null,
 	cancel:null,
 	fond:null,
@@ -7,7 +7,6 @@ CopixLoader = new Class ({
 		if (params && params['onCancel']) {
 			this.onCancel = params['onCancel']; 
 		}
-		
 		this.div = new Element('div');
 		this.div.setStyles({
 							'vertical-align':'bottom'
@@ -19,13 +18,13 @@ CopixLoader = new Class ({
 						   ,'left':window.getScrollLeft().toInt()+window.getWidth ().toInt()/2-50+'px'
 						   ,'position':'absolute'
 						   ,'text-align':'center'
-						   ,'background-image':'url("themes/default/img/tools/load.gif")'
+						   ,'background-image':'url("'+Copix.getResourceURL('img/tools/load.gif')+'")'
 						   ,'background-repeat':'no-repeat'
 						   ,'background-position':'center'
 						   ,'zIndex':999
 						   ,'visibility':'hidden'
 						   });
-
+						   
 		this.div.injectInside(document.body);
 		
 		this.fond = new Element('div');
@@ -53,6 +52,7 @@ CopixLoader = new Class ({
 			this.onCancel();
 		}.bind(this))
 	},
+	
 	load: function () {
 		this.div.setStyles({
 						   'top': window.getScrollTop().toInt()+window.getHeight ().toInt()/2-50+'px'

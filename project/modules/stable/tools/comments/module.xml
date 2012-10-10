@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="comments" version="1.0.0" longdescription="Saisie et modération de commentaires" description="Commentaires" icon="|img/comments.png"/>
+		<group id="social" caption="Social"/>
+	</general>
+	<updates>
+		<update from="0" to="1.0.0" script="doNothing"/>
+	</updates>
+	<admin groupid="comments" groupcaption="Commentaires">
+		<link url="comments|groups|" caption="Groupes de commentaires" credentials="basic:admin"/>
+		<link url="comments|comments|" caption="Commentaires" credentials="basic:admin"/>
+	</admin>
+</moduledefinition>

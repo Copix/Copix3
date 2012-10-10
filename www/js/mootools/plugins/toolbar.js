@@ -145,7 +145,7 @@ var SlidePanel = new Class({
 		var top = pan.getStyle('top').toInt();
 		var bottom = top + pan.getStyle('height').toInt();
 		
-		var slidefx = new Fx.Style(pan,this.styletochange,{
+		var slidefx = new Fx.Tween(pan,{'property' : this.styletochange,
 			'duration': this.options.duration,
 			'wait': false,
 			'transition' : Fx.Transitions.bounceOut

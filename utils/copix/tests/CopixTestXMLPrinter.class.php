@@ -327,4 +327,3 @@ class CopixTestXMLPrinter extends PHPUnit_Util_Printer implements PHPUnit_Framew
 		}
 	}	
 }
-?>

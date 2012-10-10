@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default
+			name="languages"
+			longdescriptioni18n="global.module.longdescription"
+			descriptioni18n="global.module.description"
+			icon="img/icons/languages.gif"
+			version="1.0.0"
+		/>
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+	</general>
+	<admin>
+		<link url="languages|languages|" captioni18n="global.module.link.languages" credentials="basic:admin"></link>		
+		<link url="languages|locks|" captioni18n="global.module.link.locks" credentials="basic:admin"></link>
+		<link url="languages|backups|" captioni18n="global.module.link.restoreBackup" credentials="basic:admin"></link>
+		<link url="languages|synchronize|" captioni18n="global.module.link.synchronize" credentials="basic:admin"></link>
+	</admin>
+	<parameters>
+		<parameter name="lockWaitTimeOut" captioni18n="global.parameter.lockWaitTimeOut" default="5" type="int" />
+		<parameter name="nbrBackupFiles" captioni18n="global.parameter.nbrBackupFiles" default="5" type="int" />
+	</parameters>
+</moduledefinition>

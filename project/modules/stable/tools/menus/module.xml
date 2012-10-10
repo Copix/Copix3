@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default version="1.0.0" name="menus" description="Menus" longdescription="Récupère l'événement menu et facilite l'affichage des menus" icon="menus|img/menus.png" />
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+	</general>
+	<events>
+		<listeners>
+			<listener name="Menus">
+				<event name="menu" />
+			</listener>
+ 		</listeners>
+	</events>
+</moduledefinition>

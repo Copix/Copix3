@@ -29,4 +29,3 @@ function smarty_modifier_datei18n($string, $format="") {
       return (($date = CopixDateTime::yyyymmddToText ($string)) !== false) ? $date : $string;
    }
 }
-?>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<styles>
+	<style>
+		<name>Style1</name>
+		<class>cmsEditorStyle1</class>
+	</style>
+	<style>
+		<name>Style2</name>
+		<class>cmsEditorStyle2</class>
+	</style>
+	<style>
+		<name>Style3</name>
+		<class>cmsEditorStyle3</class>
+	</style>
+	<style>
+		<name>Style4</name>
+		<class>cmsEditorStyle4</class>
+	</style>
+	<style>
+		<name>Style5</name>
+		<class>cmsEditorStyle5</class>
+	</style>
+</styles>

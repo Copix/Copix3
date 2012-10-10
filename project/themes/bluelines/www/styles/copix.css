@@ -1,0 +1,539 @@
+@CHARSET "UTF-8";
+
+/* Texte d'un message d'erreur principal, généralement affiché en haut d'une page, ou pour les exceptions */
+.errorMessage {
+   border: 2px solid #aa0000;
+   margin: 5px;
+   padding: 5px;
+   text-align: center;
+}
+
+/* Titre d'un message d'erreur principal */
+.errorMessage h1 {
+   background-color: #792206;
+   background-repeat:no-repeat;
+   background-position: top right;
+   color: #ffffff;
+   text-align: center;
+   font-size: 1em;
+   margin-top: 0;
+   padding: 3px;
+}
+
+/* Titres dans le contenu des pages */
+h2 {
+	background-image: url({copixresource path="img/title_underline.png"});
+	background-repeat: no-repeat;
+	background-position: bottom left;
+	font-size: 11pt;
+	height: 22px;
+	margin-bottom: 10px;
+	margin-top: 18px;
+}
+
+h2.first {
+	margin-top: 0px;
+}
+
+/* Tableau en mode horizontal (les th sont en haut) */
+.CopixTable {
+   width: 100%;
+   border: 1px solid #6597B0;
+	border-spacing: 0px;
+   -webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.CopixTable tr:hover {
+   background-color:#E0EFF4;
+}
+
+
+.CopixTable th {
+   text-align: left;
+   background-color:#7BB0C1;
+   height:25px;
+   color: #ffffff;
+   padding-left: 5px;
+   padding-right: 5px;
+   border-right: 1px solid white;
+}
+
+.CopixTable th.last {
+	border-right: none;
+}
+
+.CopixTable th a {
+	color: #ffffff;
+}
+
+/** th contenant une erreur pour les tableaux de classe CopixTable */
+.CopixTable th.error {
+	background-color: #F98282;
+	border-right: 1px solid white;
+	color: #8F1919;
+}
+
+.CopixTable td {
+   padding: 3px;
+}
+
+.CopixTable td.action {
+	width: 20px;
+	text-align: center;
+	padding-left: 0px;
+}
+
+.CopixTable td.action img {
+	margin-top: 3px;
+}
+
+.CopixTable tr.highlight, .CopixVerticalTable tr.highlight {
+	background-color: #b0e2ff;
+}
+
+/* Tableau en mode vertical (les th sont dans la colonne de gauche */
+.CopixVerticalTable {
+   width: 100%;
+   border: 1px solid #6597B0;
+   border-spacing: 0px;
+   -webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.CopixVerticalTable th {
+   text-align: left;
+   background-color: #7BB0C1;
+   color: #ffffff;
+   border-bottom: 1px solid #ffffff;
+   padding: 5px;
+}
+
+.CopixVerticalTable th.last {
+	border-bottom: none;
+}
+
+/** th contenant une erreur pour les tableaux de classe CopixVerticalTable */
+.CopixVerticalTable th.error {
+	background-color: #F98282;
+	border-bottom: 1px solid #ffffff;
+	color: #8F1919;
+}
+
+.CopixVerticalTable td {
+	padding: 3px;
+}
+
+.CopixVerticalTable td.action {
+	width: 18px;
+	text-align: center;
+}
+
+/* Seconde couleur pour les fonds des tr, utilisé une ligne sur deux */
+.alternate {
+   background-color: #F3F8FA;
+}
+
+.CopixVerticalTable tr:hover, .CopixTable tr:hover {
+   background-color:#E0EFF4;
+}
+
+/* Style à vérifier  */
+.resizable{
+	padding-bottom: 24px;
+	padding-right: 20px;
+	background-position: bottom right;
+	background-repeat: no-repeat;
+}
+
+/* Style à déplacer dans le wikirender, il est utilisé uniquement par ce module (à vérifier) */
+.moocolumn {
+	padding-right : 4px;
+}
+
+/* Style à déplacer dans le wikirender, il est utilisé uniquement par ce module (à vérifier) */
+.moocolumn2 {
+	padding-left : 4px;
+	border-left : 1px dotted #AEAEAE;
+}
+
+/* Erreure utilisée par CopixForms */
+.copixforms_error {
+	color:red;
+}
+
+/* Styles à vérifier */
+div.autocompleter-loading {
+	float:					left;
+	clear:					right;
+	background:				#fff no-repeat center;
+	width:					50px;
+	height:					16px;
+}
+
+ul.autocompleter-choices {
+	position:				absolute;
+	margin:					0;
+	padding:				0;
+	list-style:				none;
+	border:					1px solid #eee;
+	background-color:		white;
+	border-right-color:		#ddd;
+	border-bottom-color:	#ddd;
+	text-align:				left;
+	font-family:			Verdana, Geneva, Arial, Helvetica, sans-serif;
+	z-index:				50;
+	overflow:auto;
+	height:150px;
+}
+
+ul.autocompleter-choices li {
+	position:				relative;
+	padding:				0.1em 1.5em 0.1em 1em;
+	cursor:					pointer;
+	font-weight:			normal;
+	font-size:				1em;
+}
+
+ul.autocompleter-choices li.autocompleter-selected {
+	background-color:		#444;
+	color:					#fff;
+}
+
+ul.autocompleter-choices span.autocompleter-queried {
+	font-weight:			bold;
+}
+
+ul.autocompleter-choices li.autocompleter-selected span.autocompleter-queried {
+	color:					#9FCFFF;
+}
+
+/** Calendar **/
+div.calContainer {
+	width:auto;
+	height:auto;
+	border :0px;
+}
+div.calBackgroud {
+	background-color: #c0c0c0;
+	border: 2px outset white;
+}
+table.calendar  {
+	background-color: #c0c0c0;
+}
+
+.calendar th {
+	background-color: #eeeeee;
+	border: 1px solid #c0c0c0;
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 8pt;
+	text-align: center;
+}
+.calendar tr {
+	background-color: #c0c0c0;
+}
+.calendar tr.calendar_header {
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+.calendar td {
+	color: #000000;
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 8pt;
+}
+.calendar td.calendar_day {
+	background-color: #eeeeee;
+}
+
+.calendar td.calendar_today {
+	background-color: #dddddd;
+}
+
+.calendar td.calendar_noday {
+	background-color: #ffffff;
+}
+
+.ma_class_calendar td.calendar_today {
+	background-color: red;
+}
+
+.ma_class_calendar td.calendar_noday {
+	background-color: #ffffff;
+}
+
+.ma_class_calendar td.calendar_day {
+	background-color: blue;
+}
+
+.popupInformation {
+   background-color: #ffffff;
+   border:2px solid #6597B0;
+   padding:3px;
+   position:absolute;
+}
+
+.popupInformation ul {
+	padding: 2px;
+	margin: 2px;
+	margin-left: 20px;
+}
+
+/*****************COPIX WINDOW*************/
+/*
+ @copixwindow fenêtres pseudo modales javascript
+Structure HTML :
+<div class="copixwindow unfocus"> <!-- unfocus est ajouté quand plusieurs fenêtres sont visibles simultanément -->
+	<div class="copixwindow_title"></div>
+	<div class="copixwindow_content"></div>
+</div>
+*/
+/**************************************************/
+.copixwindow {
+	background-color: #fff;
+	border-color: #353535;
+	border-style: solid;
+	border-width: 2px;
+	position: absolute;
+	text-align: left;
+	padding-bottom: 5px;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	font-family:Arial,Helvetica,"Liberation Sans",FreeSans,sans-serif;
+	font-size:12px;
+	line-height:1.5;
+	box-shadow: 2px 2px 8px #666;
+	-moz-box-shadow: 2px 2px 8px #666;
+	-webkit-box-shadow: 2px 2px 8px #666;
+	z-index: 80 !important;
+}
+.copixwindow_title {
+	-moz-border-radius-topleft:3px;
+	-moz-border-radius-topright:3px;
+	height: auto;
+	padding: 3px 5px 0 5px;
+	border-bottom: 1px solid black;
+	color: #FFF;
+	font-weight: bold;
+	cursor: move;
+	background-color:#327AC7;
+	background-position:left center;
+	background-repeat:repeat-x;
+	background-image: url({copixresource path="img/copixwindow_background.png"});
+}
+.copixwindow_content {
+	background-color: #fff;
+	padding: 10px;
+	min-width: 400px;
+	overflow: auto;
+}
+
+.copixwindow.unfocus {
+	opacity:0.65;
+}
+
+.unfocus {
+	border-color: #bebebe;
+}
+
+/**************************************************/
+
+.inputText {
+	border: 1px solid #B7C8CF;
+	margin: 1px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	
+}
+
+.inputText:focus {
+	background-color: #F4F9FB;
+	border: 1px solid #51889D;
+	-moz-box-shadow: 0px 1px 3px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 3px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 3px #000; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+.inputText:hover {
+	border: 1px solid #51889D;
+	-moz-box-shadow: 0px 1px 3px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 3px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 3px #000; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+.inputText.error {
+	border: 1px solid red;
+	margin: 1px;
+}
+
+.inputSubmit {
+	
+}
+
+.error {
+	color: red;
+}
+
+textarea {
+	border: 1px solid #B7C8CF;
+	margin: 1px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+textarea:hover {
+	-moz-box-shadow: 0px 1px 3px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 3px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 3px #000; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+textarea.error {
+	border: 1px solid red;
+	color: red;
+}
+
+textarea:hover {
+	-moz-box-shadow: 0px 1px 3px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 3px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 3px #000; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+select {
+	border: 1px solid #B7C8CF;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+select:hover {
+	-moz-box-shadow: 0px 1px 3px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 3px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 3px #000; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+.required {
+	color: red;
+}
+
+.CopixTab {
+	border: solid 2px #6597B0;
+	padding: 1px 5px 1px 5px;
+	cursor: pointer;
+}
+
+.CopixTabSelected {
+	border: solid 2px #6597B0;
+	background-color: #b0e2ff;
+}
+
+th.help {
+	width: 1px;
+}
+
+.button {
+	background-color: #ededed;
+	margin: 2px 2px 2px 2px;
+	padding: 2px 2px;
+	color: black;
+	border: solid 1px black;
+	cursor: pointer;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+.button:hover {
+	color: blue;
+	border: solid 1px blue;
+	-moz-box-shadow: 0px 1px 3px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 3px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 3px #000; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+.buttonDown {
+	background-color: #dbdbdb;
+}
+
+.button img {
+	vertical-align: text-top;
+}
+
+.AdminBig {
+	-moz-box-shadow: 0px 1px 3px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 3px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 3px #000; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	background-color: #f4f4f4;
+}
+
+.errors {
+	background: #f1b2b2 url({copixresource path="img/error.png"}) no-repeat 5px 5px;
+	border: solid 1px red;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding-left: 60px;
+	padding-top: 5px;
+	padding-bottom: 10px;
+	padding-right: 60px;
+	margin-bottom: 15px;
+	-moz-box-shadow: 0px 1px 3px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 3px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 3px #000; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+h2.error {
+	text-align: center;
+	background: none;
+	color: #c10505;
+}
+
+.notification {
+	background-color: #f4f090;
+	border: solid 1px #cfc807;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding-left: 60px;
+	padding-top: 5px;
+	padding-bottom: 10px;
+	padding-right: 60px;
+	margin-bottom: 15px;
+	-moz-box-shadow: 0px 1px 3px #000; /* FF3.5+ */
+	-webkit-box-shadow: 0px 1px 3px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 1px 3px #000; /* Opera 10.5, IE 9.0 */
+	filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=1px, Color='#000000')"; /* IE8 */
+}
+
+.notification h2 {
+	margin-top: 0px;
+	text-align: center;
+	background: none;
+	color: #8a8122;
+}

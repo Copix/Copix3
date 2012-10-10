@@ -60,4 +60,3 @@ function smarty_function_copixurl($params, &$me) {
 		return $toReturn;
 	}
 }
-?>

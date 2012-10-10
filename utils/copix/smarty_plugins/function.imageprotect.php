@@ -18,4 +18,3 @@
 function smarty_function_imageprotect($params, & $me) {
     return _tag ('imageprotect', $params);
 }
-?>

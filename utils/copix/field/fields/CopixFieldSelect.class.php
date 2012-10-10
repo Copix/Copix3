@@ -1,22 +1,21 @@
 <?php
+/**
+ * @package		copix
+ * @subpackage	forms
+ * @author		Salleyron Julien
+ * @copyright	CopixTeam
+ * @link		http://copix.org
+ * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ * @experimental
+ */
+
 class CopixFieldSelect extends CopixAbstractField implements ICopixField  {
 	
 	public function getHTML($pName, $pValue, $pMode = 'edit') {
-		if ($pMode == 'edit') {
+		if ($pMode = 'edit') {
 			return _tag ('select', array_merge ($this->getParams(), array ('name'=>$pName, 'selected'=>$pValue)));;
 		} else {
-		    $values = $this->getParam('values');
-		    if ($this->getParam('objectMap') != null) {
-		        list ($id,$caption) = explode(';',$this->getParam('objectMap'));
-		        foreach ($values as $value) {
-		            if ($value->$id == $pValue) {
-		                return $value->$caption;
-		            }
-		        }
-		        return $pValue;
-		    } else {
-			    return isset ($values[$pValue]) ? $values[$pValue] : $pValue;
-		    }
+			return $pValue;
 		}
 	}
 	
@@ -24,6 +23,10 @@ class CopixFieldSelect extends CopixAbstractField implements ICopixField  {
 		if ($pValue != null) {
 				$pDatasource->addCondition ($pField, '=', $pValue);
 		}
+	}
+	
+	public function getHTMLFieldEdit($pName, $pValue) {
+		return _tag ('select', array_merge ($this->getParams(), array ('name'=>$pName, 'selected'=>$pValue)));
 	}
 	
 }

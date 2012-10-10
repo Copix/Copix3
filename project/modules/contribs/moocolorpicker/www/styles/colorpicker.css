@@ -1,0 +1,86 @@
+body{
+	background:#ece9d8;
+	padding:0
+}
+
+body, .side_info {
+	margin:15px
+}
+
+* {
+	font:8pt arial,
+	helvetica,
+	sans-serif
+}
+
+#np_cp{
+	width:435px
+}
+
+#nogray_logo {
+	width:20px;
+	height:20px;
+	display:block;
+	margin-top:10px;
+	background:url(../img/colorpicker/logo.png) no-repeat;text-decoration:none;
+	_background:none;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/colorpicker/logo.png',sizingMethod = 'scale')
+}
+
+.main_table{
+	text-align:left
+}
+
+#hue_color_area{
+	width:256px;
+	background:#f00 url(../img/colorpicker/mask.png) no-repeat top left;
+	_background:#f00;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/colorpicker/mask.png',sizingMethod = 'scale')
+}
+
+#hue_color_area, #spectrum_slider, .spectrum_img {
+	height:256px
+}
+
+#hue_color_area, .spectrum_img {
+	border:inset #ece9d8 2px
+}
+
+#hue_color_area_container {
+	border:solid #ece9d8 3px
+}
+
+#spectrum_slider, .button {
+	width:50px;
+	text-align:center
+}
+
+#spectrum_slider {
+	z-index:10;
+	background:url(../img/colorpicker/side_slider.jpg) no-repeat top center
+}
+
+#spectrum_arrows, #circle {
+	position:absolute;
+	top:auto;
+	left:auto
+}
+
+.side_info {
+	margin-left:5px
+}
+
+.color_preview {
+	width:90px;
+	height:50px;
+	border:solid #000 1px;
+	margin-bottom:10px
+}
+
+.preview_channel {
+	background:#f00;
+	height:25px
+}
+
+#Error {
+	font-weight:bold;
+	color:#c00
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="wikirender" descriptioni18n="wikirender.moduledescription"
+			longdescriptioni18n="wikirender.longdescription" icon="|img/icon/wikirender.png" />
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+	</general>
+	<dependencies>
+		<dependency name="geshi" kind="module" />
+	</dependencies>
+	<parameters>
+		<parameter name="plugins" captioni18n="wikirender.params.plugins" default="pluginstest|plugintest" />
+	</parameters>
+</moduledefinition>

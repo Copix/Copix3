@@ -50,4 +50,3 @@ function smarty_function_copixlist_start($params, &$me) {
 		return $toReturn;
 	}
 }
-?>

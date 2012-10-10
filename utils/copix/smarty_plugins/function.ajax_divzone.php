@@ -19,4 +19,3 @@ function smarty_function_ajax_divzone ($params, &$smarty) {
         return _tag ('ajax_divzone', $params);
     }
 }
-?>

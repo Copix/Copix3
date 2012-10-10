@@ -102,11 +102,10 @@ class CopixDBConnectionPDO_SQLite extends CopixDBPDOConnection {
      * Indique si le driver est disponible
      * @return bool
      */
-    static public function isAvailable (){
-		if (!class_exists ('PDO')){
+    public static function isAvailable (){
+		if (!class_exists ('PDO', false)){
 			return false;
 		}
 		return in_array ('sqlite', PDO::getAvailableDrivers ());
     } 
 }
-?>

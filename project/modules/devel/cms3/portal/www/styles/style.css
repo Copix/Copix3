@@ -1,0 +1,57 @@
+.cmsEditorBouton,
+.cmsEditorBoutonImage,
+.boutonElementChooser img,
+.cmsEditorSelect {
+	background-color:#FFF5F5;
+	border-color:#DEDEDE #AAA #AAA #DEDEDE;
+	border-style:solid;
+	border-width:2px;
+	margin:1px;
+	cursor:pointer;
+	width:auto;
+	padding: 3px;
+	vertical-align: bottom;
+}
+.cmsEditorBouton {
+	height: 26px;
+}
+.cmsEditorSelect {
+    /*padding-top:0;
+    padding-bottom:0;
+    padding-right:0;*/
+    height:26px;
+}
+
+.boutonElementChooser img {
+	height: 16px;
+}
+
+.cmsEditorBouton:hover,
+.cmsEditorBoutonImage:hover,
+.boutonElementChooser img:hover {
+	border-color: #CCC #DEDEDE #DEDEDE #CCC;
+}
+
+html>body .cmsEditorBouton,
+html>body .cmsEditorBoutonImage,
+html>body .boutonElementChooser img,
+html>body .cmsEditorSelect {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-moz-box-shadow: #ddd 2px 2px 10px;
+	-webkit-box-shadow: #ddd 2px 2px 10px;
+	box-shadow: #ddd 2px 2px 10px;
+}
+
+html>body .bouton:hover,
+html>body .bouton-image:hover,
+html>body .boutonElementChooser img:hover {
+	-moz-box-shadow: #aaa 2px 2px 10px;
+	-webkit-box-shadow: #aaa 2px 2px 10px;
+	box-shadow: #aaa 2px 2px 10px;
+}
+
+.cmsEditor textarea{
+	height: 250px;
+}

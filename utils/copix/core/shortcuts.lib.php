@@ -10,7 +10,7 @@
 
 /**
  * Alias à CopixI18N::get
- * 
+ *
  * @see CopixI18N::get
  * @param string $pKey Clef i18n
  * @param mixed $pArgs Paramètres à remplacer dans $pKey. Pour une seule valeur, $pArgs = string, sinon $pArgs = array ('maValeur', 'maValeur2')
@@ -23,24 +23,24 @@ function _i18n ($pKey, $pArgs = null, $pLocale = null) {
 
 /**
  * Une fonction pour echapper les caractères HTML d'une chaine UTF8
- * 
+ *
  * @param string $pString Chaine à transformer
  * @param string $pEncoding Encoding à utiliser
  * @return string
  */
-function _copix_utf8_htmlentities ($pString, $pEncoding = null) {	
+function _copix_utf8_htmlentities ($pString, $pEncoding = null) {
 	if ($pEncoding !== null) {
 		return htmlentities ($pString, null, $pEncoding);
 	}
 	if (CopixI18N::getCharset () == 'UTF-8'){
-   		return htmlentities ($pString, null, 'UTF-8');
-   	}
-   	return htmlentities ($pString);
+		return htmlentities ($pString, ENT_COMPAT, 'UTF-8');
+	}
+	return htmlentities ($pString);
 }
 
 /**
  * Décode uniquement si nous sommes en mode différent de UTF8
- * 
+ *
  * @param string $pString Chaine à décoder
  * @return string
  */
@@ -53,7 +53,7 @@ function _copix_utf8_decode ($pString) {
 
 /**
  * Alias à CopixURL::get
- * 
+ *
  * @see CopixURL::get
  * @param	string	$pDest	sélecteur pour l'url destination
  * @param	array	$pParams	tableau des paramètres supplémentaires
@@ -68,20 +68,20 @@ function _url ($pDest = null, $pParams = array (), $pForXML = false){
  * Alias à CopixURL::getResource ();
  * @see CopixURL::getResource ()
  * @param	string	$pResourcePath	le chemin de la ressource que l'on souhaite aller chercher
- * @return string 
+ * @return string
  */
-function _resource ($pResourcePath){	
-	return CopixUrl::getResource ($pResourcePath);
+function _resource ($pResourcePath, $pTheme = null, $withVersion = null){
+	return CopixUrl::getResource ($pResourcePath, $pTheme, $withVersion);
 }
 
 /**
  * Alias à CopixURL::getResourcePath ();
  * @see CopixURL::getResourcePath ()
  * @param	string	$pResourcePath	le chemin de la ressource que l'on souhaite aller chercher
- * @return string 
+ * @return string
  */
-function _resourcePath ($pResourcePath){
-	return CopixUrl::getResourcePath ($pResourcePath);
+function _resourcePath ($pResourcePath, $pTheme = null){
+	return CopixUrl::getResourcePath ($pResourcePath, $pTheme);
 }
 
 /**
@@ -117,6 +117,17 @@ function _classInclude ($pClassId){
 }
 
 /**
+ * Alias à CopixClassesFactory::fileRequire
+ *
+ * @param string $pClassId Nom de la classe
+ * @return string
+ * @throws CopixException Erreur lors de l'inclusion de la classe
+ */
+function _classRequire ($pClassId) {
+	return CopixClassesFactory::fileRequire ($pClassId);
+}
+
+/**
  * Alias à CopixDAOFactory::create
  * @param	string	$pDAOid 	identifiant de la DAO à créer
  * @param 	string	$pConnectionName	identifiant de la connection à utiliser pour la DAO à créer.
@@ -140,7 +151,7 @@ function _daoInclude ($pDAOId, $pConnectionName = null){
  * Alias à CopixDAOFactory::getInstanceOf
  * @param 	string	$pDAOid	identifiant de la DAO à instancier de façon unique
  * @param 	string	$pConnectionName
- * @return	ICopixDAO	
+ * @return	ICopixDAO
  * @see CopixDAOFactory::instanceOf
  */
 function _ioDAO ($pDAOid, $pConnectionName = null) {
@@ -149,8 +160,8 @@ function _ioDAO ($pDAOid, $pConnectionName = null) {
 
 /**
  * Alias à CopixDAOFactory::createSearchParams
- * @param	string	$pKind	Le type de gestion des conditions par défaut 
- * @return CopixDAOSearchParams 
+ * @param	string	$pKind	Le type de gestion des conditions par défaut
+ * @return CopixDAOSearchParams
  */
 function _daoSP ($pKind = 'AND'){
 	return CopixDAOFactory::createSearchParams ($pKind);
@@ -190,23 +201,23 @@ function _eTag ($pTagName, $pParams = array (), $pContent = null) {
  * Alias à CopixServices::process ()
  * @return mixed
  */
-function _service ($pServiceId, $pParams=array (), $pTransactionContext = CopixServices::NEW_TRANSACTION){
+function _service ($pServiceId, $pParams=array (), $pTransactionContext = null){
 	return CopixServices::process ($pServiceId, $pParams, $pTransactionContext);
 }
 
 /**
  * Alias de CopixEventNotifier::notify ()
  * @param	mixed 	$pEvent CopixEvent ou string qui représente l'événement levé
- * @param	array	$pParams	Tableau de paramètres relatifs à l'événement (si $pEvent est une chaine)	
+ * @param	array	$pParams	Tableau de paramètres relatifs à l'événement (si $pEvent est une chaine)
  * @see CopixEventNotifier::notify ()
  */
 function _notify ($pEvent, $pParams = array ()){
-   return CopixEventNotifier::notify ($pEvent, $pParams);	
+	return CopixEventNotifier::notify ($pEvent, $pParams);
 }
 
 /**
- * Alias à new CopixActionReturn (CopixActionReturn::PPO, $ppo, $options) 
- * @return CopixActionReturn 
+ * Alias à new CopixActionReturn (CopixActionReturn::PPO, $ppo, $options)
+ * @return CopixActionReturn
  */
 function _arPPO ($pPPO, $pOptions){
 	return new CopixActionReturn (CopixActionReturn::PPO, $pPPO, $pOptions);
@@ -216,6 +227,9 @@ function _arPPO ($pPPO, $pOptions){
  * Alias à new CopixActionReturn (CopixActionReturn::PPO, $ppo, array ('mainTemplate'=>null, 'template'=>$template))
  */
 function _arDirectPPO ($pPPO, $pTemplateName, $pOptions = array ()){
+	if ( ! is_string ($pTemplateName)){
+		throw new CopixException (_i18n ('copix:shortcut.error.arDirectPpoSecondArgument'));
+	}
 	return new CopixActionReturn (CopixActionReturn::PPO, $pPPO, array_merge (array ('mainTemplate'=>null, 'template'=>$pTemplateName), $pOptions));
 }
 
@@ -224,8 +238,18 @@ function _arDirectPPO ($pPPO, $pTemplateName, $pOptions = array ()){
  * @param	string	$pUrl	L'url ou aller
  * @return CopixActionReturn
  */
-function _arRedirect ($pUrl){
-	return new CopixActionReturn (CopixActionReturn::REDIRECT, $pUrl);
+function _arRedirect ($pUrl, $pOptions = array ()){
+	return new CopixActionReturn (CopixActionReturn::REDIRECT, $pUrl, $pOptions);
+}
+
+/**
+ * Alias à new CopixActionReturn (CopixActionReturn::HTTPCODE, CopixHTTPHeader::get404 (), $pString);
+ */
+function _ar404 ($pString = null){
+	if (is_null($pString)) {
+		$pString = _i18n ('copix:copix.error.404');
+	}
+	return new CopixActionReturn (CopixActionReturn::HTTPCODE, CopixHTTPHeader::get404 (), $pString);
 }
 
 /**
@@ -248,7 +272,7 @@ function _arContent ($pContent, $pOptions = null){
 }
 
 /**
- * Alias à new CopixActionReturn (CopixActionReturn::NONE, ... 
+ * Alias à new CopixActionReturn (CopixActionReturn::NONE, ...
  * @see CopixActionReturn
  * @return CopixActionReturn
  */
@@ -257,10 +281,10 @@ function _arNone (){
 }
 
 /**
- * Alias à new CopixActionReturn (CopixActionReturn::Display, ... 
+ * Alias à new CopixActionReturn (CopixActionReturn::Display, ...
  * @see CopixActionReturn
  * @param	CopixTpl	$pTpl	Le template à afficher
- * @param	array		$pOptions	Options supplémentaires	
+ * @param	array		$pOptions	Options supplémentaires
  * @return CopixActionReturn
  */
 function _arDisplay ($pTpl, $pOptions = null){
@@ -268,11 +292,22 @@ function _arDisplay ($pTpl, $pOptions = null){
 }
 
 /**
+ * Raccourci pour renvoyer du texte brut (sans headers ni rien)
+ * @see CopixActionReturn
+ * @param	String	$pStr	La chaîne de texte à afficher
+ * @return CopixActionReturn
+ */
+function _arString($pStr){
+	$ppo = _Ppo (array ('MAIN' => $pStr));
+	return new CopixActionReturn (CopixActionReturn::PPO, $ppo, array ('mainTemplate'=>null, 'template'=>'generictools|blanknohead.tpl'));
+}
+
+/**
  * Alias à CopixDB::getConnection ($base)->doQuery ($query, $params)
  * @param	string	$pQuery	La requête à lancer
  * @param 	array	$pParams	tableau des paramètres à passer à la base
  * @param	string	$pBase		La connexion à utiliser
- * @return mixed		
+ * @return mixed
  */
 function _doQuery ($pQuery, $pParams = array (), $pBase = null){
 	return CopixDB::getConnection ($pBase)->doQuery ($pQuery, $pParams);
@@ -283,7 +318,7 @@ function _doQuery ($pQuery, $pParams = array (), $pBase = null){
  * @param	string	$pQuery	La requête à lancer
  * @param 	array	$pParams	tableau des paramètres à passer à la base
  * @param	string	$pBase		La connexion à utiliser
- * @return mixed		
+ * @return mixed
  */
 function _iDoQuery ($pQuery, $pParams = array (), $pBase = null){
 	return CopixDB::getConnection ($pBase)->iDoQuery ($pQuery, $pParams);
@@ -295,34 +330,34 @@ function _iDoQuery ($pQuery, $pParams = array (), $pBase = null){
  * @param 	string	$pChaine	Le message à loguer
  * @param	string	$pType		le type d'élément à loguer
  * @param	int		$pLevel		Le niveau d'information à loguer
- * @param	array	$arExtra	Tableau d'éléments supplémentaires	
+ * @param	array	$arExtra	Tableau d'éléments supplémentaires
  */
 function _log ($pChaine, $pType = "default", $pLevel = CopixLog::INFORMATION, $arExtra = array ()){
 	CopixLog::log ($pChaine, $pType, $pLevel, $arExtra);
 }
 
 /**
-* Alias à CopixRequest::get ()
-* @param	string	$pVarName	le nom de la variable que l'on veut récupérer
-* @param 	mixed	$pDefaultValue	la valeur par défaut si rien n'est dans l'url
-* @param 	boolean	$pDefaultIdEmpty	demande de retourner la valeur par défaut si jamais le paramètre est vide (0, null, '')
-* @return 	mixed	valeur de la variable dans l'url
-*/
+ * Alias à CopixRequest::get ()
+ * @param	string	$pVarName	le nom de la variable que l'on veut récupérer
+ * @param 	mixed	$pDefaultValue	la valeur par défaut si rien n'est dans l'url
+ * @param 	boolean	$pDefaultIdEmpty	demande de retourner la valeur par défaut si jamais le paramètre est vide (0, null, '')
+ * @return 	mixed	valeur de la variable dans l'url
+ */
 function _request ($pVarName, $pDefaultValue = null, $pDefaultIfEmpty = true){
 	return CopixRequest::get ($pVarName, $pDefaultValue, $pDefaultIfEmpty);
 }
 
 /**
-* Alias pour CopixAuth::getCurrentUser ()
-* @return CopixUser
-*/
+ * Alias pour CopixAuth::getCurrentUser ()
+ * @return CopixUser
+ */
 function _currentUser (){
-   return CopixAuth::getCurrentUser ();
+	return CopixAuth::getCurrentUser ();
 }
 
 /**
  * Alias pour CopixDebug::var_dump (), peut accepter plusieurs variables en paramètres
- * 
+ *
  * @param var $pVar Variable
  */
 function _dump ($pVar) {
@@ -335,7 +370,7 @@ function _dump ($pVar) {
  * Alias pour CopixSession::get
  * @param	string	$pPath	le chemin de l'élément en session que l'on souhaite récupérer
  * @param	string	$pNamespace	le nom du namespace de session dans lequel on souhaite récupérer l'élément
- * @return mixed 
+ * @return mixed
  */
 function _sessionGet ($pPath, $pNamespace = 'default'){
 	return CopixSession::get ($pPath, $pNamespace);
@@ -355,8 +390,8 @@ function _sessionSet ($pPath, $pValue, $pNamespace = 'default'){
 
 /**
  * Racourcis pour new CopixPPO ()
- * 
- * @param array $pParams tableau a passer au constructeur de CopixPPO 
+ *
+ * @param array $pParams tableau a passer au constructeur de CopixPPO
  * @return CopixPPO
  */
 function _ppo ($pParams = array ()){
@@ -365,8 +400,8 @@ function _ppo ($pParams = array ()){
 
 /**
  * Racourcis pour new CopixRPPO ()
- * 
- * @param array $pParams tableau a passer au constructeur de CopixRPPO 
+ *
+ * @param array $pParams tableau a passer au constructeur de CopixRPPO
  * @return CopixRPPO
  */
 function _rppo ($pParams = array ()){
@@ -387,11 +422,10 @@ if(version_compare(PHP_VERSION, '5.2.0', '>=')) {
 	/** @ignore */
 	function _toString ($pValue) {
 		if (is_object ($pValue)){
-			return method_exists ($pValue, '__toString') ? $pValue->__toString() : (string)$pValue;	
+			return method_exists ($pValue, '__toString') ? $pValue->__toString() : (string)$pValue;
 		}else{
 			return (string)$pValue;
 		}
-		
 	}
 }
 
@@ -400,7 +434,7 @@ if(version_compare(PHP_VERSION, '5.2.0', '>=')) {
  *
  * @param string $pName		le nom du validateur à créer
  * @param array	 $pParams	les paramètres à passer au validateur
- * @param string $pMessage	Le message d'erreur à afficher en cas de problème	
+ * @param string $pMessage	Le message d'erreur à afficher en cas de problème
  * @return ICopixValidator
  */
 function _validator ($pName, $pParams = array (), $pMessage = null){
@@ -419,7 +453,7 @@ function _cValidator ($pMessage = null){
 }
 
 /**
- * 
+ *
  * @return IComplexTypeValidator
  */
 function _ctValidator ($pMessage = null){
@@ -457,4 +491,13 @@ function _field ($pType, $pParams = array (), $pAssert = true) {
 function _filter ($pName, $pParams = array ()){
 	return CopixFilterFactory::create ($pName, $pParams);
 }
-?>
+
+/**
+ * Raccourcis pour la création d'un filtre composite
+ *
+ * @param mixed
+ */
+function _cFilter (){
+	$args = func_get_args ();
+	return call_user_func_array (array ('CopixFilterFactory', 'createComposite'), $args);
+}

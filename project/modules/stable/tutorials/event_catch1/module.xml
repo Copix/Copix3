@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="event_catch1" description="[Tutoriel] Exemples de récupération d'évènements dans Copix" icon="|img/icon/tutorial.png"  />
+  <group id="tutos" captioni18n="copix:copixmodule.group.tutos" />
+ </general>
+ <events>
+   <listeners>
+      <listener name="event_catch1">
+        <event name="newEventOnly" />
+      </listener>
+   </listeners>
+ </events>
+</moduledefinition>

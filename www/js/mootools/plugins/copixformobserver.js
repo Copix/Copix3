@@ -61,8 +61,11 @@ CopixFormObserver = new Class({
 	   this._initialQueryString = this._lastQueryString;
 	   
 	   if (this.options.register){
-	   		var registerId = this.options.registerId || this._form.id;
-			Copix.register_observer (registerId, this);
+	      if (this.options.registerId != null){
+	         Copix.register_observer (this.options.registerId, this);
+	      }else{
+	         Copix.register_observer (formId, this);
+	      }
 	   }
 
 	   this.start ();
@@ -166,6 +169,6 @@ CopixClass.implement({
 		if (this._formObservers[id]) {
 		   return this._formObservers[id];
 		}
-		return false;
+		throw ("Observer ["+id+"]does not exist");
 	}
 });

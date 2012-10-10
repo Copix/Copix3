@@ -58,6 +58,7 @@ class CopixLDAPConnection {
 	private function _applyProfile ($profile){
 		$this->_baseDn   = $profile->dn;
 		$this->_host     = $profile->host;
+		$this->_port	 = $profile->port;
 		$this->_user     = $profile->user;
 		$this->_password = $profile->password;
 	}
@@ -74,7 +75,7 @@ class CopixLDAPConnection {
 			throw new CopixException (_i18n ('copix:ldap.error.hostUndefined'));
 		}
 
-		$this->_connection = ldap_connect ($this->_host);
+		$this->_connection = ldap_connect ($this->_host, $this->_port);
 		if ($this->_connection === false){
 			return false;
 		}
@@ -82,8 +83,7 @@ class CopixLDAPConnection {
 		@ldap_set_option ($this->_connection, LDAP_OPT_PROTOCOL_VERSION, 3);
 		@ldap_set_option ($this->_connection, LDAP_OPT_REFERRALS, 0);
 
-		$this->_bind ();
-		return true;
+		return $this->_bind ();
 	}
 
 	/**
@@ -350,4 +350,3 @@ class CopixLDAPConnection {
 		}
 	}
 }
-?>

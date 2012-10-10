@@ -20,4 +20,3 @@
 function smarty_modifier_time($string) {
     return (($time = CopixDateTime::hhmmssToTime ($string)) !== false) ? $time : $string;
 }
-?>

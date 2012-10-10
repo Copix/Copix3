@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Default</name>
+		<description>Template simple</description>
+		<tpl>articles|portlettemplates/default.article.php</tpl>
+	</template>
+	<template>
+		<name>colonne</name>
+		<description>Template simple</description>
+		<tpl>articles|portlettemplates/simple.article.tpl</tpl>
+	</template>
+</templates>

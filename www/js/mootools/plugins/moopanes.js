@@ -39,16 +39,16 @@ var MooPane = new Class({
                 this.isParent = isParent;
                 
 				this.container.setStyles({
-					width: this.container.getParent().getSize().size.x,
-					height: this.container.getParent().getSize().size.y
+					width: this.container.getParent().getSize().x,
+					height: this.container.getParent().getSize().y
 				});
 				
                 if( this.options.disposition == 'vertical' ){
-                     this.pane1size = ( this.container.getSize().size.x / 100 ) * this.options.pane1percentage;
-                     this.pane2size = this.container.getSize().size.x - this.options.dividersize - this.pane1size ;
+                     this.pane1size = ( this.container.getSize().x / 100 ) * this.options.pane1percentage;
+                     this.pane2size = this.container.getSize().x - this.options.dividersize - this.pane1size ;
                 }else{
-                     this.pane1size = ( this.container.getSize().size.y / 100 ) * this.options.pane1percentage;
-                     this.pane2size = this.container.getSize().size.y - this.options.dividersize - this.pane1size ;
+                     this.pane1size = ( this.container.getSize().y / 100 ) * this.options.pane1percentage;
+                     this.pane2size = this.container.getSize().y - this.options.dividersize - this.pane1size ;
                 }
                 
 				
@@ -56,12 +56,12 @@ var MooPane = new Class({
                 if( this.options.disposition == 'vertical' ){
                    this.pane1.setStyles({
                      width: this.pane1size+'px',
-                     height: this.container.getSize().size.y+'px' ,                     
+                     height: this.container.getSize().y+'px' ,                     
                      overflow: 'auto'
                    });
                    this.pane2.setStyles({
                      width: this.pane2size+'px',
-                     height: this.container.getSize().size.y+'px',
+                     height: this.container.getSize().y+'px',
 					 left: this.pane1size + this.options.dividersize ,                     
                      overflow: 'auto'
                    });	
@@ -69,12 +69,12 @@ var MooPane = new Class({
                    this.pane1.setStyles({
                      height: this.pane1size+'px',
 					 left: 0+'px',
-                     width: this.container.getSize().size.x+'px',
+                     width: this.container.getSize().x+'px',
                      overflow: 'auto'
                    });
                    this.pane2.setStyles({
                      height: this.pane2size+'px',
-                     width: this.container.getSize().size.x+'px',
+                     width: this.container.getSize().x+'px',
 					 top: this.pane1size + this.options.dividersize , 
                      overflow: 'auto'
                    });	
@@ -87,24 +87,24 @@ var MooPane = new Class({
 				}).injectInside(this.container);
 				
 				if( this.options.disposition == 'vertical' ){          
-		          this.splitbar.setStyle('left',this.pane1.getSize().size.x+'px' )
-		                       .setStyle('height',this.pane1.getSize().size.y+'px' )
+		          this.splitbar.setStyle('left',this.pane1.getSize().x+'px' )
+		                       .setStyle('height',this.pane1.getSize().y+'px' )
 		                       .setStyle('cursor','e-resize');
 		        }else{
-		          this.splitbar.setStyle('top',this.pane1.getSize().size.y+'px'  )
-		                       .setStyle('width',this.pane1.getSize().size.x+'px' )
+		          this.splitbar.setStyle('top',this.pane1.getSize().y+'px'  )
+		                       .setStyle('width',this.pane1.getSize().x+'px' )
 		                       .setStyle('cursor','s-resize');
 		        }
 		
 				if( this.options.disposition == 'vertical' ){
                     this.splitbar.setStyles({
                          width: this.options.dividersize+'px',
-                         height: this.container.getSize().size.y+'px'                     
+                         height: this.container.getSize().y+'px'                     
                     });
                 }else{
                     this.splitbar.setStyles({
                          height: this.options.dividersize+'px',
-                         width: this.container.getSize().size.x+'px'                     
+                         width: this.container.getSize().x+'px'                     
                     });
                 }
                 
@@ -115,14 +115,14 @@ var MooPane = new Class({
 	    		          handle: this.splitbar,                          
 	    		          modifiers:{x:'width', y:false},						  
 	    		          onDrag: this.resize.bind(this),
-						  limit: {x:[0 , this.container.getSize().size.x - this.options.dividersize ]}
+						  limit: {x:[0 , this.container.getSize().x - this.options.dividersize ]}
     	              });
                   }else{
                       new Drag.Move(this.pane1, {
 	    		          handle: this.splitbar,                          
 	    		          modifiers:{y:'height', x:false},						  
 	    		          onDrag: this.resize.bind(this),
-						  limit: {y:[0 , this.container.getSize().size.y - this.options.dividersize ]}
+						  limit: {y:[0 , this.container.getSize().y - this.options.dividersize ]}
     	              });    	                	              
                   }
                 }
@@ -151,31 +151,31 @@ var MooPane = new Class({
         
         resize: function(){
 				this.container.setStyles({
-					width: this.container.getParent().getSize().size.x,
-					height: this.container.getParent().getSize().size.y
+					width: this.container.getParent().getSize().x,
+					height: this.container.getParent().getSize().y
 				});
 				if( this.options.disposition == 'vertical' ){
-                  this.pane1.setStyle ('height', this.container.getSize().size.y +'px');
-				  this.pane2.setStyle ('height', this.container.getSize().size.y +'px');
-				  this.pane2.setStyle( 'left',(this.pane1.getSize().size.x + this.options.dividersize)+'px'   );
-                  this.pane2.setStyle( 'width',(this.container.getSize().size.x - this.options.dividersize - this.pane1.getSize().size.x ) +'px' );
-				  this.splitbar.setStyle('height',this.container.getSize().size.y +'px');
+                  this.pane1.setStyle ('height', this.container.getSize().y +'px');
+				  this.pane2.setStyle ('height', this.container.getSize().y +'px');
+				  this.pane2.setStyle( 'left',(this.pane1.getSize().x + this.options.dividersize)+'px'   );
+                  this.pane2.setStyle( 'width',(this.container.getSize().x - this.options.dividersize - this.pane1.getSize().x ) +'px' );
+				  this.splitbar.setStyle('height',this.container.getSize().y +'px');
 				  
                 }else{
-				  this.pane1.setStyle ('width', this.container.getSize().size.x + 'px');
-				  this.pane2.setStyle ('width', this.container.getSize().size.x + 'px');
-				  this.pane2.setStyle( 'top', (this.pane1.getSize().size.y + this.options.dividersize ) +'px'  );
-				  this.pane2.setStyle( 'height',(this.container.getSize().size.y - this.options.dividersize - this.pane1.getSize().size.y )+'px'  );
-				  this.splitbar.setStyle('width',this.container.getSize().size.x +'px' );
+				  this.pane1.setStyle ('width', this.container.getSize().x + 'px');
+				  this.pane2.setStyle ('width', this.container.getSize().x + 'px');
+				  this.pane2.setStyle( 'top', (this.pane1.getSize().y + this.options.dividersize ) +'px'  );
+				  this.pane2.setStyle( 'height',(this.container.getSize().y - this.options.dividersize - this.pane1.getSize().y )+'px'  );
+				  this.splitbar.setStyle('width',this.container.getSize().x +'px' );
                 }
                 this.children.each(function(pane){ pane.resizeOnParent() }); 
         },
         
         resizeOnParent: function(){			
-        	this.container.setStyle( 'width',this.parentPane.pane2.getSize().size.x+'px' );			
-			this.pane1.setStyle( 'width',this.container.getSize().size.x+'px' );
-        	this.pane2.setStyle( 'width',this.container.getSize().size.x+'px' );
-        	this.splitbar.setStyle( 'width',this.container.getSize().size.x+'px' );
+        	this.container.setStyle( 'width',this.parentPane.pane2.getSize().x+'px' );			
+			this.pane1.setStyle( 'width',this.container.getSize().x+'px' );
+        	this.pane2.setStyle( 'width',this.container.getSize().x+'px' );
+        	this.splitbar.setStyle( 'width',this.container.getSize().x+'px' );
         	this.splitbar.setStyle( 'left',0 );        	        	         	
             this.resize();
         }

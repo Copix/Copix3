@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default
+			name="openid"
+			longdescription="Bibliothèque et outils de connexion / serveur OpenId"
+			description="Bibliothèque et outils OpenId"
+			icon="|img/icons/openid.png"
+			version="1.0.0"
+		/>
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+	</general>
+</moduledefinition>

@@ -11,7 +11,7 @@
 /**
  * @ignore
  */
-require_once (COPIX_PATH.'db/drivers/oci/CopixDBOciResultSetIterator.class.php');
+require_once (COPIX_PATH.'db/drivers/oci/CopixDbOciResultSetIterator.class.php');
 
 /**
  * Classe de connexion à oracle en utilisant drivers OCI
@@ -93,6 +93,13 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 	protected function _parseQuery ($pQueryString, &$pParameters = array (), $pOffset = null, $pCount = null){
 		$toReturn = parent::_parseQuery ($pQueryString, $pParameters, $pOffset, $pCount);
 
+		//si ce n'est pas un select, on vérifie de suite s'il y a un with en début
+		if (! $toReturn['isSelect']){
+			if (stripos (trim ($pQueryString), 'with') === 0){
+				$toReturn['isSelect'] = $this->_isWith ($toReturn['query']);
+			}
+		}
+
 		//only for select query
 		if ($toReturn['isSelect'] && ($pOffset !== null || $pCount !== null)){
 			$toReturn['query'] = $this->_parseLimit ($toReturn['query'], $pOffset, $pCount);
@@ -106,6 +113,113 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 
 		return $toReturn;
 	}
+	
+	/**
+	 * Recherche dans un tableau de mots $pArWords, a partir de la position $pStart le mot $pWord (non échapé)
+	 *
+	 * @param string $pWord le mot à rechercher
+	 * @param int $pStart ou démarrer dans la recherche 
+	 * @param array $pArWords le tableau des mots ou rechercher
+	 * @return la position de l'élément suivant, la position finale si non trouvé
+	 */
+	protected function _getNextCharInArray ($pWord, $pStart, $pArWords){
+		$countArWords = count ($pArWords);
+		for ($i = $pStart; $i < $countArWords; $i++){
+			if (($pArWords[$i] === $pWord) && $pArWords[$i-1] !== '\\'){
+				return $i;
+			}
+		}
+		return $i;
+	}
+
+	/**
+	 * recherche dans une requête si elle est de la forme WITH X as (select ), ... select
+	 *
+	 * @param string $pQueryString
+	 * @return boolean
+	 */
+	protected function _isWith ($pQueryString){
+		//On met la requête en minuscule pour la suite
+		$pQueryString = strtolower ($pQueryString);
+	
+		//afin de pouvoir découper la chaine en mots, on rajoute des espaces entre tous les caractères spéciaux, puis on découpe la chaine avec les espaces
+		$pQueryString = str_replace (array (',', '(', ')', "\n", "\r", "\t", '\\'), array (' , ', ' ( ', ' ) ', ' ', ' ', ' ', ' \\ '), $pQueryString);
+		$pQueryString = preg_replace ('/[ ]+/', ' ', $pQueryString);
+		$queryParts = explode (' ', $pQueryString);
+		
+		//on s'attend a avoir, en premier mot clef, un with
+		$expect = "with";
+		$countQueryParts = count ($queryParts);
+		for ($i=0; $i < $countQueryParts; $i++){
+			switch ($queryParts[$i]){
+				case '\\':
+					$i++;
+					break;
+				case "'":
+					if ($expect !== "fieldName"){
+						return false;
+					}
+					$i = $this->_getNextCharInArray ("'", $i, $queryParts);
+					$expect = "as";
+					break;
+				case '"':
+					if ($expect !== "fieldName"){
+						return false;
+					}
+					$i = $this->_getNextCharInArray ('"', $i, $queryParts);
+					$expect = "as";
+					break;
+				case 'as':
+					if ($expect !== "as"){
+						return false;
+					}
+					$expect = "(";
+					break;
+				case '(';
+					if ($expect !== "("){
+						return false;
+					}
+					$parenthesisCount = 1;
+					while ($parenthesisCount >= 1 && $i < count ($queryParts)){
+						$i++;
+						if ($queryParts[$i] === '"'){
+							$i = $this->_getNextCharInArray ('"', $i+1, $queryParts);
+						}elseif ($queryParts[$i] === "'"){
+							$i = $this->_getNextCharInArray ("'", $i+1, $queryParts);
+						}elseif ($queryParts[$i] == ')'){
+							$parenthesisCount--;
+						}elseif ($queryParts[$i] == '('){
+							$parenthesisCount++;
+						}
+					}
+					$expect = "keyword";
+					break;
+	
+				case 'select' :
+					if ($expect !== "keyword"){
+						return false;
+					}
+					return true;
+	
+				case ',':
+					$expect = "fieldName";
+					break;
+	
+				case 'with':
+					$expect = "fieldName";
+					break;
+	
+				default:
+					if ($expect !== "fieldName"){
+						return false;
+					}
+					$expect = "as";
+			}
+		}
+
+		//Si on est arrivé jusqu'ici, ce n'est pas un select
+		return false;
+	}
 
 	/**
 	 * Récupère la requête pour avoir une limitation dans les résultats.
@@ -114,7 +228,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 	 * @param int $pOffset l'offset à partir duquel on souhaite récupèrer l'ensemble de résultat
 	 * @param int $pCount le nombre d'élément que l'on souhaite récupèrer.  
 	 */
-	function _parseLimit ($pQuery, $pOffset, $pCount){
+	protected function _parseLimit ($pQuery, $pOffset, $pCount){
 		return "SELECT copixselect2.* FROM (SELECT rownum crownum, copixselect1.* FROM (".$pQuery.") copixselect1 ) copixselect2
                 WHERE crownum BETWEEN ".$pOffset." AND ".($pOffset+$pCount);
 	}
@@ -138,7 +252,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 	public function getFieldList ($pTableName) {
 		$toReturn = array ();
 
-		$arType = array('FLOAT'=>'float', 'LONG'=>'float','NUMBER'=>'float', 'CHAR'=>'varchar', 'VARCHAR2'=>'varchar', 'NVARCHAR2'=>'varchar', 'NCHAR'=>'varchar', 'CLOC'=>'varchar', 'NCLOB'=>'varchar', 'BLOB'=>'blob', 'DATE'=>'datetime');
+		$arType = array('FLOAT'=>'float', 'LONG'=>'varchar', 'NUMBER'=>'float', 'CHAR'=>'varchar', 'VARCHAR2'=>'varchar', 'NVARCHAR2'=>'varchar', 'NCHAR'=>'varchar', 'CLOC'=>'varchar', 'NCLOB'=>'varchar', 'BLOB'=>'blob', 'DATE'=>'datetime');
 
 		$query = "SELECT   a.column_name AS name, " .
                  "         decode (a.nullable, 'Y', 0, 'N', 1) AS not_null, " .
@@ -194,7 +308,8 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 	 * @return  CopixDBOciResultSetIterator / int
 	 */
 	public function iDoQuery ($pQueryString, $pParams = array (), $pOffset = null, $pCount = null){
-		CopixLog::log ($pQueryString.var_export ($pParams, true), 'query', CopixLog::INFORMATION);
+		$extras = array ('binds' => $pParams);
+		_log ($pQueryString, 'query', CopixLog::INFORMATION, $extras);
 
 		$resultsOfQueryParsing = $this->_parseQuery ($pQueryString, $pParams, $pOffset, $pCount);
 		$pQueryString = $resultsOfQueryParsing['query'];
@@ -286,7 +401,8 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 	 * @return  array
 	 */
 	public function doQuery ($pQueryString, $pParams = array (), $pOffset = null, $pCount = null){
-		CopixLog::log ($pQueryString.var_export ($pParams, true), 'query', CopixLog::INFORMATION);
+		$extras = array ('binds' => $pParams);
+		_log ($pQueryString, 'query', CopixLog::INFORMATION, $extras);
 		return $this->_doQuery ($pQueryString, $pParams, $pOffset, $pCount);
 	}
 
@@ -350,7 +466,11 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 				//        	   if (! isset ($arVariables[$variableName]['maxlength'])){
 				//        	   	$arVariables[$variableName]['maxlength'] = -1;
 					//        	   }
-
+                if (($arVariables[$variableName]['type'] === CopixDBQueryParam::DB_LOB)
+				|| $arVariables[$variableName]['type'] === CopixDBQueryParam::DB_BLOB
+				|| $arVariables[$variableName]['type'] === CopixDBQueryParam::DB_CLOB){
+					$$variableName = oci_new_descriptor ($this->_ct, OCI_D_LOB);
+				}
 					if ($arVariables[$variableName]['type'] === CopixDBQueryParam::DB_CURSOR){
 						$$variableName = oci_new_cursor ($this->_ct);
 					}
@@ -374,7 +494,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 				if (($value['type'] === CopixDBQueryParam::DB_LOB)
 				|| ($value['type'] === CopixDBQueryParam::DB_BLOB)
 				|| ($value['type'] === CopixDBQueryParam::DB_CLOB)){
-					$$name->save ($value);
+					$$name->save ($arVariables[$name]['value']);
 				}
 			}
 				
@@ -407,7 +527,31 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 			return $results;
 		}
 
+		/**
+		 * Récupère l'enregistrement avec les bonnes casses
+		 * @param array	 $pRow	 l'enregistrement à récupérer
+		 * @param string $pQuery la requête exécutée	
+		 */
+		private function _getCases ($pRow, $pQuery = null) {
+			$cases = $this->_getFieldCases ($pRow, $pQuery);
+			if ($cases === false){
+				return (object) $pRow;
+			}else{
+				$final = array ();
+				foreach ($pRow as $key=>$name){
+					$final[$cases[$key]] = $name;
+				}
+			}
+			return (object) $final;			
+		}
 		
+		/**
+		 * Extrait la casse des champs depuis un enregistrement résultat et une requête donnée
+		 * 
+		 * @param $pRow l'enregistrement exemple
+		 * @param $pQuery la requête d'ou on extrait l'enregistrement
+		 * @return array
+		 */
 		private function _getFieldCases ($pRow, $pQuery = null){
 			static $queries = array ();
 			if ($pQuery === null){
@@ -446,25 +590,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 			}
 			return $queries[$pQuery];
 		}
-
-		/**
-		 * Récupère l'enregistrement avec les bonnes casses
-		 * @param array	 $pRow	 l'enregistrement à récupérer
-		 * @param string $pQuery la requête exécutée	
-		 */
-		private function _getCases ($pRow, $pQuery = null) {
-			$cases = $this->_getFieldCases ($pRow, $pQuery);
-			if ($cases === false){
-				return (object) $pRow;
-			}else{
-				$final = array ();
-				foreach ($pRow as $key=>$name){
-					$final[$cases[$key]] = $name;
-				}
-			}
-			return (object) $final;			
-		}
-
+		
 		/**
 		 * Récupère le mode à transmettre au driver OC
 		 * @return const
@@ -485,7 +611,8 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 		 *    array['params']['nomParam'] = valeur
 		 */
 		public function iDoProcedure ($pProcedure, $pParams){
-			CopixLog::log ($pProcedure.var_export ($pParams, true), 'query', CopixLog::INFORMATION);
+			$extras = array ('binds' => $pParams);
+			_log ($pProcedure, 'query', CopixLog::INFORMATION, $extras);
 
 			//Préparation de la requête
 			$stmt = ociparse ($this->_ct, $pProcedure);
@@ -574,7 +701,8 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 		 *    array['params']['nomParam'] = valeur
 		 */
 		public function doProcedure ($pProcedure, $pParams){
-			CopixLog::log ($pProcedure.var_export ($pParams, true), 'query', CopixLog::INFORMATION);
+			$extras = array ('binds' => $pParams);
+			_log ($pProcedure, 'query', CopixLog::INFORMATION, $extras);
 
 			//Préparation de la requête
 			$stmt = @ociparse ($this->_ct, $pProcedure);
@@ -610,6 +738,11 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 					if ($arVariables[$variableName]['type'] === CopixDBQueryParam::DB_CURSOR){
 						$$variableName = oci_new_cursor ($this->_ct);
 					}
+                    if (($arVariables[$variableName]['type'] === CopixDBQueryParam::DB_LOB)
+                    || $arVariables[$variableName]['type'] === CopixDBQueryParam::DB_BLOB
+                    || $arVariables[$variableName]['type'] === CopixDBQueryParam::DB_CLOB){
+                        $$variableName = oci_new_descriptor ($this->_ct, OCI_D_LOB);
+                    }
 					if (! OCIBindByName ($stmt, $name, $$variableName, $arVariables[$variableName]['maxlength'], $this->_convertQueryParam ($arVariables[$variableName]['type']))){
 						oci_free_statement ($stmt);
 						throw new CopixDBException ("[CopixDB] Impossible de rapprocher '$name' avec '".$$variableName."' taille ".$arVariables[$variableName]['maxlength']." type ".$this->_convertQueryParam ($arVariables[$variableName]['type']));
@@ -621,7 +754,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 			if (! ociexecute($stmt, OCI_DEFAULT)){
 				$statementErrors = oci_error ($stmt);
 				oci_free_statement ($stmt);
-				throw new CopixDBException ('[CopixDB] Impossible d\'exécuter la procédure '.$pProcedure.' - '.var_export ($statementErrors, true).' avec les variables '.var_export ($arVariables, true));
+				throw new CopixDBException ('[CopixDB] Impossible d\'exécuter la procédure '.$pProcedure.' - '.var_export ($statementErrors,true).' avec les variables '.var_export ($arVariables, true));
 			}
 
 			//analyse des résultats
@@ -638,6 +771,11 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 						$toReturn[':'.$name][] = $r;
 					}
 					oci_free_statement ($$name);
+                } elseif (($value['type'] === CopixDBQueryParam::DB_LOB)
+				|| ($value['type'] === CopixDBQueryParam::DB_BLOB)
+				|| ($value['type'] === CopixDBQueryParam::DB_CLOB)){
+                        $$name->save ($arVariables[$name]['value']);
+                        $toReturn[':'.$name] = $$name->read ($$name->size());
 				}else{
 					$toReturn[':'.$name] = $$name;
 				}

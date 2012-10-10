@@ -51,11 +51,7 @@ echo $pager;
 		</tr>
 <?php  } //foreach ?>
 <?php } else {
-        if ($error == null) {
-            echo '<tr><td colspan="'.count($mapping).'">'._i18n('copix:copixlist.message.zero').'</td></tr>';
-        } else {
-            echo '<tr><td colspan="'.count($mapping).'">'.$error.'</td></tr>'; 
-        }
+        echo '<tr><td colspan="'.count($mapping).'">'._i18n('copix:copixlist.message.zero').'</td></tr>'; 
       }
 ?>
 	<tbody>

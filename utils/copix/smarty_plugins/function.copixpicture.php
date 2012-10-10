@@ -19,5 +19,3 @@ function smarty_function_copixpicture($params, $me) {
         return _tag ('copixpicture', $params);
     }
 }
-
-?>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="repository" descriptioni18n="repository.description" longdescriptioni18n="repository.longdescription" />
+  <group id="tools" captioni18n="copix:copixmodule.group.tools" />
+ </general>
+ <parameters>
+	<parameter name="repositorypath" captioni18n="repository.parameter.repositorypath" default="repository" />
+ </parameters>
+ <admin>
+ 	<link url="repository|file|upload" captioni18n="repository.admin.description" credentials="basic:registered"></link>
+ </admin>
+</moduledefinition>

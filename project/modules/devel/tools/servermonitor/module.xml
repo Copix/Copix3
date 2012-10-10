@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<moduledefinition>
+    <general>
+        <default name="servermonitor" />
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+    </general>
+</moduledefinition>

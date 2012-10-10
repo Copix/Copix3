@@ -30,4 +30,3 @@ function smarty_block_tabs($params, $content, &$me) {
     }
     return _tag ('tabs', $params, $content);
 }
-?>

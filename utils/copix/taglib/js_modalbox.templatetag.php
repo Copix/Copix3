@@ -14,9 +14,7 @@
  * @subpackage	taglib
  */
 class TemplateTagJS_ModalBox extends CopixTemplateTag  {
-
-	public function process ($pParams, $pContent=null){
-		
+	public function process ($pContent = null){
 		$id = $this->getParam('id', uniqid('modalbox'));
 		$customContent = $this->getParam('customContent');
 		if(!$customContent) {
@@ -27,9 +25,9 @@ class TemplateTagJS_ModalBox extends CopixTemplateTag  {
 		$closeTriggers = $this->getParam('closeTriggers');
 		$onOpen = $this->getParam('onOpen');
 		$onClose = $this->getParam('onClose'); 
-		$this->validateParams();
 
-		CopixHTMLHeader::addJSFramework();
+
+		CopixHTMLHeader::addJSFramework(array('overlayfix'));
 		
 		$options = array(
 			'id' => $id
@@ -39,13 +37,13 @@ class TemplateTagJS_ModalBox extends CopixTemplateTag  {
 		}
 		if($openTriggers) {
 			if(!is_array($openTriggers)) {
-				$openTriggers = explode(',', $openTriggers);
+				$openTriggers = preg_split('/,/', $openTriggers);
 			};
 			$options['openTriggers'] = $openTriggers;			
 		}		
 		if($closeTriggers) {
 			if(!is_array($closeTriggers)) {
-				$closeTriggers = explode(',', $closeTriggers);
+				$closeTriggers = preg_split('/,/', $closeTriggers);
 			};
 			$options['closeTriggers'] = $closeTriggers;			
 		}
@@ -81,26 +79,20 @@ class TemplateTagJS_ModalBox extends CopixTemplateTag  {
 		CopixHTMLHeader::addJSLink(_resource('js/taglib/js_modalbox.js'), array('id'=>'taglib_js_modalbox_js'));
 		
 		$js = new CopixJSWidget();
-		
 		$js->Copix->ModalBox->register($options);
 		
 		$events = array();
-		if($onOpen) {
+		if ($onOpen) {
 			$events['open'] = $js->function_(null, null, $onOpen);
 		}
-		if($onClose) {
+		if ($onClose) {
 			$events['close'] = $js->function_(null, null, $onClose);
 		}		
-		if(count($events)) {
+		if (count($events)) {
 			$js->_($id)->addEvents($events);
 		}		
 		
 		CopixHTMLHeader::addJSDOMReadyCode($js);
-		
 		return '<div id="'.$id.'" style="display:none">'.$boxContent.'</div>';
-		
 	}
-	
 }
-
-?>

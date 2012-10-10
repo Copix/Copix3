@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="selectcomplex" version="0.1.0" 
+		         descriptioni18n="selectcomplex.description"
+		         longdescriptioni18n="selectcomplex.longdescription" 
+		         icon="|img/icon/selectcomplex.png" />
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+	</general>
+</moduledefinition>

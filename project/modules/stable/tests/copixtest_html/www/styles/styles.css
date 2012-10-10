@@ -1,0 +1,21 @@
+@CHARSET "UTF-8";
+	.tag {
+		font: 12px Courier New;
+	}
+	
+	.key {
+		color: red;
+	}
+	
+	.name_tag {
+		color: red;
+		font-weight: bold;
+	}
+	
+	.attributes_tag {
+		color: blue;
+	}
+	
+	.contains_tag {
+		color: black;
+	}

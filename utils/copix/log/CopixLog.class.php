@@ -2,56 +2,59 @@
 /**
  * @package copix
  * @subpackage log
- * @author    Landry Benguigui
- * @copyright 2001-2008 CopixTeam
- * @link      http://copix.org
- * @license	  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ * @author Landry Benguigui
+ * @copyright CopixTeam
+ * @link http://copix.org
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
  */
 
 /**
- * Interface de base pour la gestion des logs
+ * Gestion des logs
+ *
  * @package copix
  * @subpackage log
  */
-interface ICopixLogStrategy {
-	public function log    ($pProfil, $pType, $pLevel, $pDate, $pMessage, $pArExtra);
-	public function getLog ($pProfil);
-	public function deleteProfile ($pProfil);
-}
-
-/**
- * Gestion des exceptions de type log
- *
- * @package		copix
- * @subpackage	log
- */
-class CopixLogException extends CopixException { }
-
-/**
- * @package copix
- * @subpackage log 
- */
-class CopixLog{
-	
+class CopixLog {
 	/**
 	 * On conserve les éléments autorisés
+	 *
 	 * @var array
 	 */
 	private static $_enabled = array ();
 	
 	/**
 	 * Liste des strategies déja instanciées
+	 *
 	 * @var array
 	 */
 	private static $_strategy = array ();
 	
 	/**
-	 * Cache des profils activés.
+	 * Cache des profils activés
 	 *
 	 * @var array "type" => niveau mini
 	 */
-	private static $_typeLevels = array();
+	private static $_typeLevels = array ();
 	
+	/**
+	 * Cache des types de log
+	 *
+	 * @var array
+	 */
+	private static $_cacheTypes = null;
+	
+	/**
+	 * Cache des stratégies de log disponibles
+	 *
+	 * @var array
+	 */
+	private static $_cacheStrategies = null;
+	
+	/**
+	 * Log verbeux (on veut voir énorméement de choses)
+	 */
+	const VERBOSE = 0;
+
 	/**
 	 * Log informatif uniquement
 	 */
@@ -63,7 +66,7 @@ class CopixLog{
 	const NOTICE = 2;
 	
 	/**
-	 * Les avertissement qui ne remettent pas en cause le fonctionnement mais restent importants à résoudre 
+	 * Les avertissement qui ne remettent pas en cause le fonctionnement mais restent importants à résoudre
 	 */
 	const WARNING = 3;
 	
@@ -73,7 +76,7 @@ class CopixLog{
 	const EXCEPTION = 4;
 	
 	/**
-	 * Un élément important n'a pas pu être fourni 
+	 * Un élément important n'a pas pu être fourni
 	 */
 	const ERROR = 5;
 	
@@ -83,39 +86,53 @@ class CopixLog{
 	const FATAL_ERROR = 6;
 	
 	/**
-	 * Element qui indique qu'un log est déja en cours (et empêche de lancer un nouveau log entrainant des
-	 *  appels récursifs infinis.
+	 * Element qui indique qu'un log est déja en cours (et empêche de lancer un nouveau log entrainant des appels récursifs infinis)
+	 *
 	 * @var boolean
 	 */
 	private static $_lock = false;
+
+	/**
+	 * Cache des niveaux, pour ne pas rappeler des _i18n en masse pour le caption de chaque level
+	 *
+	 * @var array
+	 */
+	private static $_levels = false;
 	
 	/**
 	 * Appelle la fonction log de la stratégie qui convient
 	 *
-	 * @param String $chaine 
-	 * @param String $level
+	 * @param string $pMessage Message à loger
+	 * @param string $pType Type de message
+	 * @param int $pLevel Niveau du log, utiliser les constantes de CopixLog
+	 * @param array $pExtras Informations supplémentaires
 	 */
-	public static function log ($chaine, $pType = "default", $pLevel = CopixLog::INFORMATION, $arExtra = array ()) {
-		if (! self::$_lock){
+	public static function log ($pMessage, $pType = 'default', $pLevel = CopixLog::INFORMATION, $pExtras = array ()) {
+		if (!self::$_lock) {
 			self::$_lock = true;
 			try {
-				$profils = array();
-				foreach (self::getProfiles ($pType) as $profil) {
-					if ($profil['level'] <= $pLevel && self::_enabled ($profil['name'])) {
+				$profils = array ();
+				foreach (self::getProfiles ($pType, true) as $profil) {
+					$levelOk = (is_array ($profil['level'])) ? in_array ($pLevel, $profil['level']) : $profil['level'] <= $pLevel;
+					if ($levelOk) {
 						$profils[] = $profil;
 					}
 				}
 				if (count ($profils) > 0) {
-				    self::_fillExtra ($arExtra);
-					foreach ($profils as $profil){
+					self::_fillExtra ($pExtras);
+					$date = date ('YmdHis');
+					foreach ($profils as $profil) {
 						try {
-			    			self::_getStrategy ($profil['strategy'])->log ($profil['name'], $pType, $pLevel, date ('YmdHis'), $chaine, $arExtra);
-						} catch(Exception $e) {
+							$strategy = self::_getStrategy ($profil['strategy']);
+							if ($strategy->isWritable ($profil)) {
+								$strategy->log ($profil['name'], $pType, $pLevel, $date, $pMessage, $pExtras);
+							}
+						} catch (Exception $e) {
 							// Perd le log ET ignore l'exception
 						}
-				    }			    	
-			    }
-			}catch (Exception $e){
+					}
+				}
+			} catch (Exception $e) {
 				self::$_lock = false;
 				throw $e;
 			}
@@ -124,258 +141,378 @@ class CopixLog{
 	}
 	
 	/**
-	 * Teste si le type de log est activé de donnera lieu à un log.
-	 * 
-	 * Permet d'éviter de faire des calculs compliqués pour un log qui ne sera pas enregistré. Exemple:
-	 * 
+	 * Indique si le type de log est activé de donnera lieu à un log
+	 * Permet d'éviter de faire des calculs compliqués pour un log qui ne sera pas enregistré
+	 *
 	 * <code>
-	 * if(CopixLog::isEnabled('monTypeDeLog', CopixLog::NOTICE)) {
-	 *   $msgLog = calculComplique($param1, $param2);
-	 *   CopixLog::log($msgLog, 'monTypeDeLog', CopixLog::NOTICE);
+	 * if (CopixLog::isEnabled ('monTypeDeLog', CopixLog::NOTICE)) {
+	 *   $msgLog = calculComplique ($param1, $param2);
+	 *   CopixLog::log ($msgLog, 'monTypeDeLog', CopixLog::NOTICE);
 	 * }
 	 * </code>
 	 *
-	 * @param string $pType Type de log.
-	 * @param integer $pLeveL Niveau de Log souhaité.
-	 * @return boolean Vrai si le type de log est bien activé.
+	 * @param string $pType Type de log
+	 * @param integer $pLeveL Niveau de Log souhaité
+	 * @return boolean
 	 */
-	public static function isEnabled($pType, $pLevel = CopixLog::INFORMATION) {
-		if(!isset($_typeLevels[$pType])) {
+	public static function isEnabled ($pType, $pLevel = CopixLog::INFORMATION) {
+		static $_typeLevels = array ();
+
+		if (!isset ($_typeLevels[$pType])) {
 			$minLevel = self::FATAL_ERROR + 1;
 			$profils = self::getProfiles ($pType);
-			foreach ($profils as $profil){
-				if (self::_enabled ($profil['name']) && $profil['level'] < $minLevel){
+			foreach ($profils as $profil) {
+				if (self::_enabled ($profil['name']) && $profil['level'] < $minLevel) {
 					$minLevel = $profil['level'];
 				}
-		    }
-		    $_typeLevels[$pType] = $minLevel;
-		}		
-	    return $_typeLevels[$pType] <= $pLevel;
+			}
+			$_typeLevels[$pType] = $minLevel;
+		}
+		return $_typeLevels[$pType] <= $pLevel;
 	}
 	
 	/**
-	 * Appelle la fonction getLog de la stratégie qui convient
-	 * 
-	 * @param String $pProfil nom du profil configurer dans copixConfig
-	 * @param String $pNbItems nombre d'items affichés
-	 * @return Iterator log demandé
-	 */
-	public static function getLog ($pProfil, $pNbItems = 20){
-		$profil = CopixConfig::instance ()->copixlog_getProfile ($pProfil);
-		return self::_getStrategy ($profil['strategy'])->getLog ($pProfil, $pNbItems);
-	}
-
-	/**
-	 * Supression du contenu d'un "fichier de log" 
-	 * @param String $pProfil nom du profil à supprimer
-	 */
-	public static function deleteProfile ($pProfil){
-		$profil = CopixConfig::instance ()->copixlog_getProfile ($pProfil);	
-		self::_getStrategy ($profil['strategy'])->deleteProfile ($pProfil);		
-	}
-
-	/**
-	 * Récupération des profils qui gèrent un type d'information donné
-	 * @param 	string	$pType	le type d'information dont on souhaites récupérer les gestionnaires
-	 * @return array 
-	 */
-	public static function getProfiles ($pType){
-		return CopixConfig::instance()->copixlog_getProfileFromType ($pType);    	
-	}
-	
-	/**
-	 * Cette fonction retourne l'instance de la stratégie adéquat
+	 * Conservée pour compatibilité avec Copix 3.0.x
 	 *
-	 * @param String $pProfil nom du profil configurer dans copixConfig
-	 * @param String $pLevel niveau du log demandé
-	 * @return stratégie qui convient
+	 * @deprecated
+	 * @see CopixLog::get
 	 */
-	private static function _getStrategy ($pClasse){
+	public static function getLog ($pProfile, $pCount = 20) {
+		return self::get ($pProfile, 0, $pCount);
+	}
+	
+	/**
+	 * Retourne le contenu du log
+	 *
+	 * @param string $pProfile Nom du profil
+	 * @param int $pStart Index du premier élément à retourner
+	 * @param int $pCount Nombre d'éléments à retourner, null pour tous
+	 * @return CopixLogData[]
+	 */
+	public static function get ($pProfile, $pStart = 0, $pCount = null) {
+		$profil = CopixConfig::instance ()->copixlog_getProfile ($pProfile);
+		$strategy = self::_getStrategy ($profil['strategy']);
+		if ($strategy->isReadable ($pProfile)) {
+			return $strategy->get ($pProfile, $pStart, $pCount);
+		} else {
+			throw new CopixLogException (_i18n ('copix:log.error.cantGet'));
+		}
+	}
+
+	/**
+	 * Conservée pour compatibilité avec Copix 3.0.x
+	 *
+	 * @deprecated
+	 * @see CopixLog::delete
+	 */
+	public static function deleteProfile ($pProfile) {
+		self::delete ($pProfile);
+	}
+	
+	/**
+	 * Supprime le contenu d'un log
+	 *
+	 * @param string $pProfile Nom du profil de log dont on veut supprimer le contenu
+	 */
+	public static function delete ($pProfile) {
+		$profil = CopixConfig::instance ()->copixlog_getProfile ($pProfile);
+		$strategy = self::_getStrategy ($profil['strategy']);
+		if ($strategy->isReadable ($pProfile) && $strategy->isWritable ($pProfile)) {
+			$strategy->delete ($pProfile);
+		}
+	}
+
+	/**
+	 * Retourne les profils qui gèrent un type d'information donné
+	 *
+	 * @param string $pType Type d'information dont on souhaites récupérer les gestionnaires
+	 * @param boolean $pOnlyEnabled Indique si on veut seulement les profils actifs
+	 * @return array
+	 */
+	public static function getProfiles ($pType, $pOnlyEnabled = false) {
+		$profiles = CopixConfig::instance()->copixlog_getProfileFromType ($pType);
+		if ($pOnlyEnabled === false) {
+			return $profiles;
+		}
+		$toReturn = array ();
+		foreach ($profiles as $profile) {
+			if (self::_enabled ($profile['name'])) {
+				$toReturn[] = $profile;
+			}
+		}
+		return $toReturn;
+	}
+	
+	/**
+	 * Retourne l'instance de la stratégie adéquate
+	 *
+	 * @param string $pClasse Classe qui va loger
+	 * @return CopixLogStrategy
+	 */
+	private static function _getStrategy ($pClasse) {
 		$pClasse = strtolower ($pClasse);
 		if ($pClasse == '') {
-			throw new Exception ('Pas de stratégie définie');
+			throw new CopixLogException (_i18n ('copix:log.error.undefinedStrategy'));
 		}
-		if (isset (self::$_strategy[$pClasse])){
+		if (isset (self::$_strategy[$pClasse])) {
 			return self::$_strategy[$pClasse];
 		}
-		switch ($pClasse){
-			case 'file':
-				Copix::RequireOnce (COPIX_PATH.'log/CopixLogFileStrategy.class.php');
-				return self::$_strategy[$pClasse] = new CopixLogFileStrategy ();
-				
-			case 'db':
-				Copix::RequireOnce (COPIX_PATH.'log/CopixLogDbStrategy.class.php');
-				return self::$_strategy[$pClasse] = new CopixLogDbStrategy ();
-				
-			case 'system':
-				Copix::RequireOnce (COPIX_PATH.'log/CopixLogSystemStrategy.class.php');
-				return self::$_strategy[$pClasse] = new CopixLogSystemStrategy ();
-				
-			case 'session':
-				Copix::RequireOnce (COPIX_PATH.'log/CopixLogSessionStrategy.class.php');
-				return self::$_strategy[$pClasse] = new CopixLogSessionStrategy ();
-				
-			case 'firebug':
-				Copix::RequireOnce (COPIX_PATH.'log/CopixLogFirebugStrategy.class.php');
-				return self::$_strategy[$pClasse] = new CopixLogFireBugStrategy ();
-				
-			case 'page':
-				Copix::RequireOnce (COPIX_PATH.'log/CopixLogPageStrategy.class.php');
-				return self::$_strategy[$pClasse] = new CopixLogPageStrategy ();
-				
-			case 'email':
-				Copix::RequireOnce (COPIX_PATH.'log/CopixLogEmailStrategy.class.php');
-				return self::$_strategy[$pClasse] = new CopixLogEmailStrategy ();
-								
-			default:
-				return self::$_strategy[$pClasse] = _ioClass ($pClasse);
+		if (in_array ($pClasse, array ('file', 'db', 'system', 'session', 'firebug', 'page', 'email', 'firephp', 'developertool'))) {
+			$strategyClassName = 'CopixLog' . $pClasse . 'Strategy';
+			return self::$_strategy[$pClasse] = new $strategyClassName ();
+		} else {
+			return self::$_strategy[$pClasse] = _ioClass ($pClasse);
 		}
 	}
-	
+
 	/**
-	 * cette fonction determine si le type/level demandé est valide
+	 * Indique si le profil demandé effectuera un log
 	 *
-	 * @param String $pType nom du profil configurer dans copixConfig
-	 * @return boolean correct ou non
+	 * @param string $pProfil Nom du profil
+	 * @return boolean
 	 */
 	private static function _enabled ($pProfil = 'default') {
-		if(isset(self::$_enabled[$pProfil])){
-    		return self::$_enabled[$pProfil];
-    	}		
+		if (isset (self::$_enabled[$pProfil])) {
+			return self::$_enabled[$pProfil];
+		}
 		$config = CopixConfig::instance ();
 		//On regarde si le type est pris en charge
 		self::$_enabled[$pProfil] = false;
 		
-		if (($typeInformations = $config->copixlog_getProfile ($pProfil)) !== null){			
+		if (($typeInformations = $config->copixlog_getProfile ($pProfil)) !== null) {
 			if ($typeInformations['enabled']) {
 				self::$_enabled[$pProfil] = true;
 			}
-		}		
-    	return self::$_enabled[$pProfil];
-    }
-    
-    /**
-     * Saisie des informations supplémentaires si besoin
-     * @param	array	$pArExtra	tableau des informations de log actuel
-     * @return void 
-     */
-    private static function _fillExtra (& $pArExtra){   
-    	$arTrace = CopixDebug::getDebugBacktrace (2, array(__FILE__));
-    	$trace = reset($arTrace);
-    	while($trace && ((isset($trace['class']) && in_array($trace['class'], array('CopixLog', 'CopixErrorHandler'))) || ($trace['function'] == '_log'))) {
-    		$trace = next($arTrace);
-    	}
-    	$info = array ();
-    	$info['file'] = !empty($trace['file']) ? $trace['file'] : '';
-    	$info['line'] = !empty($trace['line']) ? $trace['line'] : '';
-    	//$trace = next($arTrace);
-        $info['class_name'] = isset ($trace['class']) ? $trace['class'] : '';
-        $info['function_name'] = isset ($trace['function']) ? $trace['function'] : '';
-        $info['request_uri'] = (isset ($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
-        $info['referer'] = (isset ($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : '';
-        $info['host'] = (isset ($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : '';
-        $info['user_agent'] = (isset ($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : '';
-        $info['remote_addr'] = (isset ($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : '';
-		$info['date'] = date (CopixI18N::getDateTimeFormat ('/'));
-    	$pArExtra = array_merge ($info, $pArExtra);
+		}
+		return self::$_enabled[$pProfil];
+	}
+	
+	/**
+	 * Ajoute des informations supplémentaires à $pExtras si elles ne sont pas indiquées
+	 *
+	 * @param array $pExtras Tableau des informations de log actuel
+	 */
+	private static function _fillExtra (&$pExtras) {
+		$arTrace = CopixDebug::getDebugBacktrace (2, array(__FILE__));
+		$trace = reset ($arTrace);
+		while ($trace && ((isset ($trace['class']) && in_array ($trace['class'], array ('CopixLog', 'CopixErrorHandler'))) || ($trace['function'] == '_log'))) {
+			$trace = next ($arTrace);
+		}
+		$info = array ();
+		$info['id'] = uniqid ();
+		$info['file'] = !empty ($trace['file']) ? $trace['file'] : '';
+		$info['line'] = !empty ($trace['line']) ? $trace['line'] : '';
+		$info['class_name'] = isset ($trace['class']) ? $trace['class'] : '';
+		$info['function_name'] = isset ($trace['function']) ? $trace['function'] : '';
+		$info['request_uri'] = (isset ($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
+		$info['referer'] = (isset ($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : '';
+		$info['host'] = (isset ($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : '';
+		$info['user_agent'] = (isset ($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : '';
+		$info['page_id'] = CopixPage::getPageId ();
+		$pExtras = array_merge ($info, $pExtras);
 
-	   	//Détermine l'utilisateur si pas donné
-    	if (!isset ($pArExtra['user'])){
-    		$pArExtra['user'] = CopixAuth::getCurrentUser ()->getLogin ();
-    	}
-    }
-    
-    /**
-     * Retourne la liste des stratégies disponibles pour la sauvegarde des logs
-     * @todo trouver un système pour que cette méthode retourne également les classes du FWK
-     *  qui héritent de ICopixLogStrategy
-     * @return array of object
-     */
-    public static function getStrategies (){
-    	$file = new StdClass ();
-    	$file->id = 'file';
-    	$file->caption = _i18n ('copix:log.CopixLogFileStrategy');
-    	
-    	$db = new StdClass ();
-    	$db->id = 'db';
-    	$db->caption = _i18n ('copix:log.CopixLogDBStrategy');
+		//Détermine l'utilisateur si pas donné
+		if (!isset ($pExtras['user'])) {
+			$users = _currentUser ()->getIdentities ();
+			foreach ($users as &$user) {
+				$user[] = _currentUser ()->getHandlerResponse ($user[0])->getLogin ();
+			}
+			$pExtras['user'] = $users;
+		}
+	}
+	
+	/**
+	 * Retourne les stratégies disponibles pour la sauvegarde des logs
+	 *
+	 * @return array
+	 */
+	public static function getStrategies () {
+		if (self::$_cacheStrategies === null) {
+			$temp =  array ();
 
-    	$system = new StdClass ();
-    	$system->id = 'system';
-    	$system->caption = _i18n ('copix:log.CopixLogSystemStrategy');
+			// stratégies de copix
+			$temp['db'] = new CopixLogStrategyDescription ('copix:CopixLogDbStrategy', _i18n ('copix:log.CopixLogdbStrategy.caption'), _i18n ('copix:log.CopixLogdbStrategy.description'));
+			$temp['file'] = new CopixLogStrategyDescription ('copix:CopixLogFileStrategy', _i18n ('copix:log.CopixLogfileStrategy.caption'), _i18n ('copix:log.CopixLogfileStrategy.description'));
+			$temp['email'] = new CopixLogStrategyDescription ('copix:CopixLogEmailStrategy', _i18n ('copix:log.CopixLogemailStrategy.caption'), _i18n ('copix:log.CopixLogemailStrategy.description'));
+			$temp['firebug'] = new CopixLogStrategyDescription ('copix:CopixLogFirebugStrategy', _i18n ('copix:log.CopixLogfireBugStrategy.caption'), _i18n ('copix:log.CopixLogfireBugStrategy.description'));
+			$temp['page'] = new CopixLogStrategyDescription ('copix:CopixLogPageStrategy', _i18n ('copix:log.CopixLogpageStrategy.caption'), _i18n ('copix:log.CopixLogpageStrategy.description'));
+			$temp['session'] = new CopixLogStrategyDescription ('copix:CopixLogSessionStrategy', _i18n ('copix:log.CopixLogsessionStrategy.caption'), _i18n ('copix:log.CopixLogsessionStrategy.description'));
+			$temp['system'] = new CopixLogStrategyDescription ('copix:CopixLogSystemStrategy', _i18n ('copix:log.CopixLogsystemStrategy.caption'), _i18n ('copix:log.CopixLogsystemStrategy.description'));
+			$temp['firephp'] = new CopixLogStrategyDescription ('copix:CopixLogFirePHPStrategy', _i18n ('copix:log.CopixLogfirePHPStrategy.caption'), _i18n ('copix:log.CopixLogfirePHPStrategy.description'));
+			
+			// stratégies ajoutées via des modules
+			foreach (CopixModule::getList () as $module) {
+				$temp = array_merge ($temp, CopixModule::getInformations ($module)->getLogStrategies ());
+			}
+			
+			// tri
+			$tri = array ();
+			foreach ($temp as $strategy) {
+				$tri[$strategy->getCaption ()] = $strategy->getId ();
+			}
+			ksort ($tri);
+			foreach ($tri as $id) {
+				self::$_cacheStrategies[$id] = $temp[$id];
+			}
+		}
+		return self::$_cacheStrategies;
+	}
+	
+	/**
+	 * Retourne les niveaux de logs
+	 *
+	 * @return array
+	 */
+	public static function getLevels () {
+		// cache pour ne pas rappeler _i18n inutilement, qui prend du temps au final
+		if (self::$_levels === false) {
+			self::$_levels = array (
+				_ppo (array ('id' => self::VERBOSE, 'caption' => _i18n ('copix:log.VERBOSE'))),
+				_ppo (array ('id' => self::INFORMATION, 'caption' => _i18n ('copix:log.INFORMATION'))),
+				_ppo (array ('id' => self::NOTICE, 'caption' => _i18n ('copix:log.NOTICE'))),
+				_ppo (array ('id' => self::WARNING, 'caption' => _i18n ('copix:log.WARNING'))),
+				_ppo (array ('id' => self::EXCEPTION, 'caption' => _i18n ('copix:log.EXCEPTION'))),
+				_ppo (array ('id' => self::ERROR, 'caption' => _i18n ('copix:log.ERROR'))),
+				_ppo (array ('id' => self::FATAL_ERROR, 'caption' => _i18n ('copix:log.FATAL_ERROR')))
+			);
+		}
+		return self::$_levels;
+	}
+	
+	/**
+	 * Retourne le nom du niveau, en prenant en compte la langue
+	 *
+	 * @param int $pLevel Constante de CopixLog
+	 * @return string
+	 */
+	public static function getLevel ($pLevel) {
+		$levels = self::getLevels ();
+		foreach ($levels as $levelInfos) {
+			if ($levelInfos->id == $pLevel) {
+				return $levelInfos->caption;
+			}
+		}
+	}
 
-    	$session = new StdClass ();
-    	$session->id = 'session';
-    	$session->caption = _i18n ('copix:log.CopixLogSessionStrategy');
-    	
-    	$firebug = new StdClass ();
-    	$firebug->id = 'firebug';
-    	$firebug->caption = _i18n ('copix:log.CopixLogFireBugStrategy');
-    	 
-    	$page = new StdClass ();
-    	$page->id = 'page';
-    	$page->caption = _i18n ('copix:log.CopixLogPageStrategy');
+	/**
+	 * Retourne la liste des types de message supportés dans les logs
+	 *
+	 * @return string[]
+	 */
+	public static function getTypes () {
+		if (self::$_cacheTypes === null) {
+			// types définis dans Copix
+			$types = array ('default', 'email', 'xml', 'modules', 'plugin', 'query', 'debug', 'copix', 'copixtimer', 'errors');
+			foreach ($types as $type) {
+				self::$_cacheTypes[$type] = new CopixLogType ('copix:' . $type);
+				self::$_cacheTypes[$type]->setCaption (_i18n ('copix:log.type.' . $type));
+			}
+	
+			// types définis dans les modules
+			foreach (CopixModule::getList () as $module) {
+				self::$_cacheTypes = array_merge (self::$_cacheTypes, CopixModule::getInformations ($module)->getLogTypes ());
+			}
 
-    	$email = new StdClass ();
-    	$email->id = 'email';
-    	$email->caption = _i18n ('copix:log.CopixLogEmailStrategy');
-    	    	
-    	return array ($file, $db, $page, $system, $session, $firebug, $email);    	    	
-    }
-    
-    /**
-     * Récupère les niveaux de logs définis avec id / libellé
-     * @return array
-     */
-    public static function getLevels (){
-    	$toReturn = array ();
+			ksort (self::$_cacheTypes);
+		}
+		
+		return self::$_cacheTypes;
+	}
 
-    	$level = new StdClass ();
-    	$level->id = self::INFORMATION;
-    	$level->caption = _i18n ('copix:log.INFORMATION');
-    	$toReturn[] = $level;
-    	
-    	$level = new StdClass ();
-    	$level->id = self::NOTICE;
-    	$level->caption = _i18n ('copix:log.NOTICE');
-    	$toReturn[] = $level;
-    	
-    	$level = new StdClass ();
-    	$level->id = self::WARNING;
-    	$level->caption = _i18n ('copix:log.WARNING');
-    	$toReturn[] = $level;
-    	
-    	$level = new StdClass ();
-    	$level->id = self::EXCEPTION;
-    	$level->caption = _i18n ('copix:log.EXCEPTION');
-    	$toReturn[] = $level;
-    	 
-    	$level = new StdClass ();
-    	$level->id = self::ERROR;
-    	$level->caption = _i18n ('copix:log.ERROR');
-    	$toReturn[] = $level;
-    	
-    	$level = new StdClass ();
-    	$level->id = self::FATAL_ERROR;
-    	$level->caption = _i18n ('copix:log.FATAL_ERROR');
-    	$toReturn[] = $level;
+	/**
+	 * Retourne la stratégie configurée pour le profil $pProfile
+	 *
+	 * @param string $pProfile Nom du profil
+	 * @return CopixLogStrategy
+	 */
+	private static function _getStrategyFromProfile ($pProfile) {
+		$profile = CopixConfig::instance ()->copixlog_getProfile ($pProfile);
+		return self::_getStrategy ($profile['strategy']);
+	}
 
-    	return $toReturn;
-    }
-    
-    /**
-     * Retourne le niveau en string, en prenant en compte la langue
-     *
-     * @param int $pLevel Constante de CopixLog
-     * @return string
-     */
-    static public function getLevel ($pLevel) {
-    	$levels = self::getLevels ();
-    	foreach ($levels as $levelInfos) {
-    		if ($levelInfos->id == $pLevel) {
-    			return $levelInfos->caption;
-    		}
-    	}
-    }
+	/**
+	 * Retourne la taille prise par les logs du profil $pProfile, en octet
+	 *
+	 * @param string $pProfile Nom du profil
+	 * @param boolean $pFormat Indique si on veut formater le retour ou renvoyer la taille en byte
+	 * @return int
+	 */
+	public static function getSize ($pProfile, $pFormat = true) {
+		$toReturn = self::_getStrategyFromProfile ($pProfile)->getSize ($pProfile);
+		if ($pFormat && $toReturn != null) {
+			$toReturn = _filter ('OctetsToText')->get ($toReturn);
+		}
+		return $toReturn;
+	}
+
+	/**
+	 * Retourne le nombre de logs effectués via le profil $pProfile
+	 *
+	 * @param string $pProfile Nom du profil
+	 * @return int
+	 */
+	public static function count ($pProfile) {
+		return self::_getStrategyFromProfile ($pProfile)->count ($pProfile);
+	}
+
+	/**
+	 * Indique si le profil de log $pProfile autorise la lecture des logs
+	 *
+	 * @param string $pProfile Nom du profil
+	 * @return boolean
+	 */
+	public static function isReadable ($pProfile) {
+		return self::_getStrategyFromProfile ($pProfile)->isReadable ($pProfile);
+	}
+
+	/**
+	 * Indique si le profil de log $pProfile autorise l'écriture des logs
+	 *
+	 * @param string $pProfile Nom du profil
+	 * @return obolean
+	 */
+	public static function isWritable ($pProfile) {
+		return self::_getStrategyFromProfile ($pProfile)->isWritable ($pProfile);
+	}
+	
+	/**
+	 * Retourne des informations sur la stratégie de log
+	 *
+	 * @param string $pName Nom de la stratégie, si elle ne contient pas de | elle sera cherchée dans Copix
+	 * @return CopixLogStrategy
+	 */
+	public static function getStrategyDescription ($pName) {
+		$pos = strpos ($pName, '|');
+		if ($pos !== false) {
+			$description = CopixModule::getInformations (substr ($pName, 0, $pos));
+			foreach ($description->getLogStrategies () as $strategy) {
+				if (strtolower ($strategy->getId ()) == strtolower ($pName)) {
+					return $strategy;
+				}
+			}
+		} else {
+			return new CopixLogStrategyDescription ('copix:' . $pName, _i18n ('copix:log.CopixLog' . $pName . 'Strategy.caption'), _i18n ('copix:log.CopixLog' . $pName . 'Strategy.description'));
+		}
+	}
+
+	/**
+	 * Retourne l'HTML pour la configuration des informations spécifiques à la stratégie
+	 *
+	 * @param array $pProfile Informations sur le profil
+	 * @return string
+	 */
+	public static function getConfigEditor ($pProfile) {
+		return self::_getStrategy ($pProfile['strategy'])->getConfigEditor ($pProfile);
+	}
+
+	/**
+	 * Indique si la configuration de la stratégie est valide
+	 *
+	 * @param array $pProfile Informations sur le profil
+	 * @param array $pConfig Configuration
+	 * @return mixed
+	 */
+	public static function isValidConfig ($pProfile, $pConfig) {
+		return self::_getStrategy ($pProfile['strategy'])->isValidConfig ($pProfile, $pConfig);
+	}
 }
-?>

@@ -1,0 +1,115 @@
+# -- start pretty url configuration --
+
+# -- to enable pretty urls, remove starting "#" --
+#RewriteEngine On
+
+# - For a domain base site:
+#RewriteBase /
+#- For a home html (developper) site:
+#RewriteBase /~your_user_name/copix/www
+#setenv COPIX_REWRITE_RULES On
+
+# -- end of pretty url configuration --
+
+# -- Now configure how to call an url
+
+# - this rewrites http://site.com/module/group/action
+# - to http://site.com/index.php/module/group/action.html
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule (.+) index.php/$1 [L,QSA]
+
+# - this rewrites http://site.com/module/group/name.html 
+# - to http://site.com/index.php/module/group/name
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule (.+).html index.php/$1 [L,QSA]
+
+# - this rewrites http://site.com/module_group_action_name.html 
+# - to http://site.com/index.php/module/group/action_name
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule (.+)_(.+)_(.+).html index.php/$1/$2/$3 [L,QSA]
+
+# -- end of url rewrites
+
+
+
+################################
+# Performance improvements
+################################
+
+# For best results, enable all the following modules:
+# - mod_rewrite (to include version numbers in filenames)
+# - mod_expires (to set far-future expiry dates)
+# - mod_headers (to add caching headers)
+# - mod_deflate (to gzip content to save bandwidth)
+
+# Generate etags based upon file characteristics, not server-dependent
+#FileETag MTime Size
+
+# Set far-future expiry dates for static content
+<IfModule mod_expires.c>
+	# Remove Etags when using expiration dates (using both is redundant)
+	#FileETag None
+	
+	# Activate the module
+	#ExpiresActive on
+	
+	# Short expiration for changing content
+	#ExpiresDefault								"access plus 24 hours"
+	#ExpiresByType text/html						"access plus 1 hour"
+	#ExpiresByType application/rss+xml			"access plus 1 hour"
+	
+	# Far-future expiry date for static content. Change filename to force redownload
+	#ExpiresByType image/gif						"access plus 1 year"
+	#ExpiresByType image/png						"access plus 1 year"
+	#ExpiresByType image/jpg						"access plus 1 year"
+	#ExpiresByType image/jpeg					"access plus 1 year"
+	#ExpiresByType image/x-icon					"access plus 1 year"
+	#ExpiresByType text/css						"access plus 1 year"
+	#ExpiresByType text/javascript				"access plus 1 year"
+	#ExpiresByType application/x-shockwave-flash	"access plus 1 year"
+</IfModule>
+
+
+# Make all content cachable by public proxies
+<IfModule mod_rewrite.c>
+	# Activate the module
+	#RewriteEngine on
+	
+	# Public proxies don't store content with ? so we include the params in the filename
+	# Transforms concat.hash.php into concat.php?id=hash
+	#RewriteRule ^concat\.(.*)\.php$ concat.php?id=$1 [L]
+	
+	# Include the version in the filename
+	# path/name.version.extension => path/name.extension
+	# Flag NC makes it case-insensitive
+	#RewriteRule ^(.+)\.[0-9]+\.(png|gif|jpe?g|ico|css|js|swf)$ $1.$2 [NC,L]
+</IfModule>
+
+# Conditionnal headers
+<IfModule mod_headers.c>
+	# Forces static content to be cachable by public proxies
+	# Warning: proxies don't handle rights management, only activate if resources should be viewable by everyone
+	<FilesMatch "\.(png|gif|jpe?g|ico|css|js|swf)$">
+		#Header set Cache-control "Public"
+	</FilesMatch>
+	
+	# Indicates that content may vary depending on the user-agent that sends the requests
+	# Ensures that gzipped content is served only if the browser can handle it
+	#Header append Vary User-Agent env=!dont-vary
+</IfModule>
+
+# Compress content
+<IfModule mod_deflate.c>
+	# Activate the module
+	#SetOutputFilter DEFLATE
+	
+	# Indicates content that should be compressed, by mime-type
+	#AddOutputFilterByType DEFLATE text/html text/plain text/xml application/rss+xml text/css text/javascript application/x-javascript
+	
+	# Do not compress binary data
+	#SetEnvIfNoCase Request_URI \
+	#\.(?:gif|jpe?g|png|pdf|swf|flv)$ no-gzip dont-vary
+</IfModule>

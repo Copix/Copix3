@@ -29,7 +29,7 @@ abstract class CopixDBPDOConnection extends CopixDBConnection {
 		try {
 			$this->_pdo = new PDO (substr ($pProfil->getConnectionString (), 4), $pProfil->getUser (), $pProfil->getPassword (), $pProfil->getOptions ());
 		}catch (PDOException $e){
-			throw new CopixDBException ($e->getMessage ());
+			throw new CopixDBException ($e->getMessage (), 0, array ('connectionString' => $pProfil->getConnectionString ()));
 		}
 	}
 
@@ -42,7 +42,9 @@ abstract class CopixDBPDOConnection extends CopixDBConnection {
 	 */
 	public function doQuery ($pQueryString, $pParameters = array (), $pOffset = null, $pCount = null){
 		$resultsOfQueryParsing = $this->_parseQuery ($pQueryString, $pParameters, $pOffset, $pCount);
-		CopixLog::log ($resultsOfQueryParsing['query'].var_export ($pParameters, true), "query", CopixLog::INFORMATION);
+		
+		$extras = array ('binds' => $pParameters);
+		_log ($resultsOfQueryParsing['query'], 'query', CopixLog::INFORMATION, $extras);
 
 		if ($resultsOfQueryParsing['isSelect'] && ($resultsOfQueryParsing['offset'] === false || $resultsOfQueryParsing['count'] === false)){
 			//Si nous sommes dans un select et que l'offset et le count ne sont pas gérés autoamtiquement, alors il nous faut un curseur "movable"
@@ -58,7 +60,9 @@ abstract class CopixDBPDOConnection extends CopixDBConnection {
 		}
 
 		if (! $stmt->execute ($pParameters)){
-			throw new CopixDBException ('Impossible d\'exécuter la requête ['.$resultsOfQueryParsing['query'].']'.serialize ($pParameters).implode ('-', $stmt->errorInfo ()));
+			$extras = array ('query_str' => $resultsOfQueryParsing['query'], 'query_params' => $pParameters, 'query_error' => $stmt->errorInfo ());
+			$error = $stmt->errorInfo ();
+			throw new CopixDBException ('Impossible d\'exécuter la requête ['.$resultsOfQueryParsing['query'].'] : ' . $error[2], 0, $extras);
 		}
 		if (! $resultsOfQueryParsing['isSelect']){
 			return $stmt->rowCount ();
@@ -108,8 +112,10 @@ abstract class CopixDBPDOConnection extends CopixDBConnection {
 	 * @param	int		$pCount			le nombre d'élément que l'on souhaites récupérer depuis la base. Si null => le maximum
 	 */
 	public function iDoQuery ($pQueryString, $pParameters = array (), $pOffset = null, $pCount = null){
-			$resultsOfQueryParsing = $this->_parseQuery ($pQueryString, $pParameters, $pOffset, $pCount);
-		CopixLog::log ($resultsOfQueryParsing['query'].var_export ($pParameters, true), "query", CopixLog::INFORMATION);
+		$resultsOfQueryParsing = $this->_parseQuery ($pQueryString, $pParameters, $pOffset, $pCount);
+		
+		$extras = array ('binds' => $pParameters);
+		_log ($resultsOfQueryParsing['query'], 'query', CopixLog::INFORMATION, $extras);
 
 		if ($resultsOfQueryParsing['isSelect'] && ($resultsOfQueryParsing['offset'] === false || $resultsOfQueryParsing['count'] === false)){
 			//Si nous sommes dans un select et que l'offset et le count ne sont pas gérés autoamtiquement, alors il nous faut un curseur "movable"
@@ -125,7 +131,8 @@ abstract class CopixDBPDOConnection extends CopixDBConnection {
 		}
 
 		if (! $stmt->execute ($pParameters)){
-			throw new CopixDBException ('Impossible d\'exécuter la requête ['.$resultsOfQueryParsing['query'].']'.serialize ($pParameters).implode ('-', $stmt->errorInfo ()));
+			$extras = array ('query_str' => $resultsOfQueryParsing['query'], 'query_params' => $pParameters, 'query_error' => $stmt->errorInfo ());
+			throw new CopixDBException ('Impossible d\'exécuter la requête ['.$resultsOfQueryParsing['query'].']', 0, $extras);
 		}
 		if (! $resultsOfQueryParsing['isSelect']){
 			return $stmt->rowCount ();
@@ -211,4 +218,3 @@ abstract class CopixDBPDOConnection extends CopixDBConnection {
 		$this->_pdo->beginTransaction ();
 	}
 }
-?>

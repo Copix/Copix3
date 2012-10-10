@@ -10,7 +10,7 @@
 
 /**
  * Affiche un icone et / ou un texte, qui permet d'afficher / cacher un div quand on click dessus
- * 
+ *
  * @package		copix
  * @subpackage	taglib
  * @example		{showdiv id="divId" show="true"}
@@ -19,6 +19,7 @@
  * Paramètres optionnels
  * 		show : bool, indique si le div est affiché ou non par défaut (ne modifie pas l'état du div), true par défaut.
  * 		showicon : bool, indique si on veut afficher un icone ou non. par défaut, true, et l'icone est _resource ('img/tools/way_up(ou down).png').
+ *      title : string, sera mit dans le alt et le title de l'icone
  * 		icondown : string, indique quel est l'icone que l'on veut afficher quand on peut afficher le div. sera passé en paramètre à _resource.
  *		iconup : string, indique quel est l'icone que l'on veut afficher quand on peut cacher le div. sera passé en paramètre à _resource.
  * 		caption : string, affiche ce texte à droite de l'icone, si il y en a un, sinon seulement le texte.
@@ -27,128 +28,168 @@
  * 		captionupi18n : string, affiche ce texte i18n à droite de l'icone, si il y en a un, sinon seulement le texte, lorsque l'on peut cacher le div.
  *		captiondown : string, affiche ce texte à droite de l'icone, si il y en a un, sinon seulement le texte, lorsque l'on peut afficher le div.
  * 		captiondowni18n : string, affiche ce texte i18n à droite de l'icone, si il y en a un, sinon seulement le texte, lorsque l'on peut afficher le div.
+ *		clicker : identifiant de l'élément à clicker pour afficher / cacher le div demandé (si on n'en spécifie pas, un span avec l'icone et l ecaption sera généré)
+ *      userpreference : string, nom de la préférence utilisateur à lire / sauvegarder pour afficher / cacher par défaut et sauvegarder le statut
+ *      alternate : string, html d'un div affiché à la place du div à cacher, lorsque celui-ci est caché
+ *		alternateelement : identifiant d'un élément HTML à afficher à la place du div à cacher, quand celui-ci est caché
  */
 class TemplateTagShowDiv extends CopixTemplateTag {
 
-	public function process ($pParams, $pContent = null) {
-	    // paramètre id
-	    if (!isset ($pParams['id'])) {
-			throw new CopixTemplateTagException (_i18n ('copix:taglib.showdiv.missingIdParameter'));
-	    }
-	    
-	    // paramètre show
-	    if (!isset ($pParams['show'])) {
-			$pParams['show'] = true;
-	    } else {
-	    	$pParams['show'] = ($pParams['show'] == 'true' || $pParams['show'] == 1);
-	    }
-	    
-	    // paramètre captioni18n fourni, qui vaut dans le cas up et le cas down
-	    if (isset ($pParams['captioni18n'])) {
-	    	$pParams['captionup'] = _i18n ($pParams['captioni18n']);
-	    	$pParams['captiondown'] = $pParams['captionup'];
-		// si on a un paramètre caption qui s'occupe de tout les cas
-	    } else if (isset ($pParams['caption'])) {
-	    	$pParams['captionup'] = $pParams['caption'];
-	    	$pParams['captiondown'] = $pParams['caption'];
-	    // paramètres captionupi18n et captiondowni18n, qui valent chacun pour leur cas
-	    } else if (isset ($pParams['captionupi18n']) && isset ($pParams['captiondowni18n'])) {
-	    	$pParams['captionup'] = _i18n ($pParams['captionupi18n']);
-	    	$pParams['captiondown'] = _i18n ($pParams['captiondowni18n']);	   
-	    // pas de paramètre captionup ou captiondown
-	    } else if (!isset ($pParams['captionup']) || !isset ($pParams['captiondown'])) {
-	    	$pParams['captionup'] = null;
-	    	$pParams['captiondown'] = null;
-	    }
-	    
-	    // paramètre showicon
+	public function process ($pContent = null) {
+		$pParams = $this->getParams ();
+
+		// paramètre id
+		$this->assertParams ('id');
+
+		// paramètre show
+		if (!isset ($pParams['show'])) {
+			$pParams['show'] = (isset ($pParams['userpreference'])) ? CopixUserPreferences::get ($pParams['userpreference'], true) : true;
+		} else {
+			$pParams['show'] = ($pParams['show'] == 'true' || $pParams['show'] == 1);
+		}
+	  
+		// paramètre captioni18n fourni, qui vaut dans le cas up et le cas down
+		if (isset ($pParams['captioni18n'])) {
+			$pParams['captionup'] = _i18n ($pParams['captioni18n']);
+			$pParams['captiondown'] = $pParams['captionup'];
+			// si on a un paramètre caption qui s'occupe de tout les cas
+		} else if (isset ($pParams['caption'])) {
+			$pParams['captionup'] = $pParams['caption'];
+			$pParams['captiondown'] = $pParams['caption'];
+			// paramètres captionupi18n et captiondowni18n, qui valent chacun pour leur cas
+		} else if (isset ($pParams['captionupi18n']) && isset ($pParams['captiondowni18n'])) {
+			$pParams['captionup'] = _i18n ($pParams['captionupi18n']);
+			$pParams['captiondown'] = _i18n ($pParams['captiondowni18n']);
+			// pas de paramètre captionup ou captiondown
+		} else if (!isset ($pParams['captionup']) || !isset ($pParams['captiondown'])) {
+			$pParams['captionup'] = null;
+			$pParams['captiondown'] = null;
+		}
+	  
+		// paramètre showicon
 		$pParams['showicon'] = (!isset ($pParams['showicon']) || (isset ($pParams['showicon']) && ($pParams['showicon'] == 'true' || $pParams['showicon'] == 1)));
-		
+
 		// paramètre iconup
 		$pParams['iconup'] = (isset ($pParams['iconup'])) ? _resource ($pParams['iconup']) : _resource ('img/tools/way_up.png');
-		
+
 		// paramètre icondown
 		$pParams['icondown'] = (isset ($pParams['icondown'])) ? _resource ($pParams['icondown']) : _resource ('img/tools/way_down.png');
-		
-		// code javascript pour afficher / cacher un div		
+
+		// code javascript pour afficher / cacher un div
 		CopixHTMLHeader::addJsCode (
-'if (!window.smarty_show_div_infos) {
-	smarty_show_div_infos = new Array ();
+'if (!window.taglib_show_div_infos) {
+	taglib_show_div_infos = new Array ();
 }
 
-function smarty_show_div (id, show) {
+function taglib_show_div (id, show) {
 	if (show) {
-		img = (window.smarty_show_div_infos[id] && window.smarty_show_div_infos[id][\'img_up\']) ? smarty_show_div_infos[id][\'img_up\'] : null;
+		img = (window.taglib_show_div_infos[id] && window.taglib_show_div_infos[id][\'img_up\']) ? taglib_show_div_infos[id][\'img_up\'] : null;
 		style = \'\';
-		caption = (window.smarty_show_div_infos[id] && window.smarty_show_div_infos[id][\'caption_up\']) ? smarty_show_div_infos[id][\'caption_up\'] : null;
+		styleAlternate = \'none\';
+		caption = (window.taglib_show_div_infos[id] && window.taglib_show_div_infos[id][\'caption_up\']) ? taglib_show_div_infos[id][\'caption_up\'] : null;
 	} else {
-		img = (window.smarty_show_div_infos[id] && window.smarty_show_div_infos[id][\'img_down\']) ? smarty_show_div_infos[id][\'img_down\'] : null;
+		img = (window.taglib_show_div_infos[id] && window.taglib_show_div_infos[id][\'img_down\']) ? taglib_show_div_infos[id][\'img_down\'] : null;
 		style = \'none\';
-		caption = (window.smarty_show_div_infos[id] && window.smarty_show_div_infos[id][\'caption_down\']) ? smarty_show_div_infos[id][\'caption_down\'] : null;
+		styleAlternate = \'\';
+		caption = (window.taglib_show_div_infos[id] && window.taglib_show_div_infos[id][\'caption_down\']) ? taglib_show_div_infos[id][\'caption_down\'] : null;
 	}
 			
-	document.getElementById (id).style.display = style;
-	if (document.getElementById (\'img_\' + id) != undefined) {
-		document.getElementById (\'img_\' + id).src = img;
+	$ (id).setStyle (\'display\', style);
+	
+	$ (id).fireEvent (\'display\');
+	
+	if ($ (\'img_\' + id) != undefined) {
+		$ (\'img_\' + id).src = img;
 		if (caption != null) {
-			document.getElementById (\'caption_\' + id).innerHTML = caption;
+			$ (\'caption_\' + id).set (\'html\', caption);
 		}
+	}
+
+	if (window.taglib_show_div_infos[id][\'alternateelement\']) {
+		$ (window.taglib_show_div_infos[id][\'alternateelement\']).setStyle (\'display\', styleAlternate);
+	} else if (window.taglib_show_div_infos[id][\'alternate\']) {
+		$ (id + \'_alternate\').setStyle (\'display\', styleAlternate);
+	}
+
+	if (window.taglib_show_div_infos[id][\'userpreference\']) {
+		Copix.savePreference (window.taglib_show_div_infos[id][\'userpreference\'], (show) ? 1 : 0);
 	}
 }
 
-function smarty_invert_show (id) {
-	smarty_show_div (id, (document.getElementById (id).style.display != \'\'));
+function taglib_invert_show (id) {
+	taglib_show_div (id, ($ (id).getStyle (\'display\') == \'none\'));
 }',
-'smarty_show_div');
-		
+
+'taglib_show_div');
+
 		// code JS pour créer le tableau des infos de cet ID
-		CopixHTMLHeader::addJsCode ('smarty_show_div_infos[\'' . $pParams['id'] . '\'] = new Array ();', 'smarty_show_div_' . $pParams['id']);
-		
+		$js = 'taglib_show_div_infos[\'' . $pParams['id'] . '\'] = new Array ();';
+
 		// code JS pour les images
 		if ($pParams['showicon'] && !is_null ($pParams['iconup']) && !is_null ($pParams['icondown'])) {
-			CopixHTMLHeader::addJsCode (
-				'smarty_show_div_infos[\'' . $pParams['id'] . '\'][\'img_up\'] = \'' . $pParams['iconup'] . '\';' . "\n" . 
-				'smarty_show_div_infos[\'' . $pParams['id'] . '\'][\'img_down\'] = \'' . $pParams['icondown'] . '\';',
-				'smarty_show_div_img_' . $pParams['id']
-			);
+			$js .= 'taglib_show_div_infos[\'' . $pParams['id'] . '\'][\'img_up\'] = \'' . $pParams['iconup'] . '\';';
+			$js .= 'taglib_show_div_infos[\'' . $pParams['id'] . '\'][\'img_down\'] = \'' . $pParams['icondown'] . '\';';
 		}
-		
+
 		// code javascript pour les captions
 		if (!is_null ($pParams['captionup']) && !is_null ($pParams['captiondown'])) {
-			CopixHTMLHeader::addJsCode (
-				'smarty_show_div_infos[\'' . $pParams['id'] . '\'][\'caption_up\'] = \'' . str_replace ("'", "\'", $pParams['captionup']) . '\';' . "\n" . 
-				'smarty_show_div_infos[\'' . $pParams['id'] . '\'][\'caption_down\'] = \'' . str_replace ("'", "\'", $pParams['captiondown']) . '\';',
-				'smarty_show_div_captions_' . $pParams['id']
-			);
+			$js .= 'taglib_show_div_infos[\'' . $pParams['id'] . '\'][\'caption_up\'] = \'' . str_replace ("'", "\'", $pParams['captionup']) . '\';';
+			$js .= 'taglib_show_div_infos[\'' . $pParams['id'] . '\'][\'caption_down\'] = \'' . str_replace ("'", "\'", $pParams['captiondown']) . '\';';
 		}
-		
-	    // création du code HTML
-	    if ($pParams['showicon'] || (!is_null ($pParams['captionup']) && !is_null ($pParams['captiondown']))) {
-		    if ($pParams['show']) {
-		    	$imgSrc = $pParams['iconup'];
-		    	$caption = $pParams['captionup'];
-		    } else {
-		    	$imgSrc = $pParams['icondown'];
-		    	$caption = $pParams['captiondown'];
-		    }
-			$out = '<a href="javascript: smarty_invert_show (\'' . $pParams['id'] . '\');">';
-		    
-		    // si on veut afficher un icon
-		    if ($pParams['showicon']) {
-		    	$out .= '<img id="img_' . $pParams['id'] . '" src="' . $imgSrc . '" style="cursor:pointer" alt="showdiv" />';
-		    }
-		    
-		    // si on veut afficher un caption
-			if (!is_null ($caption)) {
-				$out .= ' <span id="caption_' . $pParams['id'] . '">' . $caption . "</span>";
+
+		// préférence utilisateur
+		if (isset ($pParams['userpreference'])) {
+			$js .= 'taglib_show_div_infos[\'' . $pParams['id'] . '\'][\'userpreference\'] = \'' . $pParams['userpreference'] . '\';';
+		}
+
+		// texte alternatif
+		if ($this->getParam ('alternateelement') != null) {
+			$js .= 'window.taglib_show_div_infos[\'' . $pParams['id'] . '\'][\'alternateelement\'] = \'' . $this->getParam ('alternateelement') . '\'';
+		} else if (isset ($pParams['alternate'])) {
+			$jsDomReady = 'var taglib_show_div_alternate = new Element (\'div\');';
+			$jsDomReady .= 'taglib_show_div_alternate.id = \'' . $pParams['id'] . '_alternate\';';
+			$jsDomReady .= 'taglib_show_div_alternate.set (\'html\', \'' . str_replace ("'", "\'", $pParams['alternate']) . '\');';
+			if ($pParams['show']) {
+				$jsDomReady .= 'taglib_show_div_alternate.setStyle (\'display\', \'none\');';
 			}
-			
-			$out .= '</a>';
-	    } else {
-	    	$out = null;
-	    }
-	    
-	    return $out;
-	} 
+			$jsDomReady .= 'taglib_show_div_alternate.injectAfter ($ (\'' . $pParams['id'] . '\'));';
+			CopixHTMLHeader::addJSDOMReadyCode ($jsDomReady);
+			$js .= 'window.taglib_show_div_infos[\'' . $pParams['id'] . '\'][\'alternate\'] = \'' . str_replace ("'", "\'", $pParams['alternate']) . '\';';
+		}
+
+		CopixHTMLHeader::addJSCode ($js, 'taglib_show_div_' . $pParams['id']);
+
+		// création du code HTML
+		$clicker = $this->getParam ('clicker');
+		$toReturn = null;
+		// pas de clicker, une caption ou une icone
+		if ($clicker == null && $pParams['showicon'] || (!is_null ($pParams['captionup']) && !is_null ($pParams['captiondown']))) {
+			if ($pParams['show']) {
+				$imgSrc = $pParams['iconup'];
+				$caption = $pParams['captionup'];
+			} else {
+				$imgSrc = $pParams['icondown'];
+				$caption = $pParams['captiondown'];
+			}
+			$toReturn = '<a href="javascript: taglib_invert_show (\'' . $pParams['id'] . '\');">';
+
+			// si on veut afficher un icon
+			if ($pParams['showicon']) {
+				$toReturn .= '<img id="img_' . $pParams['id'] . '" src="' . $imgSrc . '" style="cursor:pointer" alt="' . $this->getParam ('title') . '" title="' . $this->getParam ('title') . '" />';
+			}
+
+			// si on veut afficher un caption
+			if (!is_null ($caption)) {
+				$toReturn .= ' <span id="caption_' . $pParams['id'] . '">' . $caption . '</span>';
+			}
+				
+			$toReturn .= '</a>';
+
+		// clicker spécifié
+		} else if ($clicker != null) {
+			CopixHTMLHeader::addJSDOMReadyCode ("$ ('" . $clicker . "').addEvent ('click', taglib_invert_show.pass ('" . $pParams['id'] . "'))");
+		}
+	  
+		return $toReturn;
+	}
 }
-?>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="auth" version="1.0.0" longdescriptioni18n="auth.longdescription" descriptioni18n="auth.description" icon="auth|img/icon/auth.png" />
+		<group id="standard" captioni18n="copix:copixmodule.group.standard" />
+	</general>
+
+	<admin>
+		<group id="dbhandlers" captioni18n="auth.admingroup.dbhandlers" icon="|img/icon/database.png">
+			<link captioni18n="auth.adminUserHandlers" url="auth|admin|userHandlers" credentials="basic:admin" icon="auth|img/icon/userhandler.png" />
+			<link captioni18n="auth.adminGroupHandlers" url="auth|admin|groupHandlers" credentials="basic:admin" icon="auth|img/icon/grouphandler.png" />
+			<link captioni18n="auth.adminCredentialHandlers" url="auth|admin|credentialHandlers" credentials="basic:admin" icon="auth|img/icon/credentials.png" />
+		</group>		
+		<group id="auth" captioni18n="auth.admingroup.auth" icon="auth|img/icon/auth.png">
+			<link captioni18n="auth.adminUsers" url="auth|users|" credentials="basic:admin" icon="auth|img/icon/user.png" />
+			<link captioni18n="auth.adminGroups" url="auth|groups|" credentials="basic:admin" icon="auth|img/icon/group.png" />
+		</group>
+	</admin>
+
+	<parameters>
+		<group captioni18n="auth.group.general">
+			<parameter name="multipleConnectionHandler" descriptioni18n="auth.parameter.description.multipleConnectionHandler" captioni18n="auth.multipleConnectionHandler" default="1" type="bool" />
+			<parameter name="timetolive" descriptioni18n="auth.parameter.description.timetolive" captioni18n="auth.remember_time" default="2678400" type="int" />
+		</group>  
+		<group captioni18n="auth.group.redirect">
+			<parameter name="authorizeRedirectIfOK" descriptioni18n="auth.parameter.description.authorizeRedirectIfOK" captioni18n="auth.authorizeRedirectIfOK" default="1" type="bool" />
+			<parameter name="authorizeRedirectIfNoK" descriptioni18n="auth.parameter.description.authorizeRedirectIfNoK" captioni18n="auth.authorizeRedirectIfNoK" default="1" type="bool" />
+		</group>
+		<group captioni18n="auth.group.dbuserhandler">
+			<parameter name="createUser" descriptioni18n="auth.parameter.description.createUser" captioni18n="auth.createUser" default="0" type="bool" />
+			<parameter name="typeConfirm" descriptioni18n="auth.parameter.description.typeConfirm" captioni18n="auth.typeConfirm" default="email" type="select" listValues="email=>E-mail" />
+			<parameter name="cryptPassword" descriptioni18n="auth.parameter.description.cryptPassword" captioni18n="auth.cryptPassword" type="select" default="md5" listValues="md5=>MD5;sha1=>SHA1;SHA256=>SHA256" />
+		</group>
+	</parameters>
+
+	<userhandlers>
+		<userhandler name="dbuserhandler" required="false" />
+	</userhandlers>
+
+	<grouphandlers>
+		<grouphandler name="dbgrouphandler" />
+	</grouphandlers>
+ 
+	<credentialhandlers>
+		<credentialhandler name="dbcredentialhandler" stopOnSuccess="true" stopOnFailure="false" />
+		<credentialhandler name="dbmodulecredentialhandler" stopOnSuccess="true" stopOnFailure="false">
+			<handle name="module" />
+		</credentialhandler>
+	</credentialhandlers>
+</moduledefinition>

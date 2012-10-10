@@ -25,6 +25,4 @@ function smarty_function_csv($params, $me) {
    }else {
       return _tag ('csv', $params);
    }
-    
 }
-?>

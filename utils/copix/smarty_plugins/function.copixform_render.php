@@ -52,4 +52,3 @@ function smarty_function_copixform_render($params, &$me) {
 		return $toReturn;
 	}
 }
-?>

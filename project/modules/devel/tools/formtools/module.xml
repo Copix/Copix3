@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="formtools" description="module formtools" />
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+	</general>
+	<parameters>
+		  <parameter name="defaultvalidurl" caption="Trigramme de l'url par défault" default="formtools|default|validform" />
+	</parameters>
+</moduledefinition>

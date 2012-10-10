@@ -19,7 +19,7 @@ CopixPopup = new Class({
 		this.divsize = this.div.getSize();
 		this.div.setStyles({'display':'none','visibility':'visible'});
 		this.declencheur.addEvent('trash', function () {
-			$ (this.div).remove ();
+		   $ (this.div).remove ();
 		}.bind(this));
 		
 		this.declencheur.addEvent('sync', this.sync.bind(this));
@@ -75,20 +75,20 @@ CopixPopup = new Class({
 		scrollLeft = (document.documentElement.scrollLeft) ? document.documentElement.scrollLeft : document.body.scrollLeft;
 		
 		x = this.declencheur.getPosition().x;
-		y = this.declencheur.getPosition().y+this.declencheur.getSize().size.y;
+		y = this.declencheur.getPosition().y+this.declencheur.getSize().y;
 		
-		tempx = (this.declencheur.getPosition().x+this.declencheur.getSize().size.x)-this.div.getSize().size.x;
-		tempy = this.declencheur.getPosition().y-this.div.getSize().size.y;
+		tempx = (this.declencheur.getPosition().x+this.declencheur.getSize().x)-this.div.getSize().x;
+		tempy = this.declencheur.getPosition().y-this.div.getSize().y;
 		
-		if (x+this.div.getSize().size.x-scrollLeft > window.getSize().size.x && (tempx-scrollLeft) > 0) {
+		if (x+this.div.getSize().x-scrollLeft > window.getSize().x && (tempx-scrollLeft) > 0) {
 			x=tempx;
-		} else if (x+this.div.getSize().size.x-scrollLeft > window.getSize().size.x && (tempx-scrollLeft) < 0) {
+		} else if (x+this.div.getSize().x-scrollLeft > window.getSize().x && (tempx-scrollLeft) < 0) {
 			x=scrollLeft;
 		}
 		
-		if (y+this.div.getSize().size.y-scrollTop > window.getSize().size.y && (tempy-scrollTop) > 0) {
+		if (y+this.div.getSize().y-scrollTop > window.getSize().y && (tempy-scrollTop) > 0) {
 			y=tempy;
-		} else if (y+this.div.getSize().size.y-scrollTop > window.getSize().size.y && (tempy-scrollTop) < 0) {
+		} else if (y+this.div.getSize().y-scrollTop > window.getSize().y && (tempy-scrollTop) < 0) {
 			y=scrollTop;
 		}
 

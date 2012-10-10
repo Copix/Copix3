@@ -18,4 +18,3 @@ function smarty_function_select ($params, $me) {
 		return _tag ('select', $params);
 	}
 }
-?>

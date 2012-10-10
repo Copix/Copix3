@@ -49,4 +49,3 @@ function smarty_function_copixlist_submit($params, &$me) {
 		return $toReturn;
 	}
 }
-?>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Date - heure</name>
+		<description>Dernière mise à jour le jj/mm/yyyy à hh:mm:ss</description>
+		<image></image>
+		<tpl>portal|portlettemplates/default.dateupdate.tpl</tpl>
+	</template>
+	<template>
+		<name>Heure</name>
+		<description>Dernière mise à jour à hh:mm:ss</description>
+		<image></image>
+		<tpl>portal|portlettemplates/hour.dateupdate.tpl</tpl>
+	</template>
+	<template>
+		<name>Date</name>
+		<description>Dernière mise à jour le jj/mm/yyyy</description>
+		<image></image>
+		<tpl>portal|portlettemplates/date.dateupdate.tpl</tpl>
+	</template>
+	<template>
+		<name>Date avec heure en "title"</name>
+		<description>Dernière mise à jour le jj/mm/yyyy, heure en "title"</description>
+		<image></image>
+		<tpl>portal|portlettemplates/datetitlehour.dateupdate.tpl</tpl>
+	</template>
+</templates>

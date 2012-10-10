@@ -26,4 +26,3 @@ function smarty_function_htmleditor($params, $smarty) {
 		return _tag ('htmleditor', $params);
 	}
 }
-?>

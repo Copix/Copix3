@@ -1,20 +1,20 @@
 <?php
 /**
- * @package		copix
+ * @package	copix
  * @subpackage	taglib
- * @author		Gérald Croës
- * @copyright	2000-2006 CopixTeam
- * @link			http://www.copix.org
- * @license  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ * @author	Gérald Croës
+ * @copyright	CopixTeam
+ * @link	http://www.copix.org
+ * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
  */
 
 /**
- * @package		copix
+ * @package	copix
  * @subpackage	taglib
  */
 class TemplateTagHtmlEditor extends CopixTemplateTag {
-    public function process($pParams) {
-        extract($pParams);
+    public function process($pContent = null) {
+        extract ($this->getParams ());
 
         if (empty ($content)) {
             $content = '&nbsp;';
@@ -39,9 +39,9 @@ class TemplateTagHtmlEditor extends CopixTemplateTag {
     }
 
     private function _doTinyMCE ($name, $content, $width, $height) {
+        _tag('mootools', array('plugins'=>"resize"));
         CopixHTMLHeader::addJSLink (_resource('js/tiny_mce/tiny_mce_src.js'), array ('concat' => false));
 
-    
         $jsCode = <<<EOF
 tinyMCE.init({
         language : "fr",
@@ -61,7 +61,7 @@ tinyMCE.init({
         elements : '$name',
         relative_urls : false,
         convert_urls : false,
-        plugins : "table",
+        plugins : "table,elementchooser,imagechooser",
         table_styles : "Header 1=header1;Header 2=header2;Header 3=header3",
         table_cell_styles : "Header 1=header1;Header 2=header2;Header 3=header3;Table Cell=tableCel1",
         table_row_styles : "Header 1=header1;Header 2=header2;Header 3=header3;Table Row=tableRow1",
@@ -80,15 +80,7 @@ EOF;
 
     private function _doCKEditor ($name, $content, $width, $height) {
         CopixHTMLHeader::addJSLink (_resource ('js/ckeditor/ckeditor.js'));
-        CopixHTMLHeader::addJSDOMReadyCode ("
-        	if(CKEDITOR.instances['$name'] != undefined){
-			    CKEDITOR.remove(CKEDITOR.instances['$name']);
-			    CKEDITOR.replace('$name');
-		    } else{
-		        CKEDITOR.replace('$name');
-		    }
-        ");
-    
+        CopixHTMLHeader::addJSDOMReadyCode ("CKEDITOR.replace( '$name' );");
         return '<textarea id="'.$name.'" name="'.$name.'" style="width:99%; height: '.$height.'px">'.$content.'</textarea>';
     }
 }

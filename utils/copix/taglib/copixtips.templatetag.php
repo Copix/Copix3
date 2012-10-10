@@ -1,11 +1,11 @@
 <?php
 /**
- * @package		copix
- * @subpackage	taglib
- * @author		Salleyron Julien
- * @copyright	2000-2006 CopixTeam
- * @link			http://www.copix.org
- * @license  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ * @package    copix
+ * @subpackage taglib
+ * @author     Salleyron Julien
+ * @copyright  CopixTeam
+ * @link       http://www.copix.org
+ * @license    http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
  */
 
 /**
@@ -13,8 +13,8 @@
  * @subpackage	taglib
  */
 class TemplateTagCopixTips extends CopixTemplateTag {
-    public function process ($pParams) {
-        extract ($pParams);
+    public function process ($pContent = null) {
+        extract ($this->getParams ());
         if ((!isset ($tips)) && (!isset ($warning))) {
             return '';
         }
@@ -34,12 +34,11 @@ class TemplateTagCopixTips extends CopixTemplateTag {
         if (strlen ($toReturn)){
         	$toReturn = '<ul>'.$toReturn.'</ul>';        	
         	if (isset ($title) ){
-            	$toReturn = '<h2><img src="' . _resource ('img/icons/help.gif') . '" /> ' . $title.'</h2>'.$toReturn;
+            	$toReturn = '<h2><img src="' . _resource ('img/icons/help.gif') . '" alt="" /> ' . $title.'</h2>'.$toReturn;
         	}elseif (isset ($titlei18n)){
-        		$toReturn = '<h2><img src="' . _resource ('img/icons/help.gif') . '" /> ' . _i18n($titlei18n).'</h2>'.$toReturn;
+        		$toReturn = '<h2><img src="' . _resource ('img/icons/help.gif') . '" alt="" /> ' . _i18n($titlei18n).'</h2>'.$toReturn;
         	}
 		}
         return $toReturn;
     }
 }
-?>

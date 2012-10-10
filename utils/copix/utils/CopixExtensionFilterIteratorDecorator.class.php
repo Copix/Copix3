@@ -27,8 +27,8 @@ class CopixExtensionFilterIteratorDecorator extends FilterIterator {
 	 * @return boolean
 	 */
 	public function accept (){
-		if (is_readable ($this->current ())) {
-			return substr ($this->current (), -1 * strlen ($this->_ext)) === $this->_ext;
+		if (substr ($this->current (), -1 * strlen ($this->_ext)) === $this->_ext){
+			return is_readable ($this->current ());
 		}
 		return false;
 	}

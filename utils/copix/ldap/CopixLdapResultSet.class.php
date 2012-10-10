@@ -72,4 +72,3 @@ class CopixLDAPResultSet {
 		return ldap_count_entries ($this->_ldapConnection->getConnectionResource (), $this->_ldapSearchResults);
 	}
 }
-?>

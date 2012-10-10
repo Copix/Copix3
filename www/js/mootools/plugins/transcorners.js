@@ -28,7 +28,7 @@ var Transcorner = new Class({
 	,assemble: function(vertical, horizontal) {
 		var corner;
 		var el = this.el;
-		while ((el = el.getParent()) && el.getTag()!='html' && [false, 'transparent'].test(corner = el.getStyle('background-color'))) {};
+		while ((el = el.getParent()) && el.getTag()!='html' && [false, 'transparent'].contains(corner = el.getStyle('background-color'))) {};
 		var s = function(property, dontParse) {	return !dontParse ? (parseInt(this.el.getStyle(property)) || 0) : this.el.getStyle(property); }.bind(this);
 		var sides = {
 			left:'right',
@@ -76,6 +76,6 @@ var Transcorner = new Class({
 		this.options.onComplete();
 	}
 });
-Element.extend({
+Element.implement({
 	makeRounded: function(side, options){ return new Transcorner(this, side, options);	}
 });

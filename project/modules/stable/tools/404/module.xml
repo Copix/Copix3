@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="404" descriptioni18n="404.module.description"
+		longdescriptioni18n="404.module.description" icon="|img/icon/404.png"/>
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+	</general>
+	<parameters>
+		<parameter name="sitemap_url" captioni18n="404.parameter.sitemap_url" default="" />
+		<parameter name="search_url" captioni18n="404.parameter.search_url" default="" />
+	</parameters>
+</moduledefinition>	

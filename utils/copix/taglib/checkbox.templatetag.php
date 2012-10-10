@@ -1,76 +1,103 @@
 <?php
 /**
-* @package copix
-* @subpackage taglib
-* @author Salleyron Julien
-* @copyright CopixTeam
-* @link	http://www.copix.org
-* @license  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
-*/
+ * @package		copix
+ * @subpackage	taglib
+ * @author		Salleyron Julien
+ * @copyright	2000-2006 CopixTeam
+ * @link			http://www.copix.org
+ * @license  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ */
 
 /**
  * Génération de checkbox
- * 
- * @package	copix
- * @subpackage taglib
+ * @package		copix
+ * @subpackage	taglib
  */
 class TemplateTagCheckBox extends CopixTemplateTag {
 	/**
 	 * Construction du code HTML
 	 * On utilise également les modifications d'en tête HTML
 	 */
-	public function process ($pParams) {
+	public function process ($pContent = null){
+		$pParams = $this->getParams ();
+		$toReturn = '';
+		extract($pParams);
+
 		//input check
-		if (empty ($pParams['name'])) {
+		if (empty($name)) {
 			throw new CopixTemplateTagException ("[plugin checkbox] parameter 'name' cannot be empty");
 		}
-
-		$pParams['values'] = $this->getParam ('values', array ());
-		if ((!is_array ($pParams['values'])) && ! ($pParams['values'] instanceof Iterator)) {
-			$pParams['values'] = (array) $pParams['values'];
+		if (empty ($values)){
+			$values = array ();
+		}
+		if ((!is_array ($values)) && ! ($values instanceof Iterator)){
+			$values = (array) $values;
+		}
+		if(empty ($id)){
+			$id = $name;
 		}
 
-		$pParams['id'] = $this->getParam ('id', $pParams['name']);
-		$pParams['selected'] = $this->getParam ('selected', null);
-		$pParams['encoding'] = $this->getParam ('encoding', null);
-		$pParams['extra'] = $this->getParam ('extra', null);
-		$pParams['separator'] = $this->getParam ('separator', '&nbsp;&nbsp;');
+		if (empty ($selected)){
+			$selected = null;
+		}
 
-		if (!empty ($pParams['objectMap'])) {
-			$tab = explode (';', $pParams['objectMap']);
-			if (count ($tab) != 2) {
+		if (!empty ($objectMap)){
+			$tab = explode (';', $objectMap);
+			if (count ($tab) != 2){
 				throw new CopixTemplateTagException ("[plugin checkbox] parameter 'objectMap' must looks like idProp;captionProp");
 			}
-			$idProp = $tab[0];
+			$idProp      = $tab[0];
 			$captionProp = $tab[1];
 		}
-	   
+		if (empty ($extra)){
+			$extra = '';
+		}
+
+		if (empty($separator)) {
+			$separator = '';
+		}
+
+		//check if there is a template or display in columns
+		$isTemplate = (array_key_exists('template', $pParams) && $pParams['template']) || (array_key_exists('columns', $pParams) && $pParams['columns']);
 		//each of the values.
-		$checkboxes = array ();
-		if (empty ($pParams['objectMap'])) {
-			foreach ($pParams['values'] as $key => $caption) {
-				$checkboxes[] = array (
-					'selected' => ((array_key_exists ('selected', $pParams)) && (in_array ($key, (is_array ($pParams['selected']) ? $pParams['selected'] : array ($pParams['selected']))))) ? ' checked="checked" ' : '',
-					'id' => $pParams['id'] . '_' . $key,
-					'caption' => (!isset ($pParams['encodeCaption']) || $pParams['encodeCaption']) ? _copix_utf8_htmlentities ($caption, $pParams['encoding']) : $caption,
-					'value' => $key
-				);
+		if (empty ($objectMap)){
+			foreach ($values  as $key=>$caption) {
+				$selectedString = ((array_key_exists('selected', $pParams)) && (in_array($key,(is_array($selected) ? $selected : array($selected))))) ? ' checked="checked" ' : '';
+				$class = isset ($class) ? ' '.$class : '';
+				$classString = ' class="copixcheck'.$name.$class.'"';
+				$checkid = $id.'_'.$key;
+				if ($isTemplate){
+					$toReturn[] = '<input'.$classString.' id="'.$checkid.'" type="checkbox" name="'.$name.'[]" '.$extra.' value="'.$key.'"'.$selectedString.' /><label id="'.$checkid.'_label" for="'.$checkid.'" > '._copix_utf8_htmlentities($caption).'</label>'.$separator;
+				} else {
+					$toReturn .= '<input'.$classString.' id="'.$checkid.'" type="checkbox" name="'.$name.'[]" '.$extra.' value="'.$key.'"'.$selectedString.' /><label id="'.$checkid.'_label" for="'.$checkid.'" > ' . _copix_utf8_htmlentities($caption).'</label>'.$separator;
+				}
 			}
-		//if given an object mapping request.
-		} else {
-			foreach ($pParams['values'] as $key => $object) {
-				$checkboxes[] = array (
-					'selected' => ((array_key_exists ('selected', $pParams)) && ($object->$idProp == $pParams['selected'])) ? ' checked="checked" ' : '',
-					'id' => $pParams['id'] . '_' . $object->$idProp,
-					'caption' => (!isset ($pParams['encodeCaption']) || $pParams['encodeCaption']) ? _copix_utf8_htmlentities ($object->$captionProp, $pParams['encoding']) : $object->$captionProp,
-					'value' => $object->$idProp
-				);
+		}else{
+			//if given an object mapping request.
+			foreach ($values  as $key=>$object) {
+				if (is_array($object)) {
+					$object = (object)$object;
+				}
+				$class = isset ($class) ? ' '.$class : '';
+				$classString = ' class="copixcheck'.$name.$class.'"';
+				$selectedString = ((array_key_exists('selected', $pParams)) && (in_array ($object->$idProp, (is_array($selected) ? $selected : array($selected)), true)) ? ' checked="checked" ' : '');
+				$checkid = $id.'_'.$object->$idProp;
+				if ($isTemplate){
+					$toReturn[] = '<input'.$classString.' id="'.$checkid.'" type="checkbox" name="'.$name.'[]" '.$extra.' value="'.$object->$idProp.'"'.$selectedString.' /><label id="'.$checkid.'_label" for="'.$checkid.'" > ' . _copix_utf8_htmlentities($object->$captionProp).'</label>'.$separator;
+				} else {
+					$toReturn .= '<input'.$classString.' id="'.$checkid.'" type="checkbox" name="'.$name.'[]" '.$extra.' value="'.$object->$idProp.'"'.$selectedString.' /><label id="'.$checkid.'_label" for="'.$checkid.'" > ' . _copix_utf8_htmlentities($object->$captionProp).'</label>'.$separator;
+				}
 			}
 		}
 
-		$tpl = new CopixTPL ();
-		$tpl->assign ('params', $pParams);
-		$tpl->assign ('checkboxes', $checkboxes);
-		return $tpl->fetch ('default|taglib/checkbox.php');
+		CopixHTMLHeader::addJSLink(_resource ('js/taglib/checkbox.js'));
+		CopixHTMLHeader::addJSDOMReadyCode('copixcheckboxes ("copixcheck'.$name.'");');
+		if ($isTemplate){
+			$tpl = new CopixTpl();
+			$tpl->assign('rows', $toReturn);
+			$tpl->assign('params', $pParams);
+			return $tpl->fetch(array_key_exists('template', $pParams) && $pParams['template'] ? $pParams['template'] : 'copix:templates/checkbox.tag.php');
+		}
+		return $toReturn;
 	}
 }

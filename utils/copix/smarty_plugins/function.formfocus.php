@@ -22,4 +22,3 @@ function smarty_function_formfocus($params, $smarty) {
       return _tag ('formfocus', $params);
    }
 }
-?>

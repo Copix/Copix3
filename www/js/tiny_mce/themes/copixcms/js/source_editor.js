@@ -3,6 +3,7 @@ tinyMCEPopup.onInit.add(onLoadInit);
 
 function saveContent() {
 	tinyMCEPopup.editor.setContent(document.getElementById('htmlSource').value, {source_view : true});
+	tinyMCEPopup.editor.cmsChange(tinyMCEPopup.editor.getContent());
 	tinyMCEPopup.close();
 }
 

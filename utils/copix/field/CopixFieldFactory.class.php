@@ -24,7 +24,7 @@ class CopixFieldFactory {
 	 *                         Si false est donné, alors on retournera un CopixFieldVarchar s'il n'existe pas.
 	 * @return ICopixField
 	 */
-	static public function get ($pType, $pParams = array (), $pAssert = true) {
+	public static function get ($pType, $pParams = array (), $pAssert = true) {
 		if ($pType === null) {
 			$pType = 'varchar';
 		}
@@ -32,16 +32,14 @@ class CopixFieldFactory {
 		if (strpos ($pType, '|')) {
 			return CopixClassesFactory::create ($pType, array ($pType, $pParams));
 		} else {
-			$class = 'CopixField'.$pType;
-			
-			if (class_exists($class)) {
+			if (class_exists ('CopixField'.$pType)) {
+				$class = 'CopixField'.$pType;
 				$object =  new $class ($pType, $pParams);
 				if (! $object instanceof ICopixField){
 					throw new CopixException ("La classe $class devrait implémenter ICopixField pour pouvoir être utilisée dans CopixForm");
 				}
 				return $object;
 			} else {
-				
 				if ($pAssert) {
 					throw new CopixException ('Ce type n\'existe pas ['.$pType.']');
 				} else {

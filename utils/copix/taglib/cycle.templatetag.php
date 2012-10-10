@@ -14,8 +14,9 @@
 * @subpackage	taglib
 */
 class TemplateTagCycle extends CopixTemplateTag  {
-	public function process ($pParams, $pContent=null){
+	public function process ($pContent=null){
 	    static $cycle_vars;
+	    $pParams = $this->getParams ();
 	    
 	    $name = (empty($pParams['name'])) ? 'default' : $pParams['name'];
 	    $print = (isset($pParams['print'])) ? (bool)$pParams['print'] : true;
@@ -68,5 +69,4 @@ class TemplateTagCycle extends CopixTemplateTag  {
 	    
 	    return $retval;
 	}
-}	
-?>
+}

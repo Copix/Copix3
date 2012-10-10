@@ -21,7 +21,6 @@ class TemplateTagVille extends CopixTemplateTag {
     * 	Paramètres possibles :
     * 		name : pour récupérer la valeur lorsque le formulaire est envoyé
     * 		codePostal : si passé en paramètres, affiche la ville ou liste correspondante
-    * 		ville : si passé, la ville est sélectionnée ou proposée par défaut
     * 		singleMatchReadOnly : si une seule ville correspond au codepostal, le champ est readonly (et possède la classe readonly)
     * 		et tous les attributs autorisés en HTML. (Compléter la liste pour HTML 5 ou des attributs "custom")
     */
@@ -38,18 +37,11 @@ class TemplateTagVille extends CopixTemplateTag {
         	$villes = array();
         }
         
-        if( array_key_exists('ville', $pParams) && $pParams['ville'] != '' ){
-	        $pParams['ville'] = strtolower( $pParams['ville'] );
-        } else {
-        	$pParams['ville'] = false;
-        }
-        
         if( count( $villes ) > 1 ){
         	$type = 'select';
         	$toReturn  = '<select %s>';
 			foreach( $villes as $index => $ville ){
-        		$selected = ( $pParams['ville'] && strtolower( $ville ) == $pParams['ville'] ) ? $this->_formatAttributes( 'selected' ) : '';
-				$toReturn .= '<option value="'.$ville.'" '.$selected.'>'.$ville.'</option>';
+				$toReturn .= '<option value="'.$ville.'">'.$ville.'</option>';
 			}
         	$toReturn .= '</select>';
         } else {
@@ -67,8 +59,6 @@ class TemplateTagVille extends CopixTemplateTag {
         	} else {
         		if (isset ($pParams['value']) && !empty( $pParams['value']) ){
 		        	$pParams['value'] = htmlspecialchars( $pParams['value'], ENT_QUOTES );
-		        } elseif( $pParams['ville'] ) {
-		        	$pParams['value'] = htmlspecialchars( $pParams['ville'], ENT_QUOTES );
 		        }
         	}
         	$toReturn = '<input type="text" %s />';
@@ -92,14 +82,14 @@ class TemplateTagVille extends CopixTemplateTag {
     }
     
     private function _formatAttributes( $key, $value = '' ){
-    	if( in_array( $key, array( 'disabled', 'readonly', 'selected' ) ) ){
-    		$value = $key;
-    	}
     	if( $value === '' ){
     		return '';
     	}
     	if( is_array( $value ) ){
     		$value = implode( ' ', $value );
+    	}
+    	if( in_array( $value, array( 'disabled', 'readonly' ) ) ){
+    		$value = $key;
     	}
     	return $key.'="'.$value.'" ';	
     }

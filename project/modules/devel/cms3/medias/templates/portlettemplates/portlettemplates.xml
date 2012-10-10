@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Default</name>
+		<description>Template en ligne</description>
+		<image>default.jpg</image>
+		<tpl>portal|portlettemplates/ligne.portlet.tpl</tpl>
+	</template>
+</templates>

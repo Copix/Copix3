@@ -15,7 +15,8 @@
 * Input:    path=le/chemin/de/la/ressource.ext
 */
 function smarty_function_copixresource($params, &$me) {
-	$toReturn = _resource ($params['path']);
+	$theme = (isset ($params['theme'])) ? $params['theme'] : null;
+	$toReturn = _resource ($params['path'], $theme);
 	
 	$assign = isset ($params['assign']) ? $params['assign'] : null;
 	if (strlen($assign) > 0){
@@ -25,4 +26,3 @@ function smarty_function_copixresource($params, &$me) {
 		return $toReturn;
 	}
 }
-?>

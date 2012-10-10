@@ -20,33 +20,33 @@ var SelectSlider = new Class({
 		}	
 
 		if(this.options.showTitle){
-			this.divTitle.setText( (this.select.options[this.select.selectedIndex].title) ? this.select.options[this.select.selectedIndex].title : this.select.options[this.select.selectedIndex].text );
+			this.divTitle.innerHTML = (this.select.options[this.select.selectedIndex].title) ? this.select.options[this.select.selectedIndex].title : this.select.options[this.select.selectedIndex].text;
 		}
 
 		//init
 		this.mootoolsSlider.set (this.select.selectedIndex);	
 		
 		//events
-		this.mootoolsSlider.drag.addEvent('onDrag', function(position){
+		this.mootoolsSlider.drag.addEvent('drag', function(position){
 			if (this.options.snap){	
 				this.mootoolsSlider.set(this.snapStep);
 			}
 			this.displayToolTip(true);
 		}.bind (this));
 
-		this.mootoolsSlider.addEvent ('onChange', function(step){	
+		this.mootoolsSlider.addEvent ('change', function(step){	
 			if (this.options.snap){	// apres un clic			
 				this.mootoolsSlider.set(step);
 				this.select.fireEvent ('change');
 			}		
 			this.select.options[step].selected=true;
 			if(this.options.showTitle){
-				this.divTitle.setText( (this.select.options[this.select.selectedIndex].title) ? this.select.options[this.select.selectedIndex].title : this.select.options[this.select.selectedIndex].text );
+				this.divTitle.innerHTML = (this.select.options[this.select.selectedIndex].title) ? this.select.options[this.select.selectedIndex].title : this.select.options[this.select.selectedIndex].text;
 			}
 			this.select.fireEvent ('change');
 		}.bind (this));
 		
-		this.mootoolsSlider.addEvent ('onTick', function(step){	
+		this.mootoolsSlider.addEvent ('tick', function(step){	
 			this.displayToolTip (true);
 		}.bind (this));
 		
@@ -63,7 +63,7 @@ var SelectSlider = new Class({
 		this.slider.addEvent ('mousemove', function(e){
 			if(this.options.snap && this.mouseOver){
 				var stepPosition = this.mootoolsSlider.toPosition(this.mootoolsSlider.step);
-				var mousePosition = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - (this.knob.getPosition().x - stepPosition) - (this.knob.getSize().size.x / 2);
+				var mousePosition = e.client.x + document.body.scrollLeft + document.documentElement.scrollLeft - (this.knob.getPosition().x - stepPosition) - (this.knob.getSize().x / 2);
 				
 				if (mousePosition < stepPosition && this.mootoolsSlider.step > 0){
 					var middleStep = this.mootoolsSlider.toPosition(this.mootoolsSlider.step - 1) + ((stepPosition - this.mootoolsSlider.toPosition(this.mootoolsSlider.step - 1))/2);
@@ -87,10 +87,10 @@ var SelectSlider = new Class({
 		e = new Event( e );
 			if (this.mouseOver){		
 				if (e.key == 'left' && (this.mootoolsSlider.step - 1) >= 0){
-					this.mootoolsSlider.fireEvent ('onChange',this.mootoolsSlider.step - 1);
+					this.mootoolsSlider.fireEvent ('change',this.mootoolsSlider.step - 1);
 					e.preventDefault();
 				} else if(e.key == 'right' & this.mootoolsSlider.step < (this.select.options.length - 1)){					
-					this.mootoolsSlider.fireEvent ('onChange',this.mootoolsSlider.step + 1);
+					this.mootoolsSlider.fireEvent ('change',this.mootoolsSlider.step + 1);
 					e.preventDefault();
 				}
 			}
@@ -103,8 +103,6 @@ var SelectSlider = new Class({
 		this.knob.addEvent ('blur', function(){
 			this.displayToolTip (false);
 		}.bind(this));
-		
-        this.displayToolTip(true);
     },
     
     createSlider : function (){
@@ -121,21 +119,34 @@ var SelectSlider = new Class({
 		
 		if(this.options.showTitle){
 	        this.divTitle = new Element('div', {'class':'slider_title'});
-	        this.divTitle.setText( (this.select.options[this.select.selectedIndex].title) ? this.select.options[this.select.selectedIndex].title : this.select.options[this.select.selectedIndex].text );
+	        this.divTitle.innerHTML = (this.select.options[this.select.selectedIndex].title) ? this.select.options[this.select.selectedIndex].title : this.select.options[this.select.selectedIndex].text;
 	        this.select.parentNode.appendChild(this.divTitle);
         }
           
         var snap = this.options.snap;
-        var SliderSelect = Slider.extend({
-			clickedElement: function(event) {
-				var position = event.page[this.z] - this.getPos() - this.half;
-				position = position.limit(-this.options.offset, this.max -this.options.offset);
-				this.step = this.toStep(position);
-				this.checkStep();
-				this.end();
-				if(!snap){
-					this.fireEvent('onTick', position);
-				}
+        
+        Slider.prototype.toStep = function(position){
+        	var step = (position + this.options.offset) * this.stepSize / this.full * this.steps;
+			return Math.round(step);
+        }
+        
+        Slider.prototype.clickedElement = function(event){
+        	var dir = this.range < 0 ? -1 : 1;
+    		var position = event.page[this.axis] - this.element.getPosition()[this.axis] - this.half;
+    		position = position.limit(-this.options.offset, this.full -this.options.offset);
+    		
+    		this.step = Math.round(this.min + dir * this.toStep(position));
+    		this.checkStep();
+    		this.end();
+    		if(!snap){
+				this.fireEvent('tick', position);
+			}
+        }
+        
+        var SliderSelect = Slider.implement({
+			toStep: function(position){
+				var step = (position + this.options.offset) * this.stepSize / this.full * this.steps;
+				return Math.round(step);
 			}
 		});
         
@@ -147,24 +158,20 @@ var SelectSlider = new Class({
 		
 		this.knob.setStyles({'position':'absolute'});
 		
-		
 		if(this.options.showLegend){
 			var begin = new Element ('div', {'class':'begin_value'});
 	    	var end = new Element ('div', {'class':'end_value'});
-	        begin.innerHTML = this.select.options[0].value;
-			end.innerHTML = this.select.options[this.select.options.length-1].value;
-	     	this.slider.appendChild(begin);
-	        this.slider.appendChild(end);
+	        begin.innerHTML = this.select.options[0].text;
+			end.innerHTML = this.select.options[this.select.options.length-1].text;
+	     	this.slider.parentNode.appendChild (begin);
+	        this.slider.parentNode.appendChild (end);  
 		}
 		
 		if(this.options.showTic || this.options.showTic == null){
 			for (i=1 ; i < this.select.options.length -1 ; i++){
 				var span = new Element('span', {'class' : 'span_tic'}).injectInside(this.slider);
-				if( this.options.useTextInTic ){
-					span.setText( this.select.options[i].text );
-				}
 				span.setStyles ({
-					'left': (this.mootoolsSlider.toPosition(i) + (this.knob.getSize().size.x)/2)+'px'
+					'left': (this.mootoolsSlider.toPosition(i) + (this.knob.getSize().x)/2)+'px'
 				});
 			}
 		}
@@ -201,27 +208,25 @@ var SelectSlider = new Class({
 	displayToolTip : function (display){
 		if (display){
 			if(this.options.showTitle){
-				this.divTitle.setText( (this.select.options[this.select.selectedIndex].title) ? this.select.options[this.select.selectedIndex].title : this.select.options[this.select.selectedIndex].text );
+				this.divTitle.innerHTML = (this.select.options[this.select.selectedIndex].title) ? this.select.options[this.select.selectedIndex].title : this.select.options[this.select.selectedIndex].text;
 			}
-			this.divToolTip.setText( this.select.options[this.select.selectedIndex].text );
+			this.divToolTip.innerHTML = this.select.options[this.select.selectedIndex].text;
 			//obligatoire pour le placement initial
 			this.divToolTip.setStyles ({
 				'display':'block'
 			});
 			left = this.knob.getPosition().x - (
 					this.slider.getPosition().x
-					+ (this.divToolTip.getSize ().size.x / 2)
-					- ( this.knob.getSize().size.x / 2)
+					+ (this.divToolTip.getSize ().x / 2)
+					- ( this.knob.getSize().x / 2)
 			);
 			this.divToolTip.setStyles ({
 				'left' : left +'px'
 			});
 		} else{
-			if( !this.options.alwaysShowTooltip ){
-				this.divToolTip.setStyles({
-					'display':'none'
-				});
-			}
+			this.divToolTip.setStyles({
+				'display':'none'
+			});
 		}
 	}
 
@@ -230,7 +235,7 @@ var SelectSlider = new Class({
 SelectSlider.implement(new Options);
 
 /********************************************************/
-Element.extend({
+Element.implement({
 	slider: null,
 	
 	makeSlider : function (options){

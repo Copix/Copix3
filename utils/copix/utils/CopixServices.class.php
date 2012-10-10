@@ -109,15 +109,12 @@ class CopixServices {
 		$methName = $extractedPath->method;
 
 		CopixContext::push ($extractedPath->module);
-
-		
 		try {
 			if ($pTransactionContext == self::NEW_TRANSACTION) {
 			   CopixDB::begin ();
 			}
 		    $toReturn = $service->$methName ();
-
-		    if ($pTransactionContext == self::NEW_TRANSACTION) {
+			if ($pTransactionContext == self::NEW_TRANSACTION) {
    		    	CopixDB::commit ();
 			}
 		    CopixContext::pop ();

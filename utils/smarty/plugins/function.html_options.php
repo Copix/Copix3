@@ -42,7 +42,7 @@ function smarty_function_html_options($params, &$smarty)
     foreach($params as $_key => $_val) {
         switch($_key) {
             case 'name':
-                $$_key = _toString($_val);
+                $$_key = (string)$_val;
                 break;
             
             case 'options':
@@ -99,7 +99,7 @@ function smarty_function_html_options_optoutput($key, $value, $selected) {
     if(!is_array($value)) {
         $_html_result = '<option label="' . smarty_function_escape_special_chars($value) . '" value="' .
             smarty_function_escape_special_chars($key) . '"';
-        if (in_array(_toString($key), $selected))
+        if (in_array((string)$key, $selected))
             $_html_result .= ' selected="selected"';
         $_html_result .= '>' . smarty_function_escape_special_chars($value) . '</option>' . "\n";
     } else {

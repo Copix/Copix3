@@ -39,7 +39,7 @@ function smarty_function_copixform_body($params, &$me) {
 	if ($params['form'] instanceof  CopixForm) {
 		$form = $params['form'];
 	} else {
-		$form = CopixFormFactory::get ($params['form'], $params);
+		$form = CopixFormFactory::get ($params['form']);
 	}
 	unset ($params['form']);
 	
@@ -56,4 +56,3 @@ function smarty_function_copixform_body($params, &$me) {
 		return $toReturn;
 	}
 }
-?>

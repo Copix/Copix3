@@ -1,0 +1,2 @@
+<a href="<?php echo _url ('formtools|default|default', array ('form_id'=>$ppo->form_id));?>">Lien vers le formulaire</a><br/>
+<a href="<?php echo _url ('formtools|admin|adminroute', array ('form_id'=>$ppo->form_id));?>">Lien vers l'admin des routes</a><br/>

@@ -1,32 +1,30 @@
 <?php
 
 class TemplateTagWikiEditor extends CopixTemplateTag {
-    public function process($pParams) {
-        
-        extract($pParams);
-        if (!isset($name)) {
-            throw new CopixTemplateTagException("Manque nom");
-        }
-        
+    public function process ($pContent = null) {
+    	$pParams = $this->getParams ();
+        extract ($pParams);
+        $name = $this->requireParam ('name');
+
         $toReturn  = "<div id=\"wiki_toolbar\" style=\"clear:both\">\n";
-		$toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('**','**','"._i18n("wiki|wiki.bold")."');\" title=\""._i18n("wiki|wiki.bold")."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/bold.png')."\" /></a>\n";
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('//','//','"._i18n("wiki|wiki.italic")."');\" title=\""._i18n("wiki|wiki.italic")."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/italic.png')."\" /></a>\n";
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('__','__','"._i18n("wiki|wiki.underline")."');\" title=\""._i18n("wiki|wiki.underline")."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/underline.png')."\" /></a>\n";		
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('   *','','"._i18n("wiki|wiki.listitem")."');\" title=\""._i18n("wiki|wiki.listitem")."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/list.png')."\" /></a>\n";		        
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('<del>','</del>','"._i18n("wiki|wiki.strike")."');\" title=\""._i18n("wiki|wiki.strike")."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/strike.png')."\" /></a>\n";		                
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('\n----\n','','');\" title=\""._i18n("wiki|wiki.hr")."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/hr.png')."\" /></a>\n";		                        
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('\'\'','\'\'','"._i18n("wiki|wiki.code")."');\" title=\""._i18n("wiki|wiki.code")."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/code.png')."\" /></a>\n";		                
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:addHeader(1);\" title=\""._i18n("wiki|wiki.header",1)."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/h1.png')."\" /></a>\n";
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:addHeader(2);\" title=\""._i18n("wiki|wiki.header",2)."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/h2.png')."\" /></a>\n";
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:addHeader(3);\" title=\""._i18n("wiki|wiki.header",3)."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/h3.png')."\" /></a>\n";
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:addHeader(4);\" title=\""._i18n("wiki|wiki.header",4)."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/h4.png')."\" /></a>\n";
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:addHeader(5);\" title=\""._i18n("wiki|wiki.header",5)."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/h5.png')."\" /></a>\n";
-        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:sendForPreview();\" title=\""._i18n("wiki|wiki.show.preview")."\"><img src=\"".CopixUrl::getResource('/img/modules/wiki/preview.png')."\" /></a>\n";                                
+		$toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('**','**','"._i18n("wiki|wiki.bold")."');\" title=\""._i18n("wiki|wiki.bold")."\"><img src=\"".CopixUrl::getResource('wiki|/img/bold.png')."\" /></a>\n";
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('//','//','"._i18n("wiki|wiki.italic")."');\" title=\""._i18n("wiki|wiki.italic")."\"><img src=\"".CopixUrl::getResource('wiki|/img//italic.png')."\" /></a>\n";
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('__','__','"._i18n("wiki|wiki.underline")."');\" title=\""._i18n("wiki|wiki.underline")."\"><img src=\"".CopixUrl::getResource('wiki|/img/underline.png')."\" /></a>\n";		
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('   *','','"._i18n("wiki|wiki.listitem")."');\" title=\""._i18n("wiki|wiki.listitem")."\"><img src=\"".CopixUrl::getResource('wiki|/img/list.png')."\" /></a>\n";		        
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('<del>','</del>','"._i18n("wiki|wiki.strike")."');\" title=\""._i18n("wiki|wiki.strike")."\"><img src=\"".CopixUrl::getResource('wiki|/img/strike.png')."\" /></a>\n";		                
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('\n----\n','','');\" title=\""._i18n("wiki|wiki.hr")."\"><img src=\"".CopixUrl::getResource('wiki|/img/hr.png')."\" /></a>\n";		                        
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:fontStyle('\'\'','\'\'','"._i18n("wiki|wiki.code")."');\" title=\""._i18n("wiki|wiki.code")."\"><img src=\"".CopixUrl::getResource('wiki|/img/code.png')."\" /></a>\n";		                
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:addHeader(1);\" title=\""._i18n("wiki|wiki.header",1)."\"><img src=\"".CopixUrl::getResource('wiki|/img/h1.png')."\" /></a>\n";
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:addHeader(2);\" title=\""._i18n("wiki|wiki.header",2)."\"><img src=\"".CopixUrl::getResource('wiki|/img/h2.png')."\" /></a>\n";
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:addHeader(3);\" title=\""._i18n("wiki|wiki.header",3)."\"><img src=\"".CopixUrl::getResource('wiki|/img/h3.png')."\" /></a>\n";
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:addHeader(4);\" title=\""._i18n("wiki|wiki.header",4)."\"><img src=\"".CopixUrl::getResource('wiki|/img/h4.png')."\" /></a>\n";
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:addHeader(5);\" title=\""._i18n("wiki|wiki.header",5)."\"><img src=\"".CopixUrl::getResource('wiki|/img/h5.png')."\" /></a>\n";
+        $toReturn .= "<a class=\"wiki_toolbar\" onclick=\"javascript:sendForPreview();\" title=\""._i18n("wiki|wiki.show.preview")."\"><img src=\"".CopixUrl::getResource('wiki|/img/preview.png')."\" /></a>\n";                                
 		$toReturn .= "</div>";
 		
 		$toReturn .= "
 <textarea class=\"noresizable\" id=\"wiki_area_content\" name=\"$name\"
-	cols=\"100\" rows=\"30\">$content
+	cols=\"100\" rows=\"30\">$pContent
 </textarea>
 <div id=\"aj_wiki_prev\" style=\"display: none\">
 </div>
@@ -159,10 +157,6 @@ function fontStyle(tagOpen, tagClose, sampleText) {
   if (txtarea.createTextRange) txtarea.caretPos = document.selection.createRange().duplicate();
 }
 		");
-        
-        
         return $toReturn;
-        
     }
 }
-?>

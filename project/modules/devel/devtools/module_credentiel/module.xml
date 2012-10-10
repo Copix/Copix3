@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="module_credentiel" descriptioni18n="module_credentiel.moduledescription"
+			longdescriptioni18n="module_credentiel.longdescription" />
+		<group id="devTools" captioni18n="copix:copixmodule.group.devTools" />
+	</general>
+</moduledefinition>

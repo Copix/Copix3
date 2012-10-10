@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Simple</name>
+		<description>Texte simple</description>
+		<tpl>portal|portlettemplates/default.text.tpl</tpl>
+	</template>
+	<template>
+		<name>Texte ouvrant</name>
+		<description>Un clicker permet d'ouvrir le texte</description>
+		<tpl>portal|portlettemplates/toggle.text.php</tpl>
+		<options>
+            <clicker type="inputtext" id="clicker" desc="Libéllé du clicker : " value="Clicker" />
+        </options>
+	</template>
+</templates>

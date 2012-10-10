@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="test_soap" description="Tests de disponibilité sur des serveurs SOAP"
+  			icon="|img/icon/url.png" />
+	<group id="tests" captioni18n="copix:copixmodule.group.tests" />
+ </general>
+<dependencies>
+	<dependency name="test" kind="module" />
+	<dependency name="soap" kind="extension" />
+</dependencies>
+</moduledefinition>

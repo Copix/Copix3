@@ -10,9 +10,8 @@
 
 
 /**
- * Inclusion des librairies mootools
+ * Lien retour
  */
 function smarty_function_back ($pParams, &$smarty) {
 	return _tag ('back', $pParams);
 }
-?>

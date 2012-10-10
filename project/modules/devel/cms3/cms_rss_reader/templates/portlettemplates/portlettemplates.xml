@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Affichage par ordre chronologique</name>
+		<description>Affichage des items tous flux confondus</description>
+		<image></image>
+		<tpl>cms_rss_reader|portlettemplates/list.portlet.php</tpl>
+	</template>
+</templates>

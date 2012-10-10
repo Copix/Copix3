@@ -153,7 +153,7 @@ var DatePicker = new Class({
 			this.calendar.addEvent('mousedown',function(){
 				// merci IE, qui lance mousemove apr�s mousedown, alors qu'on n'a pas boug� ...
 				this.calendar.firstDragMove = true;				
-				this.calendar.drag = false;
+				this.calendar.drag = true;
 			}.bindWithEvent(this));
 			
 			this.calendar.addEvent('mouseup',function(){
@@ -168,6 +168,7 @@ var DatePicker = new Class({
 							'left': (this.posLeft - 10) +"px",
 							'top': (this.posTop  - 10) +"px"
 						});
+							
 					}
 					if (this.calendar.drag==true) {
 						this.calendar.firstDragMove = false;
@@ -184,27 +185,25 @@ var DatePicker = new Class({
 			
 		// create the date object
 		var date = new Date();
+			
 		// create the date object
-		// set the day to first of the month
-		date.setDate(1);
 		if (month && year){
 			date.setFullYear(year, month);
 		}
 		
 		// Attention années bissextiles : (divisibles par 4 mais pas par 100) || 400
 		date.getYear() % 4 == 0 ? this.daysInMonth[1] = 29 : this.daysInMonth[1] = 28;
-
+		
+		// set the day to first of the month
+		date.setDate(1);
 		var firstDay;
 		// Set the first day of the week according to the language
 		if (this.language == 'fr') {
 			firstDay = 2 - date.getDay();
-			if (date.getDay() == 0){
-				//cas du dimanche
-				firstDay = -5;
-			}
 		} else {
 			firstDay = 1 - date.getDay();			
 		}
+		
 		// get the position of the input box, position div and show with styles
 		if(!this.posTop){
 			try{
@@ -252,7 +251,7 @@ var DatePicker = new Class({
 				this.closeButtonSrc = Copix.getResourceURL('img/tools/delete.png');
 			}
 			var closeButton = ' <img src="' + this.closeButtonSrc + '" alt="Fermer" title="Fermer" ';
-			closeButton += ' class="calendar_closeButton bouton" onclick="$(\''+this.inputName+'\').hideDatePicker();" />';
+			closeButton += ' style="cursor: pointer" class="calendar_closeButton" onclick="javascript: $(\'' + this.inputName + '\').hideDatePicker ();" />';
 		}
 		
 		// start creating calendar
@@ -294,7 +293,7 @@ var DatePicker = new Class({
 						if( dtValue.getFullYear() == date.getFullYear() && dtValue.getMonth() == date.getMonth() && dtValue.getDate() == firstDay){
 							calStr += ' calendar_value';
 						}
-						calStr += '" style="' + dayStyle + '"><a href="javascript:void(0);" class="' + this.id + '_calDay' + '" rel="' + date.getFullYear() + '|' + (date.getMonth() + 1) + '|' + firstDay + '"><div>' + firstDay + '</div></a></td>';
+						calStr += '" style="' + dayStyle + '"><a href="javascript:void(0);" class="' + this.id + '_calDay' + '" rel="' + date.getFullYear() + '|' + (date.getMonth() + 1) + '|' + firstDay + '">' + firstDay + '</a></td>';
 					}else{
 						if( dtToday.getFullYear() == date.getFullYear() && dtToday.getMonth() == date.getMonth() && dtToday.getDate() == firstDay){
 							calStr += '<td class="calendar_today" style="' + dayStyle + '"><a href="javascript:void(0);" class="' + this.id + '_calDay' + '" rel="' + date.getFullYear() + '|' + (date.getMonth() + 1) + '|' + firstDay + '">' + firstDay + '</a></td>';
@@ -350,8 +349,8 @@ var DatePicker = new Class({
 			this.active = false;
 		}.bind(this);
 		$(this.id + '_monthSelect').onchange = function(){
-			this.month = $(this.id + '_monthSelect').value;
-			this.year = $(this.id + '_yearSelect').value;
+			this.month = $(this.id + '_monthSelect').value
+			this.year = $(this.id + '_yearSelect').value
 			this.createCal(event);
 			this.active = false;
 			this.calendar.drag=false;
@@ -375,7 +374,7 @@ var DatePicker = new Class({
 
 		$(this.id + '_yearSelect').onchange = function(){
 			this.month = $(this.id + '_monthSelect').value
-			this.year = $(this.id + '_yearSelect').value;
+			this.year = $(this.id + '_yearSelect').value
 			// beforeyear and afteryear need to be recalculated otherwise the years add up incorrectly
 			var yearSelect = $(this.id + '_yearSelect');
 			this.beforeyear = yearSelect.value - yearSelect.options[0].value;
@@ -417,27 +416,22 @@ var DatePicker = new Class({
 	});
 
 /********************************************************/
-Element.extend({
+Element.implement({
 	datePicker: null,
 	
 	makeDatePicker : function (options){
 		options.input=this;
-		this.datePicker = new DatePicker(this.id,options);
+		this.datePicker = new DatePicker(this.name,options);
 		return this.datePicker;
 	},
 	
 	hideDatePicker : function () {
-		if(this.id!=null){
-			$(this.id).datePicker.calendar.setStyles({'display':'none'});
-			$(this.id).datePicker.posLeft = "";
-			$(this.id).datePicker.posTop = "";
-			$(this.id).datePicker.year = "";
-			$(this.id).datePicker.month = "";
-			$(this.id).datePicker.firstClick = true;
-			$(this.id).datePicker.calendar.drag = false
-		}
-		else{
-			$$('.calBackground').setStyles({'display':'none'});
-		}
+		this.datePicker.calendar.setStyles({'display':'none'});
+		this.datePicker.posLeft = "";
+		this.datePicker.posTop = "";
+		this.datePicker.year = "";
+		this.datePicker.month = "";
+		this.datePicker.firstClick = true;
+		this.datePicker.calendar.drag = false
 	}
 })

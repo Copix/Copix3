@@ -38,11 +38,12 @@ class TemplateTagCalendar extends CopixTemplateTag {
     * Construction du code HTML
     * On utilise également les modifications d'en tête HTML
     */
-   public function process ($pParams, $pContent=null){
-	    extract ($pParams);
-	    if (empty ($name)){
-	      throw new CopixTemplateTagException ('[calendar] missing name parameter');
-	    }
+   public function process ($pContent=null){
+	    $pParams = $this->getParams ();
+		extract ($pParams);
+		if (empty ($name)){
+			throw new CopixTemplateTagException ('[calendar] missing name parameter');
+		}
 
 	    // verification que le name ne contient que des caractères alphanumériques ou _
 	    preg_match_all('/^\w+$/', $name, $out_pma);
@@ -165,14 +166,17 @@ class TemplateTagCalendar extends CopixTemplateTag {
 			$out .= ' tabindex="'.$tabindex.'" ';
    		}
    		$out .= $strMask.' />'."\n\r";
-   		$out.= '<script type="text/javascript">'."\n\r";
-   		$out.= "$('".$name."').makeDatePicker({draggable:$draggable, title: '" . str_replace ("'", "\'", $title) . "', closebuttonsrc: '" . $closebuttonsrc . "', value: '" .$value . "', format: '".$format."', language: '".$lang."', sizeday:".$sizeday.", beforeyear:".$beforeyear.", afteryear:".$afteryear.", duration:".$duration.", imageCalendar:".$image;
-    	//class du calendrier.
-   		if (!empty ($classe)){
-			$out .= ', classe:"'.$classe.'"';
-   		}
-   		$out.="});"."\n\r";
-   		return $out.= '</script>';
+
+		$calendarScript = "try { $('".$name."').makeDatePicker({value: '" .$value . "', format: '".$format."', language: '".$lang."', sizeday:".$sizeday.", beforeyear:".$beforeyear.", afteryear:".$afteryear.", duration:".$duration.", imageCalendar:".$image;
+		//class du calendrier.
+		if (!empty ($classe)){
+			$calendarScript .= ', classe:"'.$classe.'"';
+		}
+		$calendarScript .= "});"."\n\r";
+		$calendarScript .= ' } catch (e) { console.debug (e); }';
+		CopixHTMLHeader::addJSDOMReadyCode ($calendarScript);
+
+		return $out;
    }
 }
 ?>

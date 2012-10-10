@@ -1,0 +1,125 @@
+/**
+ * Cette feuille de style est appelée aprés tous 
+ * les autres appels de feuille de style du CMS.
+ *
+ * Surchargée dans un thème elle permet de 
+ * redéfinir les styles du cms en fonction du thème
+ */
+ 
+ div.togglerContainer {
+ 	-moz-border-radius : 0;
+    -webkit-border-radius: 0; /* Saf3-4 */
+	border-radius: 0; /* Opera 10.5, IE9, Saf5, Chrome */
+    background-color: #E3E4E3;
+    background-image: -moz-linear-gradient(top, #E3E4E3, #D5D5D5); /* FF3.6 */
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #E3E4E3),color-stop(1, #D5D5D5)); /* Saf4+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#E3E4E3', EndColorStr='#D5D5D5'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#E3E4E3', EndColorStr='#D5D5D5')"; /* IE8 */;
+	border-bottom:1px solid #C2C2C2;
+    display: inline-block;
+    height: 21px;
+    margin: 1px 0 0;
+    padding:0;
+    vertical-align: middle;
+    width: 100%;
+}
+
+a.toggler:link, a.toggler:visited, a.toggler:active {
+    background-position: right center;
+    background-repeat: no-repeat;
+    color: #444444;
+    display: block;
+    font-weight: bold;
+    margin: 0 0 0 2px;
+    padding: 0;
+    text-decoration: none;
+}
+
+a.togglerCollapse:link, a.togglerCollapse:visited, a.togglerCollapse:active {
+	color:white;
+}
+
+
+#HeadingElementInformationsPanel {
+    background-color: #EEE;
+}
+
+div.togglerCollapse {
+	-moz-box-shadow: 0 0 0 #000000;
+	-webkit-box-shadow: 0px 0px 0px #000; /* Saf3.0+, Chrome */
+	box-shadow: 0px 0px 0px #000; /* Opera 10.5, IE 9.0 */
+	filter:  progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=0px, Color='#000000'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0px, OffY=0px, Color='#000000')"; /* IE8 */
+	
+	background: #444444; /* old browsers */
+	background: -moz-linear-gradient(top, #636363 0%, #444444 100%); /* firefox */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#636363), color-stop(100%,#444444)); /* webkit */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#636363', endColorstr='#444444',GradientType=0 ); /* ie */
+	color: white;
+}
+
+.trParentHeading {
+    background-color: #EFEFEF;
+}
+
+.CopixTable tr.trSelectedElement, .CopixTable tr.trSelectedElement:hover {
+	background: #444444; /* old browsers */
+	background: -moz-linear-gradient(top, #636363 0%, #444444 100%); /* firefox */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#636363), color-stop(100%,#444444)); /* webkit */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#636363', endColorstr='#444444',GradientType=0 ); /* ie */
+    color: white;
+}
+
+.trSelectedElement .status0{
+	color:#B5C8DF;
+}
+.trSelectedElement .status2{
+	color:#FCCD7B;
+}
+.trSelectedElement .status3{
+	color:#B1CFA8;
+}
+.trSelectedElement .status4{
+	color:#D6D6D6;
+}
+
+
+.cmsAdminElementTable tr{
+	border-bottom: 1px solid #D6D6D6 !important;
+}
+
+.titleHeadingMenu {
+    -moz-border-radius: 5px 5px 5px 5px;
+    -webkit-border-radius: 5px; /* Saf3-4 */
+	border-radius: 5px; /* Opera 10.5, IE9, Saf5, Chrome */
+    -moz-box-shadow: 0 1px 5px #000000;
+    background-color: #D6D6D6;
+    font-weight: bold;
+    margin-bottom: 7px;
+    padding: 2px 5px;
+}
+
+#CmsAdmin {
+	background-image : none !important;
+    -moz-border-radius: 5px 5px 5px 5px;
+    border: 1px solid #CCCCCC;
+    margin-bottom: 10px;
+    padding: 0 3px 2px;
+}
+
+/********ELEMENT CHOOSER ******/
+.elementChooser .mooTree_text{
+	font-size: 12px;
+	color :#444444;
+}
+
+/**********Portlet***********/
+.portletMenu {
+    background: #444444; /* old browsers */
+	background: -moz-linear-gradient(top, #636363 0%, #444444 100%); /* firefox */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#636363), color-stop(100%,#444444)); /* webkit */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#636363', endColorstr='#444444',GradientType=0 ); /* ie */
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#636363', EndColorStr='#444444')"; /* IE8 */
+    color: #FFFFFF;
+    padding: 2px;
+}

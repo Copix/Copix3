@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS `dbgroup`;
+DROP TABLE IF EXISTS `dbgroup_users`;
+DROP TABLE IF EXISTS `dbuser`;
+DROP TABLE IF EXISTS `remember_me_tokens`;
+DROP TABLE IF EXISTS `modulecredentials`;
+DROP TABLE IF EXISTS `modulecredentialsvalues`;
+DROP TABLE IF EXISTS `modulecredentialsgroups`;
+DROP TABLE IF EXISTS `dynamiccredentials`;
+DROP TABLE IF EXISTS `dynamiccredentialsvalues`;
+DROP TABLE IF EXISTS `dynamiccredentialsgroups`;

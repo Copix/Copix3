@@ -446,4 +446,3 @@ class CopixTestPrinter extends PHPUnit_Util_Printer implements PHPUnit_Framework
 		}
 	}
 }
-?>

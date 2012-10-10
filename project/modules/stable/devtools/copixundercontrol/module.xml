@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition version="1">
+	<general>
+		<default name="copixundercontrol" version="0.1" description="CopixUnderControl module d'administration pour intégration continue" />
+	</general>
+	<admin>
+        <link url="copixundercontrol|admin|" caption="CopixUnderControl - Administration" icon="copixundercontrol|img/icon/module.png" credentials="basic:admin" />
+	</admin>
+	<dependencies>
+	</dependencies>
+	<parameters>
+	</parameters>
+	<registry>
+	</registry>
+</moduledefinition>

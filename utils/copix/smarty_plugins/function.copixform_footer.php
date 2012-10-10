@@ -43,6 +43,7 @@ if (!isset($params['form'])) {
 	}
 	unset ($params['form']);
 	
+	
 	$toReturn = $form->getRenderer ()->footer ();
 	
 	if (strlen($assign) > 0){
@@ -52,4 +53,3 @@ if (!isset($params['form'])) {
 		return $toReturn;
 	}
 }
-?>

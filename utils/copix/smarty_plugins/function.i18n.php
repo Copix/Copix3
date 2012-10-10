@@ -31,4 +31,3 @@ function smarty_function_i18n($params, & $me) {
 		return _tag ('i18n', $params);
 	}
 }
-?>

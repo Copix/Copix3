@@ -1,0 +1,39 @@
+Installation de copix 3
+========================
+
+1) décompressez l'archive dans l'arborescence de votre site (DocumentRoot)
+Un répertoire Copix_3 sera créée.
+
+2) mettre les droits en écriture pour apache dans les repertoires/sous répertoires
+* Copix_3/temp
+* Copix_3/var
+
+Si vous êtes sous linux, vous pouvez arriver à cette opération en tapant les commandes : 
+chmod -R 777 Copix_3/temp
+chmod -R 777 Copix_3/var
+
+Ou, si vous connaissez vos utilisateurs, vous pouvez également effectuer : 
+chown -R mon_user:www-data Copix_3/temp
+chown -R mon_user:www-data Copix_3/var
+chmod -R 775 Copix_3/temp
+chmod -R 775 Copix_3/var
+
+3) dans votre navigateur, tapez l'url :
+http://localhost/Copix_3/www/
+
+Copix vous proposera alors de configurer une base de données.
+
+
+FAQ
+===========================
+Q: Une fois la base configurée, Copix me demande un login/password pour effectuer 
+les opérations d'administration.
+R: Le mot de passe vous a été fournit par Copix a la fin du processus d'installation. Il est important 
+de le noter. Si jamais vous avez perdu ce mot de passe, vous pouvez le changer vous même en base 
+de données en lui appliquant une fonction md5.
+
+Q: Je n'arrive pas à configurer une base MySQL.
+R: Copix utilise les drivers PDO pour les bases de données. 
+Il vous faut ainsi activer les extension PDO et PDO_MYSQL/PDO_SQLITE/PDO_PGSQL selon la base
+que vous souhaitez utiliser. Ces extensions se configurent dans le php.ini
+note : Depuis Copix 3.0.1+, copix vous permet d'utiliser les drivers "mysql" (extension mysql) pour ce faire.

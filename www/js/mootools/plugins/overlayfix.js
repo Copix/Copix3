@@ -1,21 +1,23 @@
 var OverlayFixDiv = new Class({
 	initialize: function(el) {
 		this.element = $(el);
-		if (window.ie){
+		if (Browser.ie6){
 			this.element.addEvent('trash', this.destroy.bind(this));
 			this.fix = new Element('iframe', {
 				properties: {
 					frameborder: '0',
-					scrolling: 'no',
-					src: 'javascript:false;'
+					scrolling: 'no'
+					/*src: 'https://0'*/
 				},
 				styles: {
 					position: 'absolute',
-					border: '3px solid red',
+					border: 'none',
 					display: 'none',
 					filter: 'progid:DXImageTransform.Microsoft.Alpha(opacity=0)'
 				}
-			}).injectAfter(this.element);
+			});
+                        this.fix.src = (window.location.protocol=='https:') ? 'https://0' : '';
+			this.fix.injectAfter(this.element);
 			this.element.addEvent ('trash', this.destroy);
 		}
 	},
@@ -36,14 +38,12 @@ var OverlayFixDiv = new Class({
 	
 	update: function() {
 	   if (this.fix) {
-
-   		    this.fix.setStyles($extend(
+                this.fix.setStyles($extend(
 			this.element.getCoordinates(), {
 				display: '',
 				position:'absolute',
 				zIndex: (this.element.getStyle('zIndex') || 1) - 1
 			}));
-
 		}
 		return this;
 	},
@@ -52,7 +52,7 @@ var OverlayFixDiv = new Class({
 		if (this.fix) this.fix.setStyle('display', 'none');
 		return this;
 	},
-	
+
 	destroy: function() {
 		try {
 			this.fix.remove();
@@ -61,7 +61,7 @@ var OverlayFixDiv = new Class({
 	}
 });
 
-Element.extend({
+Element.implement({
 	fixdivShow: function(){
 		if (this.fix == null) {
 			this.fix = new OverlayFixDiv(this);

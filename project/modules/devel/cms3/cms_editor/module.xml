@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="cms_editor" description="Editeurs wiki et wysiwyg" version="1.0.0" />
+		<group id="cms3" captioni18n="heading|heading.group.caption" />
+	</general>
+	<dependencies>
+		<dependency name="heading" kind="module" version="1.6.4" />
+<!--                 <dependency name="wikirenderer" kind="module" /> -->
+	</dependencies>
+	<wikirenderer>
+		<components>
+			<component name="Gras" class="cmscomponentbold" />
+			<component name="Retour à la ligne" class="cmscomponentbr" />
+			<component name="Titre" class="cmscomponentheader" />
+			<component name="Italic" class="cmscomponentitalic" />
+			<component name="Liens" class="cmscomponentlink" />
+			<component name="Paragraphe" class="cmscomponentparagraphe" />
+			<component name="ul li" class="cmscomponentulli" />
+		</components>
+	</wikirenderer>
+	<parameters>
+		<parameter name="tinymce_stylesheet" caption="TinyMCE : Chemin des feuilles de style définissant le thème"
+			default="styles/theme.css" description="Donner le chemin à partir du repertoire du thème courant" />
+	</parameters>
+</moduledefinition>	

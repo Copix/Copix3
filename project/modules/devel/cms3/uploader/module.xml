@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition version="1">
+	<general>
+		<default name="uploader" version="1.1.0" description="Upload de fichiers" icon="uploader|img/uploader.png" />
+		<group id="cms3" captioni18n="heading|heading.group.caption" />
+	</general>
+	<dependencies>
+		<dependency name="heading" kind="module" />	
+	</dependencies>
+	<updates>
+		<update from="1" to="1.0.0" script="doNothing" />
+		<update from="1.0.0" to="1.1.0" script="1_0_0_to_1_1_0" />
+	</updates>
+</moduledefinition>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Default</name>
+		<description>Template en ligne</description>
+		<tpl>document|portlettemplates/ligne.portlet.tpl</tpl>
+	</template>
+	<template>
+		<name>Telechargements multiples</name>
+		<description>Permet de sélectionner plusieurs documents pour les télécharger sous format zip.</description>
+		<tpl>document|portlettemplates/multipledownload.portlet.tpl</tpl>
+	</template>
+	<template>
+		<name>Liste de documents</name>
+		<description>Affichage d'une liste de documents avec leur icone</description>
+		<tpl>document|portlettemplates/documentlist.portlet.tpl</tpl>
+	</template>	
+</templates>

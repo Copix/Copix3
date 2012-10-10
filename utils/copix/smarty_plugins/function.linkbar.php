@@ -31,4 +31,3 @@ function smarty_function_linkbar($params, $this) {
       return _tag ('linkbar', $params);
    }
 }
-?>

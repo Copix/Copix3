@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition version="1">
+	<general>
+		<default name="cms_rss" version="1.2.0" description="Gestion des flux rss" icon="cms_rss|img/icon_rss.png" />
+		<group id="cms3" captioni18n="heading|heading.group.caption" />
+	</general>
+	<dependencies>
+		<dependency name="heading" kind="module" version="1.6.4" />
+		<dependency name="feed" kind="module" />
+	</dependencies>
+	<registry>
+		<entry id="ElementInformations">
+			<type zoneid="cms_rss|CMSRSSInformations" />
+		</entry>
+		<entry id="HeadingElement">
+	  		<type id="rss" caption="Flux RSS" 
+	  					image="cms_rss|img/rss.png" 
+	  					icon="cms_rss|img/icon_rss.png" 
+	         			classid="cms_rss|rssservices" 
+	         			adminurl="cms_rss|admin|prepareEdit" 
+	         			fronturl="cms_rss|rssfront::default" />
+		</entry>
+		<entry id="Portlet">
+			<type id="rss" group="element" description="Cette portlet permet de gérer vos flux RSS." caption="Flux RSS" portlettype="PortletRss" icon="cms_rss|img/rss.png" /> 
+		</entry>
+	</registry>
+	<userpreferences>
+        <group id="headingNotification" caption="Notification">
+            <preference name="rssNotification" caption="RSS" default="0" type="bool" description="Donne la possibilité d'envoyer une notification par mail lorsqu'un flux RSS est publié." />
+        </group>
+	</userpreferences>
+	<updates>
+		<update from="1" to="1.0.0" script="doNothing" />
+		<update from="1.0.0" to="1.1.0" script="1_0_0_to_1_1_0" />
+		<update from="1.1.0" to="1.2.0" script="1_1_0_to_1_2_0" />
+	</updates>
+</moduledefinition>

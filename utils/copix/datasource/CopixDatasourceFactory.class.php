@@ -38,18 +38,18 @@ interface ICopixDataSource {
 	public function find ();
 	
 	/**
-	 * Retourne le nombre d'enregistrements
-	 *
-	 * @return int
-	 */
-	public function count ();
-	
-	/**
 	 * Sauvegarde le record $pRecord
 	 *
 	 * @param ICopixDAORecord $pRecord
 	 */
-	public function save ($pRecord);
+	public function insert ($pRecord);
+	
+	/**
+	 * Sauvegarde les modifications apportées sur $pRecord
+	 *
+	 * @param ICopixDAORecord $pRecord
+	 */
+	public function update ($pRecord);
 	
 	/**
 	 * Retourne un enregistrement selon $pId
@@ -57,8 +57,7 @@ interface ICopixDataSource {
 	 * @param mixed pId
 	 * @return ICopixDAORecord
 	 */
-	public function get ($pId);
-	
+	public function get ();
 }
 
 /**
@@ -84,16 +83,15 @@ class CopixDatasourceFactory {
 	 * @param array $pParams Paramètres pour la création du datasource
 	 * @return mixed
 	 */
-	static public function get ($pType, $pParams) {
+	public static function get ($pType, $pParams) {
 		switch ($pType) {
 			case 'dao':
 				return new CopixDaoDatasource ($pParams);
+
 			default:
 				CopixClassesFactory::fileInclude ($pType);
 				$arDatasource = explode ('|', $pType);
 				return new $arDatasource[1] ($pParams);
-				break;
 		}
 	}
 }
-?>

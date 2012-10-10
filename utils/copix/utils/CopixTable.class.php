@@ -181,7 +181,7 @@ class CopixTable {
      */
     function getExcel($format = 'default') {
         //Inclusion de la classe pour gnération des fichiers excel
-        
+
         if ($format == 'default') {
             require_once(COPIX_PATH.'../excelwriter/excelwriter.inc.php');
             $excel = new ExcelWriter("temp.xls", "", "");
@@ -189,16 +189,16 @@ class CopixTable {
                 throw new Exception($excel->error);
         } else {
             $excel  = "ID;PWXL;N;E\r\nP;FArial;M200\r\nP;FArial;M200\r\nP;FArial;M200\r\nP;FArial;M200;SB\r\n";
-            
+
             if ($this->_size != null) {
                 foreach ($this->_size as $key=>$size) {
                     $excel .= "F;W".($key+1)." ".($key+1)." ".round(($size/6))."\r\n";
                 }
             }
         }
-        
+
             $lineNum = 1;
-        
+
         //Création de la ligne de titre
         if (count($this->_title)>0) {
             $tabTitle=array();

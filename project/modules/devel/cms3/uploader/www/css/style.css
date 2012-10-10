@@ -1,0 +1,86 @@
+#status
+{
+	/*background-color:		#F9F7ED;
+	padding:				10px 15px;*/
+}
+
+#uploadform{
+	padding-bottom : 5px;
+	border-bottom: 1px solid #ccc;
+}
+
+#uploadform th{
+	width: 250px;
+}
+ 
+#status .progress
+{
+	background:				white url({copixresource path="uploader|img/progress.gif"}) no-repeat;
+	background-position:	+50% 0;
+	margin-right:			0.5em;
+}
+ 
+#status .progress-text
+{
+	font-size:				0.9em;
+	font-weight:			bold;
+}
+ 
+#list
+{
+	list-style:				none;
+	margin:					0;
+}
+ 
+#list li.file
+{
+	border-bottom:			1px solid #eee;
+	background:				url({copixresource path="uploader|img/file.png"}) no-repeat 4px 4px;
+	padding : 4px;
+}
+#list li.file.file-uploading
+{
+	background-image:		url({copixresource path="uploader|img/uploading.png"});
+	background-color:		#D9DDE9;
+}
+#list li.file.file-success
+{
+	background-image:		url({copixresource path="uploader|img/success.png"});
+}
+#list li.file.file-failed
+{
+	background-image:		url({copixresource path="uploader|img/failed.png"});
+}
+ 
+#list li.file .file-name
+{
+	font-size:				1.2em;
+	margin-left:			44px;
+	display:				block;
+	clear:					left;
+	line-height:			40px;
+	height:					40px;
+	font-weight:			bold;
+}
+#list li.file .file-size
+{
+	font-size:				0.9em;
+	line-height:			18px;
+	float:					right;
+	margin-top:				2px;
+	margin-right:			6px;
+}
+#list li.file .file-info
+{
+	display:				block;
+	font-size:				0.9em;
+	line-height:			20px;
+	clear
+}
+#list li.file .file-remove
+{
+	clear:					right;
+	float:					right;
+	line-height:			18px;
+	margin-right:			6px;
+}

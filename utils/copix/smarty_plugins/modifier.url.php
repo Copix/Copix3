@@ -24,4 +24,3 @@ function smarty_modifier_url ($string) {
       return '<a href="'.$string.'">'.$string.'</a>';
    }
 }
-?>

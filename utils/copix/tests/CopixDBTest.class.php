@@ -91,5 +91,3 @@ class CopixDBTest extends CopixTest {
 		}
 	}
 }
-
-?>

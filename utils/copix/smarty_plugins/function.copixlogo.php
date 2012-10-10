@@ -25,4 +25,3 @@ function smarty_function_copixlogo($params, &$smarty) {
    	return _tag ('copixlogo', $params);
    }
 }
-?>

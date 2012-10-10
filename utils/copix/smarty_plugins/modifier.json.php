@@ -16,5 +16,3 @@
 function smarty_modifier_json($value) {
 	return CopixJSON::encode($value);
 }
-
-?>

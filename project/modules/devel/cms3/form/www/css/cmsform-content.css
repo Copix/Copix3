@@ -1,0 +1,147 @@
+
+
+.clear {
+	clear:both;
+}
+.hide {
+	display:none;
+}
+.flor {
+	float: right;
+}
+.p_icon {
+	float: left;
+	margin-right: .8em;
+}
+.copix_help,.copix_notice { padding: .8em; margin-bottom: 1em; border: 2px solid #ddd; }
+
+p.copix_help {
+	background: #E8EFFB;
+	color: #3399FF;
+	border-color: #0174DF; 
+}
+
+p.copix_notice {
+	background: #FFF6BF; color: #514721; border-color: #FFD324;
+}
+
+/* *** Contenu *** */
+input textarea {width:100%;}
+.draggable {
+	cursor: move;
+}
+
+#th_obligatoire {
+	text-align:center;
+	width:80px;
+}
+#th_orientation {
+	min-width:160px;
+}
+#th_actions {
+	text-align:center;
+	max-width:50px;
+}
+
+#loading_img {
+	float:right;
+	padding: 3px 15px 0px 0px;
+}
+
+.td_bouton {
+	width:20px;
+	text-align:center;
+	padding:0px;
+	cursor: pointer;
+}
+
+
+/* *** Liste des champs *** */
+.div_element_list {
+	width:99%; 
+	border: 1px solid;
+	margin: 10px 0px;
+	padding: 10px 0px;
+	-moz-border-radius-bottomleft:8px;
+	-moz-border-radius-bottomright:8px;
+	-moz-border-radius-topleft:8px;
+	-moz-border-radius-topright:8px;
+}
+.div_element_list h3 {
+    padding-left: 1em;
+}
+
+.form_field, .form_bloc {
+	float:left;
+	margin:0px 5px;
+}
+.form_field_chk {
+	float:left;
+	padding:0px 10px;
+}
+
+.form_field_label,
+.form_bloc_label {
+	float:left;
+	cursor:pointer;
+}
+
+.form_field_label{
+	width:100px;
+}
+
+.form_bloc_label{
+	width:190px;
+}
+/* *** Bloc mise à jour d'un élément *** */
+#update_element_div {
+	opacity: 0.8;
+	padding: 5px;
+	-moz-border-radius-bottomleft:8px;
+	-moz-border-radius-bottomright:8px;
+	-moz-border-radius-topleft:8px;
+	-moz-border-radius-topright:8px;
+}
+
+/* *** Page aperçu *** */
+.toggler{
+	text-align:right;
+	padding: 5px 0px;
+	margin-bottom:1px;
+	margin-top:1px;
+	background:#DBDFC9;
+	width:100%;
+	color:#595959;
+	cursor:pointer;
+}
+
+.form_new {
+	padding: 10px;
+	background: #F2F5A9;
+	-moz-border-radius-bottomleft:8px;
+	-moz-border-radius-bottomright:8px;
+	-moz-border-radius-topleft:8px;
+	-moz-border-radius-topright:8px;
+}
+
+.form_update {
+	padding: 10px;
+	background: #A9F5D0;
+	-moz-border-radius-bottomleft:8px;
+	-moz-border-radius-bottomright:8px;
+	-moz-border-radius-topleft:8px;
+	-moz-border-radius-topright:8px;
+}
+
+.button {
+	padding: 3px;
+	margin:5px;
+}
+
+input[type="submit"]  {
+	margin: 0px 15px;
+}
+
+.img_button{
+	cursor:pointer;
+}

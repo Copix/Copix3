@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Default</name>
+		<description>Template simple</description>
+		<tpl>medias|portlettemplates/default.media.tpl</tpl>
+	</template>
+	<template>
+		<name>colonne</name>
+		<description>Template en colonne</description>
+		<tpl>medias|portlettemplates/colonne.media.tpl</tpl>
+	</template>
+	<template>
+		<name>ligne</name>
+		<description>Template en ligne</description>
+		<tpl>medias|portlettemplates/ligne.media.tpl</tpl>
+	</template>
+</templates>

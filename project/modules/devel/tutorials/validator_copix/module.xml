@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+    <general>
+        <default name="validator_copix" longdescriptioni18n="validator_copix.longdescription" descriptioni18n="validator_copix.description" icon="|img/icon/tutorial.png"/>
+		<group id="tutos" captioni18n="copix:copixmodule.group.tutos" />
+    </general>
+    <admin>
+        <link url="help|" captioni18n="validator_copix.helplink" credentials="basic:registered">
+        </link>
+    </admin>
+</moduledefinition>

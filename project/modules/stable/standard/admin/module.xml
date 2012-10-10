@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="admin" longdescriptioni18n="install.longdescription" descriptioni18n="install.description" icon="|img/icon/admin.png" version="1.0.1" />
+		<group id="standard" captioni18n="copix:copixmodule.group.standard" />
+	</general>
+	
+	<admin>
+		<group id="admin" captioni18n="group.admin" icon="|img/icon/admin.png">
+			<link url="admin|install|manageModules" captioni18n="install.button.manageModules" credentials="basic:admin" icon="admin|img/icon/module.png" bigicon="admin|img/icon_big/module.png" />
+			<link url="admin|parameters|" captioni18n="install.button.parameters" credentials="basic:admin" icon="img/tools/config.png" bigicon="admin|img/icon_big/config.png" />
+			<link url="admin|plugin|" captioni18n="install.button.managePlugins" credentials="basic:admin" icon="admin|img/icon/plugin.png" bigicon="admin|img/icon_big/plugin.png" />
+			<link url="admin|log|" captioni18n="install.button.logs" credentials="basic:admin" icon="admin|img/icon/log.png" bigicon="admin|img/icon_big/log.png" />
+			<link url="admin|cache|" captioni18n="install.button.cache" credentials="basic:admin" icon="admin|img/icon/cache.png" bigicon="admin|img/icon_big/cache.png" />
+			<link url="admin|database|" captioni18n="install.button.databases" shortcaptioni18n="install.button.databasesshort" credentials="basic:admin" icon="admin|img/icon/database.png" bigicon="admin|img/icon_big/database.png" />
+			<link url="admin|proxy|" captioni18n="install.button.proxy" credentials="basic:admin" icon="admin|img/icon/proxy.png" bigicon="admin|img/icon_big/proxy.png" />
+			<link url="admin|themes|" captioni18n="install.button.theme" credentials="basic:admin" icon="admin|img/icon/theme.png" bigicon="admin|img/icon_big/theme.png" />
+			<link url="admin|temp|" captioni18n="install.button.cleartemp" shortcaptioni18n="install.button.cleartempshort" credentials="basic:admin" icon="img/tools/refresh.png" bigicon="admin|img/icon_big/refresh.png" />
+			<link url="admin|email|create" captioni18n="email.link" shortcaptioni18n="email.linkshort" credentials="basic:admin" icon="img/tools/email.png" bigicon="admin|img/icon_big/email.png" />
+			<link url="admin|i18nHandlers|" captioni18n="i18n.adminI18nHandlers" credentials="basic:admin" icon="admin|img/icon/i18n.png" bigicon="admin|img/icon_big/i18n.png" />
+			<link url="admin|maintenance|" captioni18n="maintenance.link" credentials="basic:admin" icon="img/tools/locked.png" />
+		</group>
+		<group id="auth" captioni18n="auth|auth.admingroup.auth" icon="|img/icon/auth.png">
+			<link url="admin|userpreferences|" captioni18n="userpreferences.link" credentials="basic:admin" icon="img/tools/config.png" />
+			<link url="admin|grouppreferences|" captioni18n="grouppreferences.link" credentials="basic:admin" icon="img/tools/config.png" />
+		</group>
+	</admin>
+	<grouppreferences>
+		<group caption="Accueil">
+			<preference name="homeStyle" caption="Style des liens" default="small" type="select" listValues="small=>Petits;big=>Gros" />
+		</group>
+	</grouppreferences>
+	<credentialhandlers>
+		<credentialhandler name='installcredentialhandler' stopOnSuccess='true' stopOnFailure='false' />
+	</credentialhandlers>
+</moduledefinition>

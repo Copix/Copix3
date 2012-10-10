@@ -23,16 +23,18 @@ Copix::RequireOnce (COPIX_LDAP_PATH . 'CopixLdapEntry.class.php');
 class CopixLdapProfil {
    var $dn;
    var $host;
+   var $port = 389;
    var $user;
    var $password;
-   var $shared;
+   var $shared = false;
+   
 
-   public function __construct ($dnName, $hostName, $userName, $password,$shared=false){
+   public function __construct ($dnName, $hostName, $portNumber, $userName, $password,$shared=false){
       $this->dn         = $dnName;
       $this->host       = $hostName;
+      $this->port		= $portNumber;
       $this->user       = $userName;
       $this->password   = $password;
-      $this->shared     = $shared;;
+      $this->shared     = $shared;
    }
 }
-?>

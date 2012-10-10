@@ -36,4 +36,3 @@ function smarty_function_tabgroup ($params, &$me) {
 		return $toReturn;
 	}
 }
-?>

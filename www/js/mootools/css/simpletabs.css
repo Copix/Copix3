@@ -1,0 +1,37 @@
+.tab-wrapper
+{
+	padding:				1em 1.5em;
+	margin:					0;
+	border:					1px solid #eee;
+	clear:					both;
+}
+.tab-menu
+{
+	margin:					0;
+	padding:				0;
+	list-style:				none;
+	overflow:				auto;
+}
+.tab-menu li
+{
+	margin:					0;
+	padding:				0;
+	float:					left;
+	line-height:			2em;
+}
+.tab-menu li a
+{
+	padding:				0 .5em;
+	font-weight:			bold;
+}
+.tab-menu li a:hover,
+.tab-menu li a:focus
+{
+	/* your effect here */
+}
+.tab-menu li.tab-selected a
+{
+	text-decoration:		none;
+	color:					inherit;
+	/* your effect here */
+}

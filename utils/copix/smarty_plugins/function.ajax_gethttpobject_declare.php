@@ -20,4 +20,3 @@ function smarty_function_ajax_gethttpobject_declare($params, &$me) {
 	Copix::RequireOnce (COPIX_PATH.'taglib/CopixTagLibAjaxGetHttpObject.class.php');
     CopixTagLibAjaxGetHttpObject::doDeclare ();
 }
-?>

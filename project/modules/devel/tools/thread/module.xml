@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+ 	<default name="thread" descriptioni18n="thread.description" longdescriptioni18n="thread.longdescription" />
+	<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+ </general>
+ <parameters>
+	<parameter name="clients" captioni18n="thread.clientslist" default="127.0.0.1" />
+	<parameter name="servers" captioni18n="thread.serverslist" default="local" />
+ </parameters>
+</moduledefinition>

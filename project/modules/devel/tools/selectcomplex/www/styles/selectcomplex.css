@@ -1,0 +1,57 @@
+.selectcomplex {
+	float: left;
+}
+
+.selectcomplex_box {
+	background: #FFF;
+	border:1px solid #000;
+	float:left;
+	cursor: pointer;
+	overflow: hidden;
+	padding: 0px 3px;
+}
+
+.selectcomplex_button {
+	cursor: pointer;
+	float:left;
+	margin-top:-1px;
+}
+
+.selectcomplex_values {
+	position: absolute;
+	overflow: auto;
+}
+
+.selectcomplex_useScroll {
+	background:#FFF;
+	border-left:1px solid #000;
+	border-top:1px solid #000;
+	border-bottom:1px solid #000;
+}
+.selectcomplex_values_list {
+	float:left;
+	background:#FFF;
+	border:1px solid #000;
+}
+.selectcomplex_useScroll .selectcomplex_values_list {
+	border:1px solid #FFF;
+}
+
+.selectcomplex_option, .selectcomplex_option_alternate {
+	padding: 2px 3px;
+	cursor: default;
+}
+.selectcomplex_option_alternate {
+	background:#DADADA;
+}
+
+.selectcomplex_option:hover, .selectcomplex_option_alternate:hover {
+	background:#118;
+	color: #FFF;
+}
+
+.copixlanguagechooser_img_selected {
+	display:block;
+	margin-left: -3px;
+	margin-right: 3px;
+}

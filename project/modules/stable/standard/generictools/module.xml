@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default version="1.0.0" name="generictools" descriptioni18n="messages.description" longdescriptioni18n="messages.longdescription" icon="|img/icon/generictools.png" />
+		<group id="standard" captioni18n="copix:copixmodule.group.standard" />
+	</general>
+	<parameters>
+		<parameter name="excludeFromPassword" captioni18n="generictools.parameter.excludeFromPassword" default="l;1;0;o;O" />
+		<parameter name="sizeWord" captioni18n="generictools.parameter.sizeWord" default="5" />
+	</parameters>
+</moduledefinition>

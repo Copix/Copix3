@@ -20,6 +20,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
 \* ************************************************************************************* */
+
 var iMask = new Class({
 	options: {
 		targetClass: ".iMask",
@@ -99,7 +100,6 @@ var iMask = new Class({
 				var p = this._getSelectionStart(obj);
 				switch(event.code) {
 					case 8: // Backspace
-						this._updSelection(obj, p, this.options.maskEmptyChr);
 						this._selectPrevious(obj);
 						break;
 					case 36: // Home

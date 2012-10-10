@@ -25,6 +25,7 @@
 *
 */
 function smarty_function_copixform_header($params, &$me) {
+
 	$assign = '';
 	if(isset($params['assign'])){
 		$assign = $params['assign'];
@@ -51,4 +52,3 @@ function smarty_function_copixform_header($params, &$me) {
 		return $toReturn;
 	}
 }
-?>

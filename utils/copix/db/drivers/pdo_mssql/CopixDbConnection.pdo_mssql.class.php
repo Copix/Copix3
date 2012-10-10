@@ -181,7 +181,7 @@ class CopixDBConnectionPDO_MsSQL extends CopixDBPDOConnection {
           $p_result_line->primary  = 0;
           $p_result_line->isAutoIncrement = 0;
 
-          if( preg_match("/identity/" , $p_result_line->type ) )  {
+          if( preg_mach("/identity/" , $p_result_line->type ) )  {
              $p_result_line->isAutoIncrement = 1;
           }
 
@@ -264,11 +264,10 @@ class CopixDBConnectionPDO_MsSQL extends CopixDBPDOConnection {
     * @return bool
     */
    public static function isAvailable (){
-   	if (!class_exists ('PDO')){
+   	if (!class_exists ('PDO', false)){
    		return false;
    	}
    	return in_array ('mssql', PDO::getAvailableDrivers ());
    }
              
 }
-?>

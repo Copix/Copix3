@@ -1,27 +1,18 @@
 var completer= {};
-function tag_autocomplete (id, name, length, tab, url, onrequest, onselect) {
+function tag_autocomplete (id, name, length, postData, url, onrequest, onselect) {
 	var elem = $(id);
 	$('autocompleteload_'+name).setStyle('display', 'none');
-	completer[name] = new Autocompleter.Ajax.Xhtml(elem, url, {
-        'postData': tab,
-		'onRequest': function(el) {			
-			$('autocompleteload_'+name).setStyle('display', '');
-			onrequest(el);
-		},
-		'onComplete': function(el) {
-			$('autocompleteload_'+name).setStyle('display', 'none');
-		},
-		'onSelect': function (el,eleme,element) {
-			onselect(el,eleme,element);
-		},
-		'parseChoices': function(el) {
-		    try{
-				var value = el.getFirst().innerHTML;
-				el.inputValue = value;
-				this.addChoiceEvents(el).getFirst().setStyles({'width':'200px'}).setHTML(this.markQueryValue(value));
-			}catch (e){};
+	completer[name] = new Autocompleter.Request.HTML(elem, url, {
+        'indicatorClass': 'autocompleter-loading',
+        'postData': postData,
+		'injectChoice': function(el) {
+            var first = el.getFirst();
+            var value = first.innerHTML;
+            el.inputValue = value;
+            first.set('html', this.markQueryValue(value));
+            this.addChoiceEvents(el);
 		 },
-		 minLength:length,
-		 maxChoices: 3
+         'width' : '300',
+         'minLength' : length
     });
 }

@@ -57,7 +57,4 @@ function smarty_function_json ($params, &$me) {
 	} else {
 		return $toReturn;
 	}
-		
 }
-
-?>

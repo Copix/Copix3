@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition version="1">
+	<general>
+		<default name="document" version="1.2.0" description="Gestion des documents" icon="document|img/icon_document.png" />
+		<group id="cms3" captioni18n="heading|heading.group.caption" />
+	</general>
+	<dependencies>
+		<dependency name="heading" kind="module" version="1.6.4" />
+		<dependency name="uploader" kind="module" />
+	</dependencies>
+	<registry>
+	 <entry id="HeadingElement">
+	  <type id="document" caption="Document" 
+	  					image="document|img/document.png" 
+	  					icon="document|img/icon_document.png" 
+	         			classid="document|documentservices" 
+	         			adminurl="document|admin|prepareEdit" 
+	         			fronturl="document|documentfront::default" 
+	         			canrss="true" />
+	 </entry>
+	 <entry id="Portlet">
+		<type id="document" group="element" description="Cette portlet permet d'afficher vos documents." caption="Document" portlettype="PortletDocument" icon="document|img/portleticon_document.png" 
+			/> 
+	 </entry>
+     <entry id="ModuleTables">
+        <table name="document" />
+     </entry>
+     <entry id="ModuleDirectories">
+        <directory name="documents" />
+     </entry>
+	</registry>
+	<userpreferences>
+		<group caption="Documents">
+			<preference name="uploadForm" caption="Formulaire d'envoi" default="flash" type="select" listValues="classic=>Classique;flash=>Flash" descriptioni18n="document.preferences.uploadForm" />
+		</group>
+        <group id="headingNotification" caption="Notification">
+            <preference name="documentNotification" caption="Document" default="0" type="bool" description="Donne la possibilité d'envoyer une notification par mail lorsqu'un document est publié." />
+        </group>
+	</userpreferences>
+	<updates>
+		<update from="1" to="1.0.0" script="doNothing" />
+		<update from="1.0.0" to="1.1.0" script="1_0_0_to_1_1_0" />
+		<update from="1.1.0" to="1.2.0" script="1_1_0_to_1_2_0" />
+	</updates>
+</moduledefinition>

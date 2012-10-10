@@ -32,4 +32,3 @@ function smarty_function_currenturl($params, &$me) {
 		return $assign;
 	}
 }
-?>

@@ -28,7 +28,7 @@ class TemplateTagTrClass extends CopixTemplateTag {
 	 * @param string $pContent Contenu passé en paramètre
 	 * @return string
 	 */
-	public function process ($pContent) {
+	public function process ($pContent = null) {
 		$id = (string)$this->getParam ('id', 'default');
 		if (!array_key_exists ($id, self::$_classes)) {
 			self::$_classes[$id] = 'alternate';
@@ -37,10 +37,8 @@ class TemplateTagTrClass extends CopixTemplateTag {
 		$nameOnly = $this->getParam ('nameOnly', false);
 		$highlight = $this->getParam ('highlight', false);
 		self::$_classes[$id] = (self::$_classes[$id] == null) ? 'alternate' : null;
-		if ($highlight !== false) {
-			if ($highlight == _request ('highlight')) {
-				return ($nameOnly) ? 'highlight' : 'class="highlight"';
-			}
+		if ($highlight) {
+			return ($nameOnly) ? 'highlight' : 'class="highlight"';
 		}
 		if (self::$_classes[$id] == 'alternate') {
 			return ($nameOnly) ? 'alternate' : 'class="alternate"';

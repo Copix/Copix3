@@ -28,7 +28,9 @@ function smarty_function_copixzone ($params, &$me) {
 		$assign = null;
 	}
 
-	$toReturn = _tag ('copixzone', $params);
+	$tag = new TemplateTagCopixZone ($params);
+	$toReturn = $tag->process ();
+
 	if (strlen ($assign) > 0) {
 		$me->assign ($assign, $toReturn);
 		return '';
@@ -36,4 +38,3 @@ function smarty_function_copixzone ($params, &$me) {
 		return $toReturn;
 	}
 }
-?>

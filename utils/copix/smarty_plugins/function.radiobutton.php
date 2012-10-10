@@ -29,4 +29,3 @@ function smarty_function_radiobutton($params, &$me) {
       return _tag ('radiobutton', $params);
    }
 }
-?>

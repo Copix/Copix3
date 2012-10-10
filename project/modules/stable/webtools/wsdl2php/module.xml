@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="wsdl2php" descriptioni18n="wsdl2php.title" version="0.0.1" />
+		<group id="webTools" descriptioni18n="copix:copixmodule.group.webTools" />
+	</general>
+	<admin>
+		<link url="wsdl2php||" captioni18n="wsdl2php.title" credentials="basic:admin" />
+	</admin>
+</moduledefinition>

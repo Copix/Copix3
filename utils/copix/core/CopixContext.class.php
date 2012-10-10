@@ -21,14 +21,14 @@ class CopixContext {
 	 *
 	 * @var array
 	 */
-	static private $_contextStack = array ();
+	private static $_contextStack = array ();
 
 	/**
 	 * Variable privée pour le contexte courant
 	 *
 	 * @var string
 	 */
-	static private $_currentContext = 'default';
+	private static $_currentContext = 'default';
 
 	/**
 	 * Empilement d'un contexte.
@@ -46,7 +46,7 @@ class CopixContext {
 	 *
 	 * @param string	$pModule Nnom du module dont on empile le contexte
 	 */
-	static public function push ($pModule) {
+	public static function push ($pModule) {
 		self::$_currentContext = CopixContext::$_contextStack[] = $pModule;
 	}
 
@@ -55,7 +55,7 @@ class CopixContext {
 	 *
 	 * @return string Elément dépilé, soit le contexte qui n'est plus d'atualité
 	 */
-	static public function pop () {
+	public static function pop () {
 		$lastContext = ($value = array_pop (CopixContext::$_contextStack)) === null ? 'default' : $value;
 		self::$_currentContext = (($last = (count (CopixContext::$_contextStack) - 1)) >= 0) ? CopixContext::$_contextStack[$last] : 'default';
 		return $lastContext; 
@@ -69,7 +69,7 @@ class CopixContext {
 	 *
 	 * @return string Nom du contexte actuel si défini, si pas de contexte retourne default
 	 */
-	static public function get () {
+	public static function get () {
 		return self::$_currentContext;
 	}
 
@@ -79,7 +79,7 @@ class CopixContext {
 	 * Cette méthode existe principalement pour permettre à CopixController de manipuler
 	 * la pile de contexte complète
 	 */
-	static public function clear () {
+	public static function clear () {
 		CopixContext::$_contextStack = array ();
 		self::$_currentContext = 'default';
 	}
@@ -88,7 +88,7 @@ class CopixContext {
 	 * Retourne la pile de contexte
 	 * @return array
 	 */
-	static public function getStack (){
+	public static function getStack (){
 		return array_reverse (self::$_contextStack);
 	}
 }

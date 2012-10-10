@@ -51,4 +51,3 @@ function smarty_function_copixlist_pager($params, &$me) {
 		return $toReturn;
 	}
 }
-?>

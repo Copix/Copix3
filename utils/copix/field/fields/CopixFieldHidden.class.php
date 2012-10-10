@@ -27,4 +27,14 @@ class CopixFieldHidden extends CopixAbstractField implements ICopixField  {
 			$pDatasource->addCondition ($pField, 'like', $pValue);
 		}
 	}
+	
+	/**
+	 * Affichage de l'élement
+	 * @param $pName
+	 * @param $pValue
+	 * @return string code html
+	 */
+	public function getHTMLFieldEdit ($pName, $pValue) {
+		return '<input type="hidden" name="'.$pName.'" value="'.$pValue.'" />';
+	}
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition version="1">
+	<general>
+		<default name="package_cms" version="1.0.0" description="Installation de tous les modules du CMS" icon="package_cms|img/package_cms.png" />
+		<group id="cms3" captioni18n="heading|heading.group.caption" />
+	</general>
+	<dependencies>
+		<dependency name="heading" kind="module" />
+		<dependency name="portal" kind="module" />	
+		<dependency name="articles" kind="module" />
+		<dependency name="document" kind="module" />
+		<dependency name="images" kind="module" />
+		<dependency name="medias" kind="module" />
+		<dependency name="form" kind="module" />
+		<dependency name="cms_editor" kind="module" />
+		<dependency name="cms_rss" kind="module" />
+	</dependencies>
+</moduledefinition>

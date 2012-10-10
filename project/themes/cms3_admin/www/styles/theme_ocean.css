@@ -1,0 +1,23 @@
+.bannertop, 
+.cmsbloc_title,
+div.togglerCollapse,
+.CopixTable tr.trSelectedElement, 
+.CopixTable tr.trSelectedElement:hover, 
+.copixwindow_title {
+    background: #45506F; /* old browsers */
+	background: -moz-linear-gradient(top, #63739F 0%, #45506F 100%); /* firefox */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#63739F), color-stop(100%,#45506F)); /* webkit */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#63739F', endColorstr='#45506F',GradientType=0 ); /* ie */
+}
+
+#navigation .limenu img{
+    display: none;
+}
+
+#navigation a {
+    padding: 6px 12px 0;
+}
+
+.bannerbottom .search a {
+	color: #7F0F14;
+}

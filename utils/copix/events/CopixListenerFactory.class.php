@@ -9,23 +9,6 @@
 */
 
 /**
-* Classe abstraite pour les listener
-* @package		copix
-* @subpackage 	event
-*/
-abstract class CopixListener {
-   /**
-   * Demande de traitement d'un événement donné
-   * @param CopixEvent			$pEvent			l'événement à traiter
-   * @param CopixEventResponse	$pEventResponse	la réponse à renseigner
-   */
-   public function perform ($pEvent, $pEventResponse) {
-      $methodName = 'process'.$pEvent->getName ();
-      $this->$methodName ($pEvent, $pEventResponse);
-   }
-}
-
-/**
 * Factory de listener
 * @package		copix
 * @subpackage	event
@@ -179,7 +162,7 @@ class CopixListenerFactory {
     * @return string
     */
     private static function _compiledFileName (){
-        return COPIX_CACHE_PATH.'php/listeners.instance.php';
+        return COPIX_CACHE_PATH.'listeners.instance.php';
     }
 
     /**
@@ -214,11 +197,9 @@ class CopixListenerFactory {
     */
     private function _create ($pModule, $pListenerName){
         if (! isset ($this->_listenersSingleton[$pModule][$pListenerName])){
-            Copix::RequireOnce (CopixModule::getPath ($pModule).'/'.COPIX_CLASSES_DIR.strtolower ($pListenerName).'.listener.php');
             $className = 'Listener'.$pListenerName;
             $this->_listenersSingleton[$pModule][$pListenerName] = new $className ();
         }
         return $this->_listenersSingleton[$pModule][$pListenerName];
     }
 }
-?>

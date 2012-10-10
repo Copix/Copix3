@@ -1,0 +1,8 @@
+.grip {
+	background: #eee url(../img/grip.png) center center no-repeat !important;
+	height: 10px;
+	cursor:s-resize !important;
+	border-color:#DDDDDD;
+	border-style:solid;
+	border-width:0 1px 1px;
+}

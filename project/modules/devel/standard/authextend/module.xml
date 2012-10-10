@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="authextend"
+		         version="1.0.0"
+		         descriptioni18n="authextend.moduledescription" 
+		         longdescriptioni18n="authextend.longdescription" 
+		         icon="|img/icon/authextend.png" />
+		<group id="standard" captioni18n="copix:copixmodule.group.standard" />
+	</general>
+	<dependencies>
+		<dependency name="auth" kind="module" />
+		<dependency name="spinbutton" kind="module" />
+		<dependency name="i18ndb" kind="module" />
+        <dependency name="gd" kind="extension" />
+	</dependencies>
+	<admin>
+		<group id="auth" captioni18n="auth|auth.admingroup.auth" icon="auth|img/icon/auth.png">
+			<link url="admin|default"
+			      captioni18n="authextend.adminlink"
+			      credentials="basic:admin"
+			      icon="|img/icon/authextend.png"></link>
+		</group>
+	</admin>
+</moduledefinition>

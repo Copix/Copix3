@@ -14,7 +14,7 @@
  * @package		copix
  * @subpackage	datasource
  */
-class CopixDaoDatasource {
+class CopixDaoDatasource implements ICopixDataSource {
 	/**
 	 * Connexion si différente de default 
 	 *
@@ -34,7 +34,7 @@ class CopixDaoDatasource {
 	 *
 	 * @var object
 	 */
-	protected $_dao = null;
+	private $_dao = null;
 
 	/**
 	 * Ordre des champs
@@ -62,46 +62,29 @@ class CopixDaoDatasource {
 	 * 
 	 * @var CopixDAOSearchParams
 	 */
-	protected $_sp = null;
+	private $_sp = null;
 	
 	/**
 	 * Nombre de d'enregistrements max pour la page
 	 * 
 	 * @var int
 	 */
-	protected $_max = null;
+	private $_max = null;
 	
 	/**
 	 * Nombre de pages du dernier retour
 	 * 
 	 * @var int
 	 */
-	protected $_nbpages = null;
+	private $_nbpages = null;
 	
 	/**
 	 * Nombre d'enregistrements
 	 *
 	 * @var int
 	 */
-	protected $_nbrecord = null;
-	
-	/**
-	 * Appelée pendant le unserialize
-	 */
-	public function __wakeup () {
-		$this->_dao = $this->_dao->getSessionObject (); 
-	}
-	
-	/**
-	 * Appelée avant le serialize
-	 *
-	 * @return array
-	 */
-	public function __sleep () {
-		$this->_dao = new CopixSessionObject ($this->_dao);
-		return array_keys (get_object_vars ($this)); 
-	}
-	
+	private $_nbrecord = null;
+		
 	/**
 	 * Constructeur
 	 *
@@ -165,15 +148,12 @@ class CopixDaoDatasource {
 	
 	/**
 	 * DEPRECATED - utiliser orderBy à la place : Ajoute un ordre de tri
-	 *
-	 * @param string $pField
-	 * @param string $pOrder
-	 * @return CopixDAOSearchparams
 	 */
 	public function addOrderBy ($pField, $pOrder = 'ASC') {
 		$this->orderBy (array ($pField, $pOrder));
+		return $this;
 	}
-	
+
 	/**
 	 * Ajoute un ordre de tri
 	 *
@@ -182,7 +162,6 @@ class CopixDaoDatasource {
 	 */
 	public function orderBy ($pArg) {
 		$this->_sp->orderBy ($pArg);
-		return $this;
 	}
 	
 	/**
@@ -197,7 +176,7 @@ class CopixDaoDatasource {
 		if ($pOrder != null) {
 			$this->_sp->orderBy (array ($pOrder, $pSens));
 		}
-		$sp = $this->_sp; 
+		$sp = $this->_sp;
 		$this->_sp = _daoSP ();
 		if ($this->_max !== null) {
 			if ($this->_max!=0) {
@@ -206,8 +185,8 @@ class CopixDaoDatasource {
 			}
 			$sp->setLimit ($this->_max * $pPage, $this->_max);
 		}
-		
-		$results = $this->_dao->findBy ($sp);		
+
+		$results = $this->_dao->findBy ($sp);
 		return $results->fetchAll ();
 	}
 
@@ -319,4 +298,3 @@ class CopixDaoDatasource {
 		return $this->_fields;
 	}
 }
-?>

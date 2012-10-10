@@ -3,7 +3,7 @@
  * @package		copix
  * @subpackage	utils
  * @author		Croës Gérald, Jouanneau Laurent
- * @copyright	2001-2007 CopixTeam
+ * @copyright	CopixTeam
  * @link		http://copix.org
  * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
  */
@@ -29,7 +29,7 @@ class CopixFile {
 	 * </code>
 	 */
 	public static function read ($pFilename){
-		return (file_exists($pFilename)) ? file_get_contents ($pFilename, false) : false;
+		return @file_get_contents ($pFilename, false);
 	}
 
 	/**
@@ -37,59 +37,28 @@ class CopixFile {
 	 *
 	 * Cette fonction est basée sur le code trouvé dans Smarty (http://smarty.php.net)
 	 *
-	 * @param	string	$file le nom du fichier (le fichier sera crée ou remplacé)
-	 * @param	mixed	$data les données à écrire dans le fichier
+	 * @param	string	$pFileName le nom du fichier (le fichier sera crée ou remplacé)
+	 * @param	mixed	$pData les données à écrire dans le fichier
 	 * @return	bool 	si la fonction a correctement écrit les données dans le fichier
 	 */
-	public static function write ($file, $data){
-//file_put_contents('/tmp/log_write_3.txt', $file."\n\r", FILE_APPEND);
-		$_dirname = dirname ($file);
+	public static function write ($pFileName, $pData){
+		//file_put_contents('/tmp/log_write_g.txt', $pFileName."\n\r", FILE_APPEND);
+		$_dirname = dirname ($pFileName);
 
-		//If the $file finish with / just createDir
-		if ((($lastChar = substr ($file, -1)) == '/') || ($lastChar == '\\')){
-			self::_createDir ($file);
+		//If the $pFileName finish with / just createDir
+		if ((($lastChar = substr ($pFileName, -1)) == '/') || ($lastChar == '\\')){
+			self::createDir ($pFileName);
 			return true;
 		} else {
 			//asking to create the directory structure if needed.
-			self::_createDir ($_dirname);
+			self::createDir ($_dirname);
 		}
 
-		if(!@is_writable ($_dirname)) {
-			// cache_dir not writable, see if it exists
-			if(!@is_dir ($_dirname)) {
-				throw new Exception (_i18n ('copix:copix.error.cache.directoryNotExists', array ($_dirname)));
-			}
-			throw new Exception (_i18n ('copix:copix.error.cache.notWritable', array ($file, $_dirname)));
+		if (file_put_contents ($pFileName, $pData, LOCK_EX) === false){
+			throw new CopixException (_i18n ('copix:copixfile.error.errorWhileWritingFile', array ($pFileName, null)));
 		}
 
-		// write to tmp file, then rename it to avoid
-		// file locking race condition
-		$_tmp_file = tempnam ($_dirname, 'wrt');
-
-		if (!($fd = @fopen ($_tmp_file, 'wb'))) {
-			$_tmp_file = $_dirname . '/' . uniqid('wrt');
-			if (!($fd = @fopen ($_tmp_file, 'wb'))) {
-				throw new Exception (_i18n ('copix:copix.error.cache.errorWhileWritingFile', array ($file, $_tmp_file)));
-			}
-		}
-
-		fwrite ($fd, $data);
-		fclose ($fd);
-
-		// Delete the file if it allready exists (this is needed on Win,
-		// because it cannot overwrite files with rename())
-		if (CopixConfig::osIsWindows ()) {
-			// DDT : ajout du test pour la vérification de l'existence du fichier
-			if (file_exists ($file)) {
-				@unlink ($file);
-			}
-			@copy($_tmp_file, $file);//Sur certaines configuration bien particulières, il arrive que
-			//windows echoue sur le rename... ?
-			@unlink($_tmp_file);
-		}else{
-			@rename($_tmp_file, $file);
-		}
-		@chmod($file, self::FILEMOD );
+		@chmod($pFileName, self::FILEMOD);
 		return true;
 	}
 
@@ -113,9 +82,12 @@ class CopixFile {
 		if(!@is_writable ($_dirname)) {
 			// On ne dispose pas des droits d'écriture, vérifions si le répertoire existe
 			if(!@is_dir ($_dirname)) {
-				throw new Exception (_i18n ('copix:copix.error.cache.directoryNotExists', array ($_dirname)));
+				throw new CopixException (_i18n ('copix:copixfile.error.directoryNotExists', array ($_dirname)));
 			}
-			throw new Exception (_i18n ('copix:copix.error.cache.notWritable', array ($file, $_dirname)));
+			if (!file_exists ($pFilename)) {
+				throw new CopixException (_i18n ('copix:copixfile.error.fileNotFound', array ($pFilename)));
+			}
+			throw new CopixException (_i18n ('copix:copixfile.error.notWritable', array ($pFilename, $_dirname)));
 		}
 
 		if (@unlink($pFilename)) {
@@ -126,97 +98,42 @@ class CopixFile {
 	}
 
 	/**
-	 * Création d'une arborescence de répertoires
-	 *
-	 * @param	string	$dir	La structure à créer
-	 * @return	bool 	si le repertoire est créé ou existe on retourne vrai, faux sinon
-	 * @access private
-	 */
-	private static function _createDir ($dir){
-		if (!file_exists ($dir)) {
-			$_open_basedir_ini = ini_get('open_basedir');
-
-			if (DIRECTORY_SEPARATOR=='/') {
-				/* unix-style paths */
-				$_dir = $dir;
-				$_dir_parts = preg_split('!/+!', $_dir, -1, PREG_SPLIT_NO_EMPTY);
-				$_new_dir = ($_dir{0}=='/') ? '/' : getcwd().'/';
-				if($_use_open_basedir = !empty($_open_basedir_ini)) {
-					$_open_basedirs = explode(':', $_open_basedir_ini);
-				}
-
-			} else {
-				/* other-style paths */
-				$_dir = str_replace('\\','/', $dir);
-				$_dir_parts = preg_split('!/+!', $_dir, -1, PREG_SPLIT_NO_EMPTY);
-				if (preg_match('!^((//)|([a-zA-Z]:/))!', $_dir, $_root_dir)) {
-					/* leading "//" for network volume, or "[letter]:/" for full path */
-					$_new_dir = $_root_dir[1];
-					/* remove drive-letter from _dir_parts */
-					if (isset($_root_dir[3])) array_shift($_dir_parts);
-
-				} else {
-					$_new_dir = str_replace('\\', '/', getcwd()).'/';
-				}
-
-				if($_use_open_basedir = !empty($_open_basedir_ini)) {
-					$_open_basedirs = explode(';', str_replace('\\', '/', $_open_basedir_ini));
-				}
-
-			}
-
-			/* all paths use "/" only from here */
-			foreach ($_dir_parts as $_dir_part) {
-				$_new_dir .= $_dir_part;
-
-				if ($_use_open_basedir) {
-					// do not attempt to test or make directories outside of open_basedir
-					$_make_new_dir = false;
-					foreach ($_open_basedirs as $_open_basedir) {
-						if (substr($_new_dir, 0, strlen($_open_basedir)) == $_open_basedir) {
-							$_make_new_dir = true;
-							break;
-						}
-					}
-				} else {
-					$_make_new_dir = true;
-				}
-
-				if ($_make_new_dir && !file_exists($_new_dir) && !@mkdir($_new_dir, self::DIRMOD) && !is_dir($_new_dir)) {
-					throw new Exception (_i18n ("copix:copix.error.cache.creatingDirectory", array ($_new_dir)));
-				}
-				$_new_dir .= '/';
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Création d'une arborescence de répertoires si elle n'existe pas.
+	 * 
 	 * @param	string	$pDirectory	le nom du répertoire que l'on souhaites créer
+	 * 
 	 * <code>
 	 *    if (CopixFile::createDir (COPIX_TEMP_PATH.'chemin/complet/des/repertoires/a/creer/')){
 	 *       //ok, le répertoire à bien été cré
 	 *    }
 	 * </code>
+	 * 
+	 * @return bool toujours vrai, self::_createDir lance une exception en cas d'échec
 	 */
 	public static function createDir ($pDirectory){
-		return self::_createDir ($pDirectory);
+		if (!file_exists ($pDirectory)){
+			if (!@mkdir($pDirectory, self::DIRMOD, true)) {
+				throw new CopixException (_i18n ("copix:copixfile.error.creatingDirectory", array ($pDirectory)));
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
 	 * Recherche d'un pattern dans une arborescence de répertoire
-	 * 
+	 *
 	 * @param string $pPattern le pattern à rechercher (patterns supportés: filename.*.ext, *.ext, filenamestart*.ext)
 	 * @param string $pPath le chemin dans lequel on va rechercher les fichiers
 	 * @param bool $pRecursiveSearch si l'on va également rechercher dans les sous dossier (défaut = true)
 	 * @return array of string une liste de fichier (chemins) correspondant à la recherche
 	 */
 	public static function search ($pPattern, $pPath, $pRecursiveSearch = true){
+		$pPath = self::getRealPath($pPath);
 		$pPath = self::trailingSlash ($pPath);
-		$files = glob ($pPath.$pPattern);
+		$files = self::glob ($pPath.$pPattern);
 		if ($pRecursiveSearch){
-			foreach (glob ($pPath.'*', GLOB_ONLYDIR) as $file) {
+			foreach (self::glob ($pPath.'*', GLOB_ONLYDIR) as $file) {
 				$files = array_merge ($files, self::search ($pPattern, $file, true));
 			}
 		}
@@ -251,9 +168,12 @@ class CopixFile {
 	private static function _deleteDirectory($pPath, &$pFailed, $pRemoveDirectory, $pStopOnFailure, $pFilterCallback) {
 		// Initialidation de $toReturn
 		$toReturn = true;
-	  
+		 
 		// Récupère le contenu du répertoire
-		$entries = glob(self::trailingSlash($pPath).'*');
+		if (!is_dir (self::getRealPath ($pPath))) {
+			return false;
+		}
+		$entries = self::glob (self::trailingSlash (self::getRealPath ($pPath)) . '*');
 
 		// Compte le nombre d'entrées (avant filtrage)
 		$remaining = count($entries);
@@ -265,7 +185,10 @@ class CopixFile {
 
 		// Traite les entrées
 		foreach($entries as $entry) {
-				
+			// On ne traite pas les répertoires . et ..
+			if ($entry == '.' || $entry == '..') {
+				continue;
+			}
 			if(is_dir($entry)) {
 				// Répertoire : suppresion récursive
 				$toReturn = self::_deleteDirectory($entry, $pFailed, $pRemoveDirectory, $pStopOnFailure, $pFilterCallback);
@@ -347,8 +270,7 @@ class CopixFile {
 	 * @param callback $recurseFilter Callback utilisé pour déterminer si on doit descendre dans un répertoire
 	 */
 	private static function _findFiles(&$result, $basePath, $relativePath, $depth, $entryFilter, $recurseFilter) {
-
-		$entries = glob($basePath.$relativePath.'*');
+		$entries = self::glob($basePath.$relativePath.'*');
 		foreach($entries as $entry) {
 			$entryRelativePath = $relativePath.basename($entry);
 			$entryFullPath = $basePath.$entryRelativePath;
@@ -378,7 +300,6 @@ class CopixFile {
 	 * @return array Liste des fichiers et répertoires trouvés.
 	 */
 	public static function findFiles($basePaths, $entryFilter = null, $recurseFilter = null) {
-
 		if(!is_array($basePaths)) {
 			$basePaths = array($basePaths);
 		}
@@ -425,85 +346,19 @@ class CopixFile {
 	}
 
 	/**
-	 * Retourne l'icone associée au fichier
-	 * @param	string	$pFileName	le nom du fichier
-	 * @return string	le chemin de l'icone
-	 */
-	public static function getIcon ($pFileName){
-		switch (self::extractFileExt ($pFileName)){
-			case '.gif':
-			case '.png':
-			case '.jpg':
-			case '.jpeg':
-			case '.bmp':
-				return 'img/mimetypes/image.png';
-			case '.doc':
-			case '.odt':
-				return 'img/mimetypes/office-document.png';
-			case '.txt':
-				return 'img/mimetypes/text.png';
-			case '.sh':
-				return 'img/mimetypes/script.png';
-			case '.xls':
-				return 'img/mimetypes/office-speadshit.png';
-			case '.ppt':
-			case '.pps':
-			case '.odp':
-			case '.sxi':
-			case '.fodp':
-				return 'img/mimetypes/office-presentation.png';
-			case '.odg':
-			case '.sxd':
-				return 'img/mimetypes/office-drawing.png';
-			case '.zip':
-			case '.gz':
-			case '.bz2':
-			case '.rar':
-				return 'img/mimetypes/archive.png';
-			case '.php':
-			case '.php5':
-			case '.php4':
-			case '.php3':
-			case '.ptpl':
-				return 'img/mimetypes/php.png';
-			case '.html':
-			case '.xhtml':
-			case '.htm':
-				return 'img/mimetypes/html.png';
-			case '.tpl':
-				return 'img/mimetypes/text-template.png';
-			case '.avi':
-			case '.mpg':
-			case '.wmv':
-			case '.mp4':
-				return 'img/mimetypes/video.png';
-			case '.wav':
-			case '.mp3':
-			case '.ogg':
-			case '.wma':
-				return 'img/mimetypes/audio.png';
-			case '.exe':
-				return 'img/mimetypes/executable.png';
-			default :
-				return 'img/mimetypes/unknown.png';
-		}
-	}
-
-	/**
 	 * Liste des préfixes COPIX_*_PATH du plus spécifique au moins spécifique.
 	 *
 	 * @var array
 	 */
 	private static $_copixPathPrefixes = array(
-		'COPIX_CACHE_PATH',
-		'COPIX_LOG_PATH',
-		'COPIX_TEMP_PATH',
-		'COPIX_VAR_PATH',
-		'COPIX_PROJECT_PATH',
-		'COPIX_SMARTY_PATH',
-		'COPIX_UTILS_PATH',
-		'COPIX_CORE_PATH',
-		'COPIX_PATH',	
+		'COPIX_CACHE_PATH' => true,
+		'COPIX_LOG_PATH' => true,
+		'COPIX_TEMP_PATH' => true,
+		'COPIX_VAR_PATH' => true,
+		'COPIX_PROJECT_PATH' => true,
+		'COPIX_SMARTY_PATH' => true,
+		'COPIX_UTILS_PATH' => true,
+		'COPIX_PATH' => true,
 	);
 
 	/**
@@ -513,15 +368,172 @@ class CopixFile {
 	 * @return array Un tableau array($prefixe, $cheminRelatif), si aucun préfixe ne correspond $prefixe == null
 	 */
 	public static function getCopixPathPrefix($pPath) {
-		foreach(self::$_copixPathPrefixes as $key) {
-			@list(,$relativePath) = explode(constant($key), $pPath);
-			if($relativePath) {
-				return array($key, $relativePath);
+		$pPath = self::getRealPath($pPath);
+		foreach(self::$_copixPathPrefixes as $name=>$path) {
+			if($path === true) {
+				$path = self::$_copixPathPrefixes[$name] = self::getRealPath(constant($name));
+			}
+			$length = strlen ($path);
+			// getRealPath va renvoyer false si le répertoire n'existe pas
+			if ($path !== false && substr ($pPath, 0, $length) == $path) {
+				return array($name, substr($pPath,$length));
 			}
 		}
 		return array(null, $pPath);
 	}
 
-}
+	/**
+	 * Fonction glob surchargeant glob PHP et safe_glob
+	 *
+	 * @param string $pattern
+	 * @param int $flags
+	 * @return unknown
+	 */
+	public static function glob ($pattern, $flags=null){
+		$result = glob ($pattern, $flags);
+		if ($result === false){
+			$result = self::_safe_glob ($pattern, $flags);
+		}
+		return $result;
+	}
+	/**
+	 * Fonction safe_glob pour pallier les sécurités mise en place sur certains hébergeur
+	 *
+	 * @param string $pattern
+	 * @param int $flags
+	 * @return array ou boolean
+	 */
+	private static function _safe_glob ($pattern, $flags=null){
+		$split = explode('/',$pattern);
+		$match = array_pop ($split);
+		$path = implode ('/',$split);
+		if (($dir = opendir ($path)) !== false) {
+			$glob = array();
+			while(($file = readdir ($dir))!== false) {
+				if (fnmatch ($match,$file)) {
+					if ((is_dir ("$path/$file")) || (!($flags & GLOB_ONLYDIR))) {
+						if ($flags & GLOB_MARK) {
+							$file.='/';
+						}
+						$glob[]=$file;
+					}
+				}
+			}
+			closedir($dir);
+			if (! ($flags & GLOB_NOSORT)) {
+				sort($glob);
+			}
+			return $glob;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Renvoi le répertoire réel (utilise realpath si activé sur le serveur, sinon, renvoie un équivalent)
+	 *
+	 * @param string $pPath Répertoire dont on veut le realpath
+	 * @return string
+	 */
+	public static function getRealPath ($pPath) {
+		$config = CopixConfig::instance ();
+		
+		// Supprime le slash terminal
+		if ($trailingSlash = (strlen($pPath) > 1 && (substr($pPath,-1) == '/' || substr($pPath,-1) == '\\'))) {
+			$pPath = substr($pPath, 0, -1);			
+		}
 
-?>
+		// Utilise la fonction realPath standard si possible
+		if ($config->realPathDisabled === false) {
+			if (($realPath = realpath ($pPath)) === false) {
+				return false;
+			}
+		// Implémentation maison
+		} else {
+			static $realPathCache = array ();
+			
+			// Vérifie le cache
+			if (isset ($realPathCache[$pPath])) {
+				$realPath = $realPathCache[$pPath];
+				
+			} else {
+	
+				// Transforme le chemin en chemin absolu
+				if ($config->osIsWindows ()) {
+					if (!preg_match ('@^[a-z]:[/\x5c]@i', $pPath)) {
+						$pPath = getcwd ().DIRECTORY_SEPARATOR.$pPath;
+					}
+				} elseif (substr ($pPath[0],0,1) != '/') {
+					$pPath = getcwd ().DIRECTORY_SEPARATOR.$pPath;			
+				}
+				
+				// Si le fichier n'existe pas : retourne FALSE
+				if (!is_readable ($pPath)) {
+					$realPathCache[$pPath] = false;
+					return false;
+				}
+				
+				// Découpe le chemin
+				$parts = preg_split ('@([/\x5c])@', $pPath, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_OFFSET_CAPTURE);
+				
+				// On maintient à la fois la liste des morceaux et le chemin actuel
+				$pathItems = array ();
+				$realPath = '';
+				
+				// Essaie de trouver un préfixe en cache
+				for ($i = count ($parts)-1; $i >= 0; $i--) {
+					$prefix = substr ($pPath,0,$parts[$i][1]-1);
+					if (isset ($realPathCache[$prefix])) {
+						// On a trouvé un chemin en cache, on repart à partir de celui-ci
+						$realPath = $realPathCache[$prefix];
+						$pathItems = explode (DIRECTORY_SEPARATOR, $realPath);
+						$parts = array_slice ($parts, $i);
+						break;
+					}
+				}
+
+				// Traite les parties après le préfixe que l'on a trouvé (ou non)		
+				foreach ($parts as $partInfo) {
+					list ($item, $offset) = $partInfo;
+					
+					if ($item == '.') {
+						continue;
+					} elseif ($item == '..') {
+						array_pop ($pathItems);
+						$realPath = implode (DIRECTORY_SEPARATOR, $pathItems);
+					} else {
+						$pathItems[] = $item;
+						$realPath .= (empty ($realPath) ? '' : DIRECTORY_SEPARATOR).$item;
+					}
+		
+					// Résolution des liens symboliques
+					if( is_link ($realPath)) {
+						$realPath = readlink ($realPath);
+						$pathItems = explode (DIRECTORY_SEPARATOR, $path);
+					}
+					
+					//On rajoute le slash de départ sous les systèmes linux
+					if (!$config->osIsWindows ()){
+						if (substr ($realPath, 0, 1) != '/'){
+							$realPath = '/'.$realPath;
+						}
+					}
+
+					// Met en cache
+					$realPathCache[substr ($pPath,0,$offset).$item] = $realPath;
+					$realPathCache[$realPath] = $realPath;
+				}
+				
+			}
+			
+		}
+		
+		// Ajoute le slash terminal si nécessaire
+		if ($trailingSlash && substr($realPath, -1) != DIRECTORY_SEPARATOR) {
+			$realPath .= DIRECTORY_SEPARATOR;
+		}
+
+		// Retourne ce qu'on a trouvé
+		return $realPath;		
+	} 
+}

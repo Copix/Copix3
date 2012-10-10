@@ -196,4 +196,3 @@ class CopixLDAPTools {
         return true;
     }
 }
-?>

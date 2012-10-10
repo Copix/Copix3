@@ -125,7 +125,6 @@ class CopixTestRunner extends PHPUnit_Runner_BaseTestRunner {
         }
 
         $result = $this->createTestResult();
-
         if ($this->printer === NULL) {
            $this->printer = $parameters['xml'] ? new CopixTestXMLPrinter (NULL, $parameters['verbose']) : new CopixTestPrinter (NULL, $parameters['verbose']) ;
         }
@@ -186,10 +185,10 @@ class CopixTestRunner extends PHPUnit_Runner_BaseTestRunner {
               new PHPUnit_Util_Log_XML($parameters['xmlLogfile'])
             );
         }
+        
+       	$suite->run($result, $parameters['filter']);
 
-        $suite->run($result, $parameters['filter']);
-
-        $result->flushListeners();
+       	$result->flushListeners();
 
         if (isset ($parameters['reportDirectory']) &&
             extension_loaded('xdebug')) {
@@ -326,4 +325,3 @@ class CopixTestRunner extends PHPUnit_Runner_BaseTestRunner {
         }
     }
 }
-?>

@@ -22,4 +22,9 @@ class CopixFieldSubmit extends CopixAbstractField implements ICopixField  {
 		return '<input type="submit" value="'.$pLibelle.'" />';
 	}
 	
+	public function getHTMLFieldEdit($pName, $pValue) {
+		$pLibelle = $this->getParam('libelle', 'Valider');
+		return '<input type="submit" value="'.$pLibelle.'" />';
+	}
+	
 }

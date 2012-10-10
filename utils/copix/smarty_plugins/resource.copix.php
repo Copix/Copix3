@@ -70,4 +70,3 @@ function smarty_resource_copix_trusted($tpl_name, &$smarty)
 		return false;
 	}
 }
-?>

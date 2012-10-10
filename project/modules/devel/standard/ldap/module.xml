@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="ldap" description="Configuration des profils LDAP" longdescription="Ce module permet de configurer les profils de connexion LDAP" icon="|img/icon/ldap.png" />
+	</general>
+	<admin>
+		<link url="ldap|ldap|" caption="Administration des profils LDAP" credentials="basic:admin" />
+	</admin>
+</moduledefinition>

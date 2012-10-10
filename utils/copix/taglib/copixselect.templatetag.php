@@ -28,13 +28,12 @@ class TemplateTagCopixSelect extends CopixTemplateTag {
     *           objectMap   = (optional) if given idProperty;captionProperty
     *           extra = (optional) if given, will be added directly in the select tag 
     */
-	public function process ($pParams, $pContent=null) {
+	public function process ($pContent=null) {
+		$pParams = $this->getParams ();
 		extract($pParams);
 		//input check
-		if (empty($name)) {
-			throw new CopixTemplateTagException ("[plugin copixselect] parameter 'name' cannot be empty");
-		}
-		
+		$this->assertParams ('name');		
+
 		if (!empty ($objectMap)){
 			$tab = explode (';', $objectMap);
 			if (count ($tab) != 2){
@@ -101,18 +100,11 @@ class TemplateTagCopixSelect extends CopixTemplateTag {
 		if (!isset ($class)){
 			$class = 'copixselect';
 		}
-		if (!isset ($type)){
-			$type = 'text';
-		}
 		$js = new CopixJSWidget();
 		$toReturn = "
-		<span id='clicker_$id'>";
-			if($type == 'textarea'){
-				$toReturn .="<textarea id='caption$id' name='caption$name' readonly='readonly' class='$class' style='width:$width;cursor:default;text-align:left;padding-left:3px;' ></textarea><img src=".CopixUrl::getResource('img/tools/multiple.gif')." align='absbottom' vspace='1' alt='' />";				
-			}else{
-				$toReturn .="<input id='caption$id' name='caption$name' type='text' readonly='readonly' class='$class' style='width:$width;cursor:default;text-align:left;padding-left:3px;height:13px;' value ='' /><img src=".CopixUrl::getResource('img/tools/multiple.gif')." align='absbottom' vspace='1' alt='' />";
-			}
-			$toReturn .= "<input id='$id' name='$name' type='hidden' class='$class' value ='$selected' />
+		<span id='clicker_$id'>
+			<input id='caption$id' name='caption$name' type='text' readonly='readonly' class='$class' style='width:$width;cursor:default;text-align:left;padding-left:3px;height:13px;' value ='' /><img src=".CopixUrl::getResource('img/tools/multiple.gif')." align='absbottom' vspace='1' alt='' />
+			<input id='$id' name='$name' type='hidden' class='$class' value ='$selected' />
 		</span>
 		<div class='$class' style='position:absolute;z-index:$zIndex;display:none;width:$widthDiv;height:$heightDiv' id='div$id'>
 			<table class='$class' style='width:$widthDiv;'>";
@@ -124,7 +116,6 @@ class TemplateTagCopixSelect extends CopixTemplateTag {
 		
 		if (empty ($objectMap)){
 			$compteur = 0;
-			//var_dump ($values);exit;
 			foreach ($values  as $key=>$caption) {
 				if (($selectedIsIdentical && $selected === $key) || (!$selectedIsIdentical && $selected == $key)) {
 					$js->_("caption".$id)->value = $caption;
@@ -156,4 +147,3 @@ class TemplateTagCopixSelect extends CopixTemplateTag {
 		return $toReturn;
 	}
 }
-?>

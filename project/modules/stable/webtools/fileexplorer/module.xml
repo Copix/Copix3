@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="fileexplorer" descriptioni18n="fileexplorer.description"
+			longdescriptioni18n="fileexplorer.longdescription" icon="|img/icon/fileexplorer.png"/>
+		<group id="webTools" captioni18n="copix:copixmodule.group.webTools" />
+	</general>
+	<admin>
+  		<link url="fileexplorer||" captioni18n="fileexplorer.browse" credentials="basic:admin" />	
+	</admin>
+	<parameters>
+		<parameter name="compressCmdLine" captioni18n="fileexplorer.compressCmdLine" default="tar -czf %1$s %2$s" />
+		<parameter name="compressEnabled" captioni18n="fileexplorer.compressEnabled" type="bool" default="0" />
+		<parameter name="compressExtension" captioni18n="fileexplorer.compressExtension" default=".tar.gz" />
+	</parameters>
+</moduledefinition>

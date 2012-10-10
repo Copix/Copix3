@@ -17,4 +17,3 @@
 function smarty_modifier_request ($string) {
     return _request($string);
 }
-?>

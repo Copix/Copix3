@@ -48,5 +48,4 @@ class CopixDBQueryParam {
 	 * CLOB
 	 */
 	const DB_CLOB = 5;	
-} 
-?>
+}

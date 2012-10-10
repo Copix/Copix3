@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition version="1">
+	<general>
+		<default name="form" version="1.1.0" description="Gestion de formulaires" icon="form|img/icon_form.png" />
+		<group id="cms3" captioni18n="heading|heading.group.caption" />
+	</general>
+	<admin groupid="cms3" groupcaption="CMS" groupicon="heading|img/icon_cms3.png">
+		<link url="form|stats|getstats" caption="Saisies des formulaires" credentials="cms:write@0" icon="form|img/icon_form.png" bigicon="|img/formvalues_big.png" />
+	</admin>
+	<dependencies>
+		<dependency name="heading" kind="module" version="1.6.4" />
+	</dependencies>
+	<parameters>
+    	<parameter name="destinataireForce" caption="Destinataire par défaut des formulaires du CMS (laisser vide en production)" type="text" default="" maxLength="255" />
+    	<parameter name="cc" caption="Destinataire en copie" type="text" default="" maxLength="255" />
+    	<parameter name="cci" caption="Destinataire en copie cachée" type="text" default="" maxLength="255" />
+    </parameters>
+	<registry>
+	 <entry id="HeadingElement">
+	  <type id="form" caption="Formulaire" image="form|img/form.png" icon="form|img/icon_form.png"
+	         classid="form|form_service" adminurl="form|admin|prepareEdit" />
+	 </entry>
+	 <entry id="FormTheme">
+     	<type id="copixformlight" caption="Copix" classid="forms|copixformligth"/>
+     </entry>
+	 <entry id="FormRoute">
+	 	<type id="mail" caption="Envoie par email" classid="form|route_mail"/>
+        <type id="dynamique" caption="Routage dynamique" classid="form|route_dynamique"/>
+	 	<type id="db" caption="Base de données simple" classid="form|route_db"/>
+	 </entry>
+	 <entry id="FormField">
+	 	<type id="varchar" caption="Champs texte" classid="varchar"/>
+	 	<type id="select" caption="Liste déroulante" classid="select"/>
+	 	<type id="radio" caption="Boutons radio" classid="radio"/>
+	 	<type id="checkbox" caption="Cases à cocher" classid="checkbox"/>
+	 	<type id="textarea" caption="Zone de texte" classid="textarea"/>
+	 	<type id="password" caption="Mot de passe" classid="password"/>
+	 	<type id="hidden" caption="Caché" classid="hidden"/>
+	 	<type id="uneditable" caption="Non modifiable" classid="uneditable"/>
+	 	<type id="file" caption="Fichier" classid="file"/>
+	 	<type id="email" caption="Email" classid="mail"/>
+	 	<type id="cp" caption="Code postal" classid="cp"/>
+	 </entry>
+	 <entry id="Portlet">
+		<type group="element" id="cmsform" caption="CMS Formulaire" portlettype="PortletCMSForm" icon="form|img/portleticon_form.png"  /> 
+	 </entry>
+     <entry id="ModuleTables">
+        <table name="cms_form" />
+        <table name="cms_form_element" />
+        <table name="cms_form_values" />
+        <table name="cms_form_bloc" />
+        <table name="cms_form_content" />
+        <table name="cms_form_bloc_content" />
+        <table name="cms_form_element_values" />
+     </entry>
+	</registry>
+	<updates>
+		<update from="1" to="1.0.0" script="doNothing" />
+		<update from="1.0.0" to="1.1.0" script="1_0_0_to_1_1_0" />
+		<update from="1.1.0" to="1.1.1" script="1_1_0_to_1_1_1" />
+	</updates>
+</moduledefinition>

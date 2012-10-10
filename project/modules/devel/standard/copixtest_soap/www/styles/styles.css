@@ -1,0 +1,15 @@
+@CHARSET "ISO-8859-1";
+
+	.function {
+		font-family: Courier New;
+		font-weight: bold;
+		font-size: medium;
+		color: #FF0000;
+	}
+	
+	.functionTitle {
+		font-weight: bold;
+		font-size: medium;
+		color: #FF0000;
+	}
+	

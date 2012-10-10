@@ -37,7 +37,6 @@ function smarty_function_copixlist_field($params, &$me) {
 	$list = CopixListFactory::get ($params['list']);
 	
 	if (!isset($params['name'])) {
-		// @todo : Mettre en place i18n
 		throw new Exception(_i18n ('copix:copixlist.message.needType'));
 	}
 	$type = (isset ($params['type']) ? $params['type'] : 'varchar');
@@ -51,4 +50,3 @@ function smarty_function_copixlist_field($params, &$me) {
 		return $toReturn;
 	}
 }
-?>

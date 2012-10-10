@@ -1,12 +1,12 @@
 <?php
 /**
-* @package		copix
-* @subpackage	taglib
-* @author		Steevan BARBOYON
-* @copyright	2000-2006 CopixTeam
-* @link			http://www.copix.org
-* @license  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
-*/
+ * @package		copix
+ * @subpackage	taglib
+ * @author		Steevan BARBOYON
+ * @copyright	2000-2006 CopixTeam
+ * @link			http://www.copix.org
+ * @license  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ */
 
 /**
  * Balise de vérification des données d'un formaulaire en ajax
@@ -14,9 +14,10 @@
  * @subpackage	taglib
  */
 class TemplateTagAjax_SubmitForm extends CopixTemplateTag {
-	
-	public function process ($pParams) {
-		
+
+	public function process ($pContent = null) {
+		$pParams = $this->getParams ();
+
 		// paramètres requis
 		$requestedParameters = array ('form', 'submit', 'divErrors', 'urlVerif', 'urlSubmit');
 		foreach ($requestedParameters as $param) {
@@ -24,10 +25,10 @@ class TemplateTagAjax_SubmitForm extends CopixTemplateTag {
 				throw new CopixTemplateTagException (_i18n ('copix:copix.smarty.badTagParamValue', array ('null', $param, 'ajax_submitform')));
 			}
 		}
-		
+
 		// on a besoin de mootools
 		_tag ('mootools');
-		
+
 		// code javascript
 		$jsCode = '
 			window.addEvent(\'domready\', function(){
@@ -48,8 +49,7 @@ class TemplateTagAjax_SubmitForm extends CopixTemplateTag {
 					});
 				});
 			});';
-		
+
 		CopixHTMLHeader::addJSCode($jsCode, 'ajax_submitform_' . $pParams['form']);
 	}
 }
-?>

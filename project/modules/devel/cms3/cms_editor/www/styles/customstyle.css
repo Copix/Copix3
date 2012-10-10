@@ -1,0 +1,21 @@
+/**
+ * Styles utilisés dans l'éditeur (liste déroulante)
+ */
+.cmsEditorStyle1 {
+    color:#37637C;
+    font-weight:bold;
+    font-size:15px;
+}
+.cmsEditorStyle2 {
+    color:#9F3B3B;
+}
+.cmsEditorStyle3 {
+    color:#DFDFDF;
+}
+.cmsEditorStyle4 {
+    color:#37637C;
+    text-decoration:underline;
+}
+.cmsEditorStyle5 {
+    color:#AFAFAF;
+}

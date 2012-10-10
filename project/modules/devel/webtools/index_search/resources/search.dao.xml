@@ -1,0 +1,24 @@
+<?xml version="1.0"   encoding="ISO-8859-1" ?>
+<daodefinition version="1">
+	<datasource>
+		<tables>
+			<table name="search_map"        	primary="yes" />
+			<table name="search_wordlist"   	join="inner" />
+			<table name="search_objectindex"	join="inner" />
+		</tables>
+	</datasource>
+	<properties>
+		<property name="objectindex_id"	    	fieldName="objectindex_id"	  	type="integer"	required="yes"	pk="true"	fktable="search_objectindex"	fkfieldname="objectindex_id"/>
+		<property name="wordlist_id"   	    	fieldName="wordlist_id"   	  	type="integer"	required="yes"	pk="true"	fktable="search_wordlist"		fkfieldname="wordlist_id"/>
+		<property name="map_point"     	    	fieldName="map_point"     	  	type="integer"	required="yes"	/>
+		
+		<property name="wordlist_text"       	fieldName="wordlist_text"      	type="string"	required="yes"	table="search_wordlist" />
+		
+		<property name="objectindex_name"   	fieldName="objectindex_name"   	type="string"	required="yes"	table="search_objectindex" />
+		<property name="objectindex_type"   	fieldName="objectindex_type"   	type="string"	required="yes"	table="search_objectindex" />
+		<property name="objectindex_url"    	fieldName="objectindex_url"	   	type="string"	required="yes"	table="search_objectindex" />
+		<property name="objectindex_caption"	fieldName="objectindex_caption"	type="string"	required="yes"	table="search_objectindex" />
+		<property name="objectindex_path"		fieldName="objectindex_path"	type="string"	required="no"	table="search_objectindex" />
+		
+	</properties>
+</daodefinition>

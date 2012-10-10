@@ -1,0 +1,67 @@
+/* Normal styling */    
+.simplewhite {margin:0.5em 0;}
+	/* Top corners and border */
+.simplewhite .bt {
+	height: 15px;
+	margin:0 0 0 10px;
+	background:url(roundwhite.jpg) no-repeat 100% 0;
+}
+.simplewhite .bt div {
+	position:relative;
+	left:-10px;
+	width:15px;
+	height:15px;
+	background:url(roundwhite.jpg) no-repeat 0 0;
+	font-size:0;
+	line-height:0;
+}
+
+	/* Bottom corners and border */
+.simplewhite .bb {
+	height:15px;
+	margin:0 0 0 15px;
+	background:url(roundwhite.jpg) no-repeat 100% 100%;
+}
+.simplewhite .bb div {
+	position:relative;
+	left:-15px;
+	width:15px;
+	height:15px;
+	background:url(roundwhite.jpg) no-repeat 0 100%;
+	font-size:0;
+	line-height:0;
+}
+
+	/* Left border */
+.simplewhite .i1 {
+	padding:0 0 0 5px;
+	/*background:#6d3e87;*/
+	background: #000;
+	/*background:url(glossyborder.png) repeat-y 0 0;*/
+}
+	/* Right border */
+.simplewhite .i2 {
+	padding:0 5px 0 0;
+	/*background:#6d3e87;*/
+	background: #000;
+	/*background:url(glossyborder.png) repeat-y 100% 0;*/
+}
+	/* Wrapper for the content. Use it to set the background colour and insert some padding between the borders and the content. */
+.simplewhite .i3 {
+	display:block;
+	margin:0;
+	padding:1px 5px;
+	/*background:#6d3e87;*/
+	background: #FFF;
+}
+	/* Make the content wrapper auto clearing so it will contain floats (see http://positioniseverything.net/easyclearing.html). */
+.simplewhite .i3:after {
+	content:"."; 
+	display:block; 
+	height:0; 
+	clear:both; 
+	visibility:hidden;
+}
+.simplewhite .i3 {display:inline-block;}
+.simplewhite .i3 {display:block;}
+

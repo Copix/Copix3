@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Simple</name>
+		<description>Menu simple</description>
+		<image>default.jpg</image>
+		<tpl>heading|menu/headingmenulistnavigation.php</tpl>
+	</template>
+</templates>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="soap_server" descriptioni18n="soap_server.description" longdescriptioni18n="soap_server.longdescription" icon="|img/icon/soap_server.png" version="1.0.0" />
+  <group id="tools" captioni18n="copix:copixmodule.group.tools" />
+ </general>
+ <admin groupid="soap_server" groupcaption="Serveur SOAP (webservices)">
+	 <link url="soap_server|admin|listWebServices" captioni18n="soap_server.admin.listWebServices" shortcaptioni18n="soap_server.admin.listWebServicesShort" credentials="basic:admin" bigicon="|img/icon/soap_server_big.png" />
+ 	<link url="soap_server|admin|manageWebServices" captioni18n="soap_server.admin.manageWebServices" shortcaptioni18n="soap_server.admin.manageWebServicesShort" credentials="basic:admin" bigicon="|img/icon/soap_server_big.png" />
+	<link url="soap_server|admin|test" captioni18n="soap_server.admin.testWebservice" shortcaptioni18n="soap_server.admin.testWebserviceShort" credentials="basic:admin" bigicon="|img/icon/soap_server_big.png" />
+ </admin>
+ <dependencies>
+ 	<dependency name="soap" kind="extension" />
+ </dependencies>
+ <urlhandlers>
+  <urlhandler name="UrlHandlerSoap_Server" />
+ </urlhandlers>
+</moduledefinition>

@@ -8,8 +8,6 @@
 * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
 */
 
-require_once(dirname (__FILE__).'/project.path.inc.php');
-
 /**
  * Contrôller du projet
  * @package		copix
@@ -31,16 +29,16 @@ class ProjectController extends CopixController {
 			$tplVars['TITLE_BAR'] = str_replace ('{$TITLE_PAGE}', $tplVars['TITLE_PAGE'], CopixConfig::get ('|titleBar'));
 			$tplObject->assign ('TITLE_BAR', $tplVars['TITLE_BAR']);
 		}
-		
-		$tplObject->assign ('menuItems', array ('Accueil'=>_url ('default|default|default'),
-												'Présentation'=>'http://www.copix.org/index.php/wiki/Presentation',
-												'Tutoriaux'=>'http://www.copix.org/index.php/wiki/Tutoriaux',
-												'Documentation'=>'http://www.copix.org/index.php/wiki/Documentation',
-												'Forum'=>'http://forum.copix.org',
-												'Téléchargement'=>'http://forum.copix.org',
-												'Site officiel'=>'http://www.copix.org')
-							);
-
     }
+    
+    /**
+	 * Si le module 404 est activé alors on redirige la page
+	 */
+	function _doNotExistsAction () {
+		if (CopixModule::isEnabled('404')){
+			header ('location: '._url ('404||'));
+		} else {
+			parent::_doNotExistsAction();
+		}
+	}
 }
-?>

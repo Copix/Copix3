@@ -45,4 +45,3 @@ function smarty_block_copixlist_button($params, $content, &$me) {
 	}
 	return CopixListFactory::get ($params['list'])->getButton ($params['type'], $content);
 }
-?>

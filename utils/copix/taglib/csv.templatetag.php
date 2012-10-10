@@ -15,19 +15,12 @@
 */
 class TemplateTagCsv  extends CopixTemplateTag  {
     
-    public function process($pParams) {
-	    extract ($pParams);
+    public function process ($pContent = null) {
+	    extract ($this->getParams ());
 	
 	    //are there any values given ?
-	    if (empty ($values)) {
-	        throw new CopixTemplateTagException("[plugin CSV] parameter 'values' cannot be empty");
-	        return;
-	    }
-	    //checking if values is an array
-	    if (!is_array ($values)) {
-	        throw new CopixTemplateTagException("[plugin CSV] parameter 'values' must be an array");
-	        return;
-	    }
+	    $this->assertParams ('values', array (), 'array');
+
 	    //checinkg if value is an array of object or an array of array.
 	    if (count ($values) <= 0){
 	        $output = '';
@@ -79,10 +72,6 @@ class TemplateTagCsv  extends CopixTemplateTag  {
 	
 	    //now sorting elements.
 	    //TODO.
-	
         return $output;
-
     }
 }
-
-?>

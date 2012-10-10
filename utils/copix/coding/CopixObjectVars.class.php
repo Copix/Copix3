@@ -32,7 +32,7 @@ class CopixObjectVars {
 	/**
 	 * Constructeur
 	 *
-	 * @param string $pObjectName Nom de l'objet de base que l'on a transformé en CopixObjectVars
+	 * @param string $pObjectName Nom de l'objet de base que l'on a transformé en CopixReflectObject
 	 * @param array $pVars Propriétés de l'objet de base, tout accès confondu (public, protected et private)
 	 */
 	public function __construct ($pObjectName, $pVars) {

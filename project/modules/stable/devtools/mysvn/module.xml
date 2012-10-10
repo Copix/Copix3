@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="mysvn" version="1.0.0" description="Gestion d'un dépot SVN" longdescription="Informations sur les commits d'un dépot SVN" icon="mysvn|img/svn.png"/>
+		<group id="svn" caption="Subversion"/>
+	</general>
+	<admin groupid="svn" groupcaption="Subversion" groupicon="mysvn|img/svn.png">
+		<link url="mysvn|repositories|" caption="Dépots" credentials="basic:admin" icon="|img/svn.png" bigicon="|img/svn_big.png" />
+	</admin>
+</moduledefinition>

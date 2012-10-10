@@ -12,29 +12,45 @@
 
 class CopixFieldContainer extends CopixParameterHandler {
 	
-	protected $_fieldType  = null;
+	private $_fieldType  = null;
 	
-	protected $_fieldParams = null;
+	private $_fieldParams = null;
 	
-	protected $_localValue = null;
+	private $_localValue = null;
 	
-	protected $_defaultValue = null;
+	private $_defaultValue = null;
 	
-	protected $_validators = null;
+	private $_validators = null;
 	
-	protected $_errors = true;
+	private $_errors = true;
 	
-	protected $_name = null;
+	private $_name = null;
 	
-	protected $_label = null;
+	private $_label = null;
 	
-	protected $_field = null;
+	private $_field = null;
 	
-	protected $_objField = null;
+	private $_objField = null;
 	
-	protected $_edit = true;
+	private $_edit = true;
 	
-	protected $_formId = null;
+	private $_formId = null;
+		
+	protected $_help = null;
+	
+	protected $_class = null;
+	
+	/**
+	 * Orientation du champs pour l'affichage
+	 * @var int
+	 */
+	protected $_orientation = 0;
+	
+	/**
+	 * Template d'affichage de la ligne
+	 * @var string au format copixtpl
+	 */
+	protected $_rowTpl = null;
 	
 	public function setLabel ($pLabel) {
 		$this->_label = $pLabel;
@@ -65,7 +81,7 @@ class CopixFieldContainer extends CopixParameterHandler {
 	public function setFieldParams ($pParams) {
 	    $this->_fieldParams = $pParams;
 	}
-	
+
 	public function getFieldParams () {
 	    return $this->_fieldParams;
 	}
@@ -109,11 +125,12 @@ class CopixFieldContainer extends CopixParameterHandler {
 		}
 		$this->_edit = $this->getParam('edit', true);
 		$this->_defaultValue = $this->getParam('value');
+		$this->_help = $this->getParam('help');
 	}
 	
 	public function fillFromRequest () {
 	    $mode = ($this->getEditCredential ()) ? $this->getFormMode () : 'view';
-	    if ($mode != 'view') {
+	    if ($mode != 'view' && _request ('form_'.$this->_formId) != null) {
 		    $this->_localValue = $this->getField ()->fillFromRequest ($this->_name, $this->_defaultValue, $this->_localValue);
 	    }
 	}
@@ -125,9 +142,9 @@ class CopixFieldContainer extends CopixParameterHandler {
 	
 	public function fillRecord ($pRecord) {
 	    $mode = ($this->getEditCredential ()) ? $this->getFormMode () : 'view';
-	    //if ($mode != 'view') {
+	    if ($mode != 'view') {
 		    $this->getField ()->fillRecord ($pRecord, $this->_field, $this->_localValue);
-	    //}
+	    }
 	}
 	
 	public function getLabel () {
@@ -202,10 +219,56 @@ class CopixFieldContainer extends CopixParameterHandler {
 		$this->getField ()->addCondition ($pDatasource, $this->_field, $this->_localValue);
 	}
 	
-	protected function _reportErrors ($pErrors){
-		print_r ($pErrors);
-		exit;
+	/**
+	 * Set le template d'affichage de la ligne
+	 * @param $pTemplate
+	 * @return void
+	 */
+	public function setRowTemplate($pTemplate) {
+		$this->_rowTpl = $pTemplate;
 	}
-}
+	public function getRowTemplate(){return $this->_rowTpl;}
+	public function getHelp() {
+		return $this->_help;
+	}
+	
+	public function getClass() {
+		return $this->_class;
+	}
+	
+	/**
+	 * Affichage de la ligne complète
+	 * @return string
+	 */
+	public function getRow() {
+		if ($this->getField()->getType() == 'hidden') {
+			return $this->getField()->getHTMLFieldEdit($this->_name, $this->_localValue);
+		}
+		$tpl = new CopixTpl ();
+		$tpl->assign ('name', $this->_name);
+		$tpl->assign ('label', $this->getLabel());
+		$tpl->assign ('libelle', $this->getParam('libelle', 'Valider'));
+		$tpl->assign ('input', $this->getField()->getHTMLFieldEdit($this->_name, $this->_localValue));
+		$tpl->assign ('errors', $this->getErrors());
+		$tpl->assign ('help', $this->getHelp());
+		$tpl->assign ('extra', $this->getParam('extra'));
+		$tpl->assign ('orientation', $this->getParam('orientation'));
+		$tpl->assign ('require', $this->getParam('require',false));
+		$tpl->assign ('multiple', array_key_exists ('values', $this->getFieldParams ()));
+		
+		return $tpl->fetch ($this->_rowTpl);
+	}
+	
+	
+	public function getName() {
+		return $this->_name;
+	}
 
-?>
+    public function setName($pName) {
+		if (empty($pName)) {
+            return;
+        }
+        $this->_name = $pName;
+	}
+	
+}

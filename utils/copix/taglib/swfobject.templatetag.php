@@ -9,38 +9,39 @@
  */
 
 /**
- * Enter description here...
  *
  */
 class TemplateTagSWFObject extends CopixTemplateTag  {
+	
+	private function _filterAttribute($pValue) {
+		return ($pValue !== null && $pValue !== false);
+	}
 
-	public function process ($pParams, $pContent=null){
-		
+	public function process ($pContent=null){
+		$pParams = $this->getParams ();
+
 		// Récupère les paramètres
-		$src = $this->requireParam('src');
+		$src = $this->requireParam ('src');
 		
 		$attributes = array();	
-		$attributes['quality'] = $quality = $this->getParam('quality', 'high');
-		$attributes['width'] = $width = $this->getParam('width');
-		$attributes['height'] = $height = $this->getParam('height');
-		$attributes['bgcolor'] = $bgcolor = $this->getParam('bgcolor');
-		$attributes['style'] = $style = $this->getParam('style');
+		$attributes['width'] = $this->requireParam('width', 'integer');
+		$attributes['height'] = $this->requireParam('height', 'integer');
+		$attributes['quality'] = $this->getParam('quality', 'high');
 	
 		$id = $this->getParam('id', uniqid('swf'));
 		$name = $this->getParam('name', $id);
-		$attributes = array_filter($attributes);
-		
 		$version = $this->getParam('version', '8');
+		
+		$params = $this->getParam ('params', array());
+		$vars = $this->getParam ('vars', array());
+		$extra = $this->getParams ();
+
+		// Reformate la version
 		@list($major, $minor, $rev) = explode('.', $version);
 		$version = sprintf('%d.%d.%d', $major, $minor, $rev);
-		
-		//$doExpressInstall = $this->getParam('doExpressInstall');
-		
-		$params = $this->getParam('params', array());
-		$vars = $this->getParam('vars', array());
-		$extra = $this->getExtraParams();
 
-		$this->validateParams();
+		// Filtre les attributs
+		$attributes = array_filter($attributes, array($this, '_filterAttribute'));
 		
 		// Intègre les paramètres de la forme params_X et vars_X dans les bons tableaux
 		foreach($extra as $key=>$value) {
@@ -114,9 +115,5 @@ class TemplateTagSWFObject extends CopixTemplateTag  {
 		}
 		
 		return implode("", $toReturn);
-		
 	}
-	
 }
-
-?> 

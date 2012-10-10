@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="tidy" description="Tidy - Repair XHTML"
+			longdescription="Repair HTML/XHTML output using tidy" />
+	</general>
+	 <dependencies>
+	 	<dependency name="tidy" kind="extension" />
+	 </dependencies>
+</moduledefinition>

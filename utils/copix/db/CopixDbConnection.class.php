@@ -9,18 +9,11 @@
 */
 
 /**
- * Exceptions pour les bases de données
- * @package copix
- * @subpackage db
- */
-class CopixDBConnectionException extends CopixDBException {}	
-
-/**
  * Classe de base pour représenter des connections
  * @package   copix
  * @subpackage db
  */
-abstract class CopixDBConnection {
+abstract class CopixDBConnection implements ICopixDbConnection {
 	/**
 	* Le profil de connexion utilisé pour la connexion
 	* @var CopixDBProfil
@@ -64,7 +57,7 @@ abstract class CopixDBConnection {
     protected function _parseQuery ($pQueryString, &$pParameters = array (), $pOffset = null, $pCount = null){
     	foreach ($pParameters as $key=>& $value){
    			$value = is_object($value) ? strval($value) : $value; 
-    	} 
+		}
       //On regarde si c'est une manipulation (insert/update/delete) ou une sélection
       $toReturn ['isSelect'] = ((($pos = stripos (trim ($pQueryString), 'select')) === 0) || $pos === 1);
       $toReturn ['query']    = $pQueryString;//non modifiée
@@ -84,25 +77,6 @@ abstract class CopixDBConnection {
       return $toReturn;
     } 
     
-    /**
-    * Lancement d'une requête SQL
-    * @param	string	$pQueryString	la requête à lancer
-    * @param	array	$pParameters	tableau de paramètres
-    * @param	int		$pOffset		l'offset à partir duquel nous allons lire les résultats => Si null, pas d'offset 
-    * @param	int		$pCount			le nombre d'élément que l'on souhaites récupérer depuis la base. Si null => le maximum
-    */
-    abstract function doQuery ($pQueryString, $pParameters = array (), $pOffset = null, $pCount = null);
-    
-    /**
-     * Lancement d'une requête SQL dont les résultats sont retournés sous la forme d'iterateurs.
-     *
-     * @param	string	$pQueryString	la requête à lancer
-     * @param	array	$pParameters	tableau de paramètres
-     * @param	int		$pOffset		l'offset à partir duquel nous allons lire les résultats => Si null, pas d'offset 
-     * @param	int		$pCount			le nombre d'élément que l'on souhaites récupérer depuis la base. Si null => le maximum
-     */
-    abstract function iDoQuery ($pQueryString, $pParameters = array (), $pOffset = null, $pCount = null);
-
     /**
     * Lance un script SQL
     * @param	string	$pFilePath	le chemin du fichier SQL à exécuter
@@ -157,14 +131,7 @@ abstract class CopixDBConnection {
         }
     }
     
-    /**
-    * Dernier identifiant automatique affecté
-    * @param	string	$pFromSequence	le nom de la séquence depuis laquelle on veut récupérer le dernier identifiant.
-    * 	si null est donné, on suppose que le dernier identifiant provient d'un autoincrément
-    * @return	integer
-    */
-    abstract public function lastId ($pFromSequence = null);
-    
+   
     /**
      * Quote un élément pour la base de données.
      * @param	string 	$pString l'élément que l'on souhaites mettre entre quotes
@@ -205,36 +172,8 @@ abstract class CopixDBConnection {
     }
 
     /**
-     * Valide une transaction en cours sur la connection
-     */
-    abstract public function commit ();
-
-    /**
-     * Annule une transcation sur la connection 
-     */
-    abstract public function rollback ();
-    
-    /**
-     * Demarre une transaction sur la connection donnée
-     */
-    abstract public function begin ();
-
-    /**
-     * Récuération de la liste des tables connues depuis la connexion
-     * @return array
-     */
-    abstract public function getTableList ();
-
-    /**
-     * Retourne la liste des champs connus dans la table
-     * @param	string	$pTableName le nom de la table dont on souhaite connaitre la liste des champs 
-     */
-    abstract public function getFieldList ($pTableName);
-    
-    /**
      * Indique si le driver est disponible
      * @return bool
      */
     public static function isAvailable (){return false;}
 }
-?>

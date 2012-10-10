@@ -17,4 +17,3 @@
 function smarty_modifier_testCredential ($string) {
     return CopixAuth::getCurrentUser()->testCredential ($string);
 }
-?>

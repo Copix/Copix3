@@ -1,0 +1,24 @@
+<html>
+<body>
+    <h1>Synopsis de Dune</h1>
+    
+    <a href="http://fr.wikipedia.org/wiki/Dune">Lien Wikipedia</a>
+
+<div>
+<p>
+L’histoire débute en l’an 10191 après la création de la Guilde spatiale. L’empereur Shaddam IV exerce son pouvoir féodal sur tout l’univers connu.
+L’humanité a conquis une grande étendue de l’univers, notamment grâce à une mystérieuse substance dénommée épice ou mélange. L’épice attise toutes les convoitises, car elle est un puissant stimulant cérébral qui permet à certains humains de décupler leurs capacités psychiques, elle accroît la durée de vie, tout en guérissant diverses maladies. Et nul ne connaît son origine précise ni sa composition exacte.
+On ne la trouve que sur la planète Arrakis, la planète des sables nommée Dune par ses habitants, les Fremens. Dune est donc le point focal de toutes les tensions importantes régnant dans l’univers connu. Du fait de l’absence de précipitations, l’eau est rare et donc précieuse sur Arrakis. Elle constitue une monnaie d’échange, et de nombreux dispositifs permettent de l’économiser ou de la récupérer (ex : les distilles, combinaisons Fremens pour récupérer l’eau du corps).
+La galaxie a été le théâtre du Jihad Butlérien, lorsque les humains se sont libérés du joug des Machines Pensantes et des robots conscients. Toute forme d’intelligence artificielle étant désormais proscrite, on a spécialisé des hommes dans certaines tâches : les mentats, par exemple, sont de véritables ordinateurs humains. La Guilde spatiale, en l’absence d’ordinateurs, a pris le contrôle des voyages intersidéraux : en effet, après un long apprentissage et une mutation totale de leur être par l’Épice, ses navigateurs sont les seuls êtres aptes à pouvoir calculer des trajectoires sures.
+Le Duc Leto de la Maison Atréides règne sur Caladan, une planète agricole. Sa concubine, Dame Jessica, est une Bene Gesserit, école exclusivement féminine qui a des visées politiques et certains pouvoirs. Par amour pour Leto, Jessica lui a donné un fils, Paul Atréides, désobéissant en cela aux directives du Bene Gesserit dont le programme génétique prévoyait qu’elle engendre une fille. Les Bene Gesserit, surnommées les “Sorcières” par ceux qui les craignent, cherchent à créer un mâle, par sélection génétique, qui pourra voir ce qu’elles ne peuvent voir : le Kwisatz Haderach.
+Le fils de Leto et de Jessica, Paul, est formé à l’art du combat. Qui plus est, il bénéficie de l’enseignement de sa mère, et devient un combattant redoutable. Il possède aussi quelques dons de prescience et d’analyse mentat.
+L’Empereur confie au Duc Leto la planète Arrakis, ancien fief de la Maison Harkonnen, ennemi héréditaire des Atréides. Mais l’Empereur joue un double jeu, et aide la maison Harkonnen à renverser la maison Atréides en leur prêtant ses troupes de tueurs fanatiques, les Sardaukars. Leto est livré aux Harkonnen par son propre médecin Suk, Wellington Yueh. En effet, Yueh espérait tuer le Baron Vladimir Harkonnen par l’intermédiaire du Duc (avec un poison). Ceci dans le but de venger sa femme tuée par le Baron. C’est en fait une double trahison. Jessica et Paul s’enfuient dans le désert où ils sont aidés par les Fremens et par Stilgar et Liet Kynes, ce dernier étant officiellement planétologiste impérial.
+Ici se situe la transition entre les tomes I et II du roman.
+Jessica et Paul se réfugient chez les Fremens, peuple du désert “natif” d’Arrakis. Guidés par Liet Kynes, les Fremens voient en Paul un nouveau Messie, leur Mahdi, qui apportera le bonheur et l’eau à leur peuple. Paul devient alors Muad’dib et prend une Fremen comme concubine : Chani, la fille de Liet.
+Jessica donne naissance à la sœur de Paul, Alia, peu après avoir absorbé l’Eau de Vie. Au fil du temps, Paul Muad’dib et Jessica rassemblent les tribus Fremens et harcèlent le neveu du Baron Harkonnen, Glossu Rabban, qui a la gérance d’Arrakis. La Maison Harkonnen va devoir faire face à la puissance tapie dans le désert, réveillée par Muad'dib.
+Peu à peu, au contact de l’Épice, Paul s’éveille à la prescience, il manipule le présent pour façonner l’avenir. Il a une révélation lorsqu’il absorbe l’Eau de Vie, Eau dans laquelle est noyé un ver nouveau-né, poison que seules les Bene Gesserit arrivent à neutraliser en adaptant sciemment leur métabolisme. Muad’dib peut voir le “maintenant”, il peut voir en tout lieu ce qu’il s’y passe. Considéré comme le Kwisatz Haderach, il est en fait autre chose … peut être bien plus ….
+Devenu chef des Fremens, Paul les mène à la victoire face aux troupes de Sardaukars de l’Empereur. Vaincu, l’Empereur se trouve obligé d’accepter un mariage d’alliance de sa fille Irulan avec Paul. Il accepte ainsi la domination des Atréides, et se retrouve lui-même exilé sur Salusa Secundus, planète de formation des Sardaukars.
+</p>
+</div>
+</body>
+</html>

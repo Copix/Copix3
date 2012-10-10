@@ -20,5 +20,3 @@ function smarty_function_inputtext($params, $me) {
         return _tag ('inputtext', $params);
     }
 }
-
-?>

@@ -18,4 +18,3 @@ function smarty_function_multipleselect ($params, $me) {
 		return _tag ('multipleselect', $params);
 	}
 }
-?>

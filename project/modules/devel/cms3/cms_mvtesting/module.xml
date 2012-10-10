@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="cms_mvtesting" version="1.2.1" description="Multi variant testing" icon="|img/icon_mvtesting.png" />
+		<group id="cms3" captioni18n="heading|heading.group.caption" />
+	</general>
+	<dependencies>
+		<dependency name="heading" kind="module" version="1.6.4" />
+	</dependencies>
+	<userpreferences>
+        <group id="headingNotification" caption="Notification">
+            <preference name="mvtestingNotification" caption="MV Testing" default="0" type="bool" description="Donne la possibilité d'envoyer une notification par mail lorsqu'un MV Testing est publié." />
+        </group>
+	</userpreferences>
+	<registry>
+		<entry id="ElementInformations">
+			<type zoneid="cms_mvtesting|MVTestingInformations" />
+		</entry>
+		<entry id="HeadingElement">
+			<type id="mvtesting" caption="MV testing"
+				image="cms_mvtesting|img/mvtesting.png"
+				icon="cms_mvtesting|img/icon_mvtesting.png"
+				classid="cms_mvtesting|mvtestingservices"
+				adminurl="cms_mvtesting|admin|prepareEdit"
+				fronturl="cms_mvtesting|mvtestingfront::default"
+			/>
+		</entry>
+	</registry>
+	<updates>
+		<update from="1.0.0" to="1.1.0" script="1_0_0_to_1_1_0" />
+		<update from="1.1.0" to="1.2.0" script="1_1_0_to_1_2_0" />
+		<update from="1.2.0" to="1.2.1" script="1_2_0_to_1_2_1" />
+	</updates>
+</moduledefinition>

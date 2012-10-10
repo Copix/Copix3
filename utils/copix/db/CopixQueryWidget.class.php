@@ -147,4 +147,3 @@ class CopixQueryWidget {
         return '';
     }
 }
-?>

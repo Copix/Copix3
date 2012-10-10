@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="bugtrax" descriptioni18n="bugtrax.moduledescription" longdescriptioni18n="bugtrax.longdescription" />
+		<group id="devTools" captioni18n="copix:copixmodule.group.devTools" />
+	</general>
+	<parameters>
+		<parameter name="writeadmin" captioni18n="bugtrax.parameter.writeadmin" default="admin" />
+		<parameter name="writebug"  captioni18n="bugtrax.parameter.writebug" default="public" />
+		<parameter name="readbug"  captioni18n="bugtrax.parameter.readbug" default="public" />		
+		<parameter name="states" captioni18n="bugtrax.parameter.states" default="open;confirmed;resolved;closed" />
+		<parameter name="severity" captioni18n="bugtrax.parameter.severity" default="low;medium;high;dangerous" />
+		
+		<parameter name="devgroup" captioni18n="bugtrax.parameter.devgroup" default="Developper" />
+	</parameters>
+	<admin>
+  		<link url="bugtrax|admin|" captioni18n="bugtrax.admin.page" credentials="basic:admin"></link>
+ 	</admin>
+	<events>
+	 <listeners>
+	  <listener name="BugTrax">
+        <event name="Content" />	   
+	  </listener>
+	 </listeners>
+	</events>
+</moduledefinition>

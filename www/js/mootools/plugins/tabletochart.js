@@ -95,7 +95,7 @@ Chart = new Class({
 	}
 });
 
-Element.extend({
+Element.implement({
 	toChart: function(options){
 		this.options = Object.extend({
 			type:'bars',

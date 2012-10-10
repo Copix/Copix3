@@ -20,7 +20,14 @@ class CopixPluginRegistry {
 	 * 
 	 * @var array
 	 */
-	private static $_plugins = array ();
+	private static $_plugins = false;
+	
+	/**
+	 * Tableau des plugins enregistrés
+	 *
+	 * @var array
+	 */
+	private static $_arRegistered = array ();
 
 	/**
 	 * Retourne un plugin
@@ -69,24 +76,11 @@ class CopixPluginRegistry {
 	 * @throws CopixPluginException Plugin non trouvé, code CopixPluginException::NOT_FOUND
 	 */
 	private static function _create ($pPluginName) {
-		$fic = new CopixModuleFileSelector ($pPluginName);
-		$nom = strtolower ($fic->fileName);
-		
-		$path = $fic->getPath (COPIX_PLUGINS_DIR) . $nom . '/';
-		$path_plugin = $path . $nom . '.plugin.php';
-		if (!Copix::RequireOnce ($path_plugin)) {
-			throw new CopixPluginException (
-				_i18n ('copix:copixplugin.error.notFound', array ($path_plugin, $fic->module)),
-				CopixPluginException::NOT_FOUND
-			);			
-		}		
-		
+		$pluginClassName = self::_require ($pPluginName);
 		$config = self::_loadConfig ($pPluginName);
-		$pluginClassName = 'Plugin' . $fic->fileName;
-		//nouvel objet plugin, on lui passe en paramètre son objet de configuration.
 		return new $pluginClassName ($config);
 	}
-	
+
 	/**
 	 * Charge la configuration d'un plugin 
 	 * S'il n'existe pas de configuration par défaut, renvoie null
@@ -104,7 +98,7 @@ class CopixPluginRegistry {
 		
 		// Vérifie la présence d'une configuration "old school"
 		$old_config_path = $fic->getPath (COPIX_PLUGINS_DIR) . $nom . '/' . $nom . '.plugin.conf.php';
-		if (file_exists ($old_config_path)) {
+		if (is_readable ($old_config_path)) {
 			// Ce plugin utilise l'ancien système de configuration
 			_log ($pPluginName." utilise un fichier de configuration dans les sources !", "plugin", CopixLog::WARNING);
 			Copix::RequireOnce ($old_config_path);
@@ -115,14 +109,14 @@ class CopixPluginRegistry {
 		// Vérifie la présence d'une configuration par défaut
 		$default_config_path = self::_getDefaultConfigPath ($pPluginName);
 		$default_config_class = 'PluginDefaultConfig' . $fic->fileName; 
-		if (!file_exists ($default_config_path)) {
+		if (!is_readable ($default_config_path)) {
 			// Pas de configuration
 			return null;
 		}
 			
 		// Cherche la configuration actuelle
 		$config_path = $fic->getOverloadedPath (COPIX_VAR_PATH . 'config/plugins/') . $nom . '.plugin.conf.php';
-		if (!file_exists ($config_path)) {
+		if (!is_readable ($config_path)) {
 			// Génère une configuration par défaut
 			_log ($pPluginName.": création de la configuration par défaut ($config_path)", "plugin");			
 			CopixFile::write ($config_path, 
@@ -168,11 +162,14 @@ class CopixPluginRegistry {
 	 * @return CopixPlugin[]
 	 */
 	public static function getRegistered () {
-		$arPlugins = array ();
-		foreach (CopixConfig::instance ()->plugin_getRegistered () as $name) {
-			$arPlugins[] = self::get ($name, true);
+		if (self::$_plugins === false){
+			$arPlugins = array ();
+			foreach (self::$_arRegistered as $name) {
+				$arPlugins[$name] = self::get ($name, true);
+			}
+			return self::$_plugins = $arPlugins;
 		}
-		return $arPlugins;
+		return self::$_plugins;
 	}
 	
 	/**
@@ -182,7 +179,7 @@ class CopixPluginRegistry {
 	 * @return boolean
 	 */
 	public static function isRegistered ($pPluginName) {
-		return in_array (strtolower ($pPluginName), CopixConfig::instance ()->plugin_getRegistered ());
+		return isset (self::$_arRegistered[$pPluginName]);//in_array (strtolower ($pPluginName), CopixConfig::instance ()->plugin_getRegistered ());
 	}
 	
 	/**
@@ -235,7 +232,7 @@ class CopixPluginRegistry {
 		$toReturn = array ();
 		if ($dir = @opendir ($pPath)) {
 			while (false !== ($file = readdir ($dir))) {
-				if (file_exists ($pPath.$file . '/' . $file . '.plugin.php')) {
+				if (is_readable ($pPath.$file . '/' . $file . '.plugin.php')) {
 					$toReturn[] = $pModuleName . $file; 
 				}
 			}
@@ -243,5 +240,47 @@ class CopixPluginRegistry {
 		}
 		clearstatcache ();
 		return $toReturn;
+	}
+	
+	public static function register ($pPluginName){
+		if (! in_array ($pPluginName, array (self::$_arRegistered))){
+			self::$_arRegistered[$pPluginName] = $pPluginName;
+		}		
+	}
+
+	/**
+	 * Retourne un objet décrivant le plugin
+	 *
+	 * @param string $pPluginName Nom du plugin
+	 * @return CopixPluginDescription
+	 */
+	public static function getDescription ($pPluginName) {
+		$className = self::_require ($pPluginName);
+		$toReturn = new CopixPluginDescription ();
+		$toReturn->setName ($pPluginName);
+		$plugin = new $className ();
+		$toReturn->setCaption ($plugin->getCaption ());
+		$toReturn->setDescription ($plugin->getDescription ());
+
+		return $toReturn;
+	}
+
+	/**
+	 * Inclu le fichier contenant la classe du plugin, et retourne le nom de la classe
+	 *
+	 * @param string $pPluginName Nom du plugin
+	 * @return string
+	 */
+	private static function _require ($pPluginName) {
+		$fic = new CopixModuleFileSelector ($pPluginName);
+		$nom = strtolower ($fic->fileName);
+
+		$path = $fic->getPath (COPIX_PLUGINS_DIR) . $nom . '/';
+		$path_plugin = $path . $nom . '.plugin.php';
+		if (!Copix::RequireOnce ($path_plugin)) {
+			throw new CopixPluginException (_i18n ('copix:copixplugin.error.notFound', array ($path_plugin, $fic->module)), CopixPluginException::NOT_FOUND);
+		}
+
+		return 'Plugin' . $fic->fileName;
 	}
 }

@@ -6,7 +6,7 @@ Licence: MIT
 To use with IE, add the excanvas developed by google
 */
 
-Element.extend({
+Element.implement({
 	addShadow: function (width){
 	  if (this.getTag()!="img") return false;
 	  if (!width) width=10;

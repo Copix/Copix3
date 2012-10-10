@@ -1,38 +1,12 @@
 <?php
 /**
- * @package		copix
- * @subpackage	auth
- * @author		Gérald Croës
- * @copyright	CopixTeam
- * @link		http://copix.org
- * @license		http://www.gnu.org/licenses/lgpl.html GNU General Lesser  Public Licence, see LICENCE file
+ * @package copix
+ * @subpackage auth
+ * @author Gérald Croës
+ * @copyright CopixTeam
+ * @link http://copix.org
+ * @license http://www.gnu.org/licenses/lgpl.html GNU General Lesser  Public Licence, see LICENCE file
  */
-
-/**
- * Interface de gestion des groupes
- * 
- * @package		copix
- * @subpackage	auth
- */
-interface ICopixGroupHandler {
-	/**
-	 * Retourne les groupes auquel appartient l'utilisateur $pUserId
-	 * 
-	 * @param mixed $pUserId Identifiant de l'utilisateur
-	 * @param string $pUserHandler Nom
-	 * @return array Clefs : identifiants, valeurs : noms des groupes
-	 */
-	public function getUserGroups ($pUserId, $pUserHandler);
-	
-	/**
-	 * Retourne des informations sur un groupe
-	 * 
-	 * @param mixed $pGroupId Identifiant du groupe
-	 * @return object Les propriétés contiennent les informations sur le groupe
-	 */
-	public function getInformations ($pGroupId);
-}
-
 
 /**
  * Factory de gestion des groupes
@@ -46,24 +20,86 @@ class CopixGroupHandlerFactory {
 	 * 
 	 * @var array
 	 */
-	static private $_handlers = array ();
+	private static $_handlers = array ();
 
 	/**
 	 * Création d'un handler
 	 * 
 	 * @param mixed $pHandlerId Identifiant du handler à créer
-	 * @return CopixUserHandler
-	 * @throws CopixUserException
+	 * @return ICopixGroupHandler
+	 * @throws CopixUserException Handler de group inconnu, code CopixUserException::UNDEFINED_GROUP_HANDLER
 	 */
-	static public function create ($pHandlerId) {
+	public static function create ($pHandlerId) {
 		if (!isset (self::$_handlers[$pHandlerId])) {
 			try {
 				self::$_handlers[$pHandlerId] = _ioClass ($pHandlerId);
 			} catch (Exception $e) {
-				throw new CopixUserException (_i18n ('copix:copixuser.error.undefinedGroupHandler'));
+				throw new CopixUserException (
+					_i18n ('copix:copixauth.error.undefinedGroupHandler', $pHandlerId),
+					CopixUserException::UNDEFINED_GROUP_HANDLER
+				);
 			}
 		}
 		return self::$_handlers[$pHandlerId];
 	}
+	
+	/**
+	 * Récupération de la liste des GroupHandlers
+	 * 
+	 * @return array 
+	 */
+	public static function getList (){
+		return CopixModule::getParsedModuleInformation ('copix|grouphandlers',
+													'/moduledefinition/grouphandlers/grouphandler', 
+													array ('CopixAuthParserHandler', 'parseGroupHandler'));
+	}
+	
+	/**
+	 * Récupération de la liste des Groupes dans leurs handler
+	 * 
+	 * @return array 
+	 */
+	public static function getAllGroupList ($exceptGroupHandler = array()){
+		$toReturn = array();
+		$groupsHandler =  self::getList();
+		foreach ($groupsHandler as $groupHandlerName => $properties){
+			if(!in_array($groupHandlerName, $exceptGroupHandler)){
+				$groupHandler = _class($groupHandlerName);
+				$list = $groupHandler->getGroupList();
+				$toReturn[$groupHandlerName] = $list; 
+			}
+		}
+		return $toReturn;
+	}
+	
+	/**
+	 * Récupération de la liste des groupse sous la forme handler~Groupes
+	 * @param array $exceptGroupHandler tableau des groupes ne devant pas être retournés 
+	 * @return array 
+	 */
+	public static function getAllGroupListSimple ($exceptGroupHandler = array()){
+		$toReturn = array();
+		$groupsHandler =  self::getAllGroupList();
+		foreach ($groupsHandler as $groupHandlerName => $groups){
+			if(!in_array($groupHandlerName, $exceptGroupHandler)){
+				foreach ($groups as $groupkey => $label){
+					$toReturn[$groupHandlerName.'~'.$groupkey] = $label; 
+				}	
+			}
+		}
+		return $toReturn;
+	}
+	
+	public static function getGroupLabels(){
+		$toReturn = array();
+		$groupsHandler =  self::getList();
+		foreach ($groupsHandler as $groupHandlerName => $properties){
+			$groupHandler = _class($groupHandlerName);
+			$label = $groupHandler->getLabel();
+			$toReturn[$groupHandlerName] = $label; 
+		}
+		return $toReturn;
+	}
+	
+	
 }
-?>

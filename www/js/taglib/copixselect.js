@@ -27,26 +27,26 @@ function selectoverload (name) {
 				'display':'',
 				'height':'auto',
 				'position':'absolute',
-				'top':input.getTop ()+input.getSize().size.y,
+				'top':input.getTop ()+input.getSize().y,
 				'left':input.getLeft (),
 				'overflow':'auto'
 			});
 			scrollTop = (document.documentElement.scrollTop)?document.documentElement.scrollTop:document.body.scrollTop;
 			//place en bas
-			placeBas = window.getSize ().size.y - (input.getTop () - scrollTop);
+			placeBas = window.getSize ().y - (input.getTop () - scrollTop);
 			//place en haut
 			placeHaut = input.getTop () - scrollTop;
 			//si ya pas la place en bas
-			if ( placeBas < div.getSize ().size.y){
+			if ( placeBas < div.getSize ().y){
 				//on l'affiche en haut si ya la place
 				positionTop = '';
-				if ( placeHaut < div.getSize().size.y ){
+				if ( placeHaut < div.getSize().y ){
 					//si ya pas la place, on reduit la taille du div, on regarde alors où il y a le plus de place
 					hauteurDiv = '';
 					if (placeBas  > placeHaut){
 						//on affiche en bas
-						positionTop = input.getTop ()+input.getSize().size.y;
-						hauteurDiv = placeBas - input.getSize().size.y;
+						positionTop = input.getTop ()+input.getSize().y;
+						hauteurDiv = placeBas - input.getSize().y;
 					}else{
 						//affichage en haut
 						positionTop = input.getTop () - placeHaut;
@@ -55,13 +55,13 @@ function selectoverload (name) {
 					//reduction de hauteur
 					div.setStyle ('height', hauteurDiv);
 				}else{				
-					positionTop = input.getTop () - div.getSize ().size.y;
+					positionTop = input.getTop () - div.getSize ().y;
 				}
 				//place en haut
 				div.setStyle ('top', positionTop);
 			}
 			div.fixdivShow();
-			input.testZone ( div.getTop()-5, div.getLeft()-5, div.getSize().size.y+10, div.getSize().size.x+10 );
+			input.testZone ( div.getTop()-5, div.getLeft()-5, div.getSize().y+10, div.getSize().x+10 );
 		} else {
 			div.setStyles({
 			 'display':'none'

@@ -1,0 +1,76 @@
+.bannertop, 
+.cmsbloc_title,
+div.togglerCollapse,
+.CopixTable tr.trSelectedElement, 
+.CopixTable tr.trSelectedElement:hover, 
+.copixwindow_title {
+	background: #85312E; /* old browsers */
+	background: -moz-linear-gradient(top, #85312E 50%, #7B1C17 50%); /* firefox */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(50%,#85312E), color-stop(50%,#7B1C17)); /* webkit */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#85312E', endColorstr='#7B1C17',GradientType=0 ); /* ie */
+}
+
+.bannerbottom {
+	background: #382F2F; /* old browsers */
+	background: -moz-linear-gradient(top, #382F2F 2%, #030202 100%); /* firefox */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(2%,#382F2F), color-stop(100%,#030202)); /* webkit */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#382F2F', endColorstr='#030202',GradientType=0 ); /* ie */
+	border-bottom: 1px solid #382F2F;
+	color: #ccc;
+}
+
+.bannerbottom h1 {
+    color: #ccc;
+}
+
+.bannerbreadcrumb {
+    border-top: 1px solid #382F2F;
+    padding: 2px;
+}
+
+.bannerbreadcrumb a{
+	color :#9F231D;
+}
+
+#navigation .limenu img{
+    display: none;
+}
+
+#navigation a {
+	color: #9F9595;
+    padding: 6px 12px 0;
+}
+
+#navigation .current a {
+    background-color: #382F2F;
+    color: #ccc;
+}
+
+#footer{
+	color: #cccccc;
+	background-color: #4E0A01;
+}
+
+#footer a{
+	color: #cccccc;
+}
+
+.wrapper{
+	padding-top : 20px;
+	background: #7B1C17; /* old browsers */
+	background: -moz-linear-gradient(top, #6B1814 0%, #7B1C17 100%); /* firefox */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6B1814), color-stop(100%,#7B1C17)); /* webkit */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6B1814', endColorstr='#7B1C17',GradientType=0 ); /* ie */
+}
+
+body{
+	background: #7B1C17;
+}
+
+#maincontent {
+    padding: 20px 10px 10px;
+    margin-bottom: 10px;
+    -moz-border-radius:5px 5px 5px 5px;
+	-webkit-border-radius: 5px 5px 5px 5px;
+	border-radius: 5px 5px 5px 5px;
+}

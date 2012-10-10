@@ -34,4 +34,3 @@
 function smarty_block_js_modalbox (&$params, $content, &$smarty) {	
 	return ($content !== null) ? _tag('js_modalbox', $params, $content) : '';
 }
-?>

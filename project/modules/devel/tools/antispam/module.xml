@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+    <general>
+        <default name="antispam"
+                 version="1.0.0" 
+                 descriptioni18n="antispam.description"
+                 longdescriptioni18n="antispam.longdescription"
+                 icon="|img/icon/protect.gif" />
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+    </general>
+    <dependencies>
+        <dependency name="generictools" kind="module" />
+        <dependency name="gd" kind="extension" />
+    </dependencies>
+    <parameters>
+         <parameter name="imageQuality" captioni18n="antispam.parameter.quality" default="25" type="int"/>
+		 <parameter name="recaptchapublickey" captioni18n="antispam.parameter.recaptcha.publickey" default="6LcVQgIAAAAAAJ746-pgAop9nk24sWhX2T7GK9ZU" type="string"/>
+		 <parameter name="recaptchaprivatekey" captioni18n="antispam.parameter.recaptcha.privatekey" default="6LcVQgIAAAAAALypzfOIq_FmX4MWmKRg6VOyRGZu" type="string"/>
+		 <parameter name="recaptchatheme" captioni18n="antispam.parameter.recaptcha.theme" default="clean" type="string"/>
+		 
+		 <parameter name="method" captioni18n="antispam.parameter.method" default="copixCaptcha" type="select" listValues="copixCaptcha=>Simple Captcha;recaptcha=>reCaptcha" />
+    </parameters>
+</moduledefinition>

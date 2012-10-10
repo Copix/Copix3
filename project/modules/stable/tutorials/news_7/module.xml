@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="news_7" description="[Tutoriel] News (Partie 7)" icon="|img/icon/tutorial.png" />
+		<group id="tutos" captioni18n="copix:copixmodule.group.tutos" />
+	</general>
+	<credentials>
+	    <credential name="Voir" />
+	    <credential name="Ecrire" />
+	</credentials>
+	<dependencies>
+		<dependency name="syndication" kind="module" />
+	</dependencies>
+	<urlhandlers>
+	 <urlhandler name="urlhandlernews_7" />
+	</urlhandlers>
+</moduledefinition>

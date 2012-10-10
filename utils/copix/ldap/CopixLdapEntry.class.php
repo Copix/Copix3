@@ -193,4 +193,3 @@ function _copix_ldap_decode_string (& $value, $key) {
 function _copix_ldap_encode_string (& $value) {
     return utf8_encode ($value);
 }
-?>

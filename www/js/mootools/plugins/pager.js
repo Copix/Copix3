@@ -156,7 +156,7 @@ var Pager = new Class({
 });
 
 
-Element.extend({
+Element.implement({
 	pager: function(options){
 		var temp = new Pager();
 		temp.pager(this,options);

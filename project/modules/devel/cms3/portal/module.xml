@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition version="1">
+    <general>
+        <default name="portal" version="1.2.3" description="Gestion des pages et des portlets" icon="portal|img/icon_page.png" />
+        <group id="cms3" captioni18n="heading|heading.group.caption" />
+    </general>
+    <dependencies>
+        <dependency name="heading" kind="module" version="1.6.4" />
+        <dependency name="cms_editor" kind="module" />
+    </dependencies>
+    <registry>
+        <entry id="HeadingElement">
+            <type id="page" caption="Page" image="portal|img/page.png" icon="portal|img/icon_page.png"
+                 classid="portal|pageservices" adminurl="portal|admin|prepareEdit" fronturl="portal|portalfront::page" canrss="true"/>
+            <type id="portlet" caption="Portlet" image="portal|img/portlet.png" icon="portal|img/icon_portlet.png"
+                 classid="portal|portletservices" adminurl="portal|adminportlet|prepareEdit" fronturl="portal|portalfront::portlet" />
+        </entry>
+        <entry id="Portlet">
+            <type group="simple" description="Ajout de texte rapide par l'intermédiaire d'un éditeur simple." id="text" caption="Texte" portlettype="PortletText"/>
+            <type group="simple" id="nuagetag" caption="Nuage de tags" portlettype="PortletNuageTag"/>
+            <type group="simple" description="Ancre de positionnement." id="anchor" caption="Ancre" portlettype="PortletAnchor" icon="portal|img/anchor.png"/>
+            <type group="simple" description="Ajout de code HTML directement." id="html" caption="HTML" portlettype="PortletHtml"/>
+            <type group="simple" description="Affichage d'un menu dans votre page." id="menu" caption="Menu" portlettype="PortletMenu" />
+            <type group="simple" description="Affichage de la date de dernière modification de la page." id="dateUpdate" caption="Date dernière modification" portlettype="PortletDateUpdate" icon="portal|img/icon_dateupdate.png" />
+            <type group="simple" description="Ajout de 2 colonnes redimensionnables." id="columns" caption="Ajouter 2 colonnes" portlettype="PortletColumns" />
+        </entry>
+        <entry id="ModuleTables">
+            <table name="cms_pages" />
+            <table name="cms_portlets" />
+            <table name="cms_portlets_headingelementinformations" />
+        </entry>
+    </registry>
+    <parameters>
+        <parameter name="site_id" caption="Identifiant unique du site" default="principal" />
+    </parameters>
+    <userpreferences>
+        <group caption="Barre d'édition">
+            <preference name="defaultDisplay" caption="Position" default="fix" type="select" listValues="float=>Flottante;fix=>Fixe" />
+        </group>
+        <group id="headingNotification" caption="Notification">
+            <preference name="portletNotification" caption="Portlet" default="0" type="bool" description="Donne la possibilité d'envoyer une notification par mail lorsqu'une portlet est publiée." />
+            <preference name="pageNotification" caption="Page" default="0" type="bool" description="Donne la possibilité d'envoyer une notification par mail lorsqu'une page est publiée." />
+        </group>
+	</userpreferences>
+	<updates>
+		<update from="1" to="1.0.0" script="doNothing" />
+		<update from="1.0.0" to="1.1.0" script="1_0_0_to_1_1_0" />
+		<update from="1.1.0" to="1.1.1" script="1_1_0_to_1_1_1" />
+		<update from="1.1.1" to="1.2.0" script="1_1_1_to_1_2_0" />
+		<update from="1.2.0" to="1.2.1" script="1_2_0_to_1_2_1" />
+		<update from="1.2.1" to="1.2.2" script="1_2_1_to_1_2_2" />
+		<update from="1.2.2" to="1.2.3" script="1_2_2_to_1_2_3" />
+	</updates>
+</moduledefinition>

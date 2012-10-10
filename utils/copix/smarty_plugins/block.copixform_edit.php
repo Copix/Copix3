@@ -44,4 +44,3 @@ function smarty_block_copixform_edit($params, $content, &$me) {
 
 	return CopixFormFactory::get ($params['form'])->getButton ('edit', $content); 
 }
-?>

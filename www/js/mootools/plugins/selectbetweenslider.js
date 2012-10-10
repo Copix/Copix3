@@ -26,52 +26,44 @@ var SelectBetweenSlider = new Class({
 		
 			if(this.options.hideSelect){
 				item.select.setStyle('display','none');
-			}
+			}	
 			
 			if(this.options.showValues == false){
 				item.divTitle.setStyle('display','none');
-			}
+			}	
 		
 			//init
 			item.divTitle.innerHTML = item.select.options[ item.select.selectedIndex].title;
 			
 			//events
-			item.slider.drag.addEvent('onDrag', function(knob){
-				if (this.options.snap){
+			item.slider.drag.addEvent('onDrag', function(position){
+				if (this.options.snap){	
 					item.slider.set(this.snapStep);
-				}
+				}		
 				if(item.slider == this.beginMootoolsSlider){
-					this.checkBeginPosition(knob);
-					this.checkBeginStep();
+					this.checkBeginPosition(position);
 					this.displayBeginToolTip(true);
 				}		
 				else{
-					this.checkEndPosition(knob);
-					this.checkEndStep();
+					this.checkEndPosition(position);
 					this.displayEndToolTip(true);
 				}
 				this.displayDivBetween();
 			}.bind (this));
 			
-			item.slider.drag.addEvent('onComplete', function(knob){
+			item.slider.drag.addEvent('onComplete', function(position){
 				if(item.slider == this.beginMootoolsSlider){
-					this.checkBeginPosition(knob);
+					this.checkBeginPosition(position);
 				}		
 				else{
-					this.checkEndPosition(knob);
+					this.checkEndPosition(position);
 				}
 			}.bind (this));
 					
-			item.slider.addEvent ('onChange', function(step, refresh){
-				if (item.select.options[step].disabled) {
-					return false;
-				}
+			item.slider.addEvent ('onChange', function(step){	
 				item.select.options[step].selected=true;
 				item.divTitle.innerHTML = item.select.options[item.select.selectedIndex].title;
-				//en mode refresh on ne fait pas d'appel ajax, on ne passe pas dans le change
-				if (!refresh){
-					item.select.fireEvent ('change');
-				}
+				item.select.fireEvent ('change');
 				if(item.slider == this.beginMootoolsSlider){
 					this.checkBeginStep();
 				}
@@ -79,21 +71,6 @@ var SelectBetweenSlider = new Class({
 					this.checkEndStep();
 				}
 			}.bind (this));
-			
-			item.slider.set = function (step, refresh){
-				this.step = step.limit(0, this.options.steps);
-				this.checkStep(refresh);
-				this.end();
-				this.fireEvent('onTick', this.toPosition(this.step));
-				return this;
-			}
-			
-			item.slider.checkStep = function (refresh){
-				if (this.previousChange != this.step){
-					this.previousChange = this.step;
-					this.fireEvent('onChange', [this.step, refresh]);
-				}
-			}
 			
 			item.slider.addEvent ('onTick', function(step){
 				if(item.slider == this.beginMootoolsSlider){
@@ -103,13 +80,6 @@ var SelectBetweenSlider = new Class({
 					this.displayEndToolTip (true);
 				}
 			}.bind (this));
-
-			item.select.addEvent ('refresh', function(){
-				if(item.slider.step != item.select.selectedIndex){
-					item.slider.set (item.select.selectedIndex, true);
-					this.displayDivBetween();
-				}
-			}.bind(this));
 			
 			item.select.addEvent ('change', function(){
 				if(item.slider.step != item.select.selectedIndex){	
@@ -142,6 +112,8 @@ var SelectBetweenSlider = new Class({
 			}.bind(this));
 			
 		}.bind(this));
+		
+		
 
 		this.slider.addEvent ('mouseover', function(e){
 			this.mouseOver = true;
@@ -154,7 +126,7 @@ var SelectBetweenSlider = new Class({
 		this.slider.addEvent ('mousemove', function(e){
 			if(this.options.snap && this.mouseOver){
 				var stepPosition = this.selectedSlider.toPosition(this.selectedSlider.step);
-				var mousePosition = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - (this.selectedKnob.getPosition().x - stepPosition) - (this.selectedKnob.getSize().size.x / 2);
+				var mousePosition = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - (this.selectedKnob.getPosition().x - stepPosition) - (this.selectedKnob.getSize().x / 2);
 				
 				if (mousePosition < stepPosition && this.selectedSlider.step > 0){
 					var middleStep = this.selectedSlider.toPosition(this.selectedSlider.step - 1) + ((stepPosition - this.selectedSlider.toPosition(this.selectedSlider.step - 1))/2);
@@ -191,78 +163,46 @@ var SelectBetweenSlider = new Class({
 		event.stop();
 	},
       
-    checkBeginPosition : function (knob) {
-		if((knob.getPosition().x - this.slider.getPosition().x) > this.beginMootoolsSlider.toPosition(this.endMootoolsSlider.step-1)){
+    checkBeginPosition : function (position) {
+		if(position.getPosition().x > this.beginMootoolsSlider.toPosition(this.endMootoolsSlider.step-1)){
 			this.beginMootoolsSlider.set(this.endMootoolsSlider.step-1);
-		}
+		}	
     },
     
-    checkEndPosition : function (knob) {
-		if(knob.getPosition().x < this.endMootoolsSlider.toPosition(this.beginMootoolsSlider.step+1)){
+    checkEndPosition : function (position) {
+		if(position.getPosition().x < this.endMootoolsSlider.toPosition(this.beginMootoolsSlider.step+1)){
 			this.endMootoolsSlider.set(this.beginMootoolsSlider.step+1);
 		}
     },
     
     checkBeginStep : function () {
-    	if (this.beginSelect.options[this.beginMootoolsSlider.step].disabled) {
-    		var option = null,
-    			options = this.beginSelect.options,
-    			i = this.beginMootoolsSlider.step,
-    			j = options.length;
-    		while (i < j) {
-    			i++;
-    			option = options[i];
-    			if (option && !option.disabled) {
-		    		this.beginMootoolsSlider.set(i);
-		    		break;
-    			}
-    		}
-    		return;
-    	}
 		if(this.beginMootoolsSlider.step >= this.endMootoolsSlider.step){
 			this.beginMootoolsSlider.set(this.endMootoolsSlider.step-1);
-		}
+		}	
     },
     
     checkEndStep : function () {
-    	if (this.endSelect.options[this.endMootoolsSlider.step].disabled) {
-    		var option = null,
-    			options = this.endSelect.options,
-    			i = options.length,
-    			j = this.endMootoolsSlider.step;
-    		while (i > j) {
-    			i--;
-    			option = options[i];
-    			if (!option.disabled) {
-		    		this.endMootoolsSlider.set(i);
-		    		break;
-    			}
-    		}
-    		return;
-    	}
-		if(this.beginMootoolsSlider.step >= this.endMootoolsSlider.step && this.sliders[1].select.options[this.endMootoolsSlider.step].disabled == false){
+		if(this.beginMootoolsSlider.step >= this.endMootoolsSlider.step){
 			this.endMootoolsSlider.set(this.beginMootoolsSlider.step+1);
-		}
+		}	
     },
     
     createSlider : function (){
     	this.slider = new Element('div', {'class' : 'slider'});
-        this.slider_parent = new Element('div', {'class' : 'slider_parent'});
+        this.slider_parent = new Element('div', {'class' : 'slider_parent'});      
         this.beginSelect.parentNode.appendChild(this.slider_parent);
-        this.slider.injectInside(this.slider_parent);
-        this.beginDivTitle = new Element('div', {'id' : 'begintitle', 'class':'slider_title begin'});
-        this.endDivTitle = new Element('div', {'id' : 'endtitle', 'class':'slider_title end'});
-        this.beginSelect.parentNode.appendChild(this.beginDivTitle);
-        this.beginSelect.parentNode.appendChild(this.endDivTitle);
-        this.beginKnob = new Element('div', {'class' : 'knob', 'id':'beginknob'}).injectInside(this.slider);
-        this.divBetween = new Element('div', {'class' : 'divBetween'}).injectInside(this.slider);
-        this.endKnob = new Element('div', {'class' : 'knob', 'id':'endknob'}).injectInside(this.slider);
-        if (this.options.alwaysShowTooltip) {
-	        this.beginDivToolTip = new Element('div', {'class' : 'tool_tip begintool_tip'}).injectInside(this.slider_parent);
-	        this.endDivToolTip = new Element('div', {'class' : 'tool_tip endtool_tip'}).injectInside(this.slider_parent);
-       	}
+        this.slider.injectInside(this.slider_parent); 
+        this.beginDivTitle = new Element('div', {'id' : 'title', 'class':'slider_title'});
+        this.endDivTitle = new Element('div', {'id' : 'title', 'class':'slider_title'});     
+        this.beginSelect.parentNode.appendChild(this.beginDivTitle);     
+        this.beginSelect.parentNode.appendChild(this.endDivTitle);     
+        this.beginKnob = new Element('div', {'class' : 'knob'}).injectInside(this.slider);
+        this.divBetween = new Element('div', {'class' : 'divBetween'}).injectInside(this.slider);           
+        this.endKnob = new Element('div', {'class' : 'knob', 'id':'test'}).injectInside(this.slider);           
+        this.beginDivToolTip = new Element('div', {'class' : 'tool_tip'}).injectInside(this.slider_parent);
+        this.endDivToolTip = new Element('div', {'class' : 'tool_tip'}).injectInside(this.slider_parent);
 
-		var SliderPerso = Slider.extend({
+		var SliderPerso = Slider.implement({
 			clickedElement: function(event) {
    				var position = event.page[this.z] - this.getPos() - this.half;
 				position = position.limit(-this.options.offset, this.max -this.options.offset);
@@ -290,25 +230,16 @@ var SelectBetweenSlider = new Class({
 			'position':'absolute'
 		});
 		
-		for (var i=1 ; i < this.beginSelect.options.length -1 ; i++){
-			var span = new Element('span', {'class' : 'span_tic'});
-			if (this.options.useTextInTic) {
-				span.setText(this.beginSelect.options[i].getText());
-			}
+		for (i=1 ; i < this.beginSelect.options.length -1 ; i++){
+			var span = new Element('span', {'class' : 'span_tic'}).injectInside(this.slider);
 			span.setStyles ({
-				'left': Math.round(this.beginMootoolsSlider.toPosition(i) + (this.beginKnob.getSize().size.x)/2)+'px'
+				'left': (this.beginMootoolsSlider.toPosition(i) + (this.beginKnob.getSize().x)/2)+'px'
 			});
-			span.injectInside(this.slider);
 		}
 		
 		this.selectedKnob = this.beginKnob;
 		this.selectedSlider = this.beginMootoolsSlider;
 		this.endMootoolsSlider.set (this.endSelect.selectedIndex);
-		
-		if (this.options.alwaysShowTooltip) {
-	     	this.displayBeginToolTip (true);
-			this.displayEndToolTip (true);
-       	}
     },
     
     showLegend : function (){
@@ -317,25 +248,25 @@ var SelectBetweenSlider = new Class({
      	this.slider.parentNode.appendChild (begin);
         this.slider.parentNode.appendChild (end);
         begin.innerHTML = this.beginSelect.options[0].text;
-		end.innerHTML = this.endSelect.options[this.endSelect.options.length-1].text;
+		end.innerHTML = this.endSelect.options[this.endSelect.options.length-1].text;      
     },
 
 	getValue : function (element){
 		//ie
-		if(element.options[element.selectedIndex].text == '' ||
-				element.options[element.selectedIndex].text == null){
-			return element.options[element.selectedIndex].value;
+		if(element.options[element.selectedIndex].value == '' ||
+				element.options[element.selectedIndex].value == null){
+			return element.options[element.selectedIndex].text;		
 		}
-		return element.options[element.selectedIndex].text;
+		return element.options[element.selectedIndex].value;
 	},
 	
 	setValue : function (value){
-		var i, option, j = this.select.options.length;
-		for (i = 0; i < j; i++) {
-			option = this.select.options[i];
-			if (option.value != value) {
-				option.selected = false;
-			} else {
+		for( i = 0 ; i < this.select.options.length ; i++){
+			var option = this.select.options[i];		
+			if (option.value != value){
+				option.selected=false;
+			}
+		    else {
 		    	option.selected=true;
 		    	this.mootoolsSlider.set (i);
 		    }
@@ -344,24 +275,24 @@ var SelectBetweenSlider = new Class({
 	
 	displayDivBetween : function (){
 		this.divBetween.setStyles({
-			'left':(this.beginKnob.getPosition().x - this.slider.getPosition().x)+'px',
-			'width':(this.endKnob.getPosition().x - this.beginKnob.getPosition().x)+'px'
+			'left':((this.beginKnob.getPosition().x)+this.beginKnob.getSize().x/2)+'px',
+			'width':(this.endKnob.getPosition().x-this.beginKnob.getPosition().x-this.beginKnob.getSize().x)+'px'
 		});
 	},
 	
 	displayBeginToolTip : function (display){
-		if (this.options.alwaysShowTooltip && display){
-			this.beginDivToolTip.innerHTML = $(this.beginSelect.options[this.beginSelect.selectedIndex]).getText();
+		if (display){
+			this.beginDivToolTip.innerHTML = this.getValue(this.beginSelect);
 			//en 2 fois obligatoire pour connaitre la taille de la div
 			this.beginDivToolTip.setStyles ({
 				'display':'block',
 				'position':'absolute'
 			});
 			//on a maintenant la taille
-			var left = this.beginKnob.getPosition().x - (
+			left = this.beginKnob.getPosition().x - (
 					this.slider.getPosition().x
-					+ (this.beginDivToolTip.getSize ().size.x / 2)
-					- ( this.beginKnob.getSize().size.x / 2)
+					+ (this.beginDivToolTip.getSize ().x / 2)
+					- ( this.beginKnob.getSize().x / 2)
 			);
 			this.beginDivToolTip.setStyles ({
 				'left' : left+'px'
@@ -375,17 +306,17 @@ var SelectBetweenSlider = new Class({
 	},
 	
 	displayEndToolTip : function (display){
-		if (this.options.alwaysShowTooltip && display){
-			this.endDivToolTip.innerHTML = $(this.endSelect.options[this.endSelect.selectedIndex]).getText();
+		if (display){
+			this.endDivToolTip.innerHTML = this.getValue(this.endSelect);
 			//en 2 fois obligatoire pour connaitre la taille de la div
 			this.endDivToolTip.setStyles ({
 				'display':'block',
 				'position':'absolute'
 			});
-			var left = this.endKnob.getPosition().x - (
+			left = this.endKnob.getPosition().x - (
 					this.slider.getPosition().x
-					+ (this.endDivToolTip.getSize ().size.x / 2)
-					- ( this.endKnob.getSize().size.x / 2)
+					+ (this.endDivToolTip.getSize ().x / 2)
+					- ( this.endKnob.getSize().x / 2)
 			);
 			//on a maintenant la taille
 			this.endDivToolTip.setStyles ({

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+  <general>
+    <default name="communet_skel" longdescription="Module de squelete de Communet. Allez sur index.php/communet_skel/help pour plus d'infos." description="Module de squelete de Communet." icon="|img/icon/tutorial.png" />
+	<group id="tutos" captioni18n="copix:copixmodule.group.tutos" />
+  </general>
+</moduledefinition>

@@ -17,7 +17,7 @@ class CopixContextProxy extends CopixClassProxy {
 	/**
 	 * Le contexte de l'objet
 	 *
-	 * @var unknown_type
+	 * @var string
 	 */
 	protected $_context = null;
 
@@ -27,24 +27,23 @@ class CopixContextProxy extends CopixClassProxy {
    	 * @param	string	$pFileName	le chemin de la définition du fichier
    	 */
 	public function __construct ($pObject, $pContext){
-		CopixContext::push ($this->_context = $pContext);
+		$this->_context = $pContext === null ? CopixContext::get () : $pContext;
 		parent::__construct ($pObject);
-		CopixContext::pop ();
+   	}
+   	
+   	/**
+   	 * Avant toute action automatique sur l'objet, on push le contexte initial
+   	 */
+   	protected function _beforeRemoteAction (){
+   		CopixContext::push ($this->_context);
+   		parent::_beforeRemoteAction ();
    	}
 
    	/**
-   	 * Encapsulation de l'appel des fonctions pour les transmettre directement à l'objet tout 
-   	 * en ayant au préalable indiqué les informations de contexte
-   	 * 
-   	 * @param	string	$pName	nom de la fonction
-   	 * @param	array	$pArgs	arguments passés à la fonction
-   	 * @return mixed
+   	 * Après toute action effectuée sur l'objet, on remet le contexte "courant"
    	 */
-   	public function __call ($pName, $pArgs){
-   		CopixContext::push ($this->_context);
-   		$toReturn = parent::__call ($pName, $pArgs);
+   	protected function _afterRemoteAction (){
    		CopixContext::pop ();
-   		return $toReturn;
+   		parent::_afterRemoteAction ();   		
    	}
 }
-?>

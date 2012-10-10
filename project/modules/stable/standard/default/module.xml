@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="default" descriptioni18n="default.description" icon="|img/icon/default.gif" version="1.0.0" />
+		<group id="standard" captioni18n="copix:copixmodule.group.standard" />
+	</general>
+	<parameters>
+		<group captioni18n="parameter.group.title">
+			<parameter name="homePage" descriptioni18n="parameter.description.homePage" captioni18n="parameter.homePage" default="index.php?module=default&amp;action=welcome" />
+			<parameter name="titlePage" descriptioni18n="parameter.description.titlePage" captioni18n="parameter.titlePage" default="Copix Framework" />
+			<parameter name="titleBar" descriptioni18n="parameter.description.titleBar" captioni18n="parameter.titleBar" default="[Copix] {$TITLE_PAGE}" />
+			<parameter name="favicon" descriptioni18n="parameter.description.favicon" captioni18n="parameter.favicon" default="img/copix.ico" />
+		</group>
+		<group captioni18n="parameter.group.auth">
+			<parameter name="authUrl" descriptioni18n="parameter.description.authUrl" captioni18n="parameter.authUrl" default="auth||" />
+		</group>
+		<group captioni18n="parameter.group.themes">
+			<parameter name="publicTheme" descriptioni18n="parameter.description.theme" captioni18n="parameter.publicTheme" default="default" />
+			<parameter name="adminTheme" descriptioni18n="parameter.description.theme" captioni18n="parameter.adminTheme" default="default" />
+		</group>
+		<group captioni18n="parameter.group.mail">
+			<parameter name="mailEnabled" descriptioni18n="parameter.description.mailEnabled" captioni18n="parameter.mailEnabled" default="0" type="bool" />
+			<parameter name="mailLogging" descriptioni18n="parameter.description.mailLogging" captioni18n="parameter.mailLogging" default="0" type="bool" />
+			<parameter name="mailFrom" descriptioni18n="parameter.description.mailFrom" captioni18n="parameter.mailFrom" default="webmaster" />
+			<parameter name="mailFromName" descriptioni18n="parameter.description.mailFromName" captioni18n="parameter.mailFromName" default="webmaster" />
+			<parameter name="mailAlwaysBcc" descriptioni18n="parameter.description.mailAlwaysBcc" captioni18n="parameter.mailAlwaysBcc" default="" />
+			<parameter name="mailMethod" descriptioni18n="parameter.description.mailMethod" captioni18n="parameter.mailMethod" default="smtp" type="select" listValues="mail=>Fonction mail () PHP;smtp=>Serveur SMTP" />
+			<parameter name="mailSmtpHost" descriptioni18n="parameter.description.mailSmtpHost" captioni18n="parameter.mailSmtpHost" default="localhost" />
+			<parameter name="mailSmtpAuth" descriptioni18n="parameter.description.mailSmtpAuth" captioni18n="parameter.mailAuth" default="" />
+			<parameter name="mailSmtpPass" descriptioni18n="parameter.description.mailSmtpPass" captioni18n="parameter.mailPass" default="" />
+		</group>
+		<group captioni18n="parameter.group.proxy">
+			<parameter name="proxyEnabled" descriptioni18n="parameter.description.proxyEnabled" captioni18n="parameter.proxyEnabled" default="0" type="bool" />
+			<parameter name="proxyHost" descriptioni18n="parameter.description.proxyHost" captioni18n="parameter.proxyHost" default="" />
+			<parameter name="proxyPort" descriptioni18n="parameter.description.proxyPort" captioni18n="parameter.proxyPort" default="" type="int" />
+			<parameter name="proxyUser" descriptioni18n="parameter.description.proxyUser" captioni18n="parameter.proxyUser" default="" />
+			<parameter name="proxyPass" descriptioni18n="parameter.description.proxyPass" captioni18n="parameter.proxyPass" default="" />
+		</group>
+		<group captioni18n="parameter.group.maintenance">
+			<parameter name="maintenance" descriptioni18n="parameter.description.maintenance" captioni18n="parameter.maintenance" default="0" type="bool" />
+			<parameter name="maintenanceCancel" descriptioni18n="parameter.description.maintenanceCancel" captioni18n="parameter.maintenanceCancel" default="false" />
+		</group>
+		<group captioni18n="parameter.group.webservices">
+			<parameter name="webservicesInterface" descriptioni18n="parameter.description.webservicesInterface" captioni18n="parameter.webservicesInterface" default="" />
+		</group>
+        <group captioni18n="parameter.group.messages">
+			<parameter name="messageRedirectTime" type="int" captioni18n="parameter.messageRedirectTime.caption" default="2" descriptioni18n="parameter.messageRedirectTime.description" />
+		</group>
+	</parameters>
+	<logs>
+		<types>
+			<type id="speedview" captioni18n="speedview.type" />
+		</types>
+	</logs>
+	<i18nhandlers>
+		<i18nhandler name="i18nLocalHandler" order="0" captioni18n="default|default.handlercaption" />
+	</i18nhandlers>
+</moduledefinition>

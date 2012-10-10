@@ -49,6 +49,7 @@ var ImageChooser = {
 			html += ' thumb_show_image="' + form.thumb_show_image.value + '"';
 			html += ' thumb_galery_id="' + form.thumb_galery_id.value + '"';
 		}
+		html += ' />';
 		tinyMCEPopup.editor.execCommand ('mceInsertContent', false, html);
 		tinyMCEPopup.close ();
 	}

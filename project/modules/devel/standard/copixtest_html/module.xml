@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="copixtest_html" description="Tests URL"
+  			icon="|img/icon/url.png" />
+ </general>
+ <admin>
+ <link url="admindomain|default" captioni18n="copixtest_html.message.domain" credentials="basic:admin" />
+ <link url="adminsession|default" captioni18n="copixtest_html.message.session" credentials="basic:admin" />
+ 
+ </admin>
+<dependencies>
+	<dependency name="copixtest" kind="module" />
+	<dependency name="tidy" kind="extension" />
+	<dependency name="curl" kind="extension" />
+</dependencies>
+</moduledefinition>

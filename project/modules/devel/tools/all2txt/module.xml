@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+    <general>
+        <default name="all2txt" descriptioni18n="all2txt.description"
+                 longdescriptioni18n="all2txt.longdescription" 
+                 icon="|img/icon/txt.png"/>
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+    </general>
+    
+    <parameters>
+	    <group captioni18n="all2txt.pdf2txt.title">
+	            <parameter name="PDFUsePHP" captioni18n="all2txt.PDFUsePHP" default="0" type="bool" />
+	            <parameter name="commandPDF2TXT" captioni18n="all2txt.commandPDF" default='pdftotext "{pathpdf}{filepdf}" "{pathtxt}{filetxt}"' />
+	    </group>
+	    <group captioni18n="all2txt.doc2txt.title">
+                <parameter name="DOCUsePHP" captioni18n="all2txt.DOCUsePHP" default="0" type="bool" />
+                <parameter name="commandDOC2TXT" captioni18n="all2txt.commandDOC" default='antiword "{pathdoc}{filedoc}" &gt; "{pathtxt}{filetxt}"' ></parameter>
+        </group>
+    </parameters>
+</moduledefinition>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="wbe" descriptioni18n="wbe.moduledescription"
+			longdescriptioni18n="wbe.modulelongdescription" 
+			icon="|img/icon/wbe.png" />
+	</general>	
+	<parameters>
+		<parameter name="defaultwbe" captioni18n="wbe.parameter.defaultwbe" type="select" default="tinymce" listValues="tinymce=>Tiny MCE;fck=>FCK Editor" />
+	</parameters>
+</moduledefinition>

@@ -13,17 +13,18 @@ CopixClass.implement({
 		if(options.instanceId) {
 			zone.addEvent('load', function(params) {
 				if (!params) {
-				   params = {};
+				params = {};
 				}
-				if (zone.innerHTML == '' || params.copixzone_force_refresh) {
+				if (zone.innerHTML == '') {
 					Copix.setLoadingHTML(zone);
-					new Ajax($pick(options.url, Copix.getActionURL('generictools|ajax|getZone')), {
+					new Request.HTML({
+					    url: $pick(options.url, Copix.getActionURL('generictools|ajax|getZone')),
 						method: 'post',
 						update: zone,
 						evalScripts : true,
 						data: $merge ({'instanceId': options.instanceId}, params),
 						onComplete: zone.fireEvent.bind(zone,'complete')
-					}).request();
+					}).send();
 				} else {
 					zone.fireEvent('complete');
 				}
@@ -33,11 +34,7 @@ CopixClass.implement({
 		}
 		
 		zone.addEvent('refresh', function (params) {
-			//zone.innerHTML = ''
-			if (!params) {
-			   params = {};
-			}
-            params.copixzone_force_refresh=true;
+			zone.innerHTML = ''
 			zone.fireEvent('load', params);
 		});
 		

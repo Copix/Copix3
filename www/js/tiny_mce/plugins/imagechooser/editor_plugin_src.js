@@ -16,9 +16,9 @@
 		init : function (ed, url) {
 			var divImage = new Element ('div' , {'style': 'display:none', 'id':'div'+ed.editorId + 'image'});
 			document.body.adopt(divImage);
-			
+
 			var ajax = new Request.HTML({
-				url : Copix.getActionURL ('cms_editor|ajax|getelementchooser', {'mode' : 1, 'name':ed.editorId + 'image'}),
+				url : Copix.getActionURL ('cms_editor|ajax|getelementchooser', {'mode' : 1, 'name':ed.editorId + 'image', 'heading' : $('heading_' + ed.editorId).value}),
 				update : divImage,
 				onComplete : function () {
 					$ ('wysiwygEditor_' + ed.editorId + 'image').addEvent ('change', function () {this.showPopUp (ed, url)}.bind (this));

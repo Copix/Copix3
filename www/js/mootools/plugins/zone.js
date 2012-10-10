@@ -48,7 +48,7 @@ var zone = new Class ({
 
 currentZone = new zone();
 	
-Element.extend({
+Element.implement({
 	testZone: function(x,y,sizex,sizey){
 		currentZone.testZone (this, x, y, sizex, sizey );
 	},
@@ -57,7 +57,7 @@ Element.extend({
 	}
 });
 
-Element.extend({
+Element.implement({
 	isZone: function(){
 		return currentZone.isExec;
 	}

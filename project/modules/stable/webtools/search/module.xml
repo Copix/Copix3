@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="search" descriptioni18n="module.description" icon="|img/quicksearch.png" longdescription="module.longdescription" />
+		<group id="webTools" captioni18n="copix:copixmodule.group.webTools" />
+	</general>
+	<admin>
+		<link url="search|indexing|" captioni18n="link.index" credentials="basic:admin" />
+	</admin>
+</moduledefinition>

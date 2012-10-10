@@ -21,14 +21,16 @@ class TemplateTagTextArea extends CopixTemplateTag {
 	 * @param array $pParams Paramètres
 	 * @return string
 	 */
-   public function process ($pParams) {
+   public function process ($pContent = null) {
+	   $pParams = $this->getParams ();
+	   
 		//input check
 		if (empty ($pParams['name'])) {
 			throw new CopixTemplateTagException ("[plugin textarea] parameter 'name' cannot be empty");
 		}
 
 		$pParams['id'] = $this->getParam ('id', $pParams['name']);
-		$pParams['value'] = $this->getParam ('value', null);
+		$pParams['value'] = $this->getParam ('value', $pContent);
 		$pParams['extra'] = $this->getParam ('extra', null);
 		$pParams['error'] = $this->getParam ('error', false);
 		$pParams['showerroricon'] = $this->getParam ('showerroricon', true);

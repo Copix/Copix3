@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="crud" description="[Tutoriel] CRUD (Create Read Update Delete)" longdescription="Démonstration des opérations de bases pour lire, écrire et supprimer des enregistrements depuis une table dans une base avec Copix"  icon="|img/icon/tutorial.png"  />
+  <group id="tutos" captioni18n="copix:copixmodule.group.tutos" />
+ </general>
+ <admin>
+  <link url="crud||" caption="Page de liste des éléments" />
+ </admin> 
+</moduledefinition>

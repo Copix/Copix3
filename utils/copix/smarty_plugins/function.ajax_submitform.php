@@ -14,4 +14,3 @@
 function smarty_function_ajax_submitform ($params, &$smarty) {
 	return _tag ('ajax_submitform', $params);
 }
-?>

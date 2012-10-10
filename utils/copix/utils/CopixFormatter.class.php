@@ -6,12 +6,14 @@
 * @copyright	CopixTeam
 * @link 		http://copix.org
 * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+* @deprecated
 */
 
 /**
  * Classe permettant de formatter correctement un élément de données
  * Toutes les méthodes retournent une structure de données formattée de façon normalisée, 
  *  et génèrent une exception si l'élément n'est pas correct
+ * @deprecated
  */
 class CopixFormatter {
 	/**
@@ -19,7 +21,7 @@ class CopixFormatter {
 	 * @return string
 	 */
 	public static function getNom ($pNom){
-		return strtoupper ($pNom);
+		return _filter ('UpperCase')->get ($pNom);
 	}
 
 	/**
@@ -27,8 +29,7 @@ class CopixFormatter {
 	 * @return string
 	 */
 	public static  function getPrenom ($pPrenom){
-		$result = self::capitalize ($pPrenom);
-        return strtoupper (substr ($result, 0, 1)).strtolower (substr ($result, 1));
+		return _filter ('Capitalize')->get ($pPrenom);
 	}
 
 	/**
@@ -36,33 +37,14 @@ class CopixFormatter {
 	 * Pronoms en minuscules, les tirets et espaces sont considérés comme étant des séparateurs
 	 * @param string $pExpressions l'expression à capitaliser
 	 */
-	public  static  function capitalize ($pExpression){
-		$final = array ();
-		$spacesPart = explode (' ', $pExpression);
-		foreach ($spacesPart as $spacePart){
-			$tiretParts = explode ('-', $spacePart);
-			$finalTiret = array ();
-			foreach ($tiretParts as $tiretPart){
-				$finalTiret[] = self::_capitalizeString ($tiretPart);				
-			}
-			$final[] = implode ('-', $finalTiret);
+	public static  function capitalize ($pExpression){
+		static $_capitalizeFilter = false;
+		if ($_capitalizeFilter === false){
+			$_capitalizeFilter = new CopixFilterCapitalize (array ('lowerCaseWords'=>array ('à', 'a', 'du', 'de', 'des', 'le', 'la', 'les')));
 		}
-		return implode (' ', $final);
+		return $_capitalizeFilter->get ($pExpression);
 	}
 
-	/**
-	 * Capitalisation d'une chaine sans tenir compte des espaces ou autres élements de séparation
-	 * @param string $pPart l'élément a capitaliser
-	 * @return string
-	 */
-	public  static  function _capitalizeString ($pPart){
-		$minuscules = array ('à', 'a', 'du', 'de', 'des', 'le', 'la', 'les');
-		if (in_array ($pPart, $minuscules)){
-			return strtolower ($pPart);
-		}
-	    return strtoupper (substr ($pPart, 0, 1)).strtolower (substr ($pPart, 1));
-	}
-		
 	/**
 	 * Formattage d'un numéro de sécurité sociale
 	 * @return string $pNum si cela représente bien un numéro de sécurité sociale.
@@ -103,16 +85,16 @@ class CopixFormatter {
 		}
 		if (count($parts)=== 1){
 			if (strlen ($pRibString) !== 23){
-			   throw new CopixException (_i18n ('copix:copixformatter.error.rib.badlenght', $pRibString));
+				throw new CopixException (_i18n ('copix:copixformatter.error.rib.badlenght', $pRibString));
 			}
 		}
 		if (count ($parts) === 4){
 			if ((strlen ($parts[0]) != 5) || 
-			    (strlen ($parts[1]) != 5) || 
-			    (strlen ($parts[2]) != 11) || 
-			    (strlen ($parts[3]) != 2)){
-               throw new CopixException (_i18n ('copix:copixformatter.error.rib.badelementlenght', $pRibString));
-			}            
+				(strlen ($parts[1]) != 5) || 
+				(strlen ($parts[2]) != 11) || 
+				(strlen ($parts[3]) != 2)){
+				throw new CopixException (_i18n ('copix:copixformatter.error.rib.badelementlenght', $pRibString));
+			}
 		}
 
 		if (count ($parts) === 4){
@@ -127,46 +109,36 @@ class CopixFormatter {
 			$clefRib    = substr ($pRibString, -2); 
 		}
 
-        $ribCheckString = $banqueRib.$guichetRib.$compteRib.$clefRib; 
-        $ribCheckString = strtr($ribCheckString, "abcdefghijklmnopqrstuvwxyz",
-                                            "12345678912345678923456789"); 
+		$ribCheckString = $banqueRib.$guichetRib.$compteRib.$clefRib; 
+		$ribCheckString = strtr($ribCheckString, "abcdefghijklmnopqrstuvwxyz",
+		                                         "12345678912345678923456789"); 
 
 
-        $Coef=array(62,34,3);
-        $s=0;
-        for ($i=0, $s=0; $i<3; $i++){
-           $Code=substr($ribCheckString, 7*$i, 7);
-           $s += (0+$Code) * $Coef[$i];
-        }
-        $clef = 97-($s%97);
-        
-       if ($clef != $clefRib){
-       		throw new CopixException (_i18n ('copix:copixformatter.error.rib.badelementlenght2', array($clefRib, $clef)));
-       }
-       return $banqueRib.' '.$guichetRib.' '.$compteRib.' '.$clefRib;
-    }
+		$Coef=array(62,34,3);
+		$s=0;
+		for ($i=0, $s=0; $i<3; $i++){
+			$Code=substr($ribCheckString, 7*$i, 7);
+			$s += (0+$Code) * $Coef[$i];
+		}
+		$clef = 97-($s%97);
+		
+		if ($clef != $clefRib){
+			throw new CopixException (_i18n ('copix:copixformatter.error.rib.badelementlenght2', array($clefRib, $clef)));
+		}
+		return $banqueRib.' '.$guichetRib.' '.$compteRib.' '.$clefRib;
+	}
 
 	/**
-	 * Formattage d'une adresse e mail.
+	 * Vérification de la validité d'une adresse e-mail
+	 *
+	 * @param string $pMail
+	 * @return string
+	 * @throws CopixException si l'adresse email est incorrect
 	 */
 	public  static function getMail ($pMail){
-		if (function_exists ('filter_var')){
-			if (filter_var ($pMail, FILTER_VALIDATE_EMAIL)){
-				return strtolower (filter_var ($pMail, FILTER_VALIDATE_EMAIL));
-			}else{
-				throw new CopixException ('Adresse email non valide '.$pMail);
-			}
-		}
-		
-		
-       if (!preg_match('"^[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+'.
-       '@'.
-       '[-!#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+\.'.
-       '[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+$"',
-       $pMail)){
-       		throw new CopixException (_i18n ('copix:copixformatter.error.badmail', $pMail));    	       	
-       }
-       return strtolower ($pMail);
+		$validator = new CopixValidatorEmail (array ('tld'=>true));
+		$validator->assert ($pMail);
+		return strtolower ($pMail);		
 	}
 
 	/**
@@ -179,15 +151,17 @@ class CopixFormatter {
 	 */
 	public static function getCommunicationNumber($pNumber, $pSeparator = ' ') {
 		$pNumber = str_replace ($pSeparator, '', $pNumber);
-		if (!preg_match("#^(0033|0|\+33)[1-9]\d{8}$#", $pNumber) && !preg_match("#^(00|\+)[1-9]\d{10,27}$#", $pNumber)){
+		if (!preg_match("#^(0|\+[1-9][1-9][1-9]?)[1-9]\d{8}$#", $pNumber)){
 			throw new CopixException (_i18n ('copix:copixformatter.error.badphonenumber', $pNumber));
 		}else{
-		    if (preg_match("#^\+33#",$pNumber)) {
-		        $intNbBegin = 4;
-		    } else {
-		        $intNbBegin = 2;
-		    }
-		    return substr ($pNumber, 0, $intNbBegin).$pSeparator.wordwrap(substr ($pNumber, $intNbBegin), 2, $pSeparator, true);
+			if (preg_match("#^\+\d{12}#",$pNumber)) {
+				$intNbBegin = 5;
+			} else if (preg_match("#^\+\d{11}#",$pNumber)) {
+				$intNbBegin = 4;
+			} else {
+				$intNbBegin = 2;
+			}
+			return substr ($pNumber, 0, $intNbBegin).$pSeparator.substr ($pNumber, $intNbBegin+0, 2).$pSeparator.substr ($pNumber, $intNbBegin+2, 2).$pSeparator.substr ($pNumber, $intNbBegin+4, 2).$pSeparator.substr ($pNumber, $intNbBegin+6, 2);
 		}		
 	}
 	
@@ -198,16 +172,16 @@ class CopixFormatter {
 	 * @return chaine de caractère avec le téléphone formatté correctement avec separator entre les couples de chiffres 
 	 */
 	public  static function getTelephone ($pTelephone, $pSeparator = ' '){
-	    try {
-		    $pTelephone = self::getCommunicationNumber($pTelephone,$pSeparator);
-		    return $pTelephone;
-	    } catch (Exception $e) {
-	        if ($e->getMessage() == _i18n ('copix:copixformatter.error.badphonenumber', $pTelephone)) {
-	            throw new CopixException (_i18n ('copix:copixformatter.error.badtel', $pTelephone));
-	        } else {
-	            throw $e;
-	        }
-	    }
+		try {
+			$pTelephone = self::getCommunicationNumber($pTelephone,$pSeparator);
+			return $pTelephone;
+		} catch (Exception $e) {
+			if ($e->getMessage() == _i18n ('copix:copixformatter.error.badphonenumber', $pTelephone)) {
+				throw new CopixException (_i18n ('copix:copixformatter.error.badtel', $pTelephone));
+			} else {
+				throw $e;
+			}
+		}
 	}
 	
 	/**
@@ -217,16 +191,16 @@ class CopixFormatter {
 	 * @return chaine de caractère avec le fax formatté correctement avec separateur entre les couples de chiffres
 	 */
 	public  static function getFax ($pFax, $pSeparator = ' '){
-	    try {
-		    $pFax = self::getCommunicationNumber($pFax,$pSeparator);
-		    return $pFax;
-	    } catch (Exception $e) {
-	        if ($e->getMessage() == _i18n ('copix:copixformatter.error.badphonenumber', $pFax)) {
-	            throw new CopixException (_i18n ('copix:copixformatter.error.badfax', $pFax));
-	        } else {
-	            throw $e;
-	        }
-	    }
+		try {
+			$pFax = self::getCommunicationNumber($pFax,$pSeparator);
+			return $pFax;
+		} catch (Exception $e) {
+			if ($e->getMessage() == _i18n ('copix:copixformatter.error.badphonenumber', $pFax)) {
+				throw new CopixException (_i18n ('copix:copixformatter.error.badfax', $pFax));
+			} else {
+				throw $e;
+			}
+		}
 	}
 
 	
@@ -235,18 +209,33 @@ class CopixFormatter {
 	 *
 	 * @param string	$pVarContent	Contenu de la variable
 	 * @param int		$pMaxChars		Nombre maximum de caractères autorisés
-	 * 	 * @return unknown
+	 * @return unknown
 	 */
-	static public function getReduced ($pVarContent, $pMaxChars = 30){
+	public static function getReduced ($pVarContent, $pMaxChars = 30){
 		//Tableau contenant la liste des séparateurs à supprimer de la chaine
-		static $separators = array ("-", "_", '|', '@', '.');
+		static $separators = array ("-", "_", '|', '@', '.', ' ');
 
 		if (strlen ($pVarContent) <= $pMaxChars){
 			return $pVarContent;
 		}
 
 		//Supression des séparateurs et transfo de la chaine en capitalisée.
-		$pVarContent = str_replace ($separators, '-', $pVarContent);
+		$pVarContent = str_replace ($separators, '', $pVarContent);
+		//après avoir supprimé les caractères de séparation, vérifie qu'il faut toujours traiter.
+		if (strlen ($pVarContent) <= $pMaxChars){
+			return $pVarContent;
+		}
+		$toDelete = $pVarContent - $pMaxChars;
+
+		$splited = str_split ($pVarContent, 8);
+		$increment = count ($splited) / 3;
+
+		$finalVar = '';
+		for ($i=0; $i<count ($splited); $i+=$increment){
+			$finalVar .= $splited[$i];
+		}
+		return substr ($finalVar, -1 * min($pMaxChars, strlen($finalVar)));
+/*
 		$varParts = array ();
 		foreach (explode ('-', $pVarContent) as $element){
 			foreach (self::explodeCapitalized ($element) as $subElement){
@@ -263,15 +252,16 @@ class CopixFormatter {
 			}
 		}
 
-		return substr (implode ('', $varParts), self::_strlenTab ($varParts) - $pMaxChars);		
+		return substr (implode ('', $varParts), self::_strlenTab ($varParts) - $pMaxChars);
+//*/
 	}
-	
+
 	/**
 	 * Supprime la plus petite chaine du tableau. A taille équivalente supprime la première
 	 * @param  array	$pParts	le tableau de chaines de caractères
 	 * @return array 		
 	 */
-	static private function _removeSmallest ($pParts){
+	private static function _removeSmallest ($pParts){
 		$smallest = null;
 		foreach ($pParts as $key=>$element){
 			if ($smallest === null ||  (strlen ($element) < strlen ($pParts[$smallest]))){
@@ -288,7 +278,7 @@ class CopixFormatter {
 	 * @param	array	$pArToCalc	Le tableau qui contient les chaines de caractères
 	 * @return int
 	 */
-	static private function _strlenTab ($pArToCalc){
+	private static function _strlenTab ($pArToCalc){
 		return strlen (implode ('', (array) $pArToCalc));
 	}
 
@@ -298,7 +288,7 @@ class CopixFormatter {
 	 * @param string $pCapitalizedString	la chaine à exploser
 	 * @return array
 	 */
-	static public function explodeCapitalized ($pCapitalizedString){
+	public static function explodeCapitalized ($pCapitalizedString){
 		if (strlen ($pCapitalizedString) == 0){
 			return array ();
 		}
@@ -354,8 +344,7 @@ class CopixFormatter {
 	 * @param boolean	$value	le booléen à convertir 	
 	 * @return string
 	 */
-	static public function getBool ($value){
+	public static function getBool ($value){
 		return $value ? _i18n ('copix:common.type.boolean.true') : _i18n ('copix:common.type.boolean.false');
 	}
 }
-?>

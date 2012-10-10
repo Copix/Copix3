@@ -1,0 +1,1 @@
+<input type="text" name="<?php echo $inputName;?>"	value="<?php echo $ppo->value;?>" maxlength="10"/>

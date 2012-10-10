@@ -19,4 +19,3 @@ function smarty_function_ajax_popupinformation ($params, &$smarty) {
         return _tag ('ajax_popupinformation', $params);
     }
 }
-?>

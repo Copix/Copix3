@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="geshi" descriptioni18n="geshi.description"
+			longdescriptioni18n="geshi.longDescription" icon="|img/icon/geshi.png" />
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+	</general>
+</moduledefinition>

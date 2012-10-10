@@ -24,39 +24,11 @@
 *           * = any extra params will be used to generate the url
 *
 */
-function smarty_function_copixform_field($params, &$me) {
-
-	$assign = '';
-	if(isset($params['assign'])){
-		$assign = $params['assign'];
-		unset($params['assign']);
-	}
-
-	if (!isset($params['form'])) {
-		$params['form'] = null;
-	}
+function smarty_function_copixform_field($params, &$me) {	
 	
-	if ($params['form'] instanceof  CopixForm) {
-		$form = $params['form'];
-	} else {
-		$form = CopixFormFactory::get ($params['form']);
-	}
-	unset ($params['form']);
-	
-	
-	if (!isset ($params['name'])) {
-		throw new CopixTemplateTagException ("[plugin copixform_field] parameter 'name' cannot be empty");
-	}
-	$name = $params['name'];
-	unset ($params['name']);
-	
-	$toReturn = $form->getRenderer ()->field ($name, $params);
-	
-	if (strlen($assign) > 0){
-		$me->assign($assign, $toReturn);
-		return '';
-	}else{
-		return $toReturn;
-	}
+    if (isset ($params['assign'])){
+        $me->assign ($params['assign'], _tag ('copixformfield', $params));
+        return "";
+    }
+    return _tag ('copixformfield', $params);
 }
-?>

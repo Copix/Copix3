@@ -29,8 +29,11 @@ class CopixLockFile implements ICopixLock {
      * @return boolean
      */
     public static function lock ($pId) {
-        self::$_arHandle[$pId] = fopen(COPIX_TEMP_PATH.'/lock/'.$pId, 'a');
-        flock(self::$_arHandle[$pId], LOCK_EX);
+		if (!is_dir (COPIX_TEMP_PATH . 'lock/')) {
+			CopixFile::createDir (COPIX_TEMP_PATH . 'lock/');
+		}
+        self::$_arHandle[$pId] = fopen(COPIX_TEMP_PATH . 'lock/' . $pId, 'a');
+        flock (self::$_arHandle[$pId], LOCK_EX);
         return true;
     }
     

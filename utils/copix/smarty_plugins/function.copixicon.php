@@ -21,4 +21,3 @@ function smarty_function_copixicon ($params, $me) {
         return _tag ('copixicon', $params);
     }
 }
-?>

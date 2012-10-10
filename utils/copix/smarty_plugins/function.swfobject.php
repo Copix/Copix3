@@ -26,7 +26,4 @@ function smarty_function_swfobject ($params, &$me) {
 	} else {
 		return _tag('swfobject', $params);
 	}
-	
 }
-
-?>

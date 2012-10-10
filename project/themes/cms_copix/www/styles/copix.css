@@ -1,0 +1,304 @@
+@CHARSET "UTF-8";
+
+.popupInformation{
+	padding: 0px;	
+	background-color:#EFEFEF;
+	border: 1px solid #ccc;
+}
+
+.popupInformation ul {
+	padding: 2px;
+	margin: 2px;
+	list-style-type : none;
+}
+
+/*****************COPIX WINDOW*************/
+/*
+ @copixwindow fenêtres pseudo modales javascript
+Structure HTML :
+<div class="copixwindow unfocus"> <!-- unfocus est ajouté quand plusieurs fenêtres sont visibles simultanément -->
+	<div class="copixwindow_title"></div>
+	<div class="copixwindow_content"></div>
+</div>
+*/
+/**************************************************/
+.copixwindow {
+	background-color: #fff;
+	border-color: #CCC;
+	border-style: solid;
+	border-width: 1px;
+	position: absolute;
+	text-align: left;
+	padding-bottom: 5px;	
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;	
+	font-family:Arial,Helvetica,"Liberation Sans",FreeSans,sans-serif;
+	font-size:12px;
+	line-height:1.5;
+	box-shadow: 2px 2px 8px #666;
+	-moz-box-shadow: 2px 2px 8px #666;
+	-webkit-box-shadow: 2px 2px 8px #666;
+	z-index: 80 !important;
+}
+.copixwindow_title {
+	-moz-border-radius-topleft:3px;
+	-moz-border-radius-topright:3px;	
+	height: auto;
+	padding: 3px 5px 0 5px;
+	border-bottom: 1px solid #CCC;
+	color: #FFF;
+	font-weight: bold;
+	cursor: move;
+	background-color:#A83D1B;
+	background-position:left center;
+	background-repeat:repeat-x;
+	background-image: url({copixresource path="img/nav_current.jpg"});
+}
+.copixwindow_content {
+	background-color: #fff;
+	padding: 3px;
+	min-width: 400px;
+	overflow: auto;
+}
+
+.copixwindow.unfocus {
+	opacity:0.65;
+}
+
+.unfocus {
+	border-color: #bebebe;
+}
+.unfocus thead th {
+	background: #cf844d;
+}
+
+.errorMessage {
+   border: 2px solid #792206;
+   margin: 5px;
+}
+.errorMessage h1 {
+   background-color: #8F1113;
+   background-repeat:repeat-x;
+   background-position: left 50%;
+   color: #ffffff;
+   line-height:1.3em;
+   letter-spacing:0px;
+   text-align: center;
+   font-size: 1em;
+   margin-top: 0;
+}
+
+.resizable{
+	padding-bottom: 24px;
+	padding-right: 20px;
+	background-image: url(../img/modules/wiki/resize.png);
+	background-position: bottom right;
+	background-repeat: no-repeat;
+}
+
+.moocolumn {
+	padding-right : 4px;
+}
+
+.moocolumn2 {
+	padding-left : 4px;
+	border-left : 1px dotted #AEAEAE;
+}
+
+/* CopixForms */
+.copixforms_error {
+	color:red;
+}
+
+/* AutoCompleter */
+div.autocompleter-loading {
+	float:					left;
+	clear:					right;
+	background:				#fff url('../images/spinner.gif') no-repeat center;
+	width:					50px;
+	height:					16px;
+}
+
+ul.autocompleter-choices {
+	position:				absolute;
+	margin:					0;
+	padding:				0;
+	list-style:				none;
+	border:					1px solid #eee;
+	background-color:		white;
+	border-right-color:		#ddd;
+	border-bottom-color:	#ddd;
+	text-align:				left;
+	font-family:			Verdana, Geneva, Arial, Helvetica, sans-serif;
+	z-index:				50;
+	overflow:auto;
+	height:150px;
+}
+
+ul.autocompleter-choices li {
+	position:				relative;
+	padding:				0.1em 1.5em 0.1em 1em;
+	cursor:					pointer;
+	font-weight:			normal;
+	font-size:				1em;
+}
+
+ul.autocompleter-choices li.autocompleter-selected {
+	background-color:		#444;
+	color:					#fff;
+}
+
+ul.autocompleter-choices span.autocompleter-queried {
+	font-weight:			bold;
+}
+
+ul.autocompleter-choices li.autocompleter-selected span.autocompleter-queried {
+	color:					#9FCFFF;
+}
+
+/** Calendar **/
+div.calContainer {
+	width:auto;
+	height:auto;
+	border :0px;
+	display: inline;	
+}
+div.calBackgroud {
+	background-color: #c0c0c0;
+	border: 2px outset white;
+}
+table.calendar  {
+	background-color: #c0c0c0;
+}
+
+.calendar th {
+	background-color: #eeeeee;
+	border: 1px solid #c0c0c0;
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 8pt;
+	text-align: center;
+}
+.calendar tr {
+	background-color: #c0c0c0;
+}
+.calendar tr.calendar_header {
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+.calendar td {
+	color: #000000;
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 8pt;
+}
+.calendar td.calendar_day {
+	background-color: #eeeeee;
+}
+
+.calendar td.calendar_noday {
+	background-color: #ffffff;
+}
+
+
+/* @CopixTable styles pour tableaux */
+/**************************************************/
+.CopixTable,
+.CopixVerticalTable {
+	border: 1px solid #ccc;
+	border-collapse: collapse;
+	margin-left: 0;
+	width: 100%;
+	background: #fff;
+}
+.CopixTable td {
+	border-right: 1px solid #ccc;
+}
+.CopixTable tr th,
+.CopixTable thead th,
+.CopixTable thead th tr {
+	background-color: #585F69;
+	color: #fff;
+	text-align: left;
+	border-right: 1px solid;
+}
+
+.CopixVerticalTable tr th,
+.CopixVerticalTable thead th,
+.CopixVerticalTable thead tr th {
+	background: #585F69;
+	border-bottom : 1px solid #ccc;
+	color: #fff;
+	text-align: left;
+	border-right: 1px solid;
+}
+
+.CopixVerticalTable img{
+	vertical-align: middle;
+}
+
+/* On retire la bordure droite pour le dernier élément. Pour que ça marche sur IE6, il faut rajouter la classe '.last' */
+.CopixTable thead th:last-child {
+	border-right-width: 0;
+}
+.CopixTable thead th.last {
+	border-right-width: 0;
+}
+
+.alternate {
+	background-color: #e6e9e9;
+}
+
+.CopixTable tr:hover,
+.CopixVerticalTable tr:hover {
+	background-color: #cecedf;
+}
+
+.CopixTable td,
+.CopixVerticalTable td {
+	height:25px;
+}
+
+.CopixTable thead tr a,
+.CopixTable thead tr th a:visited,
+.CopixVerticalTable thead tr th a,
+.CopixVerticalTable thead tr th a:visited {
+	color: #fff;
+}
+
+.CopixTable td.action,
+.CopixVerticalTable td.action {
+	border-width: 0;
+}
+
+.cmsEditorStyle1 {
+    color:#37637C;
+    font-weight:bold;
+    font-size:15px;
+}
+.cmsEditorStyle2 {
+    color:#9F3B3B;
+}
+.cmsEditorStyle3 {
+    color:#DFDFDF;
+}
+.cmsEditorStyle4 {
+    color:#37637C;
+    text-decoration:underline;
+}
+.cmsEditorStyle5 {
+    color:#AFAFAF;
+}
+
+.CopixTab {
+	border: solid 2px #6597B0;
+	padding: 1px 5px 1px 5px;
+	cursor: pointer;
+}
+
+.CopixTabSelected {
+	border: solid 2px #6597B0;
+	background-color: #b0e2ff;
+}

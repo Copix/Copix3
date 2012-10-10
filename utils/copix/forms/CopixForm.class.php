@@ -9,7 +9,6 @@
  * @experimental
  */
 
-
 /**
  * Classe principale pour CopixForm
  * @package		copix
@@ -18,43 +17,41 @@
 class CopixForm extends CopixParameterHandler {
 	
 	//Variables sauvé en session
-	protected $_id = null;
+	private $_id = null;
 	
-	protected $_fields = array ();
+	private $_fields = array ();
 	
-	protected $_record = null;
+	private $_record = null;
 	
-	protected $_arPkValue = array ();
+	private $_arPkValue = array ();
 
-	protected $_formUrl = null;
+	private $_formUrl = null;
 	
-	protected $_onSuccess = null;
+	private $_onSuccess = null;
 	
-	protected $_validRecord = false;
+	private $_validRecord = false;
 	
-	protected $_datasourceName = null;
+	private $_datasourceName = null;
 	
-	protected $_datasourceParams = null;
+	private $_datasourceParams = null;
 	
-	protected $_formErrors = null;
+	private $_formErrors = null;
 	
-	protected $_edit = true;
+	private $_edit = true;
 	
-	protected $_arPk = array ();
+	private $_arPk = array ();
 	
-	protected $_errorMode = false;
+	private $_errorMode = false;
 	
-	protected $_datasource = null;
+	private $_datasource = null;
 	
-	protected $_renderer = null;
+	private $_renderer = null;
 	
-	protected $_mode = null;
+	private $_mode = null;
 	
-	protected $_autoParamsIsInit = false;
+	private $_autoParamsIsInit = false;
 	
-	protected $_pk;
-	
-	protected $_savedRecord = array ();
+	private $_pk;
 	
 	public function setPk ($pPks) {
 		$this->_pk = $pPks;
@@ -99,7 +96,7 @@ class CopixForm extends CopixParameterHandler {
 	 *
 	 */
 	public function __sleep () {
-		return array ('_id', '_fields', '_record', '_arPkValue', '_formUrl', '_onSuccess', '_validRecord', '_datasourceName', '_datasourceParams', '_formErrors', '_savedRecord');
+		return array ('_id', '_fields', '_record', '_arPkValue', '_formUrl', '_onSuccess', '_validRecord', '_datasourceName', '_datasourceParams', '_formErrors');
 	}
 
 	/**
@@ -296,9 +293,11 @@ class CopixForm extends CopixParameterHandler {
 	 * @param string $pName le nom du champs
 	 * @return CopixFieldContainer 
 	 */
-	public function getField ($pName) {
+	public function getField ($pName=null) {
 		$this->initAutoParams ();
-		if (isset ($this->_fields[$pName])) {
+        if(is_null($pName)){
+            return $this->_fields;
+        }elseif (isset ($this->_fields[$pName])) {
 			return $this->_fields[$pName];
 		}
 		return false;
@@ -360,8 +359,6 @@ class CopixForm extends CopixParameterHandler {
 		$this->initAutoParams ();
 		return $this->_mode;
 	}
-	
-	
 	
 	/**
 	 * Retourne la dernière url ou a été affiché le formulaire
@@ -429,8 +426,6 @@ class CopixForm extends CopixParameterHandler {
 			if (($this->_record = call_user_func_array (array ($this->getDatasource (), 'get'), $this->_arPkValue)) === false) {
 				$this->_validRecord = false;
 				return $this->_validRecord;
-			} else {
-			    $this->_savedRecord[serialize ($this->_arPkValue)] = $this->_record;
 			}
 			
 			foreach ($this->_fields as $field) {
@@ -456,18 +451,6 @@ class CopixForm extends CopixParameterHandler {
 	 * @return bool true ou false
 	 */
 	public function check () {
-	    //On test la concurrence d'accès
-	    if ($this->_validRecord && $this->getParam('concurrence', true)) {
-	        CopixLock::lock(serialize ($this->_arPkValue));
-	        $temprecord = call_user_func_array (array ($this->getDatasource (), 'get'), $this->_arPkValue);
-	        if ($temprecord != $this->_savedRecord[serialize ($this->_arPkValue)]) {
-	            $this->fillFromRecord ($this->_arPkValue);
-	            $this->_formErrors = new CopixErrorObject('L\'enregistrement a echoué en raison d\'une concurrence d\'accès. Veuillez refaire vos modifications');
-	            CopixLock::unlock(serialize ($this->_arPkValue));
-	            return false;
-	        }
-	    }
-	    
 		$toReturn = true;
 		foreach ($this->_fields as $field) {
 			//Test du datasource, a termes il faudrait voir pour le gérer avec des validators
@@ -478,7 +461,7 @@ class CopixForm extends CopixParameterHandler {
 				$field->getField ()->attach ($this->getDatasource ()->getValidators ($field->_field));
 			}
 			//*/
-			
+
 			if ($field->check () !== true) {
 				$toReturn = false;
 			}
@@ -489,9 +472,6 @@ class CopixForm extends CopixParameterHandler {
 				$toReturn = false;
 				$this->_formErrors = new CopixErrorObject($errors);
 			}
-		}
-		if ($this->_validRecord && $this->getParam('concurrence', true)) {
-		    CopixLock::unlock(serialize ($this->_arPkValue));
 		}
 		return $toReturn;
 	}
@@ -563,106 +543,5 @@ class CopixForm extends CopixParameterHandler {
 
 	public function getFields () {
 		return $this->_fields;
-	}
-	
-	/**
-	 */
-	protected function _reportErrors ($pErrors){
-		print_r ($pErrors);
-		exit;
-	}
-}
-
-
-class CopixFormRenderer {
-
-	private $_form = null;
-	
-	public function __construct ($pForm) {
-		$this->_form = $pForm;
-	}
-	
-	public function __toString () {
-		return $this->all ();
-	}
-	
-	public function all () {
-		$toReturn  = $this->header ();
-		$toReturn .= $this->errors ();
-		$toReturn .= $this->body ();
-		$toReturn .= $this->footer ();
-		return $toReturn;
-	}
-	
-	public function header ($pParams = array ()) {
-		if (is_string($pParams)) {
-			$pParams = array ('action'=>$pParams);
-		}
-		
-		if(!isset ($pParams['action'])) {
-			$pParams['action'] = 'generictools|copixforms|newForm';
-		}
-		
-		$more = '';
-		if (isset ($pParams['uploadedfile']) && $pParams['uploadedfile']) {
-			$more = ' enctype="multipart/form-data" ';
-		}
-		
-		return '<form name="'.$this->_form->getId ().'" id="'.$this->_form->getId ().'" '.$more.' method="POST" action="'._url ($pParams['action'], array ('currentForm'=>$this->_form->getId ())).'" >';
-		
-	}
-	
-	public function footer () {
-		return '</form>';
-	}
-	
-	public function body ($pTemplate = 'copix:templates/copixform.tpl') {
-		$tpl = new CopixTpl ();
-		$tpl->assign ('fields', $this->_form->getFields());
-		return $tpl->fetch ($pTemplate);
-	}
-	
-	public function field ($pName, $pParams = array ()) {
-		$toReturn = array ();
-		if (is_string ($pParams)) {
-			$pParams['kind'] = array ($pParams);
-		}
-		if (!isset($pParams['kind'])) {
-			$pParams['kind'] = array ('all');
-		}
-		
-		if (!is_array ($pParams['kind'])) {
-		    $pParams['kind'] = array ($pParams['kind']);
-		}
-		
-		$field = $this->_form->getField ($pName);
-		if ($field != null) {
-		    foreach ($pParams['kind'] as $kind) {
-    			if ($kind == 'all' || $kind == 'label') {
-    				$toReturn[] = $field->getLabel ();
-    			}
-    			if ($kind == 'all' || $kind == 'input') {
-    				$toReturn[] = $field->getHTML ();
-    			}
-    			if ($kind == 'all' || $kind == 'errors') {
-    			    if ($field->getErrors () != null) {
-    				    $toReturn[] = '<span class="fieldError">'.$field->getErrors ().'</span>';
-    			    }
-    			}
-    			if ($kind == 'value') {
-    				$toReturn[] = $field->getValue();
-    			}
-		    }
-		}
-		return implode (' ', $toReturn);
-	}
-	
-	public function errors () {
-		$toReturn = '';
-		$errors = $this->_form->getFormErrors ();
-		if ($errors != null && count ($errors) > 0) {
-			$toReturn = '<div class="errorMessage"><ul><li>'.implode ('</li><li>', $errors->asArray ()).'</li></ul></div>';
-		}
-		return $toReturn;
 	}
 }

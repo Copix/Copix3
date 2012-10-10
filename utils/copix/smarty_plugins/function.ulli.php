@@ -30,5 +30,3 @@ function smarty_function_ulli($params, $me) {
       return _tag ('ulli', $params);
    }
 }
-
-?>

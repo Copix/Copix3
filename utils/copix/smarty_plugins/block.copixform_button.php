@@ -30,4 +30,3 @@ function smarty_block_copixform_button($params, $content, &$me) {
 	}
 	return CopixFormFactory::get ($params['form'])->getButton ($params['type'], $content);
 }
-?>

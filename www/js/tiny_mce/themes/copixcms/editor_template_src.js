@@ -193,36 +193,93 @@
 		_importClasses : function(e) {
 			var ed = this.editor, c = ed.controlManager.get('styleselect');
 			if (c.getLength() == 0) {
-				each(ed.dom.getClasses(), function(o) {
+				each(ed.dom.getClasses(), function(o, idx) {
+					var name = 'style_' + idx;
 					var tinyMceClass =  o['class'];
-					if (o['class'].indexOf('cmsEditor') == 0){
-						c.add(tinyMceClass.substr(9), o['class']);
+					if (tinyMceClass.indexOf('cmsEditor') == 0){
+					
+						ed.formatter.register(name, {
+							inline : 'span',
+							attributes : {'class' : tinyMceClass},
+							selector : '*'
+						});				
+					
+						c.add(tinyMceClass.substring(9), name);
 					}
 				});
 			}
 		},
 
 		_createStyleSelect : function(n) {
-			var t = this, ed = t.editor, cf = ed.controlManager, c = cf.createListBox('styleselect', {
+			var t = this, ed = t.editor, ctrlMan = ed.controlManager, ctrl;
+
+			// Setup style select box
+			ctrl = ctrlMan.createListBox('styleselect', {
 				title : 'copixcms.style_select',
-				onselect : function(v) {
-					if (c.selectedValue === v) {
-						ed.execCommand('mceSetStyleInfo', 0, {command : 'removeformat'});
-						c.select();
-						return false;
-					} else
-						ed.execCommand('mceSetCSSClass', 0, v);
+				onselect : function(name) {
+					var matches, formatNames = [];
+
+					each(ctrl.items, function(item) {
+						formatNames.push(item.value);
+					});
+
+					ed.focus();
+					ed.undoManager.add();
+
+					// Toggle off the current format
+					matches = ed.formatter.matchAll(formatNames);
+					if (!name || matches[0] == name)
+						ed.formatter.remove(matches[0]);
+					else
+						ed.formatter.apply(name);
+
+					ed.undoManager.add();
+					ed.nodeChanged();
+
+					return false; // No auto select
 				}
 			});
 
-			if (c) {
-				each(ed.getParam('theme_copixcms_styles', '', 'hash'), function(v, k) {
-					if (v)
-						c.add(t.editor.translate(k), v);
-				});
+			// Handle specified format
+			ed.onInit.add(function() {
+				var counter = 0, formats = ed.getParam('style_formats');
 
-				c.onPostRender.add(function(ed, n) {
-					if (!c.NativeListBox) {
+				if (formats) {
+					each(formats, function(fmt) {
+						var name, keys = 0;
+
+						each(fmt, function() {keys++;});
+
+						if (keys > 1) {
+							name = fmt.name = fmt.name || 'style_' + (counter++);
+							ed.formatter.register(name, fmt);
+							ctrl.add(fmt.title, name);
+						} else
+							ctrl.add(fmt.title);
+					});
+				} else {
+					each(ed.getParam('theme_advanced_styles', '', 'hash'), function(val, key) {
+						var name;
+
+						if (val) {
+							name = 'style_' + (counter++);
+
+							ed.formatter.register(name, {
+								inline : 'span',
+								classes : val,
+								selector : '*'
+							});
+
+							ctrl.add(t.editor.translate(key), name);
+						}
+					});
+				}
+			});
+
+			// Auto import classes if the ctrl box is empty
+			if (ctrl.getLength() == 0) {
+				ctrl.onPostRender.add(function(ed, n) {
+					if (!ctrl.NativeListBox) {
 						Event.add(n.id + '_text', 'focus', t._importClasses, t);
 						Event.add(n.id + '_text', 'mousedown', t._importClasses, t);
 						Event.add(n.id + '_open', 'focus', t._importClasses, t);
@@ -232,7 +289,7 @@
 				});
 			}
 
-			return c;
+			return ctrl;
 		},
 
 		_createFontSelect : function() {
@@ -1102,7 +1159,7 @@
 
 			ed.windowManager.open({
 				url : tinymce.baseURL + '/themes/copixcms/link.htm',
-				width : 310 + parseInt(ed.getLang('copixcms.link_delta_width', 0)),
+				width : 400 + parseInt(ed.getLang('copixcms.link_delta_width', 0)),
 				height : 200 + parseInt(ed.getLang('copixcms.link_delta_height', 0)),
 				inline : true
 			}, {

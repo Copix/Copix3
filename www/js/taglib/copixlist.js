@@ -1,6 +1,5 @@
-
-//Bout de script pour la compatibilite
-var compatibilityList = new Class ({
+//Bout de script pour la compatibilite (sans accent pour pas que ie plante)
+var list = {
 	get: function (id) {
 	 return Copix.get_copixlist(id);
 	},
@@ -8,9 +7,8 @@ var compatibilityList = new Class ({
 	 params = {formid: formid};
 	 Copix.register_copixlist (id, params);
 	}
-});
+};
 
-var list = new compatibilityList ();
 
 var CopixList = new Class ({
     options: {},
@@ -30,7 +28,7 @@ var CopixList = new Class ({
 		   onComplete = params['onComplete'];
 		}
 		
-		//On supprime les paramètres inutile
+		//On supprime les paramï¿½tres inutile
 		$each (['kind','currentForm', 'currentId', 'module', 'action', 'group', 'onComplete'], function (property) {
 			if (params[property]) {
 				delete(params[property]);
@@ -66,7 +64,7 @@ var CopixList = new Class ({
 		}
 
 	
-		//On supprime les paramètres inutile
+		//On supprime les paramï¿½tres inutile
 		$each (['kind','currentForm','field', 'currentId', 'module', 'action', 'group', 'onComplete'], function (property) {
 			if (params[property]) {
 				delete(params[property]);
@@ -101,7 +99,7 @@ var CopixList = new Class ({
 		}
 
 		
-		//On supprime les paramètres inutile
+		//On supprime les paramï¿½tres inutile
 		$each (['kind','currentForm', 'currentId', 'module', 'action', 'group', 'onComplete'], function (property) {
 			if (params[property]) {
 				delete(params[property]);
@@ -119,7 +117,7 @@ var CopixList = new Class ({
 					{
 					update:this.options.listid,
 					data:data,
-					method:'POST',
+					method:'post',
 					onComplete: function () {
 					    try {
 					        Copix.get_loader().hide();

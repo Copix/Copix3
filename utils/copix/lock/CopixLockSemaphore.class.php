@@ -20,14 +20,14 @@ class CopixLockSemaphore implements ICopixLock {
 	 *
 	 * @var array
 	 */
-    static private $_arKey = array ();
+    private static $_arKey = array ();
     
     /**
 	 * Stockage des locks pour ne pas faire de locks qui boucle dans un meme script
 	 *
 	 * @var array
 	 */
-    static private $_arLock = array ();
+    private static $_arLock = array ();
     
     /**
      * Méthode qui attend de ne plus etre locké, et lock après
@@ -50,7 +50,7 @@ class CopixLockSemaphore implements ICopixLock {
         if (!isset (self::$_arKey[$pId])) {
             //On génère un fichier qui nous servira a généré la clé de lock
             $filepath = COPIX_TEMP_PATH.'/lock/'.$pId.'sem';
-            if (!file_exists($filepath)) {
+            if (!is_readable ($filepath)) {
                 CopixFile::write ($filepath, 'locker');
             }
             //On récupère la clé depuis le fichier, on mets le paramètre projet a m de manière complètement arbitraire

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="devstandards" description="Vérifier le respect des normes de développement Copix" icon="|img/icon/devstandards.png"
+			longdescription="Permet de parser les fichiers PHP pour vérifier que la syntaxe utilisée est conforme aux normes de développement Copix." />
+		<group id="devTools" captioni18n="copix:copixmodule.group.devTools" />
+	</general>
+	<admin>
+  		<link url="devstandards||" caption="Vérifier les normes" credentials="basic:admin"></link>
+ 	</admin>
+</moduledefinition>

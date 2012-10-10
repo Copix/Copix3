@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default
+			name="backup" version="1.2.1"
+			longdescription="Permet d'effectuer des sauvegardes de la base de données et de fichiers."
+			description="Sauvegardes de base de données et de fichiers" icon="|img/backup.png"
+		/>
+		<group id="devTools" captioni18n="copix:copixmodule.group.devTools" />
+	</general>
+	<admin groupid="backup" groupcaption="Sauvegardes">
+		<link url="backup|profiles|" caption="Profils de sauvegarde" credentials="basic:admin" icon="|img/profiles.png" />
+		<link url="backup||restore" caption="Restaurer une sauvegarde" credentials="basic:admin" icon="|img/backup.png" />
+	</admin>
+	<updates>
+		<update from="1.0.0" to="1.1.0" script="1_0_0_to_1_1_0" />
+		<update from="1.1.0" to="1.2.0" script="1_1_0_to_1_2_0" />
+		<update from="1.2.0" to="1.2.1" script="1_2_0_to_1_2_1" />
+	</updates>
+</moduledefinition>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language>
+	<formats>
+		<dateseparator>/</dateseparator>
+		<timeseparator>:</timeseparator>
+		<date>d%1$sm%1$sY</date>
+		<datetime>d%1$sm%1$sY H%2$si%2$ss</datetime>
+		<datetimemask>
+			<format>d,m,y,H,i,s</format>
+			<mask>%d%1$s%d%1$s%d %d%2$s%d%2$s%d</mask>
+		</datetimemask>
+        <callingcode>\+39</callingcode>
+	</formats>
+</language>

@@ -113,7 +113,7 @@ var Nifty = new Class({
 		
 		var clone=selector.clone();
 		selector.empty;
-		selector.setHTML('');
+		selector.set('html', '');
 		
 		clone.removeProperty('id');
 		clone.removeProperty('class');
@@ -269,7 +269,7 @@ var Nifty = new Class({
 	
 });
 
-Element.extend({
+Element.implement({
 	roundedNifty: function(round,options){
 		var test= new Nifty();
 		if ($type(this)=='element') {

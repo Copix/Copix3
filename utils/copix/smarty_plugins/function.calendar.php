@@ -15,6 +15,6 @@
  * </code>
  */
 function smarty_function_calendar ($params, &$smarty) {
-	return _tag ('calendar', $params);
+	$tag = new TemplateTagCalendar ($params);
+	return $tag->process ();
 }
-?>

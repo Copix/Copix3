@@ -20,16 +20,13 @@ class CopixTestController {
     /**
      * Classe capable de prendre en charge les suites de test à lancer depuis le point d'entrée
      * test.php
-     * Actuellement capable de lancer uniquement les tests relatifs au framework. Par la suite
-     * il est souhaitable qu'il puisse prendre en charge le lancement des tests fonctionnels.
      * 
      * @param	array	$pParams	Tableau de paramètres
-     * 
-     * @todo être capable de lancer les tests fonctionnels avec ce controller.
      */	
 	public function process ($pParams){
 		if (@include_once ('PHPUnit/Framework.php')){
 			require_once (COPIX_PATH.'tests/CopixTest.class.php');
+			require_once (COPIX_PATH.'tests/CopixWebTest.class.php');
 			require_once (COPIX_PATH.'tests/CopixDBTest.class.php');
 			require_once (COPIX_PATH.'tests/CopixTestRunner.class.php');
 			require_once (COPIX_PATH.'tests/CopixTestPrinter.class.php');
@@ -41,7 +38,7 @@ class CopixTestController {
 
 			$this->_configFile = isset ($pParams['config']) ? $pParams['config'] : COPIX_CONFIG_FILE;
 			if (!isset ($_REQUEST['tests'])){
-				$this->testWelcome ();
+				header ('location: index.php');
 			}else {
 				if (!isset ($pParams['xml']) || ($pParams['xml'] == false)){
 					$options['reportDirectory'] = COPIX_TEMP_PATH;
@@ -50,7 +47,7 @@ class CopixTestController {
 				CopixTestRunner::run ($this->_getSuite (), $options);
 			}
 		}else{
-			$this->showRequiredPHPUnit ();
+			die ("PHPUnit is required to use UnitTesting under Copix");
 		}
 	}
 	
@@ -70,7 +67,6 @@ class CopixTestController {
     	//----
 		$subSuites = array ();
 		$arToTest = array ();
-		
 		
 		//on parcours l'ensemble des tests disponibles et on les ajoute
 		//si on les trouve dans l'url.
@@ -106,25 +102,6 @@ class CopixTestController {
 			}
 		}
 		return $suite;
-	}
-
-	/**
-	 * Ecran d'accueil pour les tests
-	 */
-	public function testWelcome (){
-		$project = new ProjectController ($this->_configFile);
-		$arTests = CopixTests::getAllTests ();
-		$PHPUnitTest = true;
-		require_once (COPIX_PATH.'tests/CopixTestChoices.template.php');
-	}
-	
-	/**
-	 * 
-	 */
-	public function showRequiredPHPUnit (){
-		$arTests = array ();
-		$PHPUnitTest = false;
-		require_once (COPIX_PATH.'tests/CopixTestChoices.template.php');
 	}
 }
 
@@ -173,5 +150,29 @@ class CopixTests {
 		}
 		return $testables;
     }
+
+
+    /**
+     * Construit la suite de tests à lancer pour un module
+     * 
+     * @param String $pModuleName le nom du module
+     * @return PHPUnit_Framework_TestSuite
+     */
+    public static function getTestSuiteForModule ($pModuleName){
+        //Récupération des classes de test pour le module donnée
+        $arTestClasses = self::getTestableForModule ($pModuleName);
+        $arTestClasses = array_shift($arTestClasses);
+        if (count ($arTestClasses)) {
+            //Construction de la suite
+            $moduleSuite = new PHPUnit_Framework_TestSuite ('Module '.$pModuleName);
+            foreach ($arTestClasses as $nameTest){
+                $toTest = explode ('|', $nameTest);
+                require_once (CopixModule::getPath ($toTest[0]).'tests/'.$toTest[1].'.class.php');
+                $moduleSuite->addTestSuite ($toTest[1]);
+            }
+            return $moduleSuite;
+        }
+        return null;
+    }
+
 }
-?>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Defaut</name>
+		<description>Template par defaut</description>
+		<image>default.jpg</image>
+		<tpl></tpl>
+	</template>
+	<template>
+		<name>Ligne</name>
+		<description>Template en ligne</description>
+		<image>default.jpg</image>
+		<tpl>articles|portlettemplates/ligne.portlet.tpl</tpl>
+	</template>
+	<template>
+		<name>Template défilant (marquee)</name>
+		<description>Les articles défilent de bas en haut</description>
+		<image>default.jpg</image>
+		<tpl>articles|portlettemplates/marquee.portlet.tpl</tpl>
+	</template>
+</templates>

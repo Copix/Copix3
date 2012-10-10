@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default
+			version="1.0.0"
+			name="advancedhelp"
+			description="Aide avancée"
+			longdescription="Gestion de l'aide avec dossiers, aides, effets sur l'élément dont on affiche l'aide, etc"
+			icon="img/tools/help.png"
+		/>
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+	</general>
+	<admin groupid="advancedhelp" groupcaption="Advanced help" groupicon="img/tools/help.png">
+		<link url="advancedhelp|folders|" caption="Gestion des aides" credentials="basic:admin" icon="img/tools/help.png" />
+	</admin>
+</moduledefinition>

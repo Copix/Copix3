@@ -39,4 +39,3 @@ function smarty_block_popupinformation ($pParams, $pContent, &$me, $first) {
 	}
 	return _tag ('popupinformation', $pParams, $pContent);
 }
-?>

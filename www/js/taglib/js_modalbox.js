@@ -69,7 +69,7 @@ CopixClass.implement({
 
 				var getWindowSize;
 
-				if(window.getSize().size.x == 0) {
+				if(window.getSize().x == 0) {
 					getWindowSize = function() {
 						return {
 							size: {
@@ -116,8 +116,8 @@ CopixClass.implement({
 						});
 						this.background.fixdivUpdate();
 						var pos = {
-								'left': windowSize.scroll.x + (windowSize.size.x - content.getSize().size.x) / 2,
-								'top':  windowSize.scroll.y + (windowSize.size.y - content.getSize().size.y) / 2
+								'left': windowSize.scroll.x + (windowSize.size.x - content.getSize().x) / 2,
+								'top':  windowSize.scroll.y + (windowSize.size.y - content.getSize().y) / 2
 						};
 						if(first) {
 							content.setStyles(pos);						
@@ -143,8 +143,8 @@ CopixClass.implement({
 				doCenterBox = function() {
 					if(!isOpen) return;
 					var pos = {
-						'left': (window.getWidth()  - content.getSize().size.x) / 2,
-						'top':  (window.getHeight() - content.getSize().size.y) / 2
+						'left': (window.getWidth()  - content.getSize().x) / 2,
+						'top':  (window.getHeight() - content.getSize().y) / 2
 					};
 					if(first) {
 						content.setStyles(pos);						

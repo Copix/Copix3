@@ -42,8 +42,8 @@ Elements.implement ({
                 this.display = false;
                 this.div.setStyle ('display', 'none');
             }
-        }.bind (this))
-        
+        }.bind (this));
+
         this.over = false;
         this.display = false;
 
@@ -55,7 +55,7 @@ Elements.implement ({
                 var e = new Event (e);
                 this.display = true;
                 this.current = element;
-                
+
                 this.div.setStyles({
                         'position':'absolute',
                         'display':'',
@@ -63,8 +63,8 @@ Elements.implement ({
                         'left' : e.page.x+'px',
                         'zIndex':'1001'
                 });
-                
-                
+
+
                 e.stop();
                 return false;
             }.bind(this));

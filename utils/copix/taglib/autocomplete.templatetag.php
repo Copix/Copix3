@@ -13,67 +13,66 @@
  * @subpackage	taglib
  */
 class TemplateTagAutoComplete  extends CopixTemplateTag {
-    public function process ($pParams) {
-    	extract ($pParams);
-    	
-    	if (!isset ($name)){
+    public function process ($pContent = null) {
+    	$pParams = $this->getParams ();
+
+    	if (!isset ($pParams['name'])){
     		throw new CopixTemplateTagException ('[AutoComplete] Required parameter name');
     	}
-        if (!isset ($cle)){
+        if (!isset ($pParams['cle'])){
             //$cle = uniqid();
             static $pm = 0;
-            $cle = $pm;
+            $pParams['cle'] = $pm;
             $pm++;
     	}
-    	if (!isset ($field)){
-    	   $field = $name;
+    	if (!isset ($pParams['field'])){
+    	   $pParams['field'] = $pParams['name'];
     	}
-    	if (!isset ($id)) {
-    	    $id = $name;
+    	if (!isset ($pParams['id'])) {
+    	    $pParams['id'] = $pParams['name'];
     	}
-    	
-    	if (!isset ($value)) {
-    	    $value = "";
+
+    	if (!isset ($pParams['value'])) {
+    	    $pParams['value'] = "";
     	}
-    	
-    	if (!isset($onSelect)) {
-    	    $onSelect = "";
+
+    	if (!isset($pParams['onSelect'])) {
+    	    $pParams['onSelect'] = "";
     	}
-    	
-        if (!isset($onRequest)) {
-    	    $onRequest = '';
+
+        if (!isset($pParams['onRequest'])) {
+    	    $pParams['onRequest'] = '';
     	}
-    	
-    	if (!isset($extra)) {
-    	    $extra = '';
+
+    	if (!isset($pParams['extra'])) {
+    	    $pParams['extra'] = '';
     	}
-    	
+
     	if (!isset($pParams['datasource'])) {
     	    $pParams['datasource'] = 'dao';
     	}
-    	
+
         $toMaj = '';
         $onSelectTemp = '';
-    	if (isset ($maj)) {
-    	    $onSelectTemp.= "eleme.selected.id = 'selector_autocomplete$cle';";
-    	    foreach ($maj as $key=>$field) {
+    	if (isset ($pParams['$maj'])) {
+    	    $onSelectTemp.= "eleme.selected.id = 'selector_autocomplete".$pParams['cle']."';";
+    	    foreach ($pParams['$maj'] as $key=>$field) {
     	    $onSelectTemp.= "
-						$$('#selector_autocomplete$cle .$key').each (function (el) {
-                            $('$field').value = el.getText();
+						$$('#selector_autocomplete".$pParams['cle'].$key."').each (function (el) {
+							$('$field').value = el.innerHTML;
 						});
 					";
-    	    $toMaj .= $key.';'; 
+    	    $toMaj .= $key.';';
     	    }
     	}
-    	$onSelect = $onSelectTemp.$onSelect;
-    	
-    	$url = 'generictools|ajax|getAutoComplete';
-    	if (isset($pParams['url'])) {
-    	    $url = $pParams['url'];
+    	$pParams['onSelect'] = $onSelectTemp.$pParams['onSelect'];
+    	if(!isset($pParams['url'])) {
+            $pParams['url'] = 'generictools|ajax|getAutoComplete';
         }
-    	
-        $length = isset ($length) ? $length : 1;
-        $pParams['view'] = isset ($pParams['view']) ? $pParams['view'] : $field; 
+        $pParams['url'] = _url($pParams['url']);
+
+        $pParams['length'] = isset ($pParams['length']) ? $pParams['length'] : 1;
+        $pParams['view'] = isset ($pParams['view']) ? $pParams['view'] : $pParams['field'];
 
         $tab = array();
         foreach ($pParams as $key=>$param) {
@@ -82,12 +81,12 @@ class TemplateTagAutoComplete  extends CopixTemplateTag {
         $tab['nb'] = 10;
         $tab['tomaj'] = $toMaj;
 		$js = new CopixJSWidget();
-		$js->tag_autocomplete($id,$name,$length,$tab,_url($url),$js->function_(null, 'el', $onRequest),$js->function_(null,'el,eleme,element',$onSelect));
+		$js->tag_autocomplete($pParams['id'],$pParams['name'],$pParams['length'],$tab,_url($pParams['url']),$js->function_(null, 'el', $pParams['onRequest']),$js->function_(null,'el,eleme,element',$pParams['onSelect']));
         CopixHTMLHeader::addJSDOMReadyCode($js);
         CopixHTMLHeader::addJSLink(_resource('js/taglib/tag_autocomplete.js'));
-        _eTag("mootools",array('plugin'=>"observer;autocompleter"));
-        $toReturn  = '<input type="text" id="'.$name.'" name="'.$name.'" value="'.$value.'" '.$extra.' /><span id="autocompleteload_'.$name.'" style="display:none;"><img src="'.CopixUrl::getResource('img/tools/load.gif').'" /></span>';
+        _eTag("mootools",array('plugin'=>"observer;autocompleter;autocompleter.local;autocompleter.request"));
+        $toReturn  = '<input type="text" id="'.$pParams['name'].'" name="'.$pParams['name'].'" value="'.$pParams['value'].'" '.$pParams['extra'].' />';
+        //<span id="autocompleteload_'.$pParams['name'].'" style="display:none;"><img src="'.CopixUrl::getResource('img/tools/load.gif').'" /></span>';
         return $toReturn;
     }
 }
-?>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="tracwikicomponents" description="Composants de wiki trac" />
+	</general>
+	
+	<wikirenderer>
+		<components>
+			<component name="Gras" class="traccomponentbold" />
+			<component name="Retour à la ligne" class="traccomponentbr" />
+			<component name="Code" class="traccomponentcode" />
+			<component name="Caractère d'echappement" class="traccomponentescape" />
+			<component name="Titre" class="traccomponentheader" />
+			<component name="Italic" class="traccomponentitalic" />
+			<component name="Liens" class="traccomponentlink" />
+			<component name="Paragraphe" class="traccomponentparagraphe" />
+			<component name="ul li" class="traccomponentulli" />
+			<component name="test" class="traccomponenttest" />
+		</components>
+	</wikirenderer>
+	
+</moduledefinition>	

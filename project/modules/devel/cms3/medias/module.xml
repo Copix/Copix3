@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition version="1">
+	<general>
+		<default name="medias" version="1.2.0" description="Gestion des médias" icon="|img/icone_medias.png" />
+		<group id="cms3" captioni18n="heading|heading.group.caption" />
+	</general>
+	<dependencies>
+		<dependency name="heading" kind="module" version="1.6.4" />
+		<dependency name="uploader" kind="module" />	
+	</dependencies>
+	<registry>
+	 <entry id="HeadingElement">
+	  	  <type id="flash" caption="Flash" 
+	  					image="medias|img/flash.png" 
+	  					icon="medias|img/icon_flash.png" 
+	         			classid="medias|mediasservices" 
+	         			adminurl="medias|admin|prepareEdit"
+	         			fronturl="medias|mediafront::default" 
+	         			canrss="true"/>
+	      <type id="video" caption="Vidéo" 
+	  					image="medias|img/video.png" 
+	  					icon="medias|img/icon_video.png" 
+	         			classid="medias|mediasservices" 
+	         			adminurl="medias|admin|prepareEdit"
+	         			fronturl="medias|mediafront::default" 
+	         			canrss="true" />
+	      <type id="audio" caption="Audio" 
+	  					image="medias|img/audio.png" 
+	  					icon="medias|img/icon_audio.png" 
+	         			classid="medias|mediasservices" 
+	         			adminurl="medias|admin|prepareEdit"
+	         			fronturl="medias|mediafront::default" 
+	         			canrss="true" />
+	 </entry>
+	 <entry id="Portlet">
+		<type id="flash" group="element" description="Cette portlet permet d'afficher vos flashs." caption="Flash" portlettype="PortletFlash"	icon="medias|img/portleticon_flash.png"  /> 
+		<type id="video" group="element" description="Cette portlet permet d'afficher vos vidéos." caption="Vidéo" portlettype="PortletVideo"	icon="medias|img/video.png" /> 
+		<type id="audio" group="element" description="Cette portlet permet d'afficher vos fichiers audio." caption="Audio" portlettype="PortletAudio"	icon="medias|img/audio.png" />
+	 </entry>
+     <entry id="ModuleTables">
+        <table name="cms_medias" />
+     </entry>
+     <entry id="ModuleDirectories">
+        <directory name="medias" />
+     </entry>
+	</registry>
+	<userpreferences>
+        <group id="headingNotification" caption="Notification">
+            <preference name="flashNotification" caption="Flash" default="0" type="bool" description="Donne la possibilité d'envoyer une notification par mail lorsqu'un flash est publié." />
+            <preference name="videoNotification" caption="Vidéo" default="0" type="bool" description="Donne la possibilité d'envoyer une notification par mail lorsqu'une vidéo est publiée." />
+        </group>
+	</userpreferences>
+	<updates>
+		<update from="1" to="1.0.0" script="doNothing" />
+		<update from="1.0.0" to="1.1.0" script="1_0_0_to_1_1_0" />
+		<update from="1.1.0" to="1.2.0" script="1_1_0_to_1_2_0" />
+	</updates>
+</moduledefinition>

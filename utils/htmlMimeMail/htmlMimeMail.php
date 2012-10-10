@@ -32,7 +32,7 @@ class htmlMimeMail
     * The main body of the message after building
     * @private string
     */
-    public $output;
+    private $output;
 
     /**
     * An array of embedded images   /objects
@@ -62,7 +62,7 @@ class htmlMimeMail
     * The main message headers
     * @private array
     */
-    public $headers;
+    private $headers;
     
     /**
     * The return path address. If not set the From:
@@ -693,14 +693,12 @@ class htmlMimeMail
     */
     private function encodeHeader($input, $charset = 'ISO-8859-1')
     {
-    	if ($charset === 'UTF-8' && extension_loaded("mbstring") && !mb_check_encoding($input, "UTF-8")){
-			$input = utf8_encode ($input);
-		}
-    	preg_match_all('/(\s?\w*[\x80-\xFF]+\w*\s?)/', $input, $matches);
+        preg_match_all('/(\w*[\x80-\xFF]+\w*)/', $input, $matches);
         foreach ($matches[1] as $value) {
-            $replacement = preg_replace('/([\x20\x80-\xFF])/e', '"=" . strtoupper(dechex(ord("\1")))', $value);
+            $replacement = preg_replace('/([\x80-\xFF])/e', '"=" . strtoupper(dechex(ord("\1")))', $value);
             $input = str_replace($value, '=?' . $charset . '?Q?' . $replacement . '?=', $input);
         }
+        
         return $input;
     }
 
@@ -775,7 +773,6 @@ class htmlMimeMail
             case 'smtp':
                 require_once(dirname(__FILE__) . '/smtp.php');
                 require_once(dirname(__FILE__) . '/rfc822.php');
-				$smtp_recipients = array ();
               	$smtp = new smtp ($this->smtp_params);
 				if ($smtp->connect()){
 					$smtp->status = SMTP_STATUS_CONNECTED;
@@ -810,7 +807,6 @@ class htmlMimeMail
                     }
                     $headers[] = $name . ': ' . $this->encodeHeader($value, $this->build_params['head_charset']);
                 }
-                
                 // Add To header based on $recipients argument
                 $headers[] = 'To: ' . $this->encodeHeader(implode(', ', $recipients), $this->build_params['head_charset']);
 
@@ -875,6 +871,16 @@ class htmlMimeMail
 
         return implode(CRLF, $headers) . CRLF . CRLF . $this->output;
     }
+
+    /**
+     * Retourne l'entête demandée
+     * @param string $pHeader nom de l'entête
+     * @return string valeur de l'entête
+     */
+    public function getHeader ($pHeader) {
+        return (array_key_exists($pHeader, $this->headers)) ? $this->headers[$pHeader] : '';
+    }
+
 } // End of class.
 
 

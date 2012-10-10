@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="index_search" descriptioni18n="index_search.description" longdescriptioni18n="index_search.longdescription" icon="|img/icon/index_search.png" />
+		<group id="webTools" captioni18n="copix:copixmodule.group.webTools" />
+	</general>
+	<dependencies>
+		<dependency name="search" kind="module" />
+		<dependency name="all2txt" kind="module" />
+	</dependencies>
+
+	<parameters>
+		<parameter name="objectByPage" captioni18n="index_search.objectByPage" default="10" type="int" />
+		<parameter name="showCachedAndText" captioni18n="index_search.showCachedAndText" default="true" type="bool" />
+		<parameter name="allowedThemes" caption="Thème autorisés" default="default" type="string" description="Séparez les noms des thèmes par une virgule" />
+		<parameter name="cssClass" caption="Classe CSS à appliquer aux mots trouvés" default="" type="string" description="Permet par exemple de surligner les mots correspondants à la recherche dans la liste de résultats" />
+	</parameters>
+
+	<events>
+		<listeners>
+			<listener name="index_search">
+				<event name="Content" />
+				<event name="DeletedContent" />
+				<event name="UpdateContent" />
+				<event name="BeforeIndexing" />
+			</listener>
+		</listeners>
+	</events>
+</moduledefinition>

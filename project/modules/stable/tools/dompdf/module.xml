@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="dompdf" descriptioni18n="dompdf.description" longdescriptioni18n="dompdf.longdescription" version="0.5.1" icon="|img/icon/pdf.png" />
+		<group id="tools" captioni18n="copix:copixmodule.group.tools" />
+	</general>
+</moduledefinition>

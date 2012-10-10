@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition version="1">
+	<general>
+		<default name="cms_rss_reader" version="1.0.0" description="Gestion de flux RSS externes" icon="|img/icon_rss.png" />
+		<group id="cms3" captioni18n="heading|heading.group.caption" />
+	</general>
+	<dependencies>
+		<dependency name="heading" kind="module" />		
+	</dependencies>
+	<registry>
+		<entry id="Portlet">
+			<type
+				id="rssreader"
+				group="element"
+				description="Cette portlet permet d'afficher des flux RSS externes."
+				caption="Lecteur RSS"
+				portlettype="PortletRssReader"
+				icon="cms_rss_reader|img/rss.png"
+			/>
+		</entry>
+	</registry>
+</moduledefinition>

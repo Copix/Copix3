@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="mylittlepager" description="mylittlepager (v.03)" longdescription="Ce module montre un exemple simple de pager que l'on peut inclure dans ses modules Copix. (auteur : C. GIGANTE, www.gigante.be)" />
+ </general>
+</moduledefinition>

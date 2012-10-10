@@ -1,0 +1,497 @@
+.portlet {
+	background: #fff;
+	position: relative;
+	height: auto;/* !important;*/
+	min-height: 50px;
+	margin : 2px;
+	padding: 1px;
+	border: 1px solid transparent;
+	width:99%;
+	float: left;
+}
+
+.portlet:hover {
+	border: 1px solid #D7D7D7;
+	-webkit-box-shadow: 2px #ccc;
+	-moz-box-shadow: 2px #ccc;
+	box-shadow: 2px #ccc;
+}
+
+.draggable {
+	/*border: 1px dashed #E7E7E7;*/
+}
+
+.draggable p{
+	overflow: auto;	
+}
+
+.beingDragged {
+	z-index: 1000;
+	border: 1px dotted #000;
+	-webkit-box-shadow: 2px 2px 20px #666;
+	-moz-box-shadow: 2px 2px 20px #666;
+	box-shadow: 2px 2px 20px #666;
+}
+
+/********Indicateur de déplacement*****/
+.indicator {
+	color : #EF531D;
+	text-align: center;
+	clear: both;
+}
+
+.indicator div{
+	float: left;
+}
+
+.dropPossibleTarget {
+	background: #DFDFDF;
+}
+
+.ajoutPortlet img {
+	vertical-align: middle;
+}
+
+/* La barre d'outils en standard */
+.editPortlet,
+.draggedEditPortlet  {
+	vertical-align: middle;
+	cursor: move;
+	top:0;
+	left :0;
+	height:18px;
+	margin: -22px 0px 0px 0px;
+	z-index: 10;
+	width:100%;
+	position: absolute;
+	display: block !important;
+}
+
+.editPortletInner{
+	background: #E7E7E7 url(../img/grip.png) no-repeat center center;	
+	margin : -1px;
+	padding : 1px;
+	border: 1px solid #D7D7D7;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	display: block !important;
+}
+
+/* La barre d'outils lorsqu'elle est survolée*/
+.editPortlet a:focus,
+.editPortlet a:hover {	
+	opacity : 0.78;
+}
+
+.editPortlet a {
+	right: 0;
+	top: 0;
+	padding: 1px;
+	opacity : 1;
+}
+
+.editPortlet table{
+	width: 100%;	
+	margin-left :0;
+	margin-right :0;
+}
+
+.editPortlet table tr td{
+	margin: 0;
+	padding: 0;
+	border : none;
+}
+
+.dragHandle {
+   cursor : move;
+}
+
+fieldset{
+	border:1px #ccc solid;
+}
+
+legend{
+	color:#ccc;
+}
+
+.portletOptions {
+	background:#F0F0F0;
+	margin:0px 0px 1px 0px;
+}
+
+.portletOptions img{
+	vertical-align: middle;	
+}
+
+.headForm{
+	padding:2px;
+	color:#C97729;
+	font-size:0.9em;
+}
+
+.portletMenu{
+	background:#176F9F;
+	color:#FFFFFF;
+	padding:2px;
+	background-position:left center;
+	background-repeat:repeat-x;
+}
+
+.portletMenu img{
+	vertical-align: middle;	
+}
+
+.pageMenu{
+	padding:3px;
+	margin-bottom:2px;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	border:1px #ccc solid;
+}
+
+.pageMenu img{
+	vertical-align: top;
+}
+
+.pageMenu a{
+	opacity : 0.85;
+}
+
+.pageMenu a:hover{
+	opacity : 1;
+}
+
+.TemplateChooser{
+	border:none;
+	border-collapse:collapse;
+	margin: 5px;
+	width: 100%;
+}
+.TemplateChooser .image {
+	padding-right: 30px;
+}
+
+.displayPortlet{
+	clear:both;
+}
+/* popup information avec une scrollbar */
+.scrollable{
+    height:280px;
+    overflow-x: hidden;
+    overflow-y:scroll;
+}
+
+.templateChooserpopupinfo {
+	background-color:#EFEFEF;
+	border:1px solid grey;
+	padding:0;
+	height:280px;
+    overflow-x: hidden;
+    overflow-y:scroll;
+}
+
+.articleBloc,
+.fileBloc{	
+	border:dotted 1px #ccc; 
+	margin:5px; 	
+	overflow:hidden;
+}
+
+.articleBloc:hover,
+.fileBloc:hover{
+	background-color: #EFEFEF;
+}
+
+.fileDoc{
+	height:90px;
+}
+
+.articleBloc,
+.fileBlocMulti{	
+	border:dotted 1px #ccc; 
+	margin:5px; 	
+	overflow:hidden;
+}
+
+.articleBloc:hover,
+.fileBlocMulti:hover{
+	background-color: #EFEFEF;
+}
+
+.fileBlocMulti{
+	float:left;
+	height:140px;
+}
+
+.thumbArticle,
+.thumbImage,
+.thumbDocument{
+	margin:5px 5px 4px 5px;
+	text-align:center;
+}
+
+.thumbDocument{
+	min-height: 55px;
+}
+
+.thumbArticle{
+	text-align:left;
+	margin : 0px;
+}
+
+.optionsFile{
+	border-top:dotted 1px #ccc;
+	min-width:110px; 
+	text-align: center;
+	padding-top:2px;
+	height:100%;
+	background-color: #DFDFDF
+}
+
+.optionsFile img{
+	vertical-align:middle;	
+}
+
+.optionContent{
+	background-color:#EFEFEF;
+	color:#444;
+	height: 100%;
+	padding: 5px;
+	margin: 5px 2px 2px;
+	display:none;
+}
+.optionBloc{ 
+	margin:5px;
+	background-color: #efefef;
+}
+
+.optionBloc .optionBlocTitle{
+	cursor: pointer;
+	font-size:1.1em;
+	font-weight:bold;
+	background-color: #176f9f;
+	color: #fff;
+	text-align: center;
+}
+
+.optionBlocContent{
+	padding: 3px;
+}
+
+
+.portletColumnSplitter{
+ 	cursor: e-resize;
+    min-height: 100px;
+	background: none repeat scroll 0 0 #DFDFDF;
+    width: 2px;
+    float:left;
+    margin : 0 1px;
+    border: 1px solid #DFDFDF;
+}
+
+.portletColumnUpdate{
+	border: 1px solid #DFDFDF;
+    margin: 0;
+    min-height: 100px;
+    padding: 0;
+    float:left;
+    width:49%;
+}
+
+.portletColumn{
+	overflow: auto;
+	padding: 0;
+	margin: 0;
+    float:left;
+    width:49%;
+}
+
+/******CSS des la fenetre de choix d'element dans une page******/
+.ajoutPortlet{
+	padding: 5px;	
+	margin : 2px;
+	height:25px;
+	
+	background-image: -moz-linear-gradient(top, #ccc, #DFDFDF); /* FF3.6 */
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #ccc),color-stop(1, #DFDFDF)); /* Saf4+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#ccc', EndColorStr='#DFDFDF'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#ccc', EndColorStr='#DFDFDF')"; /* IE8 */
+}
+
+.addPortletPreviewPopupInformation,
+.addPortletPopupInformation{
+	background-color:#EFEFEF;
+	border:1px solid #ccc;
+	text-align: left;
+	font-family:Arial,Helvetica,"Liberation Sans",FreeSans,sans-serif;
+	font-size:12px;
+	line-height:1.5;
+}
+
+.addPortletPopupInformation{
+	z-index:50 !important;
+	background-color: #ddd;
+}
+.addPortletTab{
+	float: left;
+	width: 150px;
+	height : 100%;
+	background-color: #ddd;
+}
+.addPortletTab .CopixTabSelected{
+	background-color: #EFEFEF;
+	background-image: none; /* FF3.6 */
+	background-image: none; /* Saf4+, Chrome */
+	filter: none; /* IE6,IE7 */
+	-ms-filter: none; /* IE8 */
+}
+.addPortletTab span{
+	font-weight : bold;
+	display: block;
+	border: none;
+	border-bottom: 1px solid #ccc;
+	padding: 5px;
+	background-image: -moz-linear-gradient(top, #ccc, #ddd); /* FF3.6 */
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #ccc),color-stop(1, #ddd)); /* Saf4+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#ccc', EndColorStr='#ddd'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#ccc', EndColorStr='#ddd')"; /* IE8 */
+}
+.addPortletContent{
+	float: left;
+	width: 500px;
+	background-color: #EFEFEF;
+}
+.addPortletElement{
+	text-align: center;
+	cursor:move;
+	border : 1px solid #ddd;
+	-moz-border-radius:5px;
+	float: left;
+	width: 90px;
+	margin : 2px;
+	height : 70px; 
+	padding:2px;
+	overflow: hidden;
+}
+
+.addPortletElement:hover{
+	border : 1px solid #ccc;
+	-webkit-box-shadow: 1px 1px 1px #ccc;
+	-moz-box-shadow: 1px 1px 1px #ccc;
+	box-shadow: 1px 1px 1px #ccc;
+	-moz-border-radius:5px;
+}
+
+.addPortletMenu{
+	position: fixed;
+	left: 0;
+	top:0;
+	background-color: #EFEFEF;
+	z-index: 51;
+	height: 100%;
+	-webkit-box-shadow: 1px 1px 1px #ccc;
+	-moz-box-shadow: 1px 1px 1px #ccc;
+	box-shadow: 1px 1px 1px #ccc;
+}
+
+.addPortletMenu .addPortletContent{
+	width: 200px;	
+}
+
+.addPortletMenu .CopixTab{
+	padding: 10px;	
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-radius: 0px;
+}
+
+.addPortletMenu .CopixTabGroup {
+    border-bottom: none;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.addPortletMenuHeader{
+	padding: 5px;
+	font-size: 14px;
+	border-bottom: 1px solid #CCC;
+}
+
+.addPortletMenu #closeAddPortletMenu{
+	float: right;	
+	cursor: pointer;
+}
+
+.addPortletMenuHide{
+	left: -9999px !important;	
+}
+	
+.addPortletMenuAddButton{
+	position: fixed;
+	left: -70px;
+	width: 155px;
+	text-align:center;
+	/* Safari */
+	-webkit-transform: rotate(-90deg);	
+	/* Firefox */
+	-moz-transform: rotate(-90deg);	
+	/* IE */
+	-ms-transform: rotate(-90deg);	
+	/* Opera */
+	-o-transform: rotate(-90deg);	
+	/* Internet Explorer */
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+	
+	border : 1px solid #CCC;
+	-moz-border-radius:5px 5px 5px 5px;
+	-webkit-border-radius: 5px 5px 5px 5px; /* Saf3-4 */
+	border-radius: 5px 5px 5px 5px; /* Opera 10.5, IE9, Saf5, Chrome */
+	
+	background-image: -moz-linear-gradient(top, #ccc, #ddd); /* FF3.6 */
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #ccc),color-stop(1, #ddd)); /* Saf4+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#ccc', EndColorStr='#ddd'); /* IE6,IE7 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#ccc', EndColorStr='#ddd')"; /* IE8 */
+	
+	font-size : 14px;
+	font-family : Verdana,Arial,sans-serif;
+	padding: 10px;
+	margin: 0;
+	display: block;
+}
+
+.addPortletMenuAddButton a{
+	margin: 0;
+	padding: 0;	
+}
+
+/*******/
+.CMSPageHover {
+	position: relative;
+	border: 1px dashed #333;
+	-border-image: url('../img/ants.gif') 1 repeat repeat;
+	-webkit-border-image: url('../img/ants.gif') 1 repeat repeat;
+	-moz-border-image: url('../img/ants.gif') 1 repeat repeat;
+	z-index: 2;	
+	background-color: white;	
+	clear:both;
+}
+
+.CopixLightWindow{
+    background-color: #EDEDED;
+    font-size: 18px;
+    padding: 20px;
+    position: fixed;
+    vertical-align: bottom;
+    width: 220px;
+    min-width: 220px;
+	border: 1px solid #CCC;
+	text-align: center;
+	z-index: 10;
+}
+
+.CopixLightWindow img{
+	margin: 2px;
+	vertical-align: bottom;	
+}

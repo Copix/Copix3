@@ -52,15 +52,13 @@ function smarty_block_copixhtmlheader ($params, $content, &$smarty) {
 			break;
 
 		case 'style':
-		case 'others':
 			CopixHTMLHeader::$funcName ($content);
 			break;
 				
 		default:
-			$smarty->_trigger_fatal_error ("[plugin copixhtmlheader] unknow kind ".$params['kind'].", only jsLink, cssLink, style, others, jsCode are available");
+			$smarty->_trigger_fatal_error ("[plugin copixhtmlheader] unknow kind ".$params['kind'].", only jsLink, cssLink, style, others, jsCode, jsdomreadycode are available");
 				
 	}
 
 	return '';
 }
-?>

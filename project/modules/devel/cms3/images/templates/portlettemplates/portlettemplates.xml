@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+	<template>
+		<name>Affichage en colonnes</name>
+		<description>Disposition des images sur plusieurs colonnes</description>
+		<image></image>
+		<tpl>images|portlettemplates/columns.portlet.php</tpl>
+	</template>
+	<template>
+		<name>Affichage en lignes</name>
+		<description>Disposition des images sur plusieurs lignes</description>
+		<image></image>
+		<tpl>images|portlettemplates/rows.portlet.php</tpl>
+	</template>
+	<template>
+		<name>Galerie d'images</name>
+		<description>Affichage d'une galerie configurable</description>
+		<image></image>
+		<tpl>images|portlettemplates/galerie.portlet.php</tpl>
+		<editionMode>multi</editionMode>
+		<options>
+            <thumbwidth type="inputtext" id="thumbwidth" desc="Largeur des vignettes : " suffix="px" value="100" size="5"/>
+            <thumbheight type="inputtext" id="thumbheight" desc="Hauteur des vignettes : " suffix="px" value="100" size="5"/>
+            <eraseimageconfig type="inputradio" id="eraseimageconfig"  desc="Clic : écraser les options d affichage de l image : " enum="oui,non" value="oui"/>
+        </options>
+	</template>
+</templates>

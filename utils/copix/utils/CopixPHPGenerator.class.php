@@ -8,24 +8,6 @@
  */
 
 /**
- * Exceptions pour CopixPHPGenerator
- *
- * @package		copix
- * @subpackage	utils
- */
-class CopixPHPGeneratorException extends CopixException {
-	/**
-	 * Exception lorsque le contenu à écrire est null
-	 */
-	const CONTENT_NULL = 0;
-	
-	/**
-	 * Exception lorsque lorsque le fichier existe déja
-	 */
-	const FILE_EXISTS = 1;
-}
-
-/**
  * Classe qui contient un certain nombre de fonction pour faciliter la génération de PHP
  * 
  * @package		copix
@@ -71,7 +53,7 @@ class CopixPHPGenerator {
 	 * @param int $pCallerLevel Niveau du caller
 	 * @return string
 	 */
-	public function getPHPTags ($pString, $pAddGenerator = true, $pCallerLevel = 0) {
+	public function getPHPTags ($pString, $pAddGenerator = true, $pCallerLevel = 0, $pEndTag = true) {
 		$toReturn = '<?php' . $this->getEndLine ();
 		if ($pAddGenerator) {
 			// on cherche les infos du générateur manuellement, sinon à l'appel de getGenerator, il y aura un niveau de getCaller "en plus"
@@ -79,8 +61,10 @@ class CopixPHPGenerator {
 			$generatorFunction = CopixDebug::getCaller ($pCallerLevel + 1);
 			$toReturn .= $this->getGenerator ($generator['file'], $generator['line'], $this->_getCallerFunction ($generatorFunction));
 		}
-		$toReturn .= $pString . $this->getEndLine ();
-		$toReturn .= '?>';
+		$toReturn .= $pString;
+		if ($pEndTag) {
+			$toReturn .= $this->getEndLine () . '?>';
+		}
 		
 		return $this->_content = $toReturn;
 	}
@@ -117,11 +101,7 @@ class CopixPHPGenerator {
 	 * @return string
 	 */
 	public function getEndLine ($pCount = 1) {
-		$toReturn = null;
-		for ($boucle = 0; $boucle < $pCount; $boucle++) {
-			$toReturn .= "\n";
-		}
-		return $toReturn;
+		return str_repeat ("\n", $pCount);
 	}
 	
 	/**
@@ -131,11 +111,7 @@ class CopixPHPGenerator {
 	 * @return string
 	 */
 	public function getTabs ($pCount = 1) {
-		$toReturn = null;
-		for ($boucle = 0; $boucle < $pCount; $boucle++) {
-			$toReturn .= "\t";
-		}
-		return $toReturn;
+		return str_repeat ("\t", $pCount);
 	}
 	
 	/**
@@ -173,26 +149,6 @@ class CopixPHPGenerator {
 		);
 		
 		return $this->getPHPDoc ($comments, 0, 2);
-	}
-	
-	/**
-	 * Ecrit le fichier
-	 *
-	 * @param string $pPath Chemin du fichier
-	 * @param string $pContent Contenu du fichier, si null sera le contenu du dernier appel à getPHPTags
-	 * @param boolean $pOverwrite Indique si on veut écrire le fichier même si il existe, sinon lève une exception si le fichier existe
-	 * @throws CopixPHPGeneratorException Le paramètre $pContent est null et on n'a pas appelé getPHPTags, code CONTENT_NULL
-	 * @throws CopixPHPGeneratorException Le paramètre $pOverwrite est à false, et le fichier existe déja, code FILE_EXISTS
-	 */
-	public function write ($pPath, $pContent = null, $pOverwrite = true) {
-		if ($this->_content === null && $pContent === null) {
-			throw new CopixPHPGeneratorException (_i18n ('copix:copixphpgenerator.contentNull', $pPath), CopixPHPGeneratorException::CONTENT_NULL);
-		}
-		if (!$pOverwrite && file_exists ($pPath)) {
-			throw new CopixPHPGeneratorException (_i18n ('copix:copixphpgenerator.fileExists', $pPath), CopixPHPGeneratorException::FILE_EXISTS);
-		}
-		$content = ($pContent === null) ? $this->_content : $pContent;
-		CopixFile::write ($pPath, $content);
 	}
 	
 	/**

@@ -1,0 +1,94 @@
+/* Calendar: a Javascript class for Mootools that adds accessible and unobtrusive date pickers to your form elements <http://electricprism.com/aeron/calendar> */
+/* Default CSS for Calendar, Copyright (c) 2007 Aeron Glemann <http://electricprism.com/aeron> */
+
+.hidden {
+	opacity: 0;
+	position: absolute;
+}
+.visible {
+	opacity: 1;
+}
+
+div.calendar {
+	padding: 0 0.5em 0.5em;
+	text-align: center;
+	background: #fff;
+	border: 1px outset #ccc;
+	width: 14em;
+}
+	div.calendar * {
+		margin: 0;
+		padding: 0;
+	}
+	div.calendar div {
+		background: none !important;
+		cursor: move;
+		position: relative;
+		font-size: 1em;
+		font-weight: normal;
+		text-align: left;
+		width: 100%;
+	}
+	
+	div.calendar div a {
+		font-weight: bold;
+	}
+	div.calendar div span a {
+		top: 0.2em;
+	}
+	
+	div.calendar div span.month,
+	div.calendar div span.year {
+		position: relative;
+		display: inline-block;
+		width: 70%;
+		cursor: default;
+	}
+	div.calendar div span.year {
+		width: 30%;
+		text-align: right;
+	}
+
+	div.calendar table {
+		background: #fff;
+		border: 1px solid #c0c0c0;
+		border-collapse: collapse;
+		cursor: default;
+		margin: 0 auto;
+		width: 147px;
+	}
+	div.calendar td,
+	div.calendar th {
+		color: #000;
+		text-align: center;
+		width: auto;
+	}
+	div.calendar td {
+		background-color: #fff;
+		border: 1px solid #c0c0c0;
+		color: #fff;
+		padding: 0.2em;
+	}
+	div.calendar td.valid {
+		background-color: #fff;
+		color: #0597db;
+		cursor: pointer;
+	}
+	div.calendar td.invalid {
+		background-color: #dfdfdf;
+		color: #666;
+		cursor: not-allowed;
+	}
+	div.calendar td.today {
+		background-color: #ff9;
+	}
+	div.calendar td.hilite {
+		background: #ffa;
+	}
+	div.calendar td.active,
+	div.calendar td.hover {
+		background-color: #ff0;
+		color: #000;
+		cursor: pointer;
+		text-decoration: underline;
+	}

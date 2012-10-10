@@ -23,7 +23,7 @@ class TemplateTagAjax_gethttpobject extends CopixTemplateTag {
 	* Déclare la fonction getHTTPObject () dans l'en tête HTML.
 	* @param mixed $pParams aucun paramètre attendu ici.
 	*/
-	public function process ($pParams, $pContent=null){
+	public function process ($pContent=null){
 		static $called = false;
 		if (!$called){
 			CopixHTMLHeader::addJSCode('function getHTTPObject()
@@ -56,4 +56,3 @@ class TemplateTagAjax_gethttpobject extends CopixTemplateTag {
 		}
 	}
 }
-?>

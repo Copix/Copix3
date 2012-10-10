@@ -20,5 +20,3 @@ function smarty_block_wikieditor($params,$content, $me) {
         return _tag ('wikieditor', $params,$content);
     }
 }
-
-?>

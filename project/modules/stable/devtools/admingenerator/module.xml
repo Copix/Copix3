@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="admingenerator" version="0.0.1" longdescription="Génération d'une interface d'administration pour la gestion d'une table" description="Admin generator" icon="|img/admingenerator.png" />
+		<group id="devTools" captioni18n="copix:copixmodule.group.devTools" />
+	</general>
+	<admin groupid="devtools" groupcaptioni18n="copix:copixmodule.group.devTools" groupicon="|img/devtools.png">
+		<link url="admingenerator|fromtable|" caption="Génération admin pour une table" credentials="basic:admin" icon="|img/admingenerator.png" />
+		<link url="admingenerator|classgenerator|" caption="Génération d'une classe" credentials="basic:admin" icon="|img/admingenerator.png" />
+	</admin>
+</moduledefinition>
