@@ -1,5 +1,0 @@
-<indexlist>
- {foreach from=$ppo->arLinks item=link}
- <link url="{$link|escape}" />
- {/foreach}
-</indexlist>

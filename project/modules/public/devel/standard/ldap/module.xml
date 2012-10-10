@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<moduledefinition>
-	<general>
-		<default name="ldap" description="Configuration des profils LDAP" longdescription="Ce module permet de configurer les profils de connexion LDAP"/>
-	</general>
-</moduledefinition>

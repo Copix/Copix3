@@ -1,2 +1,0 @@
-{copixlist_list list='crud_copix' dao='tutorial_crud_copix' edit='|edit' mapping="caption_crud=>Libellé"|toarray}
-<a href="{copixurl dest="edit"}"><img src="{copixresource path="img/tools/new.png"}" />Nouveau</a>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<moduledefinition>
-   <general>
-    <default name="pictures" description="Pictures faire i18n" />
-   </general>
-   <parameters>
-   		<parameter name="path" caption="Repertoire de stockage des images(dans COPIX_VAR)" default='pictures' />   
-   </parameters>
-</moduledefinition>
