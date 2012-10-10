@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="tags_demo" longdescription="Tutorial pour donner des exemples d'utilisation des tags dans Copix" description="Tutorial sur les tags Copix" icon="tutorial.png"  />
+ </general>
+</moduledefinition>

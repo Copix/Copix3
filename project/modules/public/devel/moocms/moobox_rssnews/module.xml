@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="moobox_rssnews" descriptioni18n="moobox_rssnews.moduledescription"
+			longdescriptioni18n="moobox_rssnews.longdescription" />
+	</general>
+	<dependencies>
+		<dependency name="moocms" kind="module" />
+	</dependencies>
+</moduledefinition>

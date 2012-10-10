@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="menu" longdescriptioni18n="admin.longdescription" descriptioni18n="admin.description" icon="menu.png" />
+	</general>
+	<admin>
+		<link url="menu|adminmenus|" captioni18n="admin.caption" credentials="module:write@menu"></link>
+	</admin>
+	<credentials>
+	    <credential name="write" />
+	</credentials>	
+</moduledefinition>

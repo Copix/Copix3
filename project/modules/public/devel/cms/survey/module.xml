@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="survey" descriptioni18n="survey.moduleDescription"/>
+ </general>
+ <dependencies>
+  <dependency name="cms" kind="module"/>
+  <dependency name="parameters" kind="module"/>
+  <dependency name="profile" kind="module"/>
+ </dependencies>
+ <events>
+  <listeners>
+   <listener name="contribsurveyheading">
+    <event name="HeadingAdminBrowsing" />
+    <event name="HasContentRequest" />
+   </listener>
+  </listeners>
+ </events>
+</moduledefinition>

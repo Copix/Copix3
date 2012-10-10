@@ -1,0 +1,78 @@
+.slider_parent {
+	color: #666;
+	width: 100%;
+	margin-top: 2.5em;
+	position: relative;
+}
+
+.slider {
+	background: #eee;
+	border: 1px solid #E4E5E3;
+	height: 1em;
+}
+.knob {
+	display: block;
+	position: absolute;
+	width: 1.15em;
+	top: -1px;
+	height:1.15em;
+	background: #327E04;
+	border: 1px solid #327E04;
+	z-index: 2;
+}
+.knob:focus,
+.knob:hover {
+	background: #5A9D1A;
+	border: 1px solid #000;
+}
+
+.begin_value {
+	float: left;
+}
+.end_value {
+	float: right;
+}
+
+.slider_title {
+	margin: 20px 0 0 10px;
+	clear: both;
+}
+
+.tool_tip {
+	background: #fff;
+	border: 1px solid #E4E5E3;
+	padding: 0.2em;
+	width: 60px;
+	position: absolute;
+	top: -2em;
+	left: 0;
+	text-align: center;
+	z-index: 100;
+}
+
+.divBetween {
+	background: #5A9D1A;	
+	border: 1px solid #E4E5E3;
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0.7;
+	height: 1em;
+}
+
+.tick {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: .2em;
+	background: #ccc;
+}
+
+.span_tic {
+	border:1px solid #E4E5E3;
+	position : absolute;
+	height:0.9em;
+	overflow:hidden;
+	z-index: 1;
+}

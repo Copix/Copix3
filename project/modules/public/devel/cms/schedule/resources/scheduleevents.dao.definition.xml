@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<daodefinition>
+	<datasource>
+		<tables>
+			<table name="scheduleevents" primary="yes" />
+			<table name="copixheadings" join="left" />
+		</tables>
+	</datasource>
+
+	<properties>
+		<property name="id_evnt"
+         captioni18n="dao.schedule.fields.id_evnt"
+                 pk="true"
+                 type="autoincrement"
+                 sequence="SEQ_ID_EVNT_SHEDULEEVENTS"
+		/>
+		<property name="id_head"
+         captioni18n="dao.schedule.fields.id_head"
+         type="numeric"
+         fkTable="copixheadings"
+         fkFieldName="id_head"
+                 required="no"
+          />
+		<property name="caption_head"
+			captioni18n="dao.schedule.fields.caption_head"
+			type="string"
+			table="copixheadings"
+         />
+		<property name="title_evnt"
+         captioni18n="dao.schedule.fields.title_evnt"
+         type="string"
+         maxlength="50"
+         required="yes"
+         />
+		<property name="preview_evnt"
+		   captioni18n="dao.schedule.fields.preview_evnt"
+         type="string"
+         maxlength="255"
+         />
+		<property name="content_evnt"
+		   captioni18n="dao.schedule.fields.content_evnt"
+         type="string"
+         required="yes"
+         />
+		<property name="author_evnt"
+		  captioni18n="dao.schedule.fields.author_evnt"
+         type="string"
+         maxlength="50"
+         />
+		<property name="status_evnt"
+		   captioni18n="dao.schedule.fields.status_evnt"
+         type="int"
+         maxlength="1"
+         />
+		<property name="datefrom_evnt"
+		   captioni18n="dao.schedule.fields.datefrom_evnt"
+         type="varchardate"
+         required="yes"
+         />
+		<property name="dateto_evnt"
+		   captioni18n="dao.schedule.fields.dateto_evnt"
+         type="varchardate"
+         />
+		<property name="datedisplayfrom_evnt"
+		   captioni18n="dao.schedule.fields.datedisplayfrom_evnt"
+         pk="False"
+         type="varchardate"
+         required="yes"
+          />
+		<property name="datedisplayto_evnt"
+		   captioni18n="dao.schedule.fields.datedisplayto_evnt"
+         type="varchardate"
+         required="yes"
+         />
+     <property name="editionkind_evnt"
+		   captioni18n="dao.schedule.fields.editionkind_evnt"
+         type="string"
+         maxlength="50"
+         required="yes"
+         />
+     <property name="statusdate_evnt"
+         captioni18n="copixheadings|workflow.messages.statusDate"
+         type="varchardate"
+         maxlength="8"
+         required="yes"
+         />
+
+      <property name="statusauthor_evnt"
+         captioni18n="copixheadings|workflow.messages.statusAuthor"
+         type="string"
+         maxlength="50"
+         required="yes"
+         />
+
+      <property name="statuscomment_evnt"
+         captioni18n="copixheadings|workflow.messages.statusComment"
+         type="string"
+         maxlength="255"
+         />
+
+      <property name="subscribeenabled_evnt"
+         captioni18n="dao.schedule.fields.subscribeenabled_evnt"
+         type="int"
+         />
+
+	</properties>
+</daodefinition>

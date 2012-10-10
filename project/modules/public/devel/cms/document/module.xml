@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="document" descriptioni18n="document.moduleDescription"/>
+ </general>
+ <dependencies>
+  <dependency name="cms" kind="module"/>
+  <dependency name="parameters" kind="module"/>
+  <dependency name="profile" kind="module"/>
+ </dependencies>
+ <parameters>
+  <parameter name="path" captioni18n="document.parameter.path" default="../var/data/documents/" />
+  <parameter name="easyWorkflow" captioni18n="document.parameter.easyWorkflow" default="1" />
+ </parameters>
+ <events>
+  <launch>
+   <event name="DocumentDelete">
+    <params>
+     <param name="id_doc" /><!-- the document id we currently delete -->
+    </params>
+   </event>
+   <event name="DocumentPublish">
+    <params>
+     <param name="document" /><!-- the document dao object-->
+    </params>
+   </event>
+   <event name="DocumentPropose">
+    <params>
+     <param name="document" /><!-- the document dao object-->
+    </params>
+   </event>
+   <event name="DocumentValid">
+    <params>
+     <param name="document" /><!-- the document dao object-->
+    </params>
+   </event>
+   <event name="DocumentRefuse">
+    <params>
+     <param name="document" /><!-- the document dao object-->
+    </params>
+   </event>
+  </launch>
+  <listeners>
+   <listener name="ContribDocumentHeading">
+    <event name="HeadingAdminBrowsing" />
+    <event name="HasContentRequest" />
+    <event name="QuickAdminBrowsing" />
+   </listener>
+  </listeners>
+ </events>
+</moduledefinition>

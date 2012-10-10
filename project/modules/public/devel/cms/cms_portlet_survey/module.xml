@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="cms_portlet_survey" descriptioni18n="survey.description"/>
+ </general>
+ <dependencies>
+  <dependency name="cms" kind="module"/>
+  <dependency name="survey" kind="module"/>
+  <dependency name="profile" kind="module"/>
+ </dependencies>
+</moduledefinition>

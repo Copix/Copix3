@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="form_playground" description="Exemple d'utilisation de Copix Forms"
+			longdescription="Module contenant un exemple d'utilisation de Copix Forms" />
+	</general>
+</moduledefinition>

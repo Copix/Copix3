@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default version="1.2.0" name="breadcrumb" descriptioni18n="module.description" longdescriptioni18n="module.longdescription"
+		icon="|img/icon/breadcrumb.png" 
+		/>
+	</general>
+	<events>
+		<listeners>
+			<listener name="BreadCrumb">
+				<event name="breadcrumb" />
+			</listener>
+ 		</listeners>
+	</events>
+</moduledefinition>

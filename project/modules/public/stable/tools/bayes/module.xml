@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="bayes" description="Réseau Bayesien" longdescription="Réseau Bayesiens" icon="bayes.png" />
+ </general>
+</moduledefinition>

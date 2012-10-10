@@ -1,0 +1,11 @@
+div.copixselect{
+	background-color:white;
+	border:1px solid black;
+}
+table.copixselect td{
+	height:15px;
+}
+input.copixselect{
+	margin-bottom:1px;
+	text-align:center;
+}

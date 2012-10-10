@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<moduledefinition>
+ <general>
+  <default name="chart" description="Chart" longdescription="Chart" icon="chart.png" />
+ </general>
+ <parameters>
+  <parameter name="chartfactory" default="SwfChart" caption="Nom de la factory à utiliser" />
+ </parameters>
+</moduledefinition>

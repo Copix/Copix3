@@ -1,0 +1,42 @@
+<?php
+/**
+ * display a menu
+ */
+if (!function_exists('showNormalPlan')) {
+   function showNormalPlan (& $arMenu,$currentNode,$level=1){
+      if (! is_array($arMenu[$currentNode])) {
+         return '';
+      }
+      $result='';
+      foreach ($arMenu[$currentNode] as $key=>$menu) {
+         if($level==1) {
+         	$htmlLink    = ((strlen (trim ($menu->htmlLink)) > 0) && (trim ($menu->htmlLink) != '#')) ? '<a href="'.$menu->htmlLink.'" title="'.$menu->tooltip_menu.'">' : '';
+         	$htmlEndLink = ((strlen (trim ($menu->htmlLink)) > 0) && (trim ($menu->htmlLink) != '#')) ? '</a>' : '';
+            $result .= '<h2>'.$htmlLink.$menu->caption_menu.$htmlEndLink.'</h2><div>';
+            $result .= '<table cellspacing="1" cellpadding="1" width="98%" border="0"><tbody><tr><td>';
+         } else {
+            $result .= '<a style="padding-left:15px;" '.$menu->htmlLink.' title="'.$menu->tooltip_menu.'">';
+            $result .= $menu->caption_menu.'</a>';
+         }
+         
+         if (isset($arMenu[$menu->id_menu]) && $level>1) {
+            $result .= showNormalPlan($arMenu,$menu->id_menu,$level+1);
+         }
+         $result .= '</li>';
+         if (isset($arMenu[$menu->id_menu]) && $level==1) {
+            $result .= showNormalPlan($arMenu,$menu->id_menu,$level+1);
+         }
+         
+         if($level==1) {
+            $result .= '</td></tr></tbody></table></div>';
+         } else {
+            $result .= '<br>';
+         }
+      }
+      return $result;
+   }
+}
+if (count ($arPlan)){
+	echo showNormalPlan ($arPlan, $startNode);
+}
+?>

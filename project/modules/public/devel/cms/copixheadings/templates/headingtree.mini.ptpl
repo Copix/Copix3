@@ -1,0 +1,36 @@
+<?php
+/**
+ * Select heading.
+ */
+echo showHeadingsTree($arHeadings, $select, $selected);
+function showHeadingsTree ($Tree, $select, $selected) {
+   $result = '<ul>'."\n\r";
+   if (!is_null($Tree->id_head)){
+      $result .= '<li style="width: auto;list-style:none;padding-top:2px;';
+      if ($Tree->id_head==$selected){
+          $result .= 'border-bottom: 1px solid #000000;';
+      }
+      $result .= '"><img id="rep_'.$Tree->id_head.'" src="'.CopixUrl::getResource('img/tools/collapse.png').'" />';
+      $result .= '<a ';
+      $result .= ' href="'.CopixUrl::appendToUrl ($select, array('id_head'=>$Tree->id_head), true).'">';
+      $result .= $Tree->caption_head;
+      $result .= '</a>';
+   }else{
+      $result .= '<li style="width: auto;list-style:none;padding-top:2px;';
+      if ($Tree->id_head==$selected){
+          $result .= 'border-bottom: 1px solid #000000;';
+      }
+      $result .= '"><img id="rep_'.$Tree->id_head.'" src="'.CopixUrl::getResource('img/tools/expand.png').'" />';
+      $result .= '<a ';
+      $result .= 'href="'.CopixUrl::appendToUrl ($select, array('id_head'=>$Tree->id_head), true).'">';
+      $result .= $Tree->caption_head.'</a>';
+   }
+   if (count($Tree->childs) > 0) {
+      foreach ($Tree->childs as $key=>$subTree) {
+         $result .= showHeadingsTree($subTree, $select, $selected);
+      }
+   }
+   $result .= '</li>'."\n\r";
+   return $result.'</ul>'."\n\r";
+}
+?>

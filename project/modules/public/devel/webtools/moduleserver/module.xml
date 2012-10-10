@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="moduleserver" descriptioni18n="moduleserver.description"
+			longdescriptioni18n="moduleserver.longdescription" />
+	</general>
+	<admin>
+  		<link url="moduleserver|admin|listexport" captioni18n="moduleserver.admin.liste" credentials="basic:admin"></link>
+ 	</admin>
+	
+</moduledefinition>

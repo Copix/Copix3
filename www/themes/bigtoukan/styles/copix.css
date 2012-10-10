@@ -1,0 +1,65 @@
+/**
+* Table
+*/
+
+.popupInformation {
+   background-color: #F6F4E4;
+   border:1px solid #4b4d46;
+   padding:3px;
+   position:absolute;
+}
+.errorMessage {
+   border: 2px solid #aa0000;
+   margin: 5px;
+}
+.errorMessage h1 {
+   background-color: #792206;
+   background-image:url('../img/titre_rouge.gif');
+   background-repeat:no-repeat;
+   background-position: top right;
+   color: #ffffff;
+   text-align: center;
+   font-size: 1em;
+   margin-top: 0;
+}
+
+.CopixTable {
+   margin-left: 5px;
+   width: 98%;
+  
+   border:3px solid #e6a241;
+   border-collapse:collapse;
+}
+.CopixVerticalTable {
+   margin-left: 5px;
+   width: 98%;
+   border:3px solid #e6a241;
+   border-collapse:collapse;
+}
+
+.CopixTable thead {
+    background-color:#e6a241;
+}
+
+.CopixTable thead th {
+   background-color:transparent;
+}
+
+.CopixTable tr th {
+   background-color:#e6a241;
+   height:25px;
+   color: #000000;
+}
+
+.CopixTable td {
+   height:25px;
+}
+
+.CopixTable th a,.CopixTable th a:visited {
+   color: #ffffff;
+   text-decoration: none;   
+}
+
+.alternate {
+   background-color: #fbf6e3;
+}

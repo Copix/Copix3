@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<daodefinition>
+   <datasource>
+      <tables>
+         <table name="datetimetests" tablename="datetimetests" primary="yes" />
+      </tables>
+   </datasource>
+   <properties>
+   <property name="id_dtt"
+   			 fieldName="id_dtt"
+	         pk="true"
+         	 required="yes"
+         	 type="autoincrement"
+         />
+  <property name="date_dtt"
+         fieldName = "date_dtt"  
+         type="date"
+         required="no"
+         />
+  <property name="datetime_dtt"
+         fieldName = "datetime_dtt"  
+         type="datetime"
+         required="no"
+         />
+  <property name="time_dtt"
+         fieldName = "time_dtt"  
+         type="time"
+         required="no"
+         />
+   </properties>
+</daodefinition>

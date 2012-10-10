@@ -1,0 +1,1 @@
+INSERT INTO `copixcapabilitypath` (`name_ccpt`, `description_ccpt`) VALUES ('modules|cms|portlet|links', 'Liste de liens');

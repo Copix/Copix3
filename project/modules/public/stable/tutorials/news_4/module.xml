@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="news_4"  icon="tutorial.png" />
+	</general>
+</moduledefinition>

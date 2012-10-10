@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<daodefinition version="2">
+
+<datasource>
+   <tables>
+      <table name="newslettermail" primary="yes" />
+   </tables>
+</datasource>
+
+<properties>
+   <property
+      name="mail_nlm"
+      captionI18N="dao.newslettermail.fields.mail_nlm"
+      pk="true"
+      type="string"
+      required="no"
+      maxlength="250"
+   />
+   <property
+      name="valid_nlm"
+      captionI18N="dao.newslettermail.fields.valid_nlm"
+      pk="false"
+      type="int"
+      required="yes"
+      maxlength="1"
+   />
+</properties>
+</daodefinition>
+

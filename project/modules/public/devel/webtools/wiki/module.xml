@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="wiki" descriptioni18n="wiki.moduledescription"
+			longdescriptioni18n="wiki.longdescription" 
+			icon="wiki.png" />
+	</general>
+	<dependencies>
+		<dependency name="wikirender" kind="module" />
+	</dependencies>
+	<parameters>
+		<parameter name="imagepath"	captioni18n="wiki.parameter.imagepath" default="wiki" />
+		<parameter name="writespecialtags"  captioni18n="wiki.parameter.specialwrite" default="admin" type="select" listValues="public=>public;registered=>registered;admin=>admin" />
+		<parameter name="arianlimit"  captioni18n="wiki.parameter.arian" default="8" type="int" minValue="0" />
+		<parameter name="specialtags"  captioni18n="wiki.parameter.specialtags" default="html" />
+		<parameter name="langs"  captioni18n="wiki.parameter.langs" default="fr;en;de" />
+	</parameters>
+	<events>
+	 <listeners>
+	  <listener name="wiki">
+        <event name="ListContent" />	   
+	  </listener>
+	 </listeners>
+	</events>
+	<credentials>
+	    <credential name="read" />
+	    <credential name="write" />
+	</credentials>	
+</moduledefinition>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="exportwiki" description="Export wiki"
+			longdescription="Exporte les données de wiki sans le mode diff" />
+	</general>
+</moduledefinition>

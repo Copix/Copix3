@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="cms_portlet_newsletter" descriptioni18n="newsletter.description" longdescriptioni18n="newsletter.longPortletDescription"/>
+	</general>
+	<dependencies>
+   	<dependency name="cms" kind="module" />
+   	<dependency name="newsletter" kind="module" />
+   	<dependency name="profile" kind="module" />
+	</dependencies>
+</moduledefinition>

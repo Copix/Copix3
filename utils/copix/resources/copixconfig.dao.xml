@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<daodefinition>
+ <datasource>
+   <tables>
+      <table name="copixconfig" primary="yes" />
+   </tables>
+ </datasource>
+
+ <properties>
+  <property name="module_ccfg"
+         captioni18n="copix:config.dao.module_ccfg"
+         required="yes"
+         type="varchar"
+         maxlength="255"
+         />
+  <property name="id_ccfg"
+         captioni18n="copix:config.dao.id_ccfg"
+         pk="true"
+         required="yes"
+         type="varchar"
+         maxlength="255"
+         />
+  <property name="value_ccfg"
+         captioni18n="copix:config.dao.value_ccfg"
+         type="varchar"
+         maxlength="255"
+         />
+ </properties>
+</daodefinition>

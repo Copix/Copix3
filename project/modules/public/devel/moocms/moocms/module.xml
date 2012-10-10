@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="moocms" descriptioni18n="moocms.moduledescription"
+			longdescriptioni18n="moocms.longdescription" />
+	</general>
+	<admin>
+		<link url="moocms|admin|" captioni18n="moocms.admin.description" credentials="basic:admin"/>
+	</admin>
+	<dependencies>
+		<dependency name="wikirender" kind="module" />
+	</dependencies>
+</moduledefinition>

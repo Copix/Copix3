@@ -1,0 +1,1 @@
+{*@name:'Mon template dynamique'}

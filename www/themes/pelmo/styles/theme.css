@@ -1,0 +1,127 @@
+html, body{
+	background-color: #595959;
+    color: #FFF;
+    font-family: arial;
+}
+
+#banner{
+	margin: 0;
+	background-image: url(../img/banner.png);
+    background-repeat: no-repeat;
+	width: 788px;
+    height: 205px;
+}
+
+#banner h1 {
+	/** Title **/
+	margin-left: 230px;
+    padding-top: 50px;
+    font-family: Arial;
+    color: #FFFFFF;
+}
+
+#content{
+    width: 788px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#menu {
+	background-color: #B3B3B3;
+    width: 200px;
+    float: left;
+    border: 1px #FFF dotted;
+}
+
+#menu ul{
+    list-style : none;
+    margin: 0;
+    padding: 0.2em ;
+}
+
+#menu li {
+    list-style : none;
+    margin: 0;
+}
+
+#menu li a {
+	display: block;
+    color: #FFF;
+}
+
+
+#menu li a:hover {
+	display: block;	
+    color: #FDCC12;
+}
+
+
+#footer{
+    border-top: 1px #FFF dotted;
+    text-align: center;
+	padding-top: 9px;
+	padding-bottom: 9px;
+	font-weight: bold;
+    clear: both;
+}
+
+a {	
+	color: #FDCC12;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+a:hover{
+	color: #FFF;
+}
+
+h2 {
+	color: #FFF;
+}
+
+#maincontent{
+    float: left;
+    width: 70%;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 0;
+}
+
+/* Surcharge des thèmes Copix */
+
+.CopixTable, .CopixVerticalTable{
+	border: 1px dotted #FFFFFF;
+}
+
+
+.CopixTable img{
+	border: 0px;
+}
+
+.alternate {
+	background-color: #B3B3B3;
+	color:  #FFFFFF;
+}
+
+.CopixTable tr:hover, .CopixVerticalTable tr:hover {
+	background-color: #CCCCCC;
+}
+
+.CopixTable thead {
+	background-color: #B3B3B3;
+}
+
+.CopixTable tr th {
+	background-color: #B3B3B3;
+	border: 1px dotted #FFFFFF;
+}
+
+.CopixTable div {
+	font-weight: bold;
+	
+}
+
+.CopixTable div:hover {
+	color: #FDCC12;
+	
+}

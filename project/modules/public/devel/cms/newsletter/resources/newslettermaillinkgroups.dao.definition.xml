@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<daodefinition version="2">
+   <datasource>
+      <tables>
+         <table name="newslettermaillinkgroups" primary="yes"/>
+         <table name="newslettergroups" join="left" />>
+      </tables>
+   </datasource>
+
+ <properties>
+  <property name="id_nlg"
+         captioni18n="dao.newslettergroups.fields.id_nlg"
+         type="int"
+         pk="true"
+         required="yes"
+         fkTable="newslettergroups"
+         fkFieldName="id_nlg"
+        />
+
+  <property name="mail_nlm"
+         captioni18n="dao.newslettermail.fields.mail_nlm"
+         type="string"
+         required="yes"
+         pk="true"
+        />
+
+  <property name="name_nlg"
+        captioni18n="dao.newslettergroups.fields.name_nlg"
+        table="newslettergroups"
+        type="string"
+        required="no"
+    />
+   </properties>
+   <methods>
+      <method name="findAllOrderByGroupMail" type="select">
+         <order>
+            <orderitem property="id_nlg" way="asc" />
+            <orderitem property="mail_nlm" way="asc" />
+         </order>
+      </method>
+   </methods>
+</daodefinition>

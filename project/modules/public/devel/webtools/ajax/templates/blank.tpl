@@ -1,0 +1,2 @@
+{$HTML_HEAD}
+{$MAIN}

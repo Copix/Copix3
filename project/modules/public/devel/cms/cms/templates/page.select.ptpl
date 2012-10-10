@@ -1,0 +1,68 @@
+<script language="javascript">
+	function fcAffiche(obDivAAfficher){
+	if (document.getElementById("h_"+obDivAAfficher).style.display == "none") {
+		document.getElementById("h_"+obDivAAfficher).style.display = "block";
+		document.getElementById("rep_"+obDivAAfficher).src="<? echo CopixUrl::getResource('img/tools/expand.png'); ?>";
+	}
+	else
+	{
+		document.getElementById("h_"+obDivAAfficher).style.display = "none";
+		document.getElementById("rep_"+obDivAAfficher).src="<? echo CopixUrl::getResource('img/tools/collapse.png'); ?>";
+	}
+ 	}
+</script>
+<?php
+/**
+* Select online pages.
+*/
+echo '<h2><img src="' . CopixUrl::getResource('img/tools/publish.png') . '" />Pages disponibles</h2>';
+if (count ($arPublished)>0) {
+   echo '<ul>'.showHeading($arHeadings,$arPublished, $select).'</ul>';
+}
+echo '<p>'.CopixI18N::get ('cms|admin.actions.selectNone').'<a href="'.CopixUrl::appendToUrl ($select, array('id'=>''), true).'"><img src="' . CopixUrl::getResource('img/tools/valid.png') . '" alt="'.CopixI18N::get('copix:common.buttons.select').'" /></a></p>';
+echo '<p><input type="button" onclick="Javascript:document.location.href=\'' . $back . '\'" value="'.CopixI18N::get('copix:common.buttons.back').'" /></p>';
+
+function showHeading ($arHeadings,$arPublished, $select) {
+   $result=Null;
+   
+   if (!hasContent($arHeadings,$arPublished)) return $result; // On n'affiche pas les branches qui n'ont pas de pages publiées
+   //$result .= '<li><strong>'.$arHeadings->caption_head.'</strong><br />';
+   if (!is_null($arHeadings->id_head)){
+      $result .= '<li style="list-style:none;padding-top:5px;"><a href="javascript:fcAffiche('.$arHeadings->id_head.')"><img id="rep_'.$arHeadings->id_head.'" src="' . CopixUrl::getResource('img/tools/collapse.png') . '" /></a>';
+      $result .= '&nbsp;<span style="font-weight:bold;">'.$arHeadings->caption_head.'</span><br />';
+      $result .= '<div id="h_'.$arHeadings->id_head.'" style="display:none;">';
+   }else{
+      $result .= '<li style="list-style: none;"><img id="rep_'.$arHeadings->id_head.'" src="' . CopixUrl::getResource('img/tools/expand.png') . '" /><span style="font-weight:bold">&nbsp;'.$arHeadings->caption_head.'</span><br />';
+      $result .= '<div id="h_'.$arHeadings->id_head.'" style="display:block;">';
+   }
+      
+   // Si on a des liens courants ou si la rubrique parente en possède on affiche la rubrique courante
+   $result.='<ul style="padding-left:15px;">';
+   foreach ((array)$arHeadings->childs as $subHead) {
+      $result .= showHeading($subHead,$arPublished, $select);
+   }
+   
+   // On teste si la rub actuelle possède des pages publiées
+   if (isset($arPublished[$arHeadings->id_head])) {
+      $tabPagesFromCurrentHead = $arPublished[$arHeadings->id_head];
+      if (count($tabPagesFromCurrentHead)>0) {
+         foreach ($tabPagesFromCurrentHead as $page) {
+            $result .= $page->title_cmsp.'<a href="'.CopixUrl::appendToUrl ($select, array('id'=>$page->publicid_cmsp, 'version'=>$page->version_cmsp), true).'"><img src="' . CopixUrl::getResource('img/tools/valid.png') . '" alt="'.CopixI18N::get('copix:common.buttons.select').'" /></a><br />';
+         }
+      }
+   }
+   $result.='</div></li>';
+   return $result;
+}
+
+/**
+* Says if the heading has a content.
+*/
+function hasContent($treeToScan,$arPublished) {
+   if (isset($arPublished[$treeToScan->id_head]) && count($arPublished[$treeToScan->id_head]) > 0) return true;
+   foreach ($treeToScan->childs as $key=>$subTree) {
+      if (hasContent($subTree,$arPublished)) return true;
+   }
+   return false;
+}
+?>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="event_launch" longdescription="Tutorial pour donner des exemples d'utilisation des évènements dans Copix" description="Tutorial pour générer des évènements dans Copix"  icon="tutorial.png"  />
+ </general>
+</moduledefinition>

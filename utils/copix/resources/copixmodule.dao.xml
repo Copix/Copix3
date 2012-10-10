@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<daodefinition>
+   <datasource>
+      <tables>
+         <table name="copixmodule" primary="yes" />
+      </tables>
+   </datasource>
+
+ <properties>
+  <property name="name_cpm"
+         captioni18n="copix:copixmodule.dao.fields.name_cpm"
+         pk="true"
+         required="yes"
+         type="string"
+         maxlength="255"
+         />
+
+  <property name="path_cpm"
+         captioni18n="copix:copixmodule.dao.fields.name_cpm"
+         pk="false"
+         required="yes"
+         type="string"
+         maxlength="255"
+         />
+  <property name="version_cpm"
+         captioni18n="copix:copixmodule.dao.fields.version_cpm"
+         pk="false"
+         type="string"
+         maxlength="255"
+         />
+         
+ </properties>
+</daodefinition>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="moobox_example" descriptioni18n="moobox_example.moduledescription"
+			longdescriptioni18n="moobox_example.longdescription" />
+	</general>
+	<dependencies>
+		<dependency name="moocms" kind="module" />
+	</dependencies>
+</moduledefinition>

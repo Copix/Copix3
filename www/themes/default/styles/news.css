@@ -1,0 +1,32 @@
+@CHARSET "UTF-8";
+
+.date_news {
+	color: #000000;
+	font-size: 10px;
+	font-weight: normal;
+}
+
+.news_a_paraitre {
+	border:1px dotted #4B4D46;
+}
+
+.zone_news {
+
+}
+
+#maincontent .zone_news h2,#maincontent .zone_news h3 {
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+
+ul.tag_list{
+	list-style-type: none;
+	margin:0;
+	padding:0;
+}
+
+ul.tag_list li{
+	list-style-type: none;
+	display: inline;
+	padding-left:0.5em;
+}

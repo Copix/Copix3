@@ -1,0 +1,231 @@
+<?php
+/**
+ * @package		copix
+ * @subpackage	utils
+ * @author		Gérald Croës
+ * @link		http://www.copix.org
+ * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ */
+
+/**
+ * Exceptions pour CopixPHPGenerator
+ *
+ * @package		copix
+ * @subpackage	utils
+ */
+class CopixPHPGeneratorException extends CopixException {
+	/**
+	 * Exception lorsque le contenu à écrire est null
+	 */
+	const CONTENT_NULL = 0;
+	
+	/**
+	 * Exception lorsque lorsque le fichier existe déja
+	 */
+	const FILE_EXISTS = 1;
+}
+
+/**
+ * Classe qui contient un certain nombre de fonction pour faciliter la génération de PHP
+ * 
+ * @package		copix
+ * @subpackage	utils
+ */ 
+class CopixPHPGenerator {
+	/**
+	 * Dernier contenu retourné par getPHPTags
+	 *
+	 * @var string
+	 */
+	private $_content = null;
+	
+	/**
+	 * Constructeur
+	 *
+	 * @param array $pVars Tableau de variable (clef = nom, valeur = valeur)
+	 */
+	public function __construct ($pVars = null) {
+		if (is_array ($pVars) && count ($pVars)) {
+			$content = null;
+			foreach ($pVars as $name => $value) {
+				$content .= $this->getVariableDeclaration ($name, $value);
+			}
+			$this->getPHPTags ($content, true, 1);
+		}
+	}
+	
+	/**
+	 * Retourne le dernier contenu généré via getPHPTags
+	 *
+	 * @return string
+	 */
+	public function getContent () {
+		return $this->_content;
+	}
+	
+	/**
+	 * Ajoute les tags PHP en début et fin de chaine
+	 * 
+	 * @param string $pString Chaine PHP que l'on souhaite intégrer dans les balises PHP
+	 * @param boolean $pAddGenerator Ajoute des commentaires sur le générateur
+	 * @param int $pCallerLevel Niveau du caller
+	 * @return string
+	 */
+	public function getPHPTags ($pString, $pAddGenerator = true, $pCallerLevel = 0) {
+		$toReturn = '<?php' . $this->getEndLine ();
+		if ($pAddGenerator) {
+			// on cherche les infos du générateur manuellement, sinon à l'appel de getGenerator, il y aura un niveau de getCaller "en plus"
+			$generator = CopixDebug::getCaller ($pCallerLevel);
+			$generatorFunction = CopixDebug::getCaller ($pCallerLevel + 1);
+			$toReturn .= $this->getGenerator ($generator['file'], $generator['line'], $this->_getCallerFunction ($generatorFunction));
+		}
+		$toReturn .= $pString . $this->getEndLine ();
+		$toReturn .= '?>';
+		
+		return $this->_content = $toReturn;
+	}
+   
+	/**
+	 * Retourne le code PHP permettant de déclarer une variable avec une valeur
+	 * 
+	 * @param string $pVariableName Nom de la variable
+	 * @param mixed $pValue Valeur de la variable
+	 * @param int $pTabCount Nombre de tabulations
+	 * @param int $pEndLineCount Nombre de retours à la ligne
+	 * @return string
+	 */
+	public function getVariableDeclaration ($pVariableName, $pValue, $pTabCount = 0, $pEndLineCount = 1) {
+		return $this->getLine ($pVariableName . ' = ' . var_export ($pValue, true) . ';', $pTabCount, $pEndLineCount);
+	}
+	
+	/**
+	 * Retourne le code PHP permettant de retourner le contenu d'une variable
+	 *
+	 * @param mixed $pValue Valeur de la variable
+	 * @param int $pTabCount Nombre de tabulations
+	 * @param int $pEndLineCount Nombre de retours à la ligne
+	 * @return string
+	 */
+	public function getVariableReturn ($pValue, $pTabCount = 0, $pEndLineCount = 1) {
+		return $this->getLine ('return ' . var_export ($pValue, true) . ';', $pTabCount, $pEndLineCount);
+	}
+	
+	/**
+	 * Retourne $pCount retours à la ligne
+	 * 
+	 * @param int $pCount Nombre de retours à la ligne
+	 * @return string
+	 */
+	public function getEndLine ($pCount = 1) {
+		$toReturn = null;
+		for ($boucle = 0; $boucle < $pCount; $boucle++) {
+			$toReturn .= "\n";
+		}
+		return $toReturn;
+	}
+	
+	/**
+	 * Retourne $pCount tabulations
+	 *
+	 * @param int $pCount Nombre de tabulations
+	 * @return string
+	 */
+	public function getTabs ($pCount = 1) {
+		$toReturn = null;
+		for ($boucle = 0; $boucle < $pCount; $boucle++) {
+			$toReturn .= "\t";
+		}
+		return $toReturn;
+	}
+	
+	/**
+	 * Retourne une ligne de code PHP, avec $pTabCount tabulations et $pEndLineCount retours à la ligne
+	 *
+	 * @param string $pLine Ligne de code PHP
+	 * @param int $pTabCount Nombre de tabulations
+	 * @param int $pEndLineCount Nombre de retours à la ligne
+	 * @return string
+	 */
+	public function getLine ($pLine = null, $pTabCount = 0, $pEndLineCount = 1) {
+		$toReturn = $this->getTabs ($pTabCount);
+		$toReturn .= $pLine;
+		$toReturn .= $this->getEndLine ($pEndLineCount);
+		return $toReturn;
+	}
+	
+	/**
+	 * Renvoie un commentaire PHP avec des informations sur le .php qui l'a appelé
+	 * 
+	 * @param string $pFile Fichier appelant, si null sera le dernier appelant
+	 * @param string $pLine Ligne appelante, si null sera la dernier appelante
+	 * @param string $pFunction Fonction appelante (Object->method si c'est un objet), si null sera le dernier appelant
+	 * @return string
+	 */
+	public function getGenerator ($pFile = null, $pLine = null, $pFunction = null) {
+		$caller = CopixDebug::getCaller ();
+		$callerFunction = CopixDebug::getCaller (1);
+		$comments = array (
+			'This file was generated by a PHP script on ' . date ('m/d/Y') . ' at ' . date ('H:i:s'),
+			'',
+			'File : ' . ((is_null ($pFile)) ? $caller['file'] : $pFile),
+			'Line : ' . ((is_null ($pLine)) ? $caller['line'] : $pLine),
+			'Function : ' . ((is_null ($pFunction)) ? $this->_getCallerFunction ($callerFunction) : $pFunction)
+		);
+		
+		return $this->getPHPDoc ($comments, 0, 2);
+	}
+	
+	/**
+	 * Ecrit le fichier
+	 *
+	 * @param string $pPath Chemin du fichier
+	 * @param string $pContent Contenu du fichier, si null sera le contenu du dernier appel à getPHPTags
+	 * @param boolean $pOverwrite Indique si on veut écrire le fichier même si il existe, sinon lève une exception si le fichier existe
+	 * @throws CopixPHPGeneratorException Le paramètre $pContent est null et on n'a pas appelé getPHPTags, code CONTENT_NULL
+	 * @throws CopixPHPGeneratorException Le paramètre $pOverwrite est à false, et le fichier existe déja, code FILE_EXISTS
+	 */
+	public function write ($pPath, $pContent = null, $pOverwrite = true) {
+		if ($this->_content === null && $pContent === null) {
+			throw new CopixPHPGeneratorException (_i18n ('copix:copixphpgenerator.contentNull', $pPath), CopixPHPGeneratorException::CONTENT_NULL);
+		}
+		if (!$pOverwrite && file_exists ($pPath)) {
+			throw new CopixPHPGeneratorException (_i18n ('copix:copixphpgenerator.fileExists', $pPath), CopixPHPGeneratorException::FILE_EXISTS);
+		}
+		$content = ($pContent === null) ? $this->_content : $pContent;
+		CopixFile::write ($pPath, $content);
+	}
+	
+	/**
+	 * Retourne un bloc de commentaire PHPDoc
+	 *
+	 * @param array $pDocs Commentaires, une ligne par commentaire. Peut être une chaine si on a un seul commentaire
+	 * @param int $pTabCount Nombre de tabulations
+	 * @param int $pNewLineCount Nombre de retours à la ligne
+	 * @return string
+	 */
+	public function getPHPDoc ($pComments, $pTabCount = 0, $pNewLineCount = 1) {
+		if (is_string ($pComments)) {
+			$pComments = array ($pComments);
+		}
+		$toReturn = $this->getLine ('/**', $pTabCount);
+		foreach ($pComments as $comment) {
+			$toReturn .= $this->getLine (' * ' . $comment, $pTabCount);
+		}
+		$toReturn .= $this->getLine (' */', $pTabCount, $pNewLineCount);
+		return $toReturn;
+	}
+	
+	/**
+	 * Retourne la function, obbjet->methode ou object::methode de l'appelant contenu dans $pCaller
+	 *
+	 * @param array $pCaller Appelant, retour de CopixDebug::getCaller ();
+	 * @return string
+	 */
+	private function _getCallerFunction ($pCaller) {
+		if (isset ($pCaller['class']) && $pCaller['class'] != '') {
+			return $pCaller['class'] . $pCaller['type'] . $pCaller['function'];
+		} else {
+			return $pCaller['function'];
+		}
+	}
+}
