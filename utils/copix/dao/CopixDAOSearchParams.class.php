@@ -355,6 +355,29 @@ class CopixDAOSearchParams {
         }
         return array ($sql, $params);
     }
+	
+	/**
+	 * retourne la valeur de la variable en fonction de son type, de sa valeur et du type de driver
+	 *
+	 * @param string	$pType
+	 * @param mixed		$pValue
+	 * @param string $pDriverName
+	 * @return mixed
+	 */
+    private function _variableValue ($pType, $pValue, $pDriverName) {
+    	if ($pDriverName == 'mysql' || $pDriverName == 'sqlite'){
+    		//Mysql et Sqlite gèrent les mêmes formats d'entrée pour les dates / datetime / time
+        	switch ($pType){
+            	case 'date':
+					return CopixDateTime::yyyymmddToFormat ($pValue, 'Y-m-d H:i:s');	                				
+              	case 'datetime':
+					return CopixDateTime::yyyymmddhhiissToFormat ($pValue, 'Y-m-d H:i:s');	                				
+              	case 'time':
+					return CopixDateTime::hhiissToFormat ($pValue, 'Y-m-d H:i:s');	                				
+            }
+        }
+        return $pValue;
+    }	                	
     
     /**
      * Exprime les conditions en SQL
@@ -424,8 +447,8 @@ class CopixDAOSearchParams {
 	                }elseif (($conditionDescription['value'] === null) && ($conditionDescription['condition'] == '<>')){
 	                   $r .= $prefixNoCondition.' IS NOT NULL';
 	                } else {
-	                	$fieldsForQueryParams[$variableName] = $conditionDescription['value'];
-	                	if ($pFields[$conditionDescription['field_id']][1] == 'datetime'){
+	                	$fieldsForQueryParams[$variableName] = $this->_variableValue ($pFields[$conditionDescription['field_id']][1], $conditionDescription['value'], $pConnection ? $pConnection->getProfile ()->getDriverName () : null);
+	                	if ($pFields[$conditionDescription['field_id']][1] == 'datetime' && $pConnection !== null && $pConnection->getProfile ()->getDriverName () == 'oci'){
 							$r .= 'to_char('.$prefixNoCondition.', \'YYYYMMDDHH24MISS\') '.$conditionDescription['condition'].' '.$variableName; 	                		
 	                	}else{
 	                		$r .= $prefix.$variableName;
@@ -446,12 +469,13 @@ class CopixDAOSearchParams {
 			                }elseif (($conditionValue === null) && ($conditionDescription['condition'] == '<>')){
 			                   $r .= $prefixNoCondition.' IS NOT NULL';
 			                } else {
-			                	if ($pFields[$conditionDescription['field_id']][1] == 'datetime'){
+			                	if ($pFields[$conditionDescription['field_id']][1] == 'datetime'  && $pConnection !== null && $pConnection->getProfile ()->getDriverName () == 'oci'){
 			                    	$r .= 'to_char('.$prefixNoCondition.', \'YYYYMMDDHH24MISS\') '.$conditionDescription['condition'].' '.$variableName;
 			                	}else{
 			                    	$r .= $prefix.$variableName;
 			                	}
-			                	$fieldsForQueryParams[$variableName] = $conditionValue;
+			                	$fieldsForQueryParams[$variableName] = $this->_variableValue ($pFields[$conditionDescription['field_id']][1], $conditionValue, $pConnection ? $pConnection->getProfile ()->getDriverName () : null);
+//			                	$fieldsForQueryParams[$variableName] = $conditionValue;
 			                }
 	                        $firstCV = false;
 	                        self::$_countParam++;
@@ -464,7 +488,7 @@ class CopixDAOSearchParams {
         
         //sub conditions
         foreach ($pConditions->group as $conditionDetail){
-        	list ($sql, $fields) = $this->_explainSQLCondition ($conditionDetail, !$first, $pFields);
+        	list ($sql, $fields) = $this->_explainSQLCondition ($conditionDetail, !$first, $pFields, $pConnection);
         	$r .= $sql;
         	$fieldsForQueryParams = array_merge ($fieldsForQueryParams, $fields);
         	if (!$conditionDetail->isEmpty ()){

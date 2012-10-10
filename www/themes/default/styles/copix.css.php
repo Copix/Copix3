@@ -1,7 +1,4 @@
 <?php       
-    if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')){
-        ob_start ("ob_gzhandler");
-    }
     header("Content-type: text/css; charset: UTF-8");
     header("Cache-Control: must-revalidate");
     $offset = 60 * 60 ;
@@ -9,25 +6,22 @@
     gmdate("D, d M Y H:i:s",
     time() + $offset) . " GMT";
     header($ExpStr);
-?>
-  
-  
-  //some defines
-  $softgrey='#4b4d46';
-  $hardgrey='#868e74';
-  $importantcolor= "#AA2314";
-  $titlecolor = "#b60000";
-  
-  
-  $contentwidth = "75%";
-  
-  $root = $_GET['copixurl'];
+
+    //some defines
+  	$softgrey='#4b4d46';
+  	$hardgrey='#868e74';
+  	$importantcolor= "#AA2314";
+  	$titlecolor = "#b60000";
+  	$contentwidth = "75%";
+  	$root = $_GET['copixurl'];
 ?>
 @CHARSET "UTF-8";
 
 .errorMessage {
    border: 2px solid #aa0000;
    margin: 5px;
+   padding: 5px;
+   text-align: center;
 }
 .errorMessage h1 {
    background-color: #792206;
@@ -38,6 +32,7 @@
    text-align: center;
    font-size: 1em;
    margin-top: 0;
+   padding: 3px;
 }
 
 .CopixTable {
@@ -95,7 +90,7 @@
 }
 
 .alternate {
-   background-color: #868e74;
+   background-color: #dbdfc9;
 }
 
 /** Mootools **/

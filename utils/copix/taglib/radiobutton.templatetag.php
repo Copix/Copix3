@@ -38,6 +38,14 @@ class TemplateTagRadioButton extends CopixTemplateTag {
 	   if (empty ($values)){
 	   	   $values = array ();
 	   }
+	   
+	   if ((!is_array ($values)) || ! ($values instanceof Iterator)){
+	   	$values = (array) $values;
+	   }
+	   
+	   if(empty ($id)){
+	       $id = $name;
+	   }
 	   if (empty ($selected)){
 	   	   $selected = null;
 	   }
@@ -54,30 +62,23 @@ class TemplateTagRadioButton extends CopixTemplateTag {
 	      $extra = '';
 	   }
 	   
-  	  if (empty ($id)){
-	      $id = $name;
-	   }
-	
 	   if (empty ($separator)) {
 	       $separator = '';
 	   }
-	   
-	   if (empty ($class)) {
-	       $class = '';
-	   } else {
-	       $class = ' class="'.$class.'"';
-	   }
+	  
 	   //each of the values.
 	   if (empty ($objectMap)){
-	      foreach ((array) $values  as $key=>$caption) {
-	         $selectedString = ((array_key_exists('selected', $pParams)) && ($key == $selected)) ? ' checked="checked" ' : '';
-	         $toReturn .= '<input type="radio" '.$class.' id="'.$id.'" name="'.$name.'" '.$extra.' value="'.$key.'"'.$selectedString.' />' .  _copix_utf8_htmlentities ($caption).$separator;
+	      foreach ($values  as $key=>$caption) {
+	        $selectedString = ((array_key_exists('selected', $pParams)) && ($key == $selected)) ? ' checked="checked" ' : '';
+	        $idRadio = $id.'_'.$key;
+	        $toReturn .= '<input type="radio" id="'.$idRadio.'" name="'.$name.'" '.$extra.' value="'.$key.'"'.$selectedString.' /><label for="'.$idRadio.'">'.  _copix_utf8_htmlentities ($caption).'</label>'.$separator;
 	      }
 	   }else{
 	      //if given an object mapping request.
 	      foreach ((array) $values  as $object) {
 	         $selectedString = ((array_key_exists('selected', $pParams)) && ($object->$idProp == $selected)) ? ' checked="checked" ' : '';
-	         $toReturn .= '<input type="radio" id="'.$id.'" name="'.$name.'" '.$extra.' value="'.$object->$idProp.'"'.$selectedString.' />' .  _copix_utf8_htmlentities ($object->$captionProp).$separator;
+	         $idRadio = $id.'_'.$object->$idProp;
+	         $toReturn .= '<input type="radio" id="'.$idRadio.'" name="'.$name.'" '.$extra.' value="'.$object->$idProp.'"'.$selectedString.' /><label for="'.$idRadio.'">'.  _copix_utf8_htmlentities ($object->$captionProp).'</label>'.$separator;
 	      }
 	   }
        return $toReturn;

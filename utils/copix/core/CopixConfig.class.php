@@ -851,10 +851,16 @@ class CopixConfig {
 	/**
     * Gets the real path of a given path
     */
-	public static function getRealPath($path){
+	public static function getRealPath ($path) {
 		$config = CopixConfig::instance ();
-		if ($config->realPathDisabled === false){
-			return realpath ($path);
+		if ($config->realPathDisabled === false) {
+			$realPath = realpath ($path);
+			$last = substr ($path, strlen ($path) - 1);
+			// si on a mi un caractère de fin de répertoire
+			if ($last == '\\' || $last == '/') {
+				$realPath .= (CopixConfig::osIsWindows ()) ? '\\' : '/';
+			}
+			return $realPath;
 		}else{
 			$result = array();
 			$pathA = preg_split('/[\/\\\]/', $path);
@@ -876,7 +882,7 @@ class CopixConfig {
 			if (!end($pathA)){
 			   $result[] = '';
 			}
-    		return implode(CopixConfig::osIsWindows() ? '\\' : '/', $result);
+    		return implode (CopixConfig::osIsWindows () ? '\\' : '/', $result);
 		}
 	}
 

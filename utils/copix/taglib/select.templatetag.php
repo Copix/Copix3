@@ -61,19 +61,21 @@ class TemplateTagSelect extends CopixTemplateTag {
 	   if (empty ($values)){
 	   	   $values = array ();
 	   }
-	
+   	   if ((!is_array ($values)) || ! ($values instanceof Iterator)){
+	   	$values = (array) $values;
+	   }	
 	   //proceed
 	   $toReturn  = '<select name="'.$name.'" id="'.$id.'" '.$extra.'>';
 	   if ((!isset ($emptyShow)) || $emptyShow == true){
 	      //the "empty" element. If no key is the selected value, then its the one.
-	      $selectedString = (isset ($selected) && in_array ($selected, array_keys ((array) $values))) ? '' : ' selected="selected" ';
+	      $selectedString = (isset ($selected) && in_array ($selected, array_keys ($values))) ? '' : ' selected="selected" ';
 	      list ($keyEmpty, $valueEmpty) = each ($emptyValues);
 	      $toReturn .= '<option value="'.$keyEmpty.'"'.$selectedString.'>'.$valueEmpty.'</option>';
 	   }
 	   
 	   //each of the values.
 	   if (empty ($objectMap)){
-	      foreach ((array) $values  as $key=>$caption) {
+	      foreach ($values  as $key=>$caption) {
 	         $selectedString = ((!empty($selected)) && ($key == $selected)) ? ' selected="selected" ' : '';
 	         $toReturn .= '<option value="'.$key.'"'.$selectedString.'>' . _copix_utf8_htmlentities ($caption) . '</option>';
 	      }

@@ -45,12 +45,6 @@ class TemplateTagMultipleSelect extends CopixTemplateTag {
 	      $captionProp = $tab[1];
 	   }
 
-	   if (empty ($emptyValues)){
-	      $emptyValues = array (''=>'-----');
-	   }elseif (!is_array ($emptyValues)){
-	   	  $emptyValues = array (''=>$emptyValues);
-	   }
-
 	   if (empty ($extra)){
 	      $extra = '';
 	   }
@@ -61,6 +55,9 @@ class TemplateTagMultipleSelect extends CopixTemplateTag {
 	   
 	   if (empty ($values)){
 	   	   $values = array ();
+	   }
+	   if ((!is_array ($values)) || ! ($values instanceof Iterator)){
+	   	$values = (array) $values;
 	   }
 	   if (empty ($height)) {
 	       $height = 'auto';
@@ -78,146 +75,101 @@ class TemplateTagMultipleSelect extends CopixTemplateTag {
 	       $img = 'img/tools/multiple.gif';
 	   }
 	   
-	   
 	   //each of the values.
-	    $idDiv = uniqid ($id);
+	   $idDiv = 'divdata_'.$id;
        $arValues = array();
        $toReturnValue = '';
 	   if (empty ($objectMap)){
-	      $arValues = $values;
-          $compteur=0;
-	      foreach ((array) $values  as $key=>$caption) {
-	         $selectedString = ((isset($selected) && (in_array($key,(is_array($selected) ? $selected : array($selected)), true)))) ? ' checked="checked" ' : '';
-             $currentId = uniqid ();
-	         $compteur++;
-	         $color = ($compteur % 2 == 0) ? '#cccccc' : '#ffffff';
-	         $toReturnValue .= '<div class="divcheck_'.$id.'" style="width:100%;background-color:'.$color.';color:black"><input type="checkbox" class="check_'.$id.'" id="'.$currentId.'" value="'.$key.'"'.$selectedString.' /><label id="label_'.$currentId.'" for="'.$currentId.'" style="color:black">' . _copix_utf8_htmlentities ($caption) . '</label><br /></div>';
-	      }
+	       $arValues = $values;
+           $compteur=0;
+	       foreach ($values  as $key=>$caption) {
+	           $selectedString = ((isset($selected) && (in_array($key,(is_array($selected) ? $selected : array($selected)), true)))) ? ' checked="checked" ' : '';
+               $currentId = uniqid ('ch');
+	           $compteur++;
+	           $color = ($compteur % 2 == 0) ? '#cccccc' : '#ffffff';
+	           $toReturnValue .= '<div class="multipleselect_checker_'.$id.'" rel="'.$id.'" style="width:auto;background-color:'.$color.';color:black"><input type="checkbox" class="multipleselect_check_'.$id.'" rel="'.$id.'" id="'.$currentId.'" value="'.$key.'"'.$selectedString.' /><label id="label_'.$currentId.'" for="'.$currentId.'" style="color:black">' . _copix_utf8_htmlentities ($caption). '</label><br /></div>';
+	       }
 	   }else{
-	      //if given an object mapping request.
-          $compteur=0;
-	      foreach ((array) $values  as $object) {
-	         $arValues[$object->$idProp]=$object->$captionProp;
-             $currentId = uniqid ();
-   	         $compteur++;
-	         $color = ($compteur % 2 == 0) ? '#cccccc' : '#ffffff';
-	         $selectedString = ((array_key_exists('selected', $pParams)) && (in_array($object->$idProp,(is_array($selected) ? $selected : array($selected))))) ? ' checked="checked" ' : '';
-	         $toReturnValue .= '<div class="divcheck_'.$id.'" style="width:100%;background-color:'.$color.';color:black"><input type="checkbox" class="check_'.$id.'" id="'.$currentId.'" value="'.$object->$idProp.'"'.$selectedString.' /><label id="label_'.$currentId.'" for="'.$currentId.'" style="color:black">' . _copix_utf8_htmlentities ($object->$captionProp) . '</label><br /></div>';
-	      }
+	       //if given an object mapping request.
+           $compteur=0;
+	       foreach ((array) $values  as $object) {
+	           $arValues[$object->$idProp]=$object->$captionProp;
+               $currentId = uniqid ('check');
+   	           $compteur++;
+	           $color = ($compteur % 2 == 0) ? '#cccccc' : '#ffffff';
+	           $selectedString = ((array_key_exists('selected', $pParams)) && (in_array($object->$idProp,(is_array($selected) ? $selected : array($selected))))) ? ' checked="checked" ' : '';
+	           $toReturnValue .= '<div class="multipleselect_checker_'.$id.'" rel="'.$id.'" style="width:auto;background-color:'.$color.';color:black"><input type="checkbox" class="multipleselect_check_'.$id.'" rel="'.$id.'" id="'.$currentId.'" value="'.$object->$idProp.'"'.$selectedString.' /><label id="label_'.$currentId.'" for="'.$currentId.'" style="color:black">' . _copix_utf8_htmlentities ($object->$captionProp) . '</label><br /></div>';
+	       }
 	   }
 	   
-	   _tag('mootools', array('plugin'=>array ('zone')));
+	   _tag('mootools', array('plugin'=>array ('zone','overlayfix')));
 	   
 	   $jsCode = "
-		
-
 		window.addEvent('domready', function () {
-			var flag_".$name." = 0;
-			var input = $('input_$id');
-			var divinput = $('div_$id');
-			var div   = $('$idDiv');
-			var fix = new OverlayFix(div);
-			div.injectInside(document.body);
-			divinput.addEvent('click', function () {
-				if (div.getStyle('visibility') != 'visible') {
-    				div.setStyles({
-    					'visibility':'visible',
-    					'position':'absolute',
-    					'top':input.getTop ()+input.getSize().size.y,
-    					'left':input.getLeft (),
-    					'width':divinput.getSize().size.x,
-    					'height':'".$height."',
-    					'overflow':'auto'
-    				});
-					fix.show();
-    				input.testZone ( divinput.getTop()-5, divinput.getLeft()-5, div.getSize().size.y+divinput.getSize().size.y+10,divinput.getSize().size.x+10 );
-				} else {
-					div.setStyles({
-    			    	'visibility':'hidden'
-    				});
-					fix.hide();
+			$$('.multipleselect_id').each(function (elementDiv) {
+				var id = elementDiv.getProperty('rel');
+    			var input = $('input_'+id);
+    			var divinput = $('div_'+id);
+    			var div   = $('divdata_'+id);
+    			div.injectInside(document.body);
+				if (!window.ie) {
+					divinput.setStyle('border-top','1px solid transparent');
 				}
-			});
-			
-			input.addEvent('reset' , function () {
-				$$('.check_$id').each ( function (el) {
-					el.checked = false;
-				});
-				$('hidden_$id').setHTML ('');
-			});
-
-			input.addEvent('mouseleavezone', function () {
-				fix.hide();
-				div.setStyles({
-    			    'visibility':'hidden'
+    			divinput.addEvent('click', function () {
+    				if (div.getStyle('visibility') != 'visible') {
+        				div.setStyles({
+        					'visibility':'visible',
+        					'position':'absolute',
+        					'top':input.getTop ()+input.getSize().size.y,
+        					'left':input.getLeft (),
+        					'height':$('height_'+id).getProperty('rel'),
+        					'overflow':'auto'
+        				});
+    					if (div.getSize().size.x < divinput.getSize().size.x) {
+    						div.setStyle('width',divinput.getSize().size.x);
+    					}
+    					div.fixdivShow();
+        				input.testZone ( divinput.getTop()-5, divinput.getLeft()-5, divinput.getSize().size.y+div.getSize().size.y+10,div.getSize().size.x+10 );
+    				} else {
+    					div.setStyles({
+        			    	'visibility':'hidden'
+        				});
+    					div.fixdivHide();
+    				}
+    			});
+    			
+    			input.addEvent('reset' , function () {
+    				$$('.multipleselect_check_'+id).each ( function (el) {
+    					el.checked = false;
+    				});
+    				$('hidden_'+id).setHTML ('');
+    			});
+    
+    			input.addEvent('mouseleavezone', function () {
+    				div.fixdivHide();
+    				div.setStyles({
+        			    'visibility':'hidden'
+        			});
+    			});
+    			$$('.multipleselect_checker_'+id).each (function (el) {
+    				el.addEvent ('click', function () {
+    					var value = '';
+    					$('hidden_'+id).setHTML(''); 
+    					$$('.multipleselect_check_'+id).each ( function (elem) {
+    						if (elem.checked) {
+    							if (value!='') {
+    								value += ',';
+    							}
+    							value += $('label_'+elem.getProperty('id')).innerHTML;
+    							$('hidden_'+id).setHTML ($('hidden_'+id).innerHTML+'<input type=\"hidden\" name=\"'+$('name_'+id).getProperty('rel')+'[]\" value=\"'+elem.value+'\" />');
+    						}
+    					});
+    					input.value = value;
+    				});
     			});
 			});
-
-			$$('.divcheck_$id').each (function (el) {
-				el.addEvent ('click', function () {
-					var value = '';
-					$('hidden_$id').setHTML(''); 
-					$$('.check_$id').each ( function (el) {
-						if (el.checked) {
-							if (value!='') {
-								value += ',';
-							}
-							value += $('label_'+el.getProperty('id')).innerHTML;
-							$('hidden_$id').setHTML ($('hidden_$id').innerHTML+'<input type=\"hidden\" name=\"".$name."[]\" value=\"'+el.value+'\" />');
-						}
-					});
-					input.value = value;
-				});
-			});
-
-
-});
-		";
-	   
-	   CopixHTMLHeader::addJsCode($jsCode);
-	   CopixHTMLHeader::addJsCode ("
-	var OverlayFix = new Class({
-
-	initialize: function(el) {
-		this.element = $(el);
-		if (window.ie){
-			this.element.addEvent('trash', this.destroy.bind(this));
-			this.fix = new Element('iframe', {
-				properties: {
-					frameborder: '0',
-					scrolling: 'no',
-					src: 'javascript:false;'
-				},
-				styles: {
-					position: 'absolute',
-					border: 'none',
-					display: 'none',
-					filter: 'progid:DXImageTransform.Microsoft.Alpha(opacity=0)'
-				}
-			}).injectAfter(this.element);
-		}
-	},
-
-	show: function() {
-		if (this.fix) this.fix.setStyles(\$extend(
-			this.element.getCoordinates(), {
-				display: '',
-				position:'absolute',
-				zIndex: (this.element.getStyle('zIndex') || 1) - 1
-			}));
-		return this;
-	},
-
-	hide: function() {
-		if (this.fix) this.fix.setStyle('display', 'none');
-		return this;
-	},
-
-	destroy: function() {
-		this.fix.remove();
-	}
-});",'fixiediv');
-	   
+		});";
+	   CopixHTMLHeader::addJsCode($jsCode,'multipleselect');
 	   //proceed
 	   $value = '';
 	   $hidden = '';
@@ -232,11 +184,15 @@ class TemplateTagMultipleSelect extends CopixTemplateTag {
 	    } elseif (isset($selected)) {
 	        $value .= isset ($arValues[$select]) ? $arValues[$selected] : '';
 	    }
-       
-   	   $toReturn = '<span id="div_'.$id.'" style="width:'.$width.';vertical-align:top;" ><input type="text" id="input_'.$id.'" name="input_'.$name.'" value="'.$value.'" '.$extra.' style="width:'.$width.'" readonly="readonly" /><img style="margin-bottom:-4px;margin-left:-1px;" src="'.CopixUrl::getResource($img).'" /></span>';
-	   $toReturn .= '<div id="'.$idDiv.'" style="visibility:hidden;position:absolute;z-index:9999;background-color:white;border:1px solid #bbbbbb">'.$toReturnValue;
-   	   $toReturn .= '</div><div id="hidden_'.$id.'" style="visibility:hidden;position:absolute">'.$hidden.'</div>';
-	   return $toReturn;
+	    //Div caché pour avoir des paramètres disponible dans le DOM
+        $toReturn = '<div style="display:none;" class="multipleselect_id" rel="'.$id.'"></div><div style="display:none;" id="name_'.$id.'" rel="'.$name.'"></div><div style="display:none;" id="height_'.$id.'" rel="'.$height.'"></div>';
+        //Commence par un &nbsp; car bug d'alignement dans certains nav       
+   	    $toReturn .= '<span id="div_'.$id.'" style="width:'.$width.';vertical-align:center;" ><input type="text" id="input_'.$id.'" name="input_'.$name.'" value="'.$value.'" '.$extra.' style="width:'.$width.'" readonly="readonly" /><img src="'.CopixUrl::getResource($img).'" align="absbottom" vspace="1" alt="" /></span>';
+	    //Div contenant la liste
+   	    $toReturn .= '<div id="'.$idDiv.'" style="margin:auto;visibility:hidden;position:absolute;z-index:9999;background-color:white;border:1px solid #bbbbbb">'.$toReturnValue.'</div>';
+   	    //Div contenant les champs hidden permettant de passer les valeurs sélectionner
+   	    $toReturn .= '<div id="hidden_'.$id.'" style="visibility:hidden;position:absolute">'.$hidden.'</div>';
+	    return $toReturn;
     }
 }
 ?>

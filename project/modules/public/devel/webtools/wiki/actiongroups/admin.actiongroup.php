@@ -36,8 +36,8 @@ class ActionGroupAdmin extends CopixActionGroup {
 		$ppo->pages = $pages;
 		$ppo->title = _request('title');
 		$ppo->heading = _request('heading');
-		$ppo->canwrite = _ioClass('wikiauth')->canWrite();
-		return _arPpo($ppo,"listpages.tpl");
+		$ppo->canwrite = _ioClass ('wikiauth')->canWrite ();
+		return _arPpo ($ppo, "listpages.tpl");
 	}
 
 	/**

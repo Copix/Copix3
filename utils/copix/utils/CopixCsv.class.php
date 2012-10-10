@@ -38,13 +38,18 @@ class CopixCsv {
     private $_nblines ;
 
     /**
+     * Entetes du fichier
+     */
+    private $_isHeaded ;
+
+    /**
      * Constructeur de classe
      *
      * @param string $pFilename
      * @param string $pDelimiter
      * @param string $pEnclosure
      */
-    public function __construct ($pFileName, $pDelimiter=',', $pEnclosure = '"'){
+    public function __construct ($pFileName, $pDelimiter=',', $pEnclosure = '"', $pArrayHead = false){
         $this->_filename = $pFileName;
         $this->_delimiter = $pDelimiter;
         $this->_enclosure = $pEnclosure;
@@ -54,8 +59,8 @@ class CopixCsv {
      * Récupération de l'iterateur CSV sur le fichier
      *
      */
-    public function getIterator (){
-        return new CopixCsvIterator($this->_filename, $this->_delimiter, $this->_enclosure);
+    public function getIterator ($pIsHeaded = false){
+        return new CopixCsvIterator($this->_filename, $this->_delimiter, $this->_enclosure, $pIsHeaded);
     }
 
     /**
@@ -92,23 +97,25 @@ class CopixCsvIterator extends LimitIterator implements Countable {
     protected $_counter;
     protected $_delimiter;
     protected $_enclosure;
+    protected $_keys = null;
     const ROW_SIZE = 4096;
 
 
-    function __construct ($pFile, $pDelimiter, $pEnclosure){
-        // $this->_data = array();
+    function __construct ($pFile, $pDelimiter, $pEnclosure, $pIsHeaded){
         $this->_filehandler = fopen ($pFile,'r');
         $this->_delimiter = $pDelimiter;
         $this->_enclosure = $pEnclosure;
-        $this->_current = fgetcsv($this->_filehandler, self::ROW_SIZE, $this->_delimiter, $this->_enclosure);
+        if ($pIsHeaded === true) {
+            $this->_keys = fgetcsv($this->_filehandler, self::ROW_SIZE, $this->_delimiter, $this->_enclosure);
+            $this->_current = array_combine ($this->_keys, fgetcsv($this->_filehandler, self::ROW_SIZE, $this->_delimiter, $this->_enclosure));
+        } else {
+            $this->_current = fgetcsv($this->_filehandler, self::ROW_SIZE, $this->_delimiter, $this->_enclosure);
+        }
         $this->_counter = 0;
     }
 
     function current (){
         return $this->_current;
-        /*$this->_current = fgetcsv($this->_filehandler, self::ROW_SIZE, $this->_delimiter, $this->_enclosure);
-        $this->_counter++;
-        return $this->_current;*/
     }
 
     function key (){
@@ -119,17 +126,17 @@ class CopixCsvIterator extends LimitIterator implements Countable {
         $this->_current = fgetcsv($this->_filehandler, self::ROW_SIZE, $this->_delimiter, $this->_enclosure);
         if ($this->_current !== false) {
             $this->_counter++;
+            if ($this->_keys !== null) {
+                $this->_current = array_combine ($this->_keys, $this->_current);
+            }
         }
         return $this->_current;
-        
-        /*return !feof( $this->_filehandler );*/
     }
 
     function rewind (){
         $this->_counter = 0;
         rewind ($this->_filehandler);
-        $this->_current = null; 
-        // fgetcsv($this->_filehandler, self::ROW_SIZE, $this->_delimiter, $this->_enclosure);
+        $this->_current = null;
     }
 
     function valid (){
@@ -153,76 +160,21 @@ class CopixCsvIterator extends LimitIterator implements Countable {
             }
         }
     }
-    
-    function __destruct (){
-        fclose ($this->_filehandler);
-    }
 
     function count() {
         $this->rewind();
         while ($this->next()) {
             continue;
         }
+        $this->rewind();
         return $this->_counter;
     }
+
+    function __destruct (){
+        fclose ($this->_filehandler);
+    }
+
 }
 
-/* Classe obsolète
-class CopixCsvReverseIterator extends CopixCsvIterator  {
-
-    protected $_currentpos = 0;
-
-    function __construct($pFile, $pDelimiter, $pEnclosure) {
-         
-        parent::__construct($pFile, $pDelimiter, $pEnclosure);
-        fseek($this->_filehandler, $this->_currentpos, SEEK_END);
-        // $this->_data = array_reverse($this->_data);
-    }
-
-    private function _rewindLine () {
-        while ($car != "\n") {
-            if (!fseek ($fp, $this->_currentpos, SEEK_END)) {
-                $car = fgetc($this->_filehandler);
-                $this->_currentpos--;
-            } else {
-                break;
-            }
-        }
-    }
-
-    function current() {
-        $this->_rewindLine();
-        $this->_current = fgetcsv($this->_filehandler, self::ROW_SIZE, $this->_delimiter, $this->_enclosure);
-        $this->_counter++;
-        return $this->_current;
-    }
-
-    function rewind() {
-        $this->_counter = 0;
-        $this->_currentpost = 0;
-        fseek ($this->_filehandler, $this->_currentpos, SEEK_END);
-         
-    }
-
-    function next() {
-        return fseek( $this->_filehandler, $this->_currentpos, SEEK_END);
-    }
-
-    function valid() {
-        if ( ! $this->next() ) {
-            fclose ($this->_filehandler);
-            return FALSE;
-        }
-        return TRUE;
-        /*if (fseek ($fp, $this->_currentpos, SEEK_END)) {
-         return TRUE;
-         } else {
-         fclose ($this->_filehandler);
-         return FALSE ;
-         }
-         
-    }
-
-}*/
 
 ?>

@@ -22,7 +22,8 @@ class ZoneCustomisedInstall extends CopixZone {
     function _createContent (&$toReturn) {
       $tpl = new CopixTpl ();
       $tpl->assign ('arModulesPath', CopixConfig::instance ()->arModulesPath);
-      $tpl->assign ('arModules', $this->_getModuleOrderByDescription());
+      $tpl->assign ('arModules', $this->_getModuleOrderByDescription ());
+      $tpl->assign ('arGroupsUninstalled', CopixModule::getGroupList ());
       $toReturn = $tpl->fetch ('modules.list.tpl');
     }
     
@@ -30,8 +31,8 @@ class ZoneCustomisedInstall extends CopixZone {
     * Récupération des modules dans l'ordre de leur description
     * @todo a trier comme avant
     */
-    function _getModuleOrderByDescription (){
-    	return _class ('InstallService')->getModules ();
+    function _getModuleOrderByDescription ($pGroupId = null){
+    	return _class ('InstallService')->getModules ($pGroupId);
     }
 }
 ?>

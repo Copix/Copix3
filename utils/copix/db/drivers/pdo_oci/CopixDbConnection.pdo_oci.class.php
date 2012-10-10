@@ -75,7 +75,7 @@ class CopixDBConnectionPDO_OCI extends CopixDBPDOConnection {
     public function getFieldList ($pTableName) {
     	$toReturn = array ();
         
-        $arType = array('LONG'=>'float','NUMBER'=>'float','CHAR'=>'varchar','VARCHAR2'=>'varchar','NVARCHAR2'=>'varchar','NCHAR'=>'varchar','CLOC'=>'varchar','NCLOB'=>'varchar','BLOB'=>'varchar','DATE'=>'date');
+        $arType = array('LONG'=>'float','NUMBER'=>'float','CHAR'=>'varchar','VARCHAR2'=>'varchar','NVARCHAR2'=>'varchar','NCHAR'=>'varchar','CLOC'=>'varchar','NCLOB'=>'varchar','BLOB'=>'varchar','DATE'=>'datetime');
  
         $query = "SELECT   a.column_name AS name, " .
                  "         decode (a.nullable, 'Y', 0, 'N', 1) AS not_null, " .
@@ -93,9 +93,9 @@ class CopixDBConnectionPDO_OCI extends CopixDBPDOConnection {
 			if (isset($arType[$val->col_type])) {
                 $field->type = $arType[$val->col_type];
             } else {
-                throw new Exception("Le type $field->type n'est pas reconnu");
+                throw new CopixDBException("Le type $field->type n'est pas reconnu");
             }
-			$field->maxlength=$val->col_size;
+			$field->maxlength = $val->col_size;
 			$field->sequence='';
 			$field->pk=false;
 			
@@ -134,47 +134,30 @@ class CopixDBConnectionPDO_OCI extends CopixDBPDOConnection {
     	//Connexion
     	$parts = $this->_profil->getConnectionStringParts ();
 
-    	$ct = oci_pconnect ($this->_profil->getUser (), $this->_profil->getPassword (), $parts['dbname']);
+    	$ct = oci_connect ($this->_profil->getUser (), $this->_profil->getPassword (), $parts['dbname']);
 
     	if ($ct === false){
-    		throw new Exception ('Impossible de se connecter');
+    		throw new CopixDBException ('Impossible de se connecter');
     	}
+   		CopixLog::log ($pProcedure.var_export ($pParams, true), 'query', CopixLog::INFORMATION);
 
-        //@todo placer ces éléments en option de driver
+   		$stmt = ociparse ($ct, "ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'");
+        ociexecute ($stmt);	   		
 
-        $stmt = ociparse ($ct, "ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'");
-        ociexecute ($stmt);	
-
-/*
-         $stmt = ociparse ($ct, "ALTER SESSION SET NLS_LANGUAGE='FRENCH'");
-        ociexecute ($stmt);	
-
-        $stmt = ociparse ($ct, "ALTER SESSION SET NLS_CHARACTERSET = 'UTF-8'");
-        ociexecute ($stmt);	
-
-        $stmt = ociparse ($ct, "ALTER SESSION SET NLS_TERRITORY = 'FRANCE'");
-        ociexecute ($stmt);	
-*/
-
-        $stmt = ociparse ($ct, "ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY'");
-        ociexecute ($stmt);	
-      
     	//Préparation de la requête
     	$stmt = ociparse ($ct, $pProcedure);
     	if ($stmt === false){
-    		oci_close ($ct);
-    		throw new Exception ('[CopixDB] Impossible de préparer la procédure '.$pProcedure);
+    		throw new CopixDBException ($pProcedure);
     	}
-
-        //On analyse les paramètres
+    	//On analyse les paramètres
         $arVariablesName = array ();
         $arVariables = array ();
         foreach ($pParams as $name=>$param){
             $variableName = substr ($name, 1);
         	if (! is_array ($param)){
                $$variableName = $param;
-               if (!OCIBindByName ($stmt, $name, $$variableName, 255)){
-                  throw new Exception ("[CopixDB] Impossible de rapprocher '$name' avec '".$$variableName."' taille ".$arVariables[$variableName]['maxlength']." type ".$this->_convertProcedureParam ($arVariables[$variableName]['type']));
+               if (!oci_bind_by_name ($stmt, $name, $$variableName, -1)){
+                  throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
                }
                $arVariables[$variableName]['type'] = 'AUTO';        		
                $arVariables[$variableName]['value'] = $param;        		
@@ -192,28 +175,22 @@ class CopixDBConnectionPDO_OCI extends CopixDBPDOConnection {
         	   }
 
            	   if ($arVariables[$variableName]['type'] === CopixDBQueryParam::DB_CURSOR){
-        		  $$variableName = oci_new_cursor ($ct);
+           	   	$$variableName = oci_new_cursor ($ct);
            	   }
-               if (! OCIBindByName ($stmt, $name, $$variableName, $arVariables[$variableName]['maxlength'], $this->_convertProcedureParam ($arVariables[$variableName]['type']))){
+               if (! oci_bind_by_name ($stmt, $name, $$variableName, $arVariables[$variableName]['maxlength'], $this->_convertProcedureParam ($arVariables[$variableName]['type']))){
                   oci_free_statement ($stmt);
-                  oci_close ($ct);
-                  throw new Exception ("[CopixDB] Impossible de rapprocher '$name' avec '".$$variableName."' taille ".$arVariables[$variableName]['maxlength']." type ".$this->_convertProcedureParam ($arVariables[$variableName]['type']));
+                  throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
                }
           	}
         }
 
         //on exécute la requête
-        if (! ociexecute($stmt, OCI_DEFAULT)){
+        if (! ociexecute ($stmt, OCI_DEFAULT)){
             $statementErrors = oci_error ($stmt);
-			oci_rollback ($ct);
             oci_free_statement ($stmt);
-        	oci_close ($ct);
-        	throw new Exception ('[CopixDB] Impossible d\'exécuter la procédure '.$pProcedure.' - '.var_export ($statementErrors, true).' avec les variables '.var_export ($arVariables, true));
-        }else{
-	        //Création de l'objet statement principal
-	    	$mainStatement = new CopixDbOciStatement ($stmt, $ct);
+            oci_rollback ($ct);
+        	throw new CopixDBException ('[CopixDB] Impossible d\'exécuter la procédure '.$pProcedure.' - '.var_dump ($statementErrors).' avec les variables '.var_dump ($arVariables));
         }
-
 
         //analyse des résultats
         foreach ($arVariables as $name=>$value){
@@ -223,26 +200,20 @@ class CopixDBConnectionPDO_OCI extends CopixDBPDOConnection {
         		    oci_free_statement ($$name);
                     oci_free_statement ($stmt);
                     oci_rollback ($ct);
-                    oci_close ($ct);
-        			throw new CopixException ("Impossible de récupèrer l'ensemble de résultat de la variable $name");;
+        			throw new CopixDBException ("Impossible de récupèrer l'ensemble de résultat de la variable $name");;
         		}
-        		$toReturn[':'.$name] = new CopixDBOciResultSetIterator ($$name, $mainStatement, $pProcedure);
-/*
         		$toReturn[':'.$name] = array ();
-        		while ($r = oci_fetch_object ($$name)){
-                   $toReturn[':'.$name][] =         			
+        		while ($r = oci_fetch_array ($$name)){
+                   $toReturn[':'.$name][] = $this->_getCases ($r);        			
         		}
         		oci_free_statement ($$name);
-*/
         	}else{
                $toReturn[':'.$name] = $$name;
         	}
         }
-/*        
-        oci_commit($ct);        
+        
+        oci_commit($ct);
         oci_free_statement ($stmt);
-        oci_close ($ct);
-*/
         return $toReturn;
     }
 

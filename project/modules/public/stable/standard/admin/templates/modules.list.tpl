@@ -6,15 +6,16 @@
   {foreach from=$arModules item=module}
      {if $module->isInstalled}
    <tr  class="detailmodule {cycle values=",alternate"}" rel="{$module->name}">
-   <td width="20px">
+   <td width="20px" valign="top" align="center">
    		{if ($module->icon)}
-   		<img src="{$module->icon}" alt="{$module->name}" title="{$module->name}" />
+   		<img src="{$module->icon}" alt="{$module->name}" title="{$module->name}" style="margin-top: 3px" />
    		{/if}
    </td>
-   <td>{$module->description|default:$module->name|escape}
-       {ajax_divzone id=$module->name zone='admin|detailmodule' moduleName=$module->name}
+   <td valign="top">
+		<div style="margin-top: 3px">{$module->description|default:$module->name|escape}</div>
+       {copixzone id=$module->name process='admin|detailmodule' moduleName=$module->name ajax=true}
    </td>
-   <td width="20px"><img src="{copixresource path="img/tools/add.png"}" /></td>
+   <td width="20px" valign="top"><img src="{copixresource path="img/tools/delete.png"}" style="margin-top: 3px" /></td>
    </tr>
      {/if}
   {/foreach}
@@ -22,34 +23,45 @@
 <br />
    
 <h2>{i18n key="install.title.InstallableModules"}</h2>
+<center>
+{assign var=isFirst value=true}
+{foreach from=$arGroupsUninstalled item=item value=value}
+{if (!$isFirst)} | {/if}
+{assign var=isFirst value=false}
+<a href="">{$item} {$nbrGroup}</a>
+{/foreach}
+</center>
+<br />
+
 <table class="CopixTable">
-<tr>
- <th colspan="3">{i18n key=install.titleTab.name}</th>
-</tr>
- {foreach from=$arModules item=module}
-  {if ! $module->isInstalled}
-   <tr  class="detailmodule {cycle values=",alternate"}" rel="{$module->name}">
-   <td width="20px">
-   		{if ($module->icon)}
-   		<img src="{$module->icon}" alt="{$module->name}" title="{$module->name}" />
-   		{/if}
-   </td>
-   <td>{$module->description|default:$module->name|escape}
-       {ajax_divzone id=$module->name zone='admin|detailmodule' moduleName=$module->name}
-       <!-- <a title="{i18n key="copix:common.buttons.add"}"  href="{copixurl dest="admin|install|installModule" moduleName=$module->name todo="add"}"> -->
-   </td>
-   <td width="20px"><img src="{copixresource path="img/tools/add.png"}" /></td>
-   </tr>
-  {/if}
- {/foreach}
+	<tr>
+		<th colspan="3">{i18n key=install.titleTab.name}</th>
+	</tr>
+
+	{foreach from=$arModules item=module}
+		{if ! $module->isInstalled}
+			<tr class="detailmodule {cycle values=",alternate"}" rel="{$module->name}">
+				<td width="20px" valign="top" align="center">
+   					{if ($module->icon)}
+   						<img src="{$module->icon}" alt="{$module->name}" title="{$module->name}" style="margin-top: 3px" />
+   					{/if}
+				</td>
+				<td valign="top">
+					<div style="margin-top: 3px">{$module->description|default:$module->name|escape}</div>
+					{copixzone id=$module->name process='admin|detailmodule' moduleName=$module->name ajax=true}
+					<!-- <a title="{i18n key="copix:common.buttons.add"}"  href="{copixurl dest="admin|install|installModule" moduleName=$module->name todo="add"}"> -->
+				</td>
+				<td width="20px" valign="top">
+					<img src="{copixresource path="img/tools/add.png"}" style="margin-top: 3px" />
+				</td>
+			</tr>
+		{/if}
+	{/foreach}
 </table>
 <br />
    
 <h2>{i18n key="install.title.modulesPath"}</h2>
-<ul>
- {ulli values=$arModulesPath}
-</ul>
-
+{ulli values=$arModulesPath}
 
 <a href="{copixurl dest="admin||"}"> <input type="button" value="{i18n key="copix:common.buttons.back"}" /></a>
 

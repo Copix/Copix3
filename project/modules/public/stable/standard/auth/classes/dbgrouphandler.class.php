@@ -43,7 +43,7 @@ class DBGroupHandler implements ICopixGroupHandler {
 		if (count ($result)){
 			return $result[0];
 		}
-		throw new Exception ('No informations on Group '.$pGroupId);
+		throw new CopixException ('No informations on Group '.$pGroupId);
 	}
 }
 ?>

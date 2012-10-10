@@ -123,7 +123,7 @@ class ActionGroupAdmin extends CopixActionGroup {
     /**
      * Editer un captcha
      */
-    public function processEditCaptcha() {
+    public function processEditCaptcha() {    	
         CopixRequest::assert ('captchaid');
         if (CopixRequest::getInt ('confirm') == 1) {
             $arrCaptcha = _ioDAO ('commentscaptcha')->findBy (_daoSP()->addCondition("captcha_id","=",_request('captchaid')));
@@ -133,6 +133,7 @@ class ActionGroupAdmin extends CopixActionGroup {
             _ioDAO ('commentscaptcha')->update ($objCaptcha);
             return _arRedirect(_url('comments|admin|listcaptcha'));
         } else {
+        	$ppo = new CopixPPO ();
             $ppo->TITLE_PAGE = _i18n ('comments.admin.captchalist');        
             $ppo->arrCaptcha = _ioDAO ('commentscaptcha')->findall();
             $ppo->editedCaptcha = _request('captchaid');

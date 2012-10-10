@@ -2,7 +2,7 @@
 /**
 * @package   copix
 * @subpackage utils
-* @author   Gérald Croës
+* @author    Gérald Croës
 * @copyright 2001-2005 CopixTeam
 * @link      http://copix.org
 * @license   http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
@@ -20,8 +20,8 @@ class CopixDateTime {
      * @param string $separator le séparateur utilisé dans $date pour séparer les éléments entre eux.
      * @return string date au format DD-MM-YYYY. Le premier jour de la semaine
      */
-    public static function firstDayOfWeek ($separator = '-') {
-       return self::timestampToDate(strtotime('last Monday'), $separator);
+    public static function firstDayOfWeek ($separator = '/') {
+       return self::timestampToDate (strtotime('last Monday'), $separator);
     }
     
     /**
@@ -29,8 +29,8 @@ class CopixDateTime {
      * @param string $separator le séparateur utilisé dans $date pour séparer les éléments entre eux.
      * @return string date au format DD-MM-YYYY. Le dernier jour de la semaine
      */
-    public static function lastDayOfWeek ($separator = '-') {
-       return self::timestampToDate(strtotime('next Sunday'), $separator);
+    public static function lastDayOfWeek ($separator = '/') {
+       return self::timestampToDate (strtotime('next Sunday'), $separator);
     }
     
 	/**
@@ -157,27 +157,27 @@ class CopixDateTime {
 
 
 	/**
-    * Transforme une chaine hhmmss dans une chaine représentant une heure en fonction de la langue donnée (HH:MM:SS en français)
+    * Transforme une chaine hhiiss dans une chaine représentant une heure en fonction de la langue donnée (HH:MM:SS en français)
     * @param string $hhiiss l'heure
     * @return l'heure formattée, null si aucune heure donnée, false si l'heure est incorrecte
     */
-	public static function hhmmssToTime ($hhmmss, $separator=':'){
-	    if (($hhmmss !== false) && (($hhmmss === null) || (strlen ($hhmmss = trim ($hhmmss)) === 0))){
+	public static function hhiissToTime ($hhiiss, $separator=':'){
+	    if (($hhiiss !== false) && (($hhiiss === null) || (strlen ($hhiiss = trim ($hhiiss)) === 0))){
 	        return null;
 	    }
 
 	    $arTime=array();
-	    switch (strlen($hhmmss)) {
+	    switch (strlen($hhiiss)) {
 	        case 6:
-	            $arTime[2]=substr($hhmmss, 4, 2);
+	            $arTime[2]=substr($hhiiss, 4, 2);
 	            if ($arTime[2] > 59) return false;
 
 	        case 4:
-	            $arTime[1]=substr($hhmmss, 2, 2);
+	            $arTime[1]=substr($hhiiss, 2, 2);
 	            if ($arTime[1] > 59) return false;
 	            	
 	        case 2:
-	            $arTime[0]=substr($hhmmss, 0, 2);
+	            $arTime[0]=substr($hhiiss, 0, 2);
 	            if ($arTime[0] > 23) return false;
 	            break;
 
@@ -197,7 +197,7 @@ class CopixDateTime {
 	 * @param string $time l'heure à transformer 
 	 * @return string l'heure au format HHIISS. Null si non donné. False si l'heure est incorrecte
 	 */
-	public static function timeToHHMMSS ($time, $separator=':'){
+	public static function timeTohhiiss ($time, $separator=':'){
 	    if (($time !== false) && (($time === null) || (strlen ($time = trim ($time)) === 0))){
 	        return null;
 	    }
@@ -242,6 +242,9 @@ class CopixDateTime {
 	 * @return timestamp en fonction de la date
 	 */
 	public static function yyyymmddToTimestamp ($yyyymmdd){
+		if (($yyyymmdd !== false) && (($yyyymmdd === null) || (strlen ($yyyymmdd = trim ($yyyymmdd)) === 0))){
+			return null;
+		}		
 	    return mktime (0, 0, 0, substr($yyyymmdd, 4, 2), substr($yyyymmdd, 6, 2), substr($yyyymmdd, 0, 4));
 	}
 
@@ -250,10 +253,13 @@ class CopixDateTime {
 	 *
 	 * @param int $timestamp le timestamp
 	 * @param string $separator separator de date a passer au format
-	 * @return date au format spécifier
+	 * @return date au format spécifié
 	 */
-	public static function timestampToDate($timestamp,$separator='/') {
-	    return date(CopixI18N::getDateFormat ($separator),$timestamp);
+	public static function timestampToDate($timestamp, $separator='/') {
+		if ($timestamp === null){
+			return null;
+		}
+	    return date (CopixI18N::getDateFormat ($separator), $timestamp);
 	}
 
 	/**
@@ -261,8 +267,11 @@ class CopixDateTime {
 	 * @param int $timestamp le timestamp
 	 * @return string Date au format yyyymmdd
 	 */
-	public static function timestampToyyyymmdd($timestamp) {
-	    return strftime('%Y%m%d',$timestamp);
+	public static function timestampToyyyymmdd ($timestamp) {
+		if ($timestamp === null){
+			return null;
+		}
+	    return strftime ('%Y%m%d', $timestamp);
 	}
 	
 	/**
@@ -271,8 +280,8 @@ class CopixDateTime {
 	 * @param string $separator Separateur
 	 * @return int Un timestamp
 	 */
-	public static function dateTotimestamp($date,$separator='/') {
-	    $yyyymmdd = self::dateToYYYYMMDD ($date,$separator);
+	public static function dateToTimestamp($date, $separator='/') {
+	    $yyyymmdd = self::dateToYYYYMMDD ($date, $separator);
 	    return self::yyyymmddToTimestamp ($yyyymmdd);
 	}
 
@@ -294,7 +303,7 @@ class CopixDateTime {
 		}
 		
 		if ($date = self::yyyymmddToDate (substr ($pParam, 0, 8), $separator)){
-			if ($time = self::hhmmssToTime (substr ($pParam, 8, 6))){
+			if ($time = self::hhiissToTime (substr ($pParam, 8, 6))){
 				return $date.' '.$time;
 			}
 		}
@@ -318,7 +327,7 @@ class CopixDateTime {
 		}
 		
 		if ($date = self::yyyymmddToText (substr ($pParam, 0, 8), $separator)){
-			if ($time = self::hhmmssToTime (substr ($pParam, 8, 6))){
+			if ($time = self::hhiissToTime (substr ($pParam, 8, 6))){
 				return $date.' '.$time;
 			}
 		}
@@ -331,7 +340,10 @@ class CopixDateTime {
 	 * @param string $timestamp TimeStamp
 	 * @return yyyymmddhhiiss
 	 */
-	public static function timeStampToyyyymmddhhiiss($timestamp) {
+	public static function timeStampToyyyymmddhhiiss ($timestamp) {
+		if ($timestamp === null){
+			return null;
+		}
         return strftime ('%Y%m%d%H%M%S', $timestamp);
     }
 	
@@ -341,14 +353,14 @@ class CopixDateTime {
      * @param string $pParam yyyymmddhhiiss
      * @return timestamp
      */
-    public static function yyyymmddhhiissToTimeStamp($pParam) {
+    public static function yyyymmddhhiissToTimeStamp ($pParam) {
 	    //On vérifie que la date donnée est remplie
 		if (($pParam !== false) && (($pParam === null) || (strlen ($pParam = trim ($pParam)) === 0))){
 			return null;
 		}
 
 		//On vérifie que la date donnée est correcte
-				if ((substr ($pParam, 8, 2)<0 || substr ($pParam, 8, 2)>24)) {
+		if ((substr ($pParam, 8, 2)<0 || substr ($pParam, 8, 2)>24)) {
 		    return false; 
 		}
 
@@ -368,14 +380,46 @@ class CopixDateTime {
 	}
 	
 	/**
+	 * Converti une heure au format HHIISS en timestamp
+	 *
+	 * @param string $pParam	l'heure à convertir
+	 * @return	string / false en cas d'erreur
+	 */
+	function hhiissToTimeStamp ($pParam){
+	    //On vérifie que la date donnée est remplie
+		if (($pParam !== false) && (($pParam === null) || (strlen ($pParam = trim ($pParam)) === 0))){
+			return null;
+		}
+		//On vérifie que la date donnée est correcte
+		if ((substr ($pParam, 0, 2)<0 || substr ($pParam, 8, 2)>24)) {
+		    return false; 
+		}
+
+	    if ((substr ($pParam, 2, 2)<0 || substr ($pParam, 10, 2)>59)) {
+		    return false; 
+		}
+		
+	    if ((substr ($pParam, 4, 2)<0 || substr ($pParam, 12, 2)>59)) {
+		    return false; 
+		}
+
+		//on retourne au jour 0	
+	    return mktime (substr($pParam, 0, 2), substr($pParam, 2, 2), substr($pParam, 4, 2), 
+			    0, 0, 0);
+	}
+	
+	/**
 	 * Convertit DateTime en yyyymmddhhiiss
 	 * 
 	 * @param string $DateTime le DateTime
 	 * @param string $separator Separateur (par défaut /)
 	 * @return yyyymmddhhiiss
 	 */
-	public static function DateTimeToyyyymmddhhiiss($DateTime,$separator='/') {
-	    $arMask = CopixI18N::getDateTimeMask($separator);
+	public static function DateTimeToyyyymmddhhiiss ($DateTime, $separator='/') {
+		if ($DateTime === null){
+			return null;
+		}
+	    $arMask = CopixI18N::getDateTimeMask ($separator);
 	    $tmpArray = sscanf($DateTime,$arMask->mask);
 	    $arDate=array();
 	    foreach($tmpArray as $key=>$donnee) {
@@ -431,6 +475,85 @@ class CopixDateTime {
 		    
 		//On retourne la date formattée
 		return date (CopixI18N::getDateTimeFormat ($pSeparator), $pIsoDateTime);
+	}
+	
+	/**
+	 * Transforme une date au format YYYYMMDD au format donné en paramètre
+	 *
+	 * @param string $pYYYYMMDD	la date à convertir
+	 * @param string $format	le format désiré ()
+	 * @return string
+	 */
+	public static function yyyymmddToFormat ($pYYYYMMDD, $pFormat){
+		if ($pYYYYMMDD === null){
+			return null;
+		}
+
+		if (($timeStamp = self::yyyymmddToTimeStamp ($pYYYYMMDD)) !== false){
+        	return date ($pFormat, $timeStamp);
+		}
+
+		return false;
+	}
+	
+	/**
+	 * Converti une heure au format demandé.
+	 *
+	 * @param string $pYYYYMMDDHHIISS la date/heure à convertir
+	 * @param unknown_type $pFormat	le format désiré
+	 * @return string
+	 */
+	public static function yyyymmddhhiissToFormat ($pYYYYMMDDHHIISS, $pFormat){
+		if ($pYYYYMMDDHHIISS === null){
+			return null;
+		}
+
+		if (($timeStamp = self::yyyymmddhhiissToTimeStamp ($pYYYYMMDDHHIISS)) !== false){
+			return date ($pFormat, $timeStamp);
+		}
+		return false;
+	}
+	
+	/**
+	 * Converti une heure au format demandé.
+	 *
+	 * @param string $pHHIISS l'heure à convertir
+	 * @param unknown_type $pFormat	le format désiré
+	 * @return string
+	 */
+	public static function hhiissToFormat ($pHHIISS, $pFormat){
+		if ($pHHIISS === null){
+			return null;
+		}
+
+		if (($timeStamp = self::hhiissToTimeStamp ($pHHIISS)) !== false){
+			return date ($pFormat, $timeStamp);	
+		}
+		return false;
+	}
+	
+	/**
+	 * Conversion d'une heure en heure affichage
+	 *
+	 * @param string $hhiiss	heure à convertir
+	 * @param string $separator	caractère de séparation à utiliser
+	 * @return string
+	 * @deprecated
+	 */
+	public static function hhmmsstoTime ($pHHIISS, $pSeparator=':'){
+		return self::hhiissToTime ($pHHIISS, $pSeparator);
+	}
+
+	/**
+	 * Conversion d'une heure en heure affichage
+	 *
+	 * @param string $hhiiss	heure à convertir
+	 * @param string $separator	caractère de séparation à utiliser
+	 * @return string
+	 * @deprecated
+	 */
+	public static function timeToHHMMSS ($pHHIISS, $pSeparator=':'){
+		return self::timeToHHIISS ($pHHIISS, $pSeparator);
 	}
 }
 ?>

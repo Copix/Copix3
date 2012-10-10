@@ -7,5 +7,3 @@ CREATE TABLE `copixheadings` (
   `url_head` varchar(255) NULL,
   PRIMARY KEY  (`id_head`)
 )CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-INSERT INTO `copixcapability` (`name_ccpb`, `description_ccpb`, `name_ccpt`, `values_ccpb`) VALUES ('copixheadings', 'Rubriques', 'modules|copixheadings', '0;10;30');
-INSERT INTO `copixcapabilitypath` (`name_ccpt`, `description_ccpt`) VALUES ('modules|copixheadings', 'Rubrique principale');

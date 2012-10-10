@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <moduledefinition>
    <general>
-    <default name="themechooser" descriptioni18n="default.description" icon="user.gif" />
+    <default name="themechooser" descriptioni18n="default.description" icon="themechooser.png" />
    </general>
 </moduledefinition>

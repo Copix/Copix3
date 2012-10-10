@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="moduleeditor" descriptioni18n="global.module.description" icon="copix.gif" longdescriptioni18n="global.module.longdescription"/>
+	</general>
+	<admin>
+  		<link url="createmodule|" captioni18n="global.link.create" credentials="basic:admin"></link>
+  		<!--<link url="infos|" captioni18n="global.link.infos" credentials="basic:admin"></link>
+  		<link url="links|" captioni18n="global.link.links" credentials="basic:admin"></link>
+  		<link url="parameters|" captioni18n="global.link.parameters" credentials="basic:admin"></link>
+  		<link url="events|" captioni18n="global.link.events" credentials="basic:admin"></link>
+  		<link url="dependencies|" captioni18n="global.link.dependencies" credentials="basic:admin"></link>-->
+ 	</admin>
+</moduledefinition>

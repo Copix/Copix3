@@ -9,7 +9,7 @@
         echo '<li>';
         echo $module->name;
         if (isset($module->delete) && $module->delete) {
-            echo '<a href="'._url('auth|module|deleteModule',array('moduleToDelete'=>$mc->name,"id_group"=>$ppo->id_group,'handler_group'=>$ppo->handler_group,'url_return'=>$ppo->url_return)).'"><img src="'._resource('img/tools/delete.png').'" /></a>';
+            echo '<a href="'._url('auth|module|deleteModule',array('moduleToDelete'=>$module->name,"id_group"=>$ppo->id_group,'handler_group'=>$ppo->handler_group,'url_return'=>$ppo->url_return)).'"><img src="'._resource('img/tools/delete.png').'" /></a>';
         }
         if (count($module->data) > 0) {
             echo '<ul>';

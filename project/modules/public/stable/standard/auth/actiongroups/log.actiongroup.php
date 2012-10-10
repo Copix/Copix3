@@ -2,20 +2,20 @@
 /**
  * @package standard
  * @subpackage auth
- * @author		Gérald Croës
+ * @author		GÃ©rald CroÃ«s
  * @copyright	CopixTeam
  * @link		http://copix.org
  * @license		http://www.gnu.org/licenses/lgpl.html GNU General Lesser  Public Licence, see LICENCE file
  */
 
 /**
- * Opérations de connexions / déconnexion
+ * OpÃ©rations de connexions / dÃ©connexion
  * @package standard
  * @subpackage auth
  */
 class ActionGroupLog extends CopixActionGroup {
 	/**
-	 * Action par défaut.... logique
+	 * Action par dÃ©faut.... logique
 	 */
 	public function processDefault (){
 		return $this->processForm ();		
@@ -28,6 +28,17 @@ class ActionGroupLog extends CopixActionGroup {
 		CopixRequest::assert ('login', 'password');
 		if (CopixAuth::getCurrentUser ()->login (array ('login'=>CopixRequest::get ('login'),
 													'password'=>CopixRequest::get ('password')))){
+		    
+		
+		    //insert token for remember_me plugin
+		    $response = CopixAuth::getCurrentUser()->getResponses();
+		    foreach ($response as $key=>$r){
+		        if($r instanceof CopixUserLogResponse){
+		            if($r->getResult ())
+		                $handlername = $key;
+		        }
+		    }
+
 			CopixEventNotifier::notify ('login', array ('login'=>CopixRequest::get ('login')));
 			return _arRedirect (CopixRequest::get ('auth_url_return', _url ('log|')));
 		}
@@ -55,7 +66,6 @@ class ActionGroupLog extends CopixActionGroup {
 		}
 		$ppo->auth_url_return = CopixRequest::get ('auth_url_return', _url ('#'));
 		$ppo->failed = array ();
-		
 		if (CopixRequest::getInt ('noCredential', 0)){
 			$ppo->failed[] = _i18n ('auth.error.noCredentials');
 		}

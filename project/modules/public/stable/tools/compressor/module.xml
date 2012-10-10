@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <moduledefinition>
 	<general>
-		<default name="compressor" descriptioni18n="compressor.description" icon="compress.gif"
+		<default name="compressor" descriptioni18n="compressor.description" icon="compressor.png"
 			longdescriptioni18n="compressor.longDescription" />
 	</general>
 </moduledefinition>

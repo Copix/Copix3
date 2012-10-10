@@ -208,7 +208,7 @@ class CopixDBOCIResultSetIterator implements Iterator, ArrayAccess {
     public function rewind (){
     	if ($this->_currentOffset != 0){
 	    	if (!@ociexecute ($this->_statement)){
-	           throw new CopixException ("Impossible de récupèrer l'ensemble de résultat de la variable $name");;
+	           throw new CopixDBException ("Impossible de récupèrer l'ensemble de résultat de la variable $name");;
 	    	}
 	    	$this->_currentOffset = 0;
     	}
@@ -218,7 +218,7 @@ class CopixDBOCIResultSetIterator implements Iterator, ArrayAccess {
 	 * Impossibilité de définir des valeurs dans un resultset
 	 */
 	 function offsetSet ($key, $value) {
-	 	throw new CopixException ('Cannot set directly in a result set');
+	 	throw new CopixDBException ('Cannot set directly in a result set');
 	 }
 	
 	 /**
@@ -228,13 +228,13 @@ class CopixDBOCIResultSetIterator implements Iterator, ArrayAccess {
       */
 	 function offsetGet ($pKey) {
 	 	if (! $this->offsetExists ($pKey)){
-	 		throw new CopixException ('Offset incorrect');	 		
+	 		throw new CopixDBException ('Offset incorrect');	 		
 	 	}
 	 	
 	 	if ($this->_loadKey ($pKey)){
 	 		return $this->_loadedResults[$pKey]; 
 	 	}else{
-	 		throw new CopixException ('Buffer insuffisant pour récupérer l\'ensemble de résultat');
+	 		throw new CopixDBException ('Buffer insuffisant pour récupérer l\'ensemble de résultat');
 	 	}
 	 }
 	
@@ -245,7 +245,7 @@ class CopixDBOCIResultSetIterator implements Iterator, ArrayAccess {
 	  * @return void
  	  */
 	 function offsetUnset ($key) {
-	 	throw new CopixException ('Impossible de supprimer un élément de l ensemble de résultat');
+	 	throw new CopixDBException ('Impossible de supprimer un élément de l ensemble de résultat');
 	 }
 	
 	 /**

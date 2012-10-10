@@ -27,7 +27,7 @@ class CopixPHPGenerator {
     * Code PHP permettant de déclarer une variable avec une valeur
     * @param string $pVariableName le nom de la variable
     * @param mixed $pValue la valeur de la variable
-    * return string le code PHP correspondant
+    * @return string le code PHP correspondant
     */
    public function getVariableDeclaration ($pVariableName, $pValue){
       return "$pVariableName = ".var_export ($pValue, true).';';

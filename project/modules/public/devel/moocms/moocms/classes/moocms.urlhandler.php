@@ -1,6 +1,6 @@
 <?php
 
-class moocmsSignificantUrl extends CopixUrlHandler {
+class UrlHandlermoocms extends CopixUrlHandler {
 	
 	public function get($dest, $parameters, $mode){
 		return false;
@@ -10,12 +10,12 @@ class moocmsSignificantUrl extends CopixUrlHandler {
 		if($mode=='none'){
 			return false;
 		}
-		if($path[0]!="moocms"){
+		if($path[0] !="moocms"){
 			return false;
 		}
 		$skip = array("admin","default");
 		$toReturn = array();
-		if(!in_array($path[1],$skip) && count($path)==2){
+		if(count($path)==2 && !in_array($path[1], $skip)){
 			$toReturn['module'] = "moocms";
 			$toReturn['group'] = "default";
 			$toReturn['action'] = "showpage";

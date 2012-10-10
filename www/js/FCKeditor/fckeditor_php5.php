@@ -119,8 +119,18 @@ class FCKeditor
 			$iVersion = (int)substr($sAgent, strpos($sAgent, 'Gecko/') + 6, 8) ;
 			return ($iVersion >= 20030210) ;
 		}
+		else if ( strpos($sAgent, 'Opera/') !== false )
+		{
+			$fVersion = (float)substr($sAgent, strpos($sAgent, 'Opera/') + 6, 4) ;
+			return ($fVersion >= 9.5) ;
+		}
+		else if ( preg_match( "|AppleWebKit/(\d+)|i", $sAgent, $matches ) )
+		{
+			$iVersion = $matches[1] ;
+			return ( $matches[1] >= 522 ) ;
+		}
 		else
-			return false ;
+			return false ;			
 	}
 
 	function GetConfigFieldString()

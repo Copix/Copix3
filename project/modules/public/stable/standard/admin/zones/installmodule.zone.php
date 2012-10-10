@@ -8,7 +8,9 @@ class ZoneInstallModule extends CopixZone {
         if (($message = CopixModule::installModule($moduleName))===true) {
             $toReturn = _i18n('install.module.install').' '.$moduleName.' <img src="'._resource('img/tools/valid.png').'" />';
             if (count($arModuleToInstall)>0) {
-                $toReturn .= _tag('ajax_divzone',array ('id'=>uniqid(),'zone'=>'admin|installmodule','auto'=>true));
+                $toReturn .= _tag('copixzone',array ('id'=>uniqid(),'process'=>'admin|installmodule','auto'=>true, 'ajax'=>true));
+            } else {
+            	$toReturn .= "<script>$('back').setStyle('display','');</script>";
             }
             array_push($arInstalledModule,$moduleName);
         } else {
@@ -19,7 +21,7 @@ class ZoneInstallModule extends CopixZone {
                 CopixSession::set('arModuleToDelete',$arInstalledModule,'copix');
                 CopixSession::set('arInstalledModule',null,'copix');
                 CopixSession::set('arModuleToInstall',null,'copix');
-                $toReturn .= _tag('ajax_divzone',array ('id'=>uniqid(),'zone'=>'admin|deletemodule','auto'=>true));
+                $toReturn .= _tag('copixzone',array ('id'=>uniqid(),'process'=>'admin|deletemodule','auto'=>true,'ajax'=>true));
             }
         }
         CopixSession::set('arModuleToInstall',$arModuleToInstall,'copix');

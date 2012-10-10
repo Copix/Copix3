@@ -9,19 +9,30 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>[Copix] Tests 2/2</title>
-<link rel="stylesheet" style="color: black"
-	href="<?php echo CopixUrl::getResource ("copix.css.php"); ?>?copixurl=<?php echo CopixUrl::get(); ?>"
+<script type="text/javascript" src="<?php echo _resource('js/mootools/mootools.js'); ?>" ></script>
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/elementmover.js'); ?>" ></script>
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/transcorners.js'); ?>" ></script>
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/toolbar.js'); ?>" ></script>
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/shadows.js'); ?>" ></script>
+
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/fixhrefbutton.js'); ?>" ></script>
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/moopanes.js'); ?>" ></script>
+
+<link rel="stylesheet"
+	href="<?php echo _resource ("styles/copix.css.php"); ?>?copixurl=<?php echo _url (); ?>"
 	type="text/css" />
-<link rel="stylesheet" style="color: black"
-	href="<?php echo CopixUrl::getResource ("js/niftycorners/niftyCorners.css"); ?>"
+<link rel="stylesheet"
+	href="<?php echo _resource ("styles/theme.css.php"); ?>?copixurl=<?php echo _url (); ?>"
+	type="text/css" />
+<link rel="stylesheet"
+	href="<?php echo _resource ("js/mootools/css/moopanes.css"); ?>"
 	type="text/css" />
 <script type="text/javascript"
-	src="<?php echo CopixUrl::getResource ("js/niftycorners/niftycube.js"); ?>"></script>
-<script type="text/javascript"
-	src="<?php echo CopixUrl::getResource ("site.js"); ?>"></script>
+	src="<?php echo _resource ("js/site.js.php"); ?>"></script>
 <!--[if IE]>
-  <link rel="stylesheet" style="color: black" href="<?php echo CopixUrl::getResource ("ie.css"); ?>" type="text/css"/>
+  <link rel="stylesheet" href="<?php echo _resource ("styles/ie.css"); ?>" type="text/css"/>
 <![endif]-->
+
 </head>
 <body>
 

@@ -31,6 +31,7 @@ class ActionGroupThemes extends CopixActionGroup {
 		$arThemes = CopixTpl::getThemesList ();
 		
 		$arThemesInfos = array();
+		$ppo->arThemes = array ();
 		foreach ($arThemes as $theme) {
 			$ppo->arThemes[] = CopixTpl::getThemeInformations ($theme);
 		}

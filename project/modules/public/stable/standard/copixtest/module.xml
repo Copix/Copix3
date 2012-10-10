@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <moduledefinition>
  <general>
-  <default name="copixtest" description="Tests unitaires" longdescription="Module de test des classes Copix" icon="infos.gif" />
+  <default name="copixtest" description="Tests unitaires" longdescription="Module de test des classes Copix" icon="copixtest.gif" />
  </general>
  <admin>
   <link url="copixtest||launch" captioni18n="copixtest.messages.unittest" credentials="basic:admin" />
@@ -10,4 +10,7 @@
   <parameter name="test" caption="Paramètre de test" default="0" />
   <parameter name="testSpecial" caption="Paramètre de test" default="mon\chemin\et\sous\chemin" />
  </parameters>
+<dependencies>
+	<dependency name="PHPUnit_Framework_TestCase|PHPUnit/Framework.php" kind="class" />
+</dependencies>
 </moduledefinition>

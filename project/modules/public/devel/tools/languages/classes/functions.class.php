@@ -192,7 +192,7 @@ class Functions {
 	public function getFileInfos ($pFile, $pLangToCountry = true) {
 		$fileBase = substr($pFile, 0, (strlen($pFile) - strlen('.properties')));
 		$array = explode('_', $fileBase);
-		
+		$toReturn = new stdClass ();
 		$toReturn->name = $pFile;
 		
 		// fichier de la forme "monNom.properties" (langue en)

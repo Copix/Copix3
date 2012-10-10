@@ -8,6 +8,11 @@
  * @copyright Copix Team (c) 2007-2008
  */
 
+/**
+ * Actions par défaut pour les trackback
+ * @package webtools
+ * @subpackage trackback
+ */
 class ActionGroupDefault extends CopixActionGroup{
 	
 	public function processSend (){

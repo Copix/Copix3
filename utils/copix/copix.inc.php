@@ -113,9 +113,15 @@ class Copix {
 	 		'copixi18n'=>'CopixI18N',
 			'copixsession'=>'CopixSession', 
 			'copixsessionobject'=>'CopixSession',
+			'copixcookie'=>'CopixCookie',
+			'copixcookieobject'=>'CopixCookie',
 			'copixclassproxy'=>'CopixClassProxy', 
 			'copixcontextproxy'=>'CopixContextProxy',
-	 		'copixxmlserializer'=>'CopixXMLSerializer');
+	 		'copixxmlserializer'=>'CopixXMLSerializer',
+	 		'copixsoapclient'=>'CopixSoapClient',
+	 		'copixserializableobject'=>'CopixSerializableObject',
+	 		'copixdebug' => 'CopixDebug'
+	 		);
 
 		if (isset ($utilsClasses[$pClassName])){
  			self::$_libraries[$pClassName] = true;
@@ -179,11 +185,11 @@ class Copix {
 //Définition de constantes.
 define ('COPIX_VERSION_MAJOR', 3);
 define ('COPIX_VERSION_MINOR', 0);
-define ('COPIX_VERSION_FIX', 1);
+define ('COPIX_VERSION_FIX', 2);
 
 define ('COPIX_VERSION_RC', null);
 define ('COPIX_VERSION_BETA', null);
-define ('COPIX_VERSION_CVS', false);
+define ('COPIX_VERSION_DEV', false);
 
 
 $copixVersion = COPIX_VERSION_MAJOR . '.' . COPIX_VERSION_MINOR . '.' . COPIX_VERSION_FIX;
@@ -193,10 +199,10 @@ if (!is_null (COPIX_VERSION_RC)) {
 if (!is_null (COPIX_VERSION_BETA)) {
 	$copixVersion .= ' BETA ' . COPIX_VERSION_BETA;
 }
-if (!is_null (COPIX_VERSION_CVS)) {
-	$copixVersion .= ' CVS ';
+if (!is_null (COPIX_VERSION_DEV)) {
+	$copixVersion .= ' DEV ';
 }
-define ('COPIX_VERSION', $copixVersion);
+define ('COPIX_VERSION', trim ($copixVersion));
 
 define ('COPIX_PATH', dirname (__FILE__).'/');
 define ('COPIX_CORE_PATH', COPIX_PATH.'core/');

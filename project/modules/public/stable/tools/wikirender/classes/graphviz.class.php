@@ -1,7 +1,7 @@
 <?php
 /**
 * @package		tools 
- * @subpackage	wikirender
+* @subpackage	wikirender
 * @author	Patrice Ferlet
 * @copyright 2001-2006 CopixTeam
 * @link      http://copix.org
@@ -19,24 +19,35 @@ class GraphViz {
 	
 	/**
 	 * Constructeur
+	 * @param	string	$pCode	le code wiki du graphe
+	 * @param	string 	$pMode (dot ou neato) le mode de rendu désiré	
 	 */
-	public function __construct ($code, $mode="dot"){
-		$this->mode="dot";
-		if($mode=="neato") $this->mode=$mode;
+	public function __construct ($pCode, $pMode="dot"){
+		switch ($mode){
+			case "neato":
+				$this->mode = "neato";
+				break;
+			default:
+				$this->mode = "dot"; 
+		}
 		$this->code = $code;	
 	}
 	
-	
+	/**
+	 * Rendu HTML de l'élément
+	 *
+	 * @return unknown
+	 */
 	function render (){
 		$path = COPIX_CACHE_PATH."/graphviz/";
-		@mkdir($path);					
-		
-		$md5 = md5(stripslashes($this->code));
+		CopixFile::createDir ($path);
+
+		$md5 = md5 (stripslashes ($this->code));
 		$this->hash=$md5;
-		
+
 		$file = $md5.".png";
-		if(!file_exists($path.$file)){
-			$this->_render($file);
+		if (!file_exists($path.$file)){
+			$this->_render ($file);
 		}
 		return $file;
 	}
@@ -66,14 +77,12 @@ class GraphViz {
 		*/		
 		sleep(3);
         @unlink($dot);
-        
 	}
 	
 	function getMap(){
 		$current = getcwd ();
 		chdir (COPIX_CACHE_PATH."/graphviz/");		
 		$this->map = file($this->hash.".map");
-		
 		
 		$toReturn ="<MAP NAME=\"".$this->hash."\">\n";
 		foreach($this->map as $mapelem){
@@ -112,5 +121,4 @@ $this->code
 EOF;
 	}
 }
-
 ?>

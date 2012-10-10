@@ -56,7 +56,7 @@ class ActionGroupParameters extends CopixActionGroup {
 			// type int
 			if ($config['Type'] == 'int') {
 				// chiffre invalide
-				if ((String)intval ($value) <> (String)$value) {
+				if ((string)intval ($value) <> (string)$value) {
 					$error = 'typeInt';
 				// chiffre trop petit
 				} else if (!is_null ($config['MinValue']) && $config['MinValue'] > intval ($value)) {

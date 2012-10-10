@@ -84,10 +84,16 @@ class ActionGroupMessages extends CopixActionGroup {
 		    default:
         		$ppo->message = $e->getMessage ();
 		}
-		$ppo->type = $e->getCode ();
+		$ppo->type = get_class ($e);
 		$ppo->file = $e->getFile ();
 		$ppo->line = $e->getLine ();
 		$ppo->trace = $e->getTrace ();
+		switch (CopixConfig::getMode ()) {
+			case CopixConfig::DEVEL : $ppo->mode = 'DEVEL'; break;
+			case CopixConfig::PRODUCTION : $ppo->mode = 'FORCE_INITIALISATION'; break;
+			case CopixConfig::FORCE_INITIALISATION : $ppo->mode = 'FORCE_INITIALISATION'; break;
+			default : $ppo->mode = 'UNKNOW'; break;
+		}
 
 		return _arPpo ($ppo, 'default|exception.tpl');
 	}

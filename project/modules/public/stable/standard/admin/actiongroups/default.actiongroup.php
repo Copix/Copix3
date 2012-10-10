@@ -66,10 +66,10 @@ class ActionGroupDefault extends CopixActionGroup {
 			
 			// si on a au moins un lien
 			if (count ($moduleInformations->admin_links) > 0) {
-				$groupid = (!is_null ($moduleInformations->groupid)) ? $moduleInformations->groupid : uniqid ();
+				$groupid = (!is_null ($moduleInformations->admin_links_group->id)) ? $moduleInformations->admin_links_group->id : uniqid ();
 				
-				$ppo->links[$groupid]['groupcaption'] = $moduleInformations->groupcaption;
-				$ppo->links[$groupid]['icon'] = (!is_null ($moduleInformations->groupicon)) ? $moduleInformations->groupicon : $moduleInformations->icon;
+				$ppo->links[$groupid]['groupcaption'] = $moduleInformations->admin_links_group->caption;
+				$ppo->links[$groupid]['icon'] = (!is_null ($moduleInformations->admin_links_group->icon)) ? $moduleInformations->admin_links_group->icon : $moduleInformations->icon;
 
 				foreach ($moduleInformations->admin_links as $linkInformations){
 					if (($linkInformations['credentials'] == null) || CopixAuth::getCurrentUser ()->testCredential ($linkInformations['credentials'])){

@@ -2,15 +2,14 @@
 <moduledefinition>
 	<general>
 		<default name="wiki" descriptioni18n="wiki.moduledescription"
-			longdescriptioni18n="wiki.longdescription" />
+			longdescriptioni18n="wiki.longdescription" 
+			icon="wiki.png" />
 	</general>
 	<dependencies>
 		<dependency name="wikirender" kind="module" />
 	</dependencies>
 	<parameters>
 		<parameter name="imagepath"	captioni18n="wiki.parameter.imagepath" default="wiki" />
-		<parameter name="writeLevel" captioni18n="wiki.parameter.writeLevel" default="admin" type="select" listValues="public=>public;registered=>registered;admin=>admin" />
-		<parameter name="readLevel"  captioni18n="wiki.parameter.readLevel" default="public" type="select" listValues="public=>public;registered=>registered;admin=>admin" />
 		<parameter name="writespecialtags"  captioni18n="wiki.parameter.specialwrite" default="admin" type="select" listValues="public=>public;registered=>registered;admin=>admin" />
 		<parameter name="arianlimit"  captioni18n="wiki.parameter.arian" default="8" type="int" minValue="0" />
 		<parameter name="specialtags"  captioni18n="wiki.parameter.specialtags" default="html" />
@@ -23,4 +22,8 @@
 	  </listener>
 	 </listeners>
 	</events>
+	<credentials>
+	    <credential name="read" />
+	    <credential name="write" />
+	</credentials>	
 </moduledefinition>

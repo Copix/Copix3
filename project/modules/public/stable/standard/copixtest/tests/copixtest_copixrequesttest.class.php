@@ -29,7 +29,7 @@ class CopixTest_CopixRequestTest extends CopixTest {
 	
 	public function setUp (){
 		$array = CopixRequest::asArray ();
-		$this->_tableau = array ('element'=>'valeur', 'element2'=>'valeur-\\//& "3', 'element3'=>'valeur 4');
+		$this->_tableau = array ('element'=>'valeur', 'element2'=>'valeur-\\//& "3', 'element3'=>'valeur 4', 'elementvide'=>'');
 		CopixRequest::setRequest($this->_tableau);
 	}
 	
@@ -89,6 +89,13 @@ class CopixTest_CopixRequestTest extends CopixTest {
 
 	public function testAlpha () {
 		$this->assertEquals ('valeur ', CopixRequest::getAlpha ('element2'));
+	}
+	
+	public function testVide (){
+		$this->assertTrue (_request ('elementvide') === null);
+		$this->assertTrue (_request ('elementvide', 'default') === 'default');
+		$this->assertTrue (_request ('elementvide', 'default', false) === '');
+		
 	}
 
 }

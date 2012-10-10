@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="search" type="application/opensearchdescription+xml" title="Documentation Copix" href="<?php echo _url(); ?>goodies/copix.xml">
+<link rel="search" type="application/opensearchdescription+xml" title="Documentation Copix" href="<?php echo _url(); ?>goodies/copix.xml" />
 <title><?php echo $TITLE_BAR; ?></title>
 <?php
 _tag ('mootools', array ('plugin'=>'elementmover;transcorners;toolbar;shadows;fixhrefbutton;moopanes')); 

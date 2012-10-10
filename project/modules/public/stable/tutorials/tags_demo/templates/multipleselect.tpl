@@ -53,8 +53,12 @@ $arObjects[] = $obj;
 </pre>
 
 
-{ldelim}multipleselect name=multipleselect id=autrechose values=$ppo->arObjects objectMap="id;caption"{rdelim}
-<p>{multipleselect name=multipleselect8 id=autrechose values=$ppo->arObjects objectMap="id;caption"}</p>
+{ldelim}multipleselect name=multipleselect8 values=$ppo->arObjects objectMap="id;caption"{rdelim}
+<p>{multipleselect name=multipleselect8 values=$ppo->arObjects objectMap="id;caption"}</p>
+
+<h2>Iterateur d'objets avec spécification de clef / valeurs</h2>
+{ldelim}multipleselect name=multipleselect8b values=$ppo->iteratorObjects objectMap="id;caption"{rdelim}
+<p>{multipleselect name=multipleselect8b values=$ppo->iteratorObjects objectMap="id;caption"}</p>
 
 <h2>Paramètre extra pour rajouter des informations à la balise</h2>
 {ldelim}multipleselect extra='style="background-color: #ccc;"' name=multipleselect values="1;2;3;4;5"|toarray{rdelim}

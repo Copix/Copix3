@@ -51,6 +51,10 @@ $arObjects[] = $obj;
 {ldelim}select name=select id=autrechose values=$ppo->arObjects objectMap="id;caption"{rdelim}
 <p>{select name=select id=autrechose values=$ppo->arObjects objectMap="id;caption"}</p>
 
+<h2>Iterateur d'objets avec spécification de clef / valeurs</h2>
+{ldelim}select name=select id=autrechose values=$ppo->iteratorObjects objectMap="id;caption"{rdelim}
+<p>{select name=select id=autrechose values=$ppo->iteratorObjects objectMap="id;caption"}</p>
+
 <h2>Paramètre extra pour rajouter des informations à la balise</h2>
 {ldelim}select extra='style="background-color: #ccc;"' name=select values="1;2;3;4;5"|toarray{rdelim}
 <p>{select extra='style="background-color: #ccc;"' name=select values="1;2;3;4;5"|toarray}</p>

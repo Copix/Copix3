@@ -45,6 +45,7 @@ InsertLinkLbl		: "Hiperłącze",
 InsertLink			: "Wstaw/edytuj hiperłącze",
 RemoveLink			: "Usuń hiperłącze",
 Anchor				: "Wstaw/edytuj kotwicę",
+AnchorDelete		: "Remove Anchor",	//MISSING
 InsertImageLbl		: "Obrazek",
 InsertImage			: "Wstaw/edytuj obrazek",
 InsertFlashLbl		: "Flash",
@@ -70,6 +71,7 @@ RightJustify		: "Wyrównaj do prawej",
 BlockJustify		: "Wyrównaj do lewej i prawej",
 DecreaseIndent		: "Zmniejsz wcięcie",
 IncreaseIndent		: "Zwiększ wcięcie",
+Blockquote			: "Blockquote",	//MISSING
 Undo				: "Cofnij",
 Redo				: "Ponów",
 NumberedListLbl		: "Lista numerowana",
@@ -103,20 +105,27 @@ SelectionField	: "Lista wyboru",
 ImageButton		: "Przycisk obrazek",
 
 FitWindow		: "Maksymalizuj rozmiar edytora",
+ShowBlocks		: "Show Blocks",	//MISSING
 
 // Context Menu
 EditLink			: "Edytuj hiperłącze",
 CellCM				: "Komórka",
 RowCM				: "Wiersz",
 ColumnCM			: "Kolumna",
-InsertRow			: "Wstaw wiersz",
+InsertRowAfter		: "Insert Row After",	//MISSING
+InsertRowBefore		: "Insert Row Before",	//MISSING
 DeleteRows			: "Usuń wiersze",
-InsertColumn		: "Wstaw kolumnę",
+InsertColumnAfter	: "Insert Column After",	//MISSING
+InsertColumnBefore	: "Insert Column Before",	//MISSING
 DeleteColumns		: "Usuń kolumny",
-InsertCell			: "Wstaw komórkę",
+InsertCellAfter		: "Insert Cell After",	//MISSING
+InsertCellBefore	: "Insert Cell Before",	//MISSING
 DeleteCells			: "Usuń komórki",
 MergeCells			: "Połącz komórki",
-SplitCell			: "Podziel komórkę",
+MergeRight			: "Merge Right",	//MISSING
+MergeDown			: "Merge Down",	//MISSING
+HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
+VerticalSplitCell	: "Split Cell Vertically",	//MISSING
 TableDelete			: "Usuń tabelę",
 CellProperties		: "Właściwości komórki",
 TableProperties		: "Właściwości tabeli",
@@ -134,7 +143,7 @@ SelectionFieldProp	: "Właściwości listy wyboru",
 TextareaProp		: "Właściwości obszaru tekstowego",
 FormProp			: "Właściwości formularza",
 
-FontFormats			: "Normalny;Tekst sformatowany;Adres;Nagłówek 1;Nagłówek 2;Nagłówek 3;Nagłówek 4;Nagłówek 5;Nagłówek 6",		//REVIEW : Check _getfontformat.html
+FontFormats			: "Normalny;Tekst sformatowany;Adres;Nagłówek 1;Nagłówek 2;Nagłówek 3;Nagłówek 4;Nagłówek 5;Nagłówek 6",
 
 // Alerts and Messages
 ProcessingXHTML		: "Przetwarzanie XHTML. Proszę czekać...",
@@ -229,7 +238,7 @@ DlgLnkURL			: "Adres URL",
 DlgLnkAnchorSel		: "Wybierz etykietę",
 DlgLnkAnchorByName	: "Wg etykiety",
 DlgLnkAnchorById	: "Wg identyfikatora elementu",
-DlgLnkNoAnchors		: "<W dokumencie nie zdefiniowano żadnych etykiet>",		//REVIEW : Change < and > with ( and )
+DlgLnkNoAnchors		: "(W dokumencie nie zdefiniowano żadnych etykiet)",
 DlgLnkEMail			: "Adres e-mail",
 DlgLnkEMailSubject	: "Temat",
 DlgLnkEMailBody		: "Treść",
@@ -321,6 +330,9 @@ DlgCellCollSpan		: "Zajętość kolumn",
 DlgCellBackColor	: "Kolor tła",
 DlgCellBorderColor	: "Kolor ramki",
 DlgCellBtnSelect	: "Wybierz...",
+
+// Find and Replace Dialog
+DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
 
 // Find Dialog
 DlgFindTitle		: "Znajdź",

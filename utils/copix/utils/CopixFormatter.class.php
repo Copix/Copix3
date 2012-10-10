@@ -76,12 +76,10 @@ class CopixFormatter {
 		}
 		if (substr($pNum,5,2)=='2A'){
 			$v_numero = substr($pNum,0,6)+'19'+ substr($pNum,8,4);
-		}
-		else {
+		} else {
 			if (substr($pNum,5,2)=='2A'){
 				$v_numero = substr($pNum,1,6)+'19'+substr($pNum,8,4);
-			}	
-			else {
+			} else {
 				$v_numero = $pNum;
 			}
 		}
@@ -166,30 +164,63 @@ class CopixFormatter {
 	}
 
 	/**
+	 * Formattage d'un numero permettant de communiquer (téléphone, fax, portable...)
+	 * Cette fonction est destinée à être appelée par une autre
+	 *
+	 * @param string $pNumber
+	 * @param string $pSeparator
+	 * @return chaine de caractère avec le numéro formatté correctement avec separator entre les couples de chiffres
+	 */
+	public static function getCommunicationNumber($pNumber, $pSeparator = ' ') {
+		$pNumber = str_replace ($pSeparator, '', $pNumber);
+		if (!preg_match("#^(0|\+33)[1-9]\d{8}$#", $pNumber)){
+			throw new CopixException (_i18n ('copix:copixformatter.error.badphonenumber', $pNumber));
+		}else{
+		    if (preg_match("#^\+33#",$pNumber)) {
+		        $intNbBegin = 4;
+		    } else {
+		        $intNbBegin = 2;
+		    }
+		    return substr ($pNumber, 0, $intNbBegin).$pSeparator.substr ($pNumber, $intNbBegin+0, 2).$pSeparator.substr ($pNumber, $intNbBegin+2, 2).$pSeparator.substr ($pNumber, $intNbBegin+4, 2).$pSeparator.substr ($pNumber, $intNbBegin+6, 2);
+		}		
+	}
+	
+	/**
 	 * Formattage d'un numéro de téléphone
 	 * @param string $pTelephone le téléphone à vérifier
+	 * @param string $pSeparator séparateur
 	 * @return chaine de caractère avec le téléphone formatté correctement avec separator entre les couples de chiffres 
 	 */
 	public  static function getTelephone ($pTelephone, $pSeparator = ' '){
-		$pTelephone = str_replace ($pSeparator, '', $pTelephone);
-		if (!preg_match("#^0[1-8]\d{8}$#", $pTelephone)){
-			throw new CopixException (_i18n ('copix:copixformatter.error.badtel', $pTelephone));
-		}else{
-			return substr ($pTelephone, 0, 2).$pSeparator.substr ($pTelephone, 2, 2).$pSeparator.substr ($pTelephone, 4, 2).$pSeparator.substr ($pTelephone, 6, 2).$pSeparator.substr ($pTelephone, 8, 2);
-		}		
+	    try {
+		    $pTelephone = self::getCommunicationNumber($pTelephone,$pSeparator);
+		    return $pTelephone;
+	    } catch (Exception $e) {
+	        if ($e->getMessage() == _i18n ('copix:copixformatter.error.badphonenumber', $pTelephone)) {
+	            throw new CopixException (_i18n ('copix:copixformatter.error.badtel', $pTelephone));
+	        } else {
+	            throw $e;
+	        }
+	    }
 	}
 	
 	/**
 	 * Formattage d'un numéro de fax
 	 * @param string $pFax le fax à vérifier.
+	 * @param string $pSeparator séparateur
+	 * @return chaine de caractère avec le fax formatté correctement avec separateur entre les couples de chiffres
 	 */
 	public  static function getFax ($pFax, $pSeparator = ' '){
-		$pFax = str_replace ($pSeparator, '', $pFax);
-		if (!preg_match("#^0[1-8]\d{8}$#", $pFax)){
-			throw new CopixException (_i18n ('copix:copixformatter.error.badfax', $pFax));
-		}else{
-			return substr ($pFax, 0, 2).$pSeparator.substr ($pFax, 2, 2).$pSeparator.substr ($pFax, 4, 2).$pSeparator.substr ($pFax, 6, 2).$pSeparator.substr ($pFax, 8, 2);
-		}		
+	    try {
+		    $pFax = self::getCommunicationNumber($pFax,$pSeparator);
+		    return $pFax;
+	    } catch (Exception $e) {
+	        if ($e->getMessage() == _i18n ('copix:copixformatter.error.badphonenumber', $pFax)) {
+	            throw new CopixException (_i18n ('copix:copixformatter.error.badfax', $pFax));
+	        } else {
+	            throw $e;
+	        }
+	    }
 	}
 
 	
@@ -309,6 +340,16 @@ class CopixFormatter {
 
 		$parts[] = $stack;
 		return $parts;
-	} 
+	}
+
+	/**
+	 * Retourne un booléen formatté en chaine de caractère
+	 *
+	 * @param boolean	$value	le booléen à convertir 	
+	 * @return string
+	 */
+	static public function getBool ($value){
+		return $value ? _i18n ('copix:common.type.boolean.true') : _i18n ('copix:common.type.boolean.false');
+	}
 }
 ?>

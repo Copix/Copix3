@@ -9,4 +9,3 @@ create table trackbacks (
 	date_tb varchar(14) not null,
 	spam_tb integer not null default -1
 );
-

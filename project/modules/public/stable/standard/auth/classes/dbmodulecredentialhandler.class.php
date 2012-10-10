@@ -39,7 +39,7 @@ class dbModuleCredentialHandler implements ICopixCredentialHandler {
 	 */
 	private function _module ($pString, $pUser){
 	    foreach ($pUser->getGroups () as $handler=>$arGroupForHandler) {
-	        foreach ($arGroupForHandler as $id=>$groupCaption){
+	    	foreach ($arGroupForHandler as $id=>$groupCaption){
 	            _classInclude('auth|dbmodulegrouphandler');
 	            $handlerCredential = new dbModuleGroupHandler ($handler,$id);
 	            if ($handlerCredential->isOk ($pString)) {

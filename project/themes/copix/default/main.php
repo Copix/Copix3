@@ -5,7 +5,7 @@
 <link rel="search" type="application/opensearchdescription+xml" title="Documentation Copix" href="<?php echo _url(); ?>goodies/copix.xml">
 <title><?php echo $TITLE_BAR; ?></title>
 <?php
-_tag ('mootools', array ('plugin'=>'elementmover;transcorners;toolbar;shadows;fixhrefbutton,moopanes')); 
+_tag ('mootools', array ('plugin'=>'elementmover;transcorners;toolbar;shadows;fixhrefbutton;moopanes')); 
 echo $HTML_HEAD; 
 ?>
 <link rel="stylesheet"

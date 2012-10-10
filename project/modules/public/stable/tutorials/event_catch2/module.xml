@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <moduledefinition>
  <general>
-  <default name="event_catch2" longdescription="Tutorial pour donner des exemples de récupération des évènements dans Copix" description="Tutorial pour attraper des évènements avec paramètres dans Copix"  icon="help.gif" />
+  <default name="event_catch2" longdescription="Tutorial pour donner des exemples de récupération des évènements dans Copix" description="Tutorial pour attraper des évènements avec paramètres dans Copix"  icon="tutorial.png"  />
  </general>
  <events>
    <listeners>

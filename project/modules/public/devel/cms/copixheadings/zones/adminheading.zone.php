@@ -19,7 +19,6 @@ class ZoneAdminHeading extends CopixZone {
     function _createContent (& $toReturn) {
         //we get the path.
         $headingServices        = CopixClassesFactory::getInstanceOf ('CopixHeadingsServices');
-        $headingProfileServices = CopixClassesFactory::getInstanceOf ('CopixProfileForHeadingServices');
 
         //we check if the path exists.
         $path = $headingServices->getPath ($this->_params['id_head']);
@@ -30,10 +29,6 @@ class ZoneAdminHeading extends CopixZone {
         //we get the subpaths
         $arHeadings         = $headingServices->getLevel ($this->_params['id_head']);
         $arCompleteHeadings = $headingServices->getFlatOrderedList ();
-        $headingProfileServices->appendProfileInformation ($path);
-
-        //profile information appending.
-        $headingProfileServices->filter ($arHeadings, PROFILE_CCV_SHOW);
 
         //assign data to the template.
         $tpl = new CopixTpl ();

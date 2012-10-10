@@ -9,7 +9,7 @@ CREATE TABLE copixtestmain (
   "type_test" integer NOT NULL default '0',
   "titre_test" varchar(255) NOT NULL default '',
   "description_test" text NOT NULL,
-  "date_test" varchar(8) NOT NULL default '',
+  "date_test" TIMESTAMP NOT NULL,
   "version_test" int not null default '0',
   PRIMARY KEY  (id_test), unique(id_test)
 ) ;

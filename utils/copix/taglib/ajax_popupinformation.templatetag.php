@@ -71,8 +71,11 @@ class TemplateTagAjax_PopupInformation extends CopixTemplateTag {
 	   $toReturn .= strlen ($pParams['text']) ? $pParams['text'] : '';
 	   $toReturn .= isset($pParams['imgnext']) ? '<img src="'.$pParams['imgnext'].'" />' : '';
 	   $toReturn .= $close;
-
-	   $toReturn .= '<div class="'.$pParams['divclass'].'" id="'.$id.'" style="display:none;" >';
+       $width = 'auto';
+	   if (isset($pParams['width'])) {
+	       $width = $pParams['width'];
+	   }
+	   $toReturn .= '<div class="'.$pParams['divclass'].'" id="'.$id.'" style="width:'.$width.';display:none;" >';
 	   //$toReturn .= $pContent;
 	   $toReturn .= '</div>';
 	   
@@ -126,15 +129,19 @@ var ajax_zone = {
 									rel.setHTML('<img src=\"".CopixUrl::getResource('img/tools/load.gif')."\" />');
 									ajax_zone.getZone('$sessionZone','$sessionVar',rel);
 							}
-							rel.setStyles({'left':(el.getLeft()+el.getSize().size.x)+'px'});
+							rel.setStyles({'left':(el.getLeft()+el.getSize().size.x)+'px','zIndex':'10'});
+							
                 	    	rel.setStyle('display','');
+							rel.fixdivShow.delay(200,rel);
                 	    } else {
+							rel.fixdivHide();
                 	    	rel.setStyle('display','none');
                 	    }
 					});
 					rel.addEvent ('hide', function () {
 						save$id.flag = false;
 						save$id.click = false;
+						rel.fixdivHide();
 						rel.setStyle('display','none');
 					});
 				});
@@ -158,6 +165,7 @@ var ajax_zone = {
 									ajax_zone.getZone('$sessionZone','$sessionVar',rel)
 								}
 								var e = new Event(e);
+								rel.fixdivShow();
 	    				        rel.setStyle('visibility','visible');
 							 });
 
@@ -172,6 +180,7 @@ var ajax_zone = {
 
 							 el.addEvent('mouseleave', function (e) {
 							     var e = new Event(e);
+								 rel.fixdivHide();
 						         rel.setStyle('visibility','hidden');
 							 });
 							
@@ -181,7 +190,7 @@ var ajax_zone = {
 	   }
 	   CopixHTMLHeader::addJSCode ($jsCode);
 	   
-	   _tag ('mootools');
+	   _tag ('mootools',array('plugin'=>array('overlayfix')));
        return $toReturn;
    }
 }

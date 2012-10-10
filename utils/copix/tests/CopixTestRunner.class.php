@@ -16,7 +16,6 @@ require_once 'PHPUnit/Extensions/RepeatedTest.php';
 require_once 'PHPUnit/Runner/Version.php';
 require_once 'PHPUnit/Runner/Version.php';
 require_once 'PHPUnit/Util/Report.php';
-require_once 'PHPUnit/Util/Report/GraphViz.php';
 require_once 'PHPUnit/Util/Log/GraphViz.php';
 require_once 'PHPUnit/Util/Log/JSON.php';
 require_once 'PHPUnit/Util/Log/TAP.php';

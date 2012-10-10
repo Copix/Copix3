@@ -93,11 +93,16 @@ class CopixField {
    
    public function getFromRequest ($force = false) {
        foreach ($this->_datas as $key=>&$field) {
-           if ($this->_typeField === 'list') {
-               $field->value = _request ($field->name,  null, false);
-           } else {
-               $field->value = _request ($field->name,  $field->value, false);
-           }
+               if ($force === true) {
+                   $field->value = _request ($field->name,  null);
+               } else {
+                   if ($this->_typeField === 'list') {
+                       $field->value = _request ($field->name,  null, false);
+                   } else {
+                       $field->value = _request ($field->name,  $field->value, false);
+                       
+                   }
+               }
        }
    }
    
@@ -518,7 +523,7 @@ class CopixForm {
         }
         
         if (!$this->_create || _request ('error_'.$this->_id) != null) {
-            $this->_fields[$id]->getFromRequest (true);
+            $this->_fields[$id]->getFromRequest ();
         } else {
             $this->_fields[$id]->emptyData ();
         }
@@ -594,7 +599,7 @@ class CopixForm {
                     $method = $arClasses[1].'HTML';
                     $toReturn .= $Class->$method($field,$currentMode);
                 } else {
-                    throw new CopixListException(_i18n('copix:copixlist.message.unknownType',$field->getType ()));
+                    throw new CopixFormException(_i18n('copix:copixlist.message.unknownType',$field->getType ()));
                 }
         }
         
@@ -603,14 +608,14 @@ class CopixForm {
         }
 	    
         if ($currentMode=='edit') {
-            if (_request ('error_'.$this->_id)=='true') {
+            if (_request ('error_'.$this->_id)==true) {
 	            if ($field->getErrors ()) {
 		            foreach ($field->getErrors() as $error) {
-		                $toReturn .= '<span class="copixforms_error" >* '.$error.'</span>';
+		                $toReturn .= '<span class="copixforms_error" >* '._copix_utf8_htmlentities($error).'</span>';
 		            }
 	            }
 	            if (isset($this->_errors[$field->field])) {
-	                $toReturn .= '<span class="copixforms_error" >* '.$this->_errors[$field->field].'</span>';
+	                $toReturn .= '<span class="copixforms_error" >* '._copix_utf8_htmlentities($this->_errors[$field->field]).'</span>';
 	            }
 	        } 
 	        return $toReturn;
@@ -691,10 +696,10 @@ class CopixForm {
         $result = null;
         try {
     	    if (!isset($this->_create) || $this->_create) {
-    	        CopixLog::log('create');
+    	        CopixLog::log('create : '.var_export($this->_record,true),'copixforms');
                 $result = $this->_datasource->save($this->_record);
     	    } else {
-    	        CopixLog::log('update');
+    	        CopixLog::log('update : '.var_export($this->_record,true),'copixforms');
     	        $result = $this->_datasource->update($this->_record);
     	    }
         } catch (CopixDAOCheckException $e) {

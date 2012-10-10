@@ -69,7 +69,7 @@ class ActionGroupDefault extends CopixActionGroup {
 		$obj->caption = 'libellé 2';
 		$arObjects[] = $obj;
 
-		return _arPpo (new CopixPPO (array ('TITLE_PAGE'=>'Utilisation de select', 'arObjects'=>$arObjects)), 'select.tpl');
+		return _arPpo (new CopixPPO (array ('TITLE_PAGE'=>'Utilisation de select', 'arObjects'=>$arObjects, 'iteratorObjects'=>new ArrayIterator ($arObjects))), 'select.tpl');
 	}
 	/**
 	 * Demo avec le tag multipleselect
@@ -87,7 +87,7 @@ class ActionGroupDefault extends CopixActionGroup {
 		$obj->caption = 'libellé 2';
 		$arObjects[] = $obj;
 
-		return _arPpo (new CopixPPO (array ('TITLE_PAGE'=>'Utilisation de multipleselect', 'arObjects'=>$arObjects)), 'multipleselect.tpl');
+		return _arPpo (new CopixPPO (array ('TITLE_PAGE'=>'Utilisation de multipleselect', 'arObjects'=>$arObjects, 'iteratorObjects'=>new ArrayIterator ($arObjects))), 'multipleselect.tpl');
 	}
 	
 	/**
@@ -106,7 +106,7 @@ class ActionGroupDefault extends CopixActionGroup {
 		$obj->caption = 'libellé 2';
 		$arObjects[] = $obj;
 		
-		return _arPpo (new CopixPPO (array ('TITLE_PAGE'=>'Utilisation de radio boutton', 'arObjects'=>$arObjects)), 'radiobutton.tpl');
+		return _arPpo (new CopixPPO (array ('TITLE_PAGE'=>'Utilisation de radio boutton', 'arObjects'=>$arObjects, 'iteratorObjects'=>new ArrayIterator ($arObjects))), 'radiobutton.tpl');
 	}
 	
 	/**
@@ -125,7 +125,7 @@ class ActionGroupDefault extends CopixActionGroup {
 		$obj->caption = 'libellé 2';
 		$arObjects[] = $obj;
 
-		return _arPpo (new CopixPPO (array ('TITLE_PAGE'=>'Utilisation d\'un checkbox', 'arObjects'=>$arObjects)), 'checkbox.tpl');
+		return _arPpo (new CopixPPO (array ('TITLE_PAGE'=>'Utilisation d\'un checkbox', 'arObjects'=>$arObjects, 'iteratorObjects'=>new ArrayIterator ($arObjects))), 'checkbox.tpl');
 	}
 	
 	/**

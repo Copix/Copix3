@@ -42,6 +42,10 @@ class TemplateTagAutoComplete {
     	    $extra = '';
     	}
     	
+    	if (!isset($pParams['datasource'])) {
+    	    $pParams['datasource'] = 'dao';
+    	}
+    	
         $toMaj = '';
         $onSelectTemp = '';
     	if (isset ($maj)) {

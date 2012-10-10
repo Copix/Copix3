@@ -36,7 +36,7 @@ class CopixProfileForHeadingServices {
     * @param int PROFILE_CCV_VALUE the level we wants to match to keep informations
     * @return void
     */
-    function filter (& $toFilter, $filterLevel = PROFILE_CCV_SHOW){
+    function filter (& $toFilter, $filterLevel = null){
         CopixProfileForHeadingServices::appendProfileInformation($toFilter);
         foreach ((array)$toFilter as $key => $element){
             if ($element->profileInformation < $filterLevel){
@@ -67,7 +67,7 @@ class CopixProfileForHeadingServices {
     * @return void
 
     */
-    function filterTree ($tree, $filterLevel = PROFILE_CCV_SHOW){
+    function filterTree ($tree, $filterLevel = null){
         $this->filter($tree->childs,$filterLevel);
 
         if (is_array($tree->childs) && count($tree->childs)>0) {

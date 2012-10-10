@@ -40,12 +40,12 @@ class InstallService {
     *  @return array of object
     *  @access private
     */
-    function getModules () {
+    function getModules ($pGroupId = null) {
         $toReturn    = array ();
         $arInstalledModule = CopixModule::getList (true);
 
         //Liste des modules installables
-        foreach (CopixModule::getList (false) as $name){
+        foreach (CopixModule::getList (false, $pGroupId) as $name){
             if (($temp = CopixModule::getInformations ($name)) !== null) {
                 //check if they are installed or not
                 if (in_array ($temp->name, $arInstalledModule)) {
@@ -56,19 +56,31 @@ class InstallService {
                 $toReturn[] = $temp;
             }
         }
+        
+        // tri des modules par ordre alphabétique sur la description
+        $tri = true;
+        $nbrModule = count ($toReturn);
+        while ($tri) {
+        	$tri = false;
+        	for ($boucle = 1; $boucle < $nbrModule; $boucle++) {
+        		$moduleDesc1 = ($toReturn[$boucle - 1]->description <> '') ? $toReturn[$boucle - 1]->description : $toReturn[$boucle - 1]->name;
+        		$moduleDesc2 = ($toReturn[$boucle]->description <> '') ? $toReturn[$boucle]->description : $toReturn[$boucle]->name;
+        		
+        		//echo '[<b>' . $moduleDesc1 . '</b>] [<font color="red">' . $moduleDesc2 . '</font>]<br />';
+        		
+        		$comp = strcasecmp ($moduleDesc1, $moduleDesc2);
+        		if ($comp > 0) {
+        			$temp = $toReturn[$boucle - 1];
+        			$toReturn[$boucle - 1] = $toReturn[$boucle];
+        			$toReturn[$boucle] = $temp;
+        			$tri = true;
+        		}
+        	}
+        }
+        
         return $toReturn;
     }
 	
-	/**
-	 * Génération du mot de passe de l'utilisateur admin du module auth normal
-	 */
-	private function _generatePassword (){
-		$user = _ioDAO ('dbuser')->get (1);
-		$user->password_dbuser = md5 ($pass = substr (UniqId ('p'), -5));
-		_ioDAO ('dbuser')->update ($user);
-
-		return array ('login'=>'admin', 'password'=>$pass);
-	}
 
     /**
      * Prepare installation, launch sql script needed during installation

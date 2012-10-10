@@ -39,6 +39,10 @@ $arObjects[] = $obj;
 {ldelim}radiobutton name=radio4 values=$ppo->arObjects objectMap="id;caption"{rdelim}
 <p>{radiobutton name=radio4 values=$ppo->arObjects objectMap="id;caption"}</p>
 
+<h2>Iterateur d'objets avec spécification de clef / valeurs</h2>
+{ldelim}radiobutton name=radio4 values=$ppo->iteratorObjects objectMap="id;caption"{rdelim}
+<p>{radiobutton name=radio4 values=$ppo->iteratorObjects objectMap="id;caption"}</p>
+
 <h2>Paramètre extra pour rajouter des informations à la balise</h2>
 Les styles sur les radio button ne marche pas très bien :`(<br/>
 {ldelim}radiobutton extra='style="background-color: #ccc;"' name=radio5 values="1;2;3;4;5"|toarray{rdelim}

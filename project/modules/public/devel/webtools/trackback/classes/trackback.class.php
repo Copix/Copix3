@@ -7,6 +7,11 @@
  * @subpackage trackback
  * @copyright Copix Team (c) 2007-2008
  */
+
+/**
+ * @package webtools
+ * @subpackage trackback
+ */
 class TrackBack {
 	
 	public function send(){

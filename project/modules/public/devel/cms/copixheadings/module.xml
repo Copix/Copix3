@@ -9,9 +9,6 @@
       <parameter name="rootHeadingDomain" captioni18n="copixheadings.parameter.rootHeadingDomain" default="" />
       <parameter name="useCache" captioni18n="copixheadings.parameter.useCache" default="0" />
     </parameters>
-    <dependencies>
-       <dependency name="profile" kind="module" version="1" />
-    </dependencies>
 
     <versions>
       <version num="1" date="20051005" />

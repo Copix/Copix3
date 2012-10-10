@@ -35,9 +35,12 @@ $arObjects[] = $obj;
 {ldelim}checkbox name=checkbox values=$ppo->arObjects objectMap="id;caption"{rdelim}
 <p>{checkbox name=checkbox values=$ppo->arObjects objectMap="id;caption"}</p>
 
+<h2>Iterateur d'objets avec spécification de clef / valeurs</h2>
+{ldelim}checkbox name=checkbox values=$ppo->iteratorObjects objectMap="id;caption"{rdelim}
+<p>{checkbox name=checkbox values=$ppo->iteratorObjects objectMap="id;caption"}</p>
+
 <h2>Paramètre extra pour rajouter des informations à la balise</h2>
 {ldelim}checkbox extra='style="background-color: #ccc;"' name=checkbox values="1;2;3;4;5"|toarray{rdelim}
 <p>{checkbox extra='style="background-color: #ccc;"' name=checkbox values="1;2;3;4;5"|toarray}</p>
-
 
 <p><a href="{copixurl dest="default"}">Retour à la page de liste</a></p>

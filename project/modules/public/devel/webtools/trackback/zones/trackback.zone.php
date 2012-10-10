@@ -20,14 +20,12 @@ class ZoneTrackback extends CopixZone {
 											->addCondition('valid_tb','=',1)
 											->orderBy('date_tb')
 		);
-		
+
 		$tpl = new CopixTpl();
 		$tpl->assign('id',$id);
 		$tpl->assign('trackbacks',$tbs);
 		$toReturn = $tpl->fetch('trackback.link.tpl');
 		return true;
 	}
-
-	
 }
 ?>

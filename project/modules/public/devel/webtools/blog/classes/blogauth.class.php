@@ -26,5 +26,19 @@ class blogAuth {
 				return CopixAuth::getCurrentUser ()->testCredential ('basic:admin');
 		}
 	}
+	
+	/**
+	 * Vérifie si l'utilisateur peut écrire ou non.
+	 */
+	public function assertWrite (){
+		switch (CopixConfig::get ('blog|write')){
+			case 'public':
+				return true;
+			case 'registered':
+				return CopixAuth::getCurrentUser ()->assertCredential ('basic:registered');
+			default:
+				return CopixAuth::getCurrentUser ()->assertCredential ('basic:admin');
+		}
+	}
 }
 ?>

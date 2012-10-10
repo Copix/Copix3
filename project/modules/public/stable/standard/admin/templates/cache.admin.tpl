@@ -1,3 +1,4 @@
+<br />
 <table class="CopixTable">
 <thead>
 <tr>
@@ -31,4 +32,6 @@
 </tr>
 </form>
 </table>
-<a href="{copixurl dest="admin||"}"> <input type="button" value="{i18n key="copix:common.buttons.back"}" /></a>
+
+<br />
+<input type="button" value="{i18n key="copix:common.buttons.back"}" onclick="javascript:document.location='{copixurl dest="admin||"}'" />

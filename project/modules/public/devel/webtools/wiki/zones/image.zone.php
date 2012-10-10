@@ -2,11 +2,11 @@
 /**
  * @package	webtools
  * @subpackage	wiki
-* @author	Patrice Ferlet
-* @copyright 2001-2006 CopixTeam
-* @link      http://copix.org
-* @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
-*/
+ * @author	Patrice Ferlet
+ * @copyright 2001-2006 CopixTeam
+ * @link      http://copix.org
+ * @licence  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ */
 
 /**
  * Zone d'affichage d'une image
@@ -16,7 +16,7 @@
 class ZoneImage extends CopixZone {
 	function _createContent(& $toReturn) {
 		$dao = _dao ('wikiimages');
-		$name = $this->getParam('heading',"")."/".$this->getParam('page');		
+		$name = $this->getParam('heading',"")."/".$this->getParam('page');
 		if (!$this->getParam('page', false)) {
 			$files = $dao->findAll();
 		} else {
@@ -43,7 +43,7 @@ class ZoneImage extends CopixZone {
 			}
 			$images[] = $file;
 		}
-		
+
 		$tpl = new CopixTpl();
 		$tpl->assign('images', $images);
 		$tpl->assign('page', $pagename);

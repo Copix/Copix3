@@ -22,10 +22,12 @@ class Socket {
     
     public function close(){
         fclose($this->sock);
+        return $this;
     }
     
     public function write($req){
-        fwrite($this->$sock, $req);
+        fwrite($this->sock, $req);
+        return $this;
     }
     
     public function read(){

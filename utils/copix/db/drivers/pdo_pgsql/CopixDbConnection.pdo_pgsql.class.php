@@ -82,9 +82,11 @@ class CopixDBConnectionPDO_PgSQL extends CopixDBPDOConnection {
 		";
 		$result = $this->doQuery ($sql);
 		foreach ($result as $key => $val) {
-			if(preg_match ('/btree \((.*?)\)/', $val->inddef, $matches)){
+			// Une clé primaire à un btree et son indisprimary est à t (true)
+			if(preg_match ('/btree \((.*?)\)/', $val->inddef, $matches) && ($val->indisprimary == 't')){
 				$arIdx[] = $matches[1];
 			}
+			
 		}
 
 		$sql_get_fields = "SELECT
@@ -149,8 +151,5 @@ class CopixDBConnectionPDO_PgSQL extends CopixDBPDOConnection {
 		}
 		return in_array ('pgsql', PDO::getAvailableDrivers ());
 	}
-
-
-
 }
 ?>

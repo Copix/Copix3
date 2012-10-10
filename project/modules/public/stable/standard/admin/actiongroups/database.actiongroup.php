@@ -206,6 +206,7 @@ class ActionGroupDatabase extends CopixActionGroup {
 	 * Confirmation de l'installation et affichage des infos login / mot de passe
 	 */
 	public function processDone (){
+		_currentUser ()->logout ();
 		if (($loginInformations = CopixSession::get ('admin|database|loginInformations')) !== null){
 			//CopixSession::set ('admin|database|loginInformations', null);
 			$ppo = new CopixPpo ();
@@ -213,7 +214,7 @@ class ActionGroupDatabase extends CopixActionGroup {
 			$ppo->loginInformations = $loginInformations;
 			return _arPpo ($ppo, 'install.done.tpl');
 		}
-		return _arRedirect (_url ('admin||'));
+		return _arRedirect (_url ('||'));
 	} 
 
 	/**
@@ -225,10 +226,7 @@ class ActionGroupDatabase extends CopixActionGroup {
         $adminTemp = _class ('admin|admintemp');
 	    if (!in_array ('copixmodule', $tables) || !in_array ('copixconfig', $tables) || !in_array ('copixconfig', $tables)) {
 	        $adminTemp->clearTemp();
-	        $loginInformations = _class ('admin|installservice')->installFramework ();
-	        CopixSession::set ('admin|database|loginInformations', $loginInformations);
-	        _currentUser ()->logout ();
-	        return _arRedirect (_url ('admin|database|done')); 
+	        return _arRedirect (_url ('admin|install|installFramework')); 
         }
         $adminTemp->clearTemp();
         return _arRedirect (_url ('admin||'));

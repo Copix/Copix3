@@ -30,7 +30,7 @@ class ZoneShowParams extends CopixZone {
 		
 		$paramIndex = $this->_params['choiceModule'] . '|' . $this->_params['editParam'];
 		      
-		// si on a passé une erreur en parametre
+		// si on a passï¿½ une erreur en parametre
 		if (!is_null (_request ('error'))) {
 			switch (_request ('error')) {
 				case 'typeTextMax' :

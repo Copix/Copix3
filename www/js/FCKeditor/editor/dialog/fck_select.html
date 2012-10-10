@@ -58,7 +58,7 @@ window.onload = function()
 		// Load the actual options
 		for ( var i = 0 ; i < oActiveEl.options.length ; i++ )
 		{
-			var sText	= oActiveEl.options[i].innerHTML ;
+			var sText	= HTMLDecode( oActiveEl.options[i].innerHTML ) ;
 			var sValue	= oActiveEl.options[i].value ;
 
 			AddComboOption( oListText, sText, sText ) ;
@@ -73,14 +73,15 @@ window.onload = function()
 
 function Ok()
 {
+	oEditor.FCKUndo.SaveUndoStep() ;
+	
 	var sSize = GetE('txtLines').value ;
 	if ( sSize == null || isNaN( sSize ) || sSize <= 1 )
 		sSize = '' ;
 
 	if ( !oActiveEl )
 	{
-		oActiveEl = oEditor.FCK.EditorDocument.createElement( 'SELECT' ) ;
-		oActiveEl = oEditor.FCK.InsertElementAndGetIt( oActiveEl ) ;
+		oActiveEl = oEditor.FCK.InsertElement( 'select' ) ;
 	}
 
 	SetAttribute( oActiveEl, 'name'	, GetE('txtName').value ) ;

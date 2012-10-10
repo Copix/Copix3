@@ -22,18 +22,15 @@ class ZoneCopixHeadingsAdminHeading extends CopixZone {
 
         //profile information appending.
         $arHeadings = $headingServices->getLevel ($this->_params['id_head']);
-        $headingProfileServices->filter ($arHeadings, PROFILE_CCV_SHOW);
 
         //now we're gonna add the "canDelete" information.
         foreach ((array) $arHeadings as $key=>$heading) {
             $canDelete = false;
-            if ($heading->profileInformation >= PROFILE_CCV_WRITE){
-                $response = CopixEventNotifier::notify(new CopixEvent ('HasContentRequest', array ('id'=>$heading->id_head)));
-                $who = array ();
-                if (! $response->inResponse ('hasContent', true, $who)){
-                    $canDelete = true;
-                }
-            }
+            $response = CopixEventNotifier::notify(new CopixEvent ('HasContentRequest', array ('id'=>$heading->id_head)));
+            $who = array ();
+             if (! $response->inResponse ('hasContent', true, $who)){
+                 $canDelete = true;
+             }
             $arHeadings[$key]->canDelete = $canDelete;
         }
 
@@ -42,10 +39,10 @@ class ZoneCopixHeadingsAdminHeading extends CopixZone {
         $tpl->assignByRef ('arHeadings', $arHeadings);
 
         //may we write in this level ? (for update, create or so things in here)
-        $tpl->assign ('writeEnabled', $writeEnabled = CopixUserProfile::valueOf ($headingProfileServices->getPath($this->_params['id_head']), 'copixheadings') >= PROFILE_CCV_WRITE);
+        $tpl->assign ('writeEnabled', $writeEnabled = true);
         $tpl->assign ('currentLevel', $this->_params['id_head']);
         $tpl->assign ('cutLevel', $this->getParam ('cutLevel'));
-        $tpl->assign ('pasteEnabled', CopixActionGroup::process ('AdminHeading::canPaste', array ('id_head'=>$this->_params['id_head'])) && $writeEnabled);
+        $tpl->assign ('pasteEnabled', CopixActionGroup::process ('Admin::canPaste', array ('id_head'=>$this->_params['id_head'])) && $writeEnabled);
 
         $toReturn = $tpl->fetch ('copixheadings.adminheading.tpl');
         return true;

@@ -318,12 +318,6 @@ class ActionGroupSynchronize extends CopixActionGroup {
 						}
 					}
 
-				// ************************
-				// si on est en mode global
-				// ************************
-
-				} else if ($rMode == 'global') {
-				
 				}
 			}
 		}
@@ -417,9 +411,7 @@ class ActionGroupSynchronize extends CopixActionGroup {
 			$ppo->resultMsg = _i18n ($resultKey, array ($deletedFiles, $lang));
 			
 			return _arPpo ($ppo, 'deletelang.result.tpl');
-		}
-		
-		return _arNone ();
+		}		
 	}
 	
 	/**

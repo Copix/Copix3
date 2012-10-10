@@ -24,6 +24,7 @@ foreach($ppo->templates as $name=>$val){
 </select>
 <a id="addpage" href="#">Create New</a>
 <?php 
+_eTag('mootools');
 CopixHTMLHeader::addJSCode('
 window.addEvent("domready",function(){
 	$("addpage").addEvent("click",function(){

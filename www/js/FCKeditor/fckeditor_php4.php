@@ -35,7 +35,7 @@ class FCKeditor
 	var $Value ;
 	var $Config ;
 
-	// PHP 4 Contructor
+	// PHP 4 Constructor
 	function FCKeditor( $instanceName )
 	{
 		$this->InstanceName	= $instanceName ;
@@ -58,6 +58,11 @@ class FCKeditor
 		$HtmlValue = htmlspecialchars( $this->Value ) ;
 
 		$Html = '<div>' ;
+		
+		if ( !isset( $_GET ) ) {
+			global $HTTP_GET_VARS ;
+		    $_GET = $HTTP_GET_VARS ;
+		}
 
 		if ( $this->IsCompatible() )
 		{
@@ -104,6 +109,11 @@ class FCKeditor
 	{
 		global $HTTP_USER_AGENT ;
 
+		if ( !isset( $_SERVER ) ) {
+			global $HTTP_SERVER_VARS ;
+		    $_SERVER = $HTTP_SERVER_VARS ;
+		}
+		
 		if ( isset( $HTTP_USER_AGENT ) )
 			$sAgent = $HTTP_USER_AGENT ;
 		else
@@ -118,6 +128,16 @@ class FCKeditor
 		{
 			$iVersion = (int)substr($sAgent, strpos($sAgent, 'Gecko/') + 6, 8) ;
 			return ($iVersion >= 20030210) ;
+		}
+		else if ( strpos($sAgent, 'Opera/') !== false )
+		{
+			$fVersion = (float)substr($sAgent, strpos($sAgent, 'Opera/') + 6, 4) ;
+			return ($fVersion >= 9.5) ;
+		}
+		else if ( preg_match( "|AppleWebKit/(\d+)|i", $sAgent, $matches ) )
+		{
+			$iVersion = $matches[1] ;
+			return ( $matches[1] >= 522 ) ;
 		}
 		else
 			return false ;

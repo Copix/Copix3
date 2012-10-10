@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <moduledefinition>
  <general>
-  <default name="comments" longdescriptioni18n="comments.longdescription" descriptioni18n="comments.description" />
+  <default name="comments" longdescriptioni18n="comments.longdescription" descriptioni18n="comments.description" icon="comments.png" />
  </general>
  <parameters>
  	<parameter name="captcha" captioni18n="comments.parameter.captcha" default="0" />

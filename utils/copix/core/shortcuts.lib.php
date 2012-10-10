@@ -77,11 +77,12 @@ function _resourcePath ($pResourcePath){
 /**
  * Alias à CopixClassesFactory::create ();
  * @param 	string	$pClassId	identifiant de la classe à créer (module|classe)
+ * @param array $pArgs Arguments de création
  * @return object
  * @see CopixClassesFactory::create
  */
-function _class ($pClassId){
-	return CopixClassesFactory::create ($pClassId);
+function _class ($pClassId, $pArgs = null){
+	return CopixClassesFactory::create ($pClassId, $pArgs);
 }
 
 /**

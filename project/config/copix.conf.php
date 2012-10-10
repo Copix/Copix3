@@ -48,7 +48,8 @@ $config->arModulesPath = array (
 	COPIX_PROJECT_PATH.'modules/public/devel/standard/',
 	COPIX_PROJECT_PATH.'modules/public/devel/tools/',
 	COPIX_PROJECT_PATH.'modules/public/devel/tutorials/',
-	COPIX_PROJECT_PATH.'modules/public/devel/webtools/'
+	COPIX_PROJECT_PATH.'modules/public/devel/webtools/',
+	COPIX_VAR_PATH.'modules/'
 );
 
 //---------------------------------------------

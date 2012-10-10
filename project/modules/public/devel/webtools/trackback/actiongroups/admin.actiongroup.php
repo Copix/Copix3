@@ -2,26 +2,33 @@
 /**
  * Trackback Admin Actiongroup
  * Based on http://silent-strength.com/?articles/php/trackbacks
+ * 
  * @author Patrice Ferlet - <metal3d@copix.org>
  * @package webtools
  * @subpackage trackback
  * @copyright Copix Team (c) 2007-2008
  */
 
+/**
+ * Actions d'administration pour les tracksback
+ * @package webtools
+ * @subpackage trackback
+ */
 class ActionGroupAdmin extends CopixActionGroup{
 
 	public function processDefault (){
 		$ppo = new CopixPPO();
-		$sp = _daoSp()->addCondition('spam_tb',"=",0)
-					  ->addCondition('valid_tb',"=",0)
+		$sp = _daoSp()->addCondition('spam_tb', "=", 0)
+					  ->addCondition('valid_tb', "=", 0)
 					  ->orderBy('date_tb');
-		if(_request('all',false)=="true"){
+
+		if (_request('all', false) === "true"){
 			$sp = _daoSp()->addCondition('spam_tb',"=",0)
 					      ->orderBy('date_tb');
 		}
-		$ppo->trackbacks = _ioDao('trackbacks')->findBy($sp);
+		$ppo->trackbacks = _ioDao ('trackbacks')->findBy ($sp);
 											  
-		$this->checkSpam($ppo->trackbacks);
+		$this->_checkSpam ($ppo->trackbacks);
 		$ppo->frompage = "default";
         return _arPPO($ppo,"admin.list.tpl");
 	}
@@ -33,7 +40,7 @@ class ActionGroupAdmin extends CopixActionGroup{
 											  ->orderBy('date_tb')
 											  );
 											  
-		$this->checkSpam($ppo->trackbacks);
+		$this->_checkSpam($ppo->trackbacks);
 		$ppo->frompage = "Spam";
 		
         return _arPPO($ppo,"admin.list.tpl");
@@ -103,12 +110,12 @@ class ActionGroupAdmin extends CopixActionGroup{
 		}
 	}
 	
-	private function checkSpam(&$tbs){
-		$bayes = _ioClass('bayes|bayes');
-		$bayes->setDataMode("db","trackbacks_spam");
+	private function _checkSpam (& $tbs){
+		$bayes = _ioClass ('bayes|bayes');
+		$bayes->setDataMode ("db","trackbacks_spam");
 		foreach ($tbs as $tb){
 			$content = $tb->title_tb." ".$tb->excerpt_tb." ".$tb->blogname_tb;
-			$tb->danger = round($bayes->getBayes('spam',$content),2);
+			$tb->danger = round ($bayes->getBayes ('spam', $content), 2);
 			
 		}
 	}

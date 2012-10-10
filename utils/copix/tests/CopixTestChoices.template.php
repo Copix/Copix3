@@ -9,18 +9,29 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>[Copix] Tests 1/2</title>
+
+<script type="text/javascript" src="<?php echo _resource('js/mootools/mootools.js'); ?>" ></script>
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/elementmover.js'); ?>" ></script>
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/transcorners.js'); ?>" ></script>
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/toolbar.js'); ?>" ></script>
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/shadows.js'); ?>" ></script>
+
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/fixhrefbutton.js'); ?>" ></script>
+<script type="text/javascript" src="<?php echo _resource('js/mootools/plugins/moopanes.js'); ?>" ></script>
+
 <link rel="stylesheet"
-	style="color: black" href="<?php echo _resource ("copix.css.php"); ?>?copixurl=<?php echo CopixUrl::get(); ?>"
+	href="<?php echo _resource ("styles/copix.css.php"); ?>?copixurl=<?php echo _url (); ?>"
 	type="text/css" />
 <link rel="stylesheet"
-	style="color: black" href="<?php echo _resource ("js/niftycorners/niftyCorners.css"); ?>"
+	href="<?php echo _resource ("styles/theme.css.php"); ?>?copixurl=<?php echo _url (); ?>"
+	type="text/css" />
+<link rel="stylesheet"
+	href="<?php echo _resource ("js/mootools/css/moopanes.css"); ?>"
 	type="text/css" />
 <script type="text/javascript"
-	src="<?php echo _resource ("js/niftycorners/niftycube.js"); ?>"></script>
-<script type="text/javascript"
-	src="<?php echo _resource ("site.js"); ?>"></script>
+	src="<?php echo _resource ("js/site.js.php"); ?>"></script>
 <!--[if IE]>
-  <link rel="stylesheet" style="color: black" href="<?php echo _resource ("ie.css"); ?>" type="text/css"/>
+  <link rel="stylesheet" href="<?php echo _resource ("styles/ie.css"); ?>" type="text/css"/>
 <![endif]-->
 </head>
 <body>

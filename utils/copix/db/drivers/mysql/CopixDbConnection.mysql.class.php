@@ -15,7 +15,6 @@
  * @subpackage  db
  */
 class CopixDBConnectionMySQL extends CopixDBConnection {
-    
     /**
      * Identifiant de connexion à la base MySQL.
      */
@@ -34,10 +33,10 @@ class CopixDBConnectionMySQL extends CopixDBConnection {
         $parts['host'] = isset($parts['host']) ? $parts['host'] : "localhost";  
        
         if (!($this->_ct = mysql_connect ($parts['host'], $this->_profil->getUser (), $this->_profil->getPassword (), true))) {
-            throw new Exception ('Impossible de se connecter à la base localhost');
+        	throw new CopixDBException (mysql_error ());    
         }
-        if(!mysql_select_db($parts['dbname'], $this->_ct)) {
-            throw new Exception ('Impossible de se connecter');
+        if(!mysql_select_db ($parts['dbname'], $this->_ct)) {
+            throw new CopixDBException (mysql_error ($this->_ct));
         }
     }
     
@@ -133,12 +132,12 @@ class CopixDBConnectionMySQL extends CopixDBConnection {
             $arType = array ('int'=>'int', 'tinyint'=>'int', 'smallint'=>'int', 'mediumint'=>'int', 'bigint'=>'numeric', 'int unsigned'=>'int', 'smallint unsigned'=>'int','mediumint unsigned'=>'int',
             'double'=>'float', 'decimal'=>'float', 'float'=>'float', 'numeric'=>'float', 'real'=>'float', 'char'=>'varchar', 'tinyblob'=>'varchar',
             'blob'=>'varchar', 'tinytext'=>'varchar', 'text'=>'string', 'mediumblob'=>'varchar', 'mediumtext'=>'varchar', 'longblob'=>'varchar', 'longtext'=>'varchar',
-            'date'=>'date', 'datetime'=>'datetime', 'time'=>'date',
+            'date'=>'date', 'datetime'=>'datetime', 'time'=>'time',
             'varchar'=>'varchar');
             if (isset ($arType[$field->type])) {
                 $field->type = $arType[$field->type];
             } else {
-                throw new Exception ("Le type $field->type n'est pas reconnu");
+                throw new CopixDBException ("Le type $field->type n'est pas reconnu");
             }
 
             if ($field->isAutoIncrement && $field->type == 'int') {
@@ -170,25 +169,28 @@ class CopixDBConnectionMySQL extends CopixDBConnection {
         $resultsOfQueryParsing = $this->_parseQuery ($pQueryString, $pParams, $pOffset, $pCount);
         $pQueryString = $resultsOfQueryParsing['query'];
         
-        CopixLog::log ($pQueryString.var_export ($pParams, true), 'query', CopixLog::INFORMATION);
+        _log ($pQueryString.var_export ($pParams, true), 'query', CopixLog::INFORMATION);
         
         // Création du statement
-        $stmt = self::_prepareStatement ($pQueryString);
+        $stmt = $this->_prepareStatement ($pQueryString);
         
-        // On analyse les paramètres
+        //On trie le tableau de paramètre en fonction de la taille (workaround pour éviter les conflits de binds)
+        $pParams = $this->_sortParams ($pParams);
+
+        //Association des paramètres
         foreach ($pParams as $name=>$param){
             if (is_array ($param)){
                 $param = isset ($param['value']) ? $param['value'] : null;
             }
-            if (($stmt = self::_bindByName ($stmt, $name, $param)) == false ){
-               throw new CopixDBException ("Bind ['$name'] - Query ['$pQueryString']");
+            if (($this->_bindByName ($stmt, $name, $param)) == false ){
+	            throw new CopixDBException ("Cannot bind ['$name'] in Query ['".$stmt->query."']");
             }
         }
         
         //on exécute la requête
-        $result = mysql_query($stmt->query, $this->_ct);
+        $result = mysql_query ($stmt->query, $this->_ct);
         if (!$result) {
-            throw new CopixDBException ("Requête invalide - Query ['$pQueryString']");
+            throw new CopixDBException ("Query Error [".mysql_error ($this->_ct)."] - ['".$stmt->query."']");
         }
 
         //retourne les résultats.
@@ -223,17 +225,16 @@ class CopixDBConnectionMySQL extends CopixDBConnection {
      * 
      * @return stdClass 
      */
-    private static function _prepareStatement ($query) {
+    private function _prepareStatement ($query) {
         $statement   = new stdClass ();
         $statement->query = $query;
-        
         return $statement;
     }
     
     /**
      * Remplace les parametres de la requète par le nom
      */
-    private static function _bindByName ($stmt, $name, $value) {
+    private function _bindByName ($stmt, $name, $value) {
         $oldquery = $stmt->query;
         if($name[0] !== ':') {
             $name = ':' . $name;
@@ -248,7 +249,7 @@ class CopixDBConnectionMySQL extends CopixDBConnection {
         if($oldquery == $stmt->query) {
             return false;
         }
-        return $stmt;
+        return true;
     }
     
     /**
@@ -288,7 +289,15 @@ class CopixDBConnectionMySQL extends CopixDBConnection {
      * @return int 
      */
     public function lastId ($pFromSequence = null){
-        return mysql_insert_id();
+        return mysql_insert_id ($this->_ct);
+    }
+    
+    /**
+	* Tri les paramètres 
+	*/
+    private function _sortParams ($pParams){
+    	ksort ($pParams);
+    	return array_reverse ($pParams);
     }
 }
 ?>

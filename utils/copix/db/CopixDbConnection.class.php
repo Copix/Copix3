@@ -48,6 +48,14 @@ abstract class CopixDBConnection {
     }
     
     /**
+     * Retourne le profil de connexion utilisé pour la connexion courante
+     * @return CopixDBProfile
+     */
+    public function getProfile (){
+    	return $this->_profil;
+    }
+    
+    /**
      * Analyse de la requête à redéfinir dans les parents
      * @return array [isSelect] => true / false si c'est une sélection
      *         array [isStatement] => true / false si c'est un statement
@@ -139,7 +147,7 @@ abstract class CopixDBConnection {
     * @return	string	le type de jointure (ORACLE ou MYSQL).
     */
     public function joinType () {
-        if ($this->profil->driver == 'oci8') {
+        if ($this->_profil->driver == 'oci8') {
             return 'ORACLE';
         }else{
             return 'MYSQL';
@@ -189,7 +197,7 @@ abstract class CopixDBConnection {
     		}
     	}
     	if (count ($toRaise)){
-    		throw new Exception ('[CopixDBConnection] Les éléments '.implode ('-', $toRaise).' sont manquants pour la chaine de connexion '.$this->_profil->getDriverName ());
+    		throw new CopixDBException ('[CopixDBConnection] Les éléments '.implode ('-', $toRaise).' sont manquants pour la chaine de connexion '.$this->_profil->getDriverName ());
     	}
     }
 

@@ -79,11 +79,11 @@ class CopixDBConnectionPDO_SQLite extends CopixDBPDOConnection {
             $field->isAutoIncrement = ($field->primary && strtolower ($field->type) == 'integer');
             $field->caption = $val->name;
             $field->required=($val->notnull != '0') ? 'yes' : 'no';
-            $arType = array('int'=>'int','tinyint'=>'int','smallint'=>'int','mediumint'=>'int','bigint'=>'numeric','integer'=>'int','double'=>'float','decimal'=>'float','float'=>'float','numeric'=>'float','real'=>'float','char'=>'varchar','tinyblob'=>'varchar','blob'=>'varchar','tinytext'=>'varchar','text'=>'string','mediumblob'=>'varchar','mediumtext'=>'varchar','longblob'=>'varchar','longtext'=>'varchar','date'=>'date','varchar'=>'varchar');
+            $arType = array('int'=>'int','tinyint'=>'int','smallint'=>'int','mediumint'=>'int','bigint'=>'numeric','integer'=>'int','double'=>'float','decimal'=>'float','float'=>'float','numeric'=>'float','real'=>'float','char'=>'varchar','tinyblob'=>'varchar','blob'=>'varchar','tinytext'=>'varchar','text'=>'string','mediumblob'=>'varchar','mediumtext'=>'varchar','longblob'=>'varchar','longtext'=>'varchar','date'=>'date','datetime'=>'datetime', 'time'=>'time', 'varchar'=>'varchar');
             if (isset($arType[strtolower($field->type)])) {
             	  $field->type= $arType[$field->type];
             } else {
-            	  throw new Exception ("Le type $field->type n'est pas reconnu");
+            	  throw new CopixDBException ("Le type $field->type n'est pas reconnu");
             }
             if ($field->type == 'int' && $field->isAutoIncrement){
             	$field->type = 'autoincrement';

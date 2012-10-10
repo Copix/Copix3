@@ -86,6 +86,16 @@ class CopixDBFieldDescription {
  * @subpackage	db
  */
 class CopixDBProfile {
+	/**
+	 * Pour spécifier une connexion persistante.
+	 */
+	const PERSISTENT = PDO::ATTR_PERSISTENT;
+     
+	/**
+	 * Pour spécifier l'émulation des prepares et non des prépares réels
+	 */
+	const EMULATE_PREPARES = PDO::ATTR_EMULATE_PREPARES;
+
     /**
 	 * Nom du profil
 	 * @var string
@@ -186,7 +196,7 @@ class CopixDBProfile {
      */
     public function getDriverName (){
     	if (($position = strpos ($this->_connectionString, ':')) === false){
-    		throw new Exception ('[CopixDBProfile] Nom du driver manquant pour le profil '.$this->_name);
+    		throw new CopixDBException ('[CopixDBProfile] Nom du driver manquant pour le profil '.$this->_name);
     	}
     	return substr ($this->_connectionString, 0, $position);
     }
@@ -197,6 +207,18 @@ class CopixDBProfile {
      */
     public function getOptions (){
     	return $this->_options;
+    }
+    
+    /**
+     * Indique la valeur d'une option
+     * @param	mixed	$pOption	L'option dont on souhaite connaitre la valeur
+     * @return mixed
+     */
+    public function getOption ($pOption){
+    	if (isset ($this->_options[$pOption])){
+    		return $pOption;
+    	}
+    	return null;
     }
     
     /**
@@ -269,7 +291,7 @@ class CopixDB {
 	public static function getConnection ($pNamed = null){
 		if ($pNamed === null){
            if (($pNamed = CopixConfig::instance ()->copixdb_getDefaultProfileName ()) === null){
-           	throw new CopixException ('Aucun profil de base défini par défaut.');
+           	throw new CopixDBException ('Aucun profil de base défini par défaut.');
            }			
 		}
 
@@ -418,19 +440,32 @@ class CopixDB {
     * Retourne la liste des drivers disponibles sur la plateforme actuelle
     */
    public static function getAvailableDrivers (){
-     	$arDrivers   = array ();
+     	return self::_getDrivers (true);
+   }
+   
+   public static function getAllDrivers () {
+		return self::_getDrivers (false);
+   }
+   
+   private function _getDrivers  ($pGetOnlyAvailables) {
+   		$arDrivers   = array ();
    		$arAvailable = array ();
 
    		if ($dir      = @opendir (COPIX_PATH.'db/drivers/')){
    			while (false !== ($file = readdir($dir))) {
    				if (is_dir (COPIX_PATH.'db/drivers/'.$file)){
    					if (file_exists ($fileName = COPIX_PATH.'db/drivers/'.$file.'/CopixDbConnection.'.$file.'.class.php')){
-   						Copix::RequireOnce ($fileName);
-   						$class = 'CopixDbConnection'.$file;
-   						if (class_exists ($class)){
-	   						if (call_user_func (array ($class, 'isAvailable'))){
-	   							$arAvailable[$file] = $file;
+   						
+   						if ($pGetOnlyAvailables) {
+	   						Copix::RequireOnce ($fileName);
+	   						$class = 'CopixDbConnection'.$file;
+	   						if (class_exists ($class)){
+		   						if (call_user_func (array ($class, 'isAvailable'))){
+		   							$arAvailable[$file] = $file;
+		   						}
 	   						}
+   						} else {
+   							$arAvailable[$file] = $file;
    						}
    					}
    				}

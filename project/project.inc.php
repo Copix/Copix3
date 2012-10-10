@@ -11,7 +11,7 @@
 /**
  * @ignore
  */
-define ('COPIX_PROJECT_PATH', dirname (__FILE__).'/');
+define ('COPIX_PROJECT_PATH', dirname (__FILE__) . '/');
 define ('COPIX_TEMP_PATH',    COPIX_PROJECT_PATH.'../temp/');
 define ('COPIX_CACHE_PATH',   COPIX_TEMP_PATH.'cache/');
 define ('COPIX_LOG_PATH',     COPIX_TEMP_PATH.'log/');

@@ -4,7 +4,7 @@
 <input id="yes" type="button" value="{i18n key="Copix:common.buttons.yes"}" /><input type="button" value="{i18n key="Copix:common.buttons.no"}" onclick="javascript:document.location.href='{copixurl dest="admin|install|manageModules"}'" />
 </div>
 
-{ajax_divzone id=$id zone='admin|deletemodule'}
+{copixzone id=$id process='admin|deletemodule' ajax=true}
 <input id="back" type="button" value="{i18n key="copix:common.buttons.back"}" onclick="javascript:document.location.href='{copixurl dest='admin|install|manageModules'}'" />
 
 {copixhtmlheader kind="jsCode"}
@@ -15,7 +15,6 @@ window.addEvent('domready', function () {
 		$('messageConfirm').setStyle('display','none');
 	    $('{/literal}{$id}{literal}').fireEvent('display');
 	    $('{/literal}{$id}{literal}').setStyle('display','');
-	    $('back').setStyle('display','');
 	});
 });
 {/literal}

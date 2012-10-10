@@ -117,8 +117,6 @@ class ActionGroupAdmin extends CopixActionGroup {
 			$tpl->assign('MAIN',$res);
 			return new CopixActionReturn (CopixActionReturn::DISPLAY, $tpl);
 			
-			return _arRedirect (_url ('wsserver||', array ('wsname'=>$pServiceName)));
-			
 		// si on doit afficher le formulaire d'ajout
 		} else {
 			$ppo = new CopixPPO ();

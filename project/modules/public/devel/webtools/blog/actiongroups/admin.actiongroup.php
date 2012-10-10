@@ -15,11 +15,7 @@
 class ActionGroupAdmin extends CopixActionGroup{
 
 	public function beforeAction (){
-		if(!_ioClass('blog|blogauth')->canWrite()){
-			return CopixActionGroup::process ('genericTools|Messages::getError',
-			array ('message'=>_i18n ('blog.error.cannot.edit'),
-			'back'=>_url ()));
-		}
+		_ioClass('blog|blogauth')->assertWrite ();
 		CopixHtmlHeader::addCSSLink (_resource ('styles/wiki.css.php'));
 		CopixHtmlHeader::addCSSLink (_resource ('styles/blog.css.php'));
 	}
@@ -29,7 +25,7 @@ class ActionGroupAdmin extends CopixActionGroup{
 		$ppo->TITLE_BAR = "blog|";
 		$ppo->TITLE_PAGE = $ppo->TITLE_BAR;
 		$ppo->headings = _ioDao('blog_heading')->findAll();
-		return _arPPO($ppo,'admin.tpl');
+		return _arPPO ($ppo,'admin.tpl');
 	}
 
 	public function processAddHeading (){

@@ -29,6 +29,13 @@ class TemplateTagCheckBox extends CopixTemplateTag {
 	   if (empty ($values)){
 	   	   $values = array ();
 	   }
+	   if ((!is_array ($values)) || ! ($values instanceof Iterator)){
+	   	$values = (array) $values;
+	   }
+	   if(empty ($id)){
+			$id = $name;
+		}
+	   
 	   if (empty ($selected)){
 	   	   $selected = null;
 	   }
@@ -51,17 +58,17 @@ class TemplateTagCheckBox extends CopixTemplateTag {
 	   
 	   //each of the values.
 	   if (empty ($objectMap)){
-	      foreach ((array) $values  as $key=>$caption) {
+	      foreach ($values  as $key=>$caption) {
 	         $selectedString = ((array_key_exists('selected', $pParams)) && (in_array($key,(is_array($selected) ? $selected : array($selected))))) ? ' checked="checked" ' : '';
 	         $classString = (!empty($class)) ? ' class="'.$class.'"' : '';
-	         $checkid = uniqid();
+	         $checkid = $id.'_'.$key;
 	         $toReturn .= '<input'.$classString.' id="'.$checkid.'" type="checkbox" name="'.$name.'[]" '.$extra.' value="'.$key.'"'.$selectedString.' /><label id="'.$checkid.'_label" for="'.$checkid.'" >'._copix_utf8_htmlentities($caption).'</label>'.$separation;
 	      }
 	   }else{
 	      //if given an object mapping request.
 	      foreach ((array) $values  as $key=>$object) {
 	         $selectedString = ((array_key_exists('selected', $pParams)) && ($object->$idProp == $selected)) ? ' checked="checked" ' : '';
-	         $checkid = uniqid();
+	         $checkid = $id.'_'.$object->$idProp;
 	         $toReturn .= '<input'.$classString.' id="'.$checkid.'" type="checkbox" name="'.$name.'[]" '.$extra.' value="'.$object->$idProp.'"'.$selectedString.' /><label id="'.$checkid.'_label" for="'.$checkid.'" >' . _copix_utf8_htmlentities($object->$captionProp).'</label>'.$separation;
 	      }
 	   }

@@ -6,9 +6,9 @@
 {if count ($ppo->arErrors)}
 <br />
   {if count ($ppo->arErrors) == 1}
-    {assign var=title_key value='admin.error'}
+    {assign var=title_key value='copix:common.messages.error'}
   {else}
-    {assign var=title_key value='admin.errors'}
+    {assign var=title_key value='copix:common.messages.errors'}
   {/if}
   <div class="errorMessage">
   <h1>{i18n key="$title_key"}</h1>
@@ -16,10 +16,10 @@
   </div>
 {/if}
 
-<table border="0" cellspacing="5px" cellpadding="0">
+<table>
   <tr>
     <td>{i18n key="admin.name_item"}&nbsp;</td>
-    <td><input type="text" name="name_item" value="{$ppo->toEdit->name_item}" /></td>
+    <td><input type="text" name="name_item" id="name_item" value="{$ppo->toEdit->name_item}" /></td>
   </tr>
   <tr>
     <td>{i18n key="admin.link_item"}&nbsp;</td>
@@ -28,8 +28,10 @@
   <tr>
     <td colspan="2" align="center">
       <input type="submit" value="{$ppo->submit_caption}" />
-      <input type="button" value="{i18n key="admin.back"}" onclick="document.location='{copixurl dest="menu|adminitems|" id_menu=$ppo->toEdit->id_menu}'" />
+      <input type="button" value="{i18n key="copix:common.buttons.back"}" onclick="document.location='{copixurl dest="menu|adminitems|" id_menu=$ppo->toEdit->id_menu}'" />
     </td>
   </tr>
 </table>
 </form>
+
+{formfocus id="name_item"}

@@ -4,7 +4,11 @@
 		<default name="copixpackager" description="Packager pour les fichiers de Copix" icon="copix.gif"
 			longdescription="Permet de générer des archives des différentes versions de Copix" />
 	</general>
-	<admin>
+	<admin groupid="devtools" groupcaptioni18n="copix:copix.moduleGroup.devtools" groupicon="tools.gif">
   		<link url="copixpackager|packager|" caption="Créer un package" credentials="basic:admin"></link>
- 	</admin>	
+ 	</admin>
+ 	<parameters>
+		<parameter name="cmdZip" caption="Commande compression ZIP" default="zip -r #FILE# #DIR#" type="text" />
+		<parameter name="cmdTarGz" caption="Commande compression TAR GZ" default="tar czvf #FILE# #DIR#" type="text" />
+	</parameters>
 </moduledefinition>

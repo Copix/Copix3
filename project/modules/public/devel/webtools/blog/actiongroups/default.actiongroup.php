@@ -18,9 +18,9 @@ class ActionGroupDefault extends CopixActionGroup{
 	public $TITLE_BAR="";
 
 	public function beforeAction (){
+		$this->canwrite = _ioClass('blog|blogauth')->canWrite();
 		CopixHtmlHeader::addCSSLink (_resource ('styles/wiki.css.php'));
 		CopixHtmlHeader::addCSSLink (_resource ('styles/blog.css.php'));
-		$this->canwrite = _ioClass('blog|blogauth')->canWrite();
 	}
 
 	public function afterAction ($action,$return){
@@ -169,5 +169,4 @@ class ActionGroupDefault extends CopixActionGroup{
 		return _arPPO($ppo,"showticket.tpl");
 	}
 }
-
 ?>

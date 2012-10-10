@@ -29,13 +29,20 @@ class ActionGroupInstall extends CopixActionGroup {
     * Préparation de l'installation
     */
 	function processInstallFramework () {
-		try {
-		   CopixDB::getConnection ();//test de la connexion
-		   _class ('InstallService')->installFramework ();
-		   return _arRedirect (_url ('admin||'));			
-		}catch (CopixDBException $e){
-           return _arRedirect (_url ('admin|database|', array ('databaseNotOk'=>1)));			
-		}
+		// find the current connection type (defined in /plugins/copixDB/profils.definition.xml)
+    	$config = CopixConfig::instance ();
+    	$driver = $config->copixdb_getProfile ();
+    	$typeDB = $driver->getDriverName ();
+
+        // Search each module install file
+        $scriptName = 'prepareinstall.'.$typeDB.'.sql';
+        $file = CopixModule::getPath ('admin') . COPIX_INSTALL_DIR . 'scripts/' . $scriptName;
+        CopixDB::getConnection ()->doSQLScript ($file);
+        //make sure that copixmodule is reset
+        CopixModule::reset();
+        $tpl = new CopixTpl();
+		$tpl->assignZone('MAIN','admin|installmodulewithdep', array('arModule'=>array( 'generictools','auth','default','admin'),'url_return'=>_url ('admin|database|done'),'messageConfirm'=>false));
+		return _arDisplay($tpl);
 	}
 	
 	/**
@@ -47,7 +54,17 @@ class ActionGroupInstall extends CopixActionGroup {
 	    $tpl->assignZone('MAIN','admin|installmodulewithdep', array('moduleName'=>_request('moduleName')));
 	    return _arDisplay($tpl);
    	}
-
+	/**
+	 * Installation d'un tableau de module
+	 */
+   	public function processInstallModules () {
+	    $tpl = new CopixTpl();
+  	    //$tpl->assign('TITLE_PAGE',_i18n('install.title.installModule',_request('moduleName')));
+	    $tpl->assignZone('MAIN','admin|installmodulewithdep', array('arModule'=>explode('|',_request('arModule'))));
+	    return _arDisplay($tpl);
+   	}
+   	
+   	
 	/**
 	 * Mise a jour du module
 	 */

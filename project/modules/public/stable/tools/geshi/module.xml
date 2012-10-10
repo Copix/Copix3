@@ -2,6 +2,6 @@
 <moduledefinition>
 	<general>
 		<default name="geshi" descriptioni18n="geshi.description"
-			longdescriptioni18n="geshi.longDescription" />
+			longdescriptioni18n="geshi.longDescription" icon="geshi.png" />
 	</general>
 </moduledefinition>

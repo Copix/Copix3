@@ -22,6 +22,7 @@ class ZoneLoginForm extends CopixZone {
 		$ppo->user = CopixAuth::getCurrentUser ()->isConnected () ? CopixAuth::getCurrentUser () : null;
 		$ppo->auth_url_return = $this->getParam ('auth_url_return', _url ('#'));
 		$ppo->createUser = CopixConfig::get ('auth|createUser');
+		$ppo->ask_remember = false;
 		$toReturn = $this->_usePPO ($ppo, $this->getParam ('template', 'login.form.php'));
 	}
 }

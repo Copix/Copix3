@@ -15,8 +15,10 @@
  * @example {showdiv id="divId" show="true"}
  * Paramètre requis
  * 		id : id du div
- * Paramètre optionnel
- * 		show : bool, affiché ou non par défaut (ne modifie pas l'état du div)
+ * Paramètres optionnels
+ * 		show : bool, div affiché ou non par défaut (ne modifie pas l'état du div), true par défaut
+ * 		caption : string, affiche ce texte au lieu de l'image
+ * 		captioni18n : string, affiche un texte i18n au lieu de l'image
  */
 class TemplateTagShowDiv extends CopixTemplateTag {
 
@@ -35,6 +37,10 @@ class TemplateTagShowDiv extends CopixTemplateTag {
 	    	$show = ($show == 'true') ? true : false;
 	    }
 	    
+	    if (!empty ($captioni18n)) {
+	    	$caption = _i18n ($captioni18n);
+	    }
+	    
 	    // code javascript pour afficher / cacher un div
 	    CopixHTMLHeader::addJsCode ('function smarty_showDiv (id, show) {
 			if (show) {
@@ -46,7 +52,9 @@ class TemplateTagShowDiv extends CopixTemplateTag {
 			}
 			
 			document.getElementById (id).style.display = style;
-			document.getElementById (\'img_\' + id).src = img;
+			if (document.getElementById (\'img_\' + id) != undefined) {
+				document.getElementById (\'img_\' + id).src = img;
+			}
 		}
 
 		function smarty_invertShow (id) {
@@ -55,7 +63,12 @@ class TemplateTagShowDiv extends CopixTemplateTag {
 		
 	    // création du code HTML
 	    $imgName = ($show) ? 'way_up' : 'way_down';
-	    $out = '<img id="img_' . $id . '" src="' . _resource ('img/tools/' . $imgName . '.png') . '" onclick="javascript: smarty_invertShow (\'' . $id . '\');" style="cursor:pointer" />';
+		
+		if (!empty ($caption)) {
+			$out = '<a href="javascript: smarty_invertShow (\'' . $id . '\');">' . $caption . '</a>';
+		} else {
+			$out = '<img id="img_' . $id . '" src="' . _resource ('img/tools/' . $imgName . '.png') . '" onclick="javascript: smarty_invertShow (\'' . $id . '\');" style="cursor:pointer" />';
+		}
 	    
 	    return $out;
 	} 

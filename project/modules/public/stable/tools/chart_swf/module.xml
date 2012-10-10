@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <moduledefinition>
  <general>
-  <default name="chart_swf" description="SwfChart" longdescription="SwfChart" />
+  <default name="chart_swf" description="Chart (SWF)" longdescription="Chart avec la bibliothèque SWFChart"  icon="chart.png"  />
  </general> 
  <dependencies>
   <dependency name="chart" kind="module"/>

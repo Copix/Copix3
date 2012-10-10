@@ -50,8 +50,9 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 		$this->_autoCommitMode = self::OCI_AUTO_COMMIT; 
 
 		$parts = $this->_profil->getConnectionStringParts ();
-		if (($this->_ct = oci_connect ($this->_profil->getUser (), $this->_profil->getPassword (), $parts['dbname'])) === false){
-    		throw new Exception ('Impossible de se connecter');
+		$funcName = $this->_profil->getOption (CopixDBProfile::PERSISTENT) ? 'oci_connect' : 'oci_pconnect';
+		if (($this->_ct = $funcName ($this->_profil->getUser (), $this->_profil->getPassword (), $parts['dbname'], isset ($parts['charset']) ? $parts['charset'] : null)) === false){
+    		throw new CopixDBException ('Impossible de se connecter');
     	}
    }
 
@@ -106,7 +107,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
     public function getFieldList ($pTableName) {
     	$toReturn = array ();
 
-        $arType = array('LONG'=>'float','NUMBER'=>'float', 'CHAR'=>'varchar', 'VARCHAR2'=>'varchar', 'NVARCHAR2'=>'varchar', 'NCHAR'=>'varchar', 'CLOC'=>'varchar', 'NCLOB'=>'varchar', 'BLOB'=>'blob', 'DATE'=>'date');
+        $arType = array('LONG'=>'float','NUMBER'=>'float', 'CHAR'=>'varchar', 'VARCHAR2'=>'varchar', 'NVARCHAR2'=>'varchar', 'NCHAR'=>'varchar', 'CLOC'=>'varchar', 'NCLOB'=>'varchar', 'BLOB'=>'blob', 'DATE'=>'datetime');
  
         $query = "SELECT   a.column_name AS name, " .
                  "         decode (a.nullable, 'Y', 0, 'N', 1) AS not_null, " .
@@ -124,9 +125,9 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 			if (isset($arType[strtoupper($val->col_type)])) {
                 $field->type = $arType[$val->col_type];
             } else {
-                throw new Exception("Le type $field->type n'est pas reconnu");
+                throw new CopixDBException("Le type $field->type n'est pas reconnu");
             }
-			$field->maxlength=$val->col_size;
+			$field->maxlength = $val->col_size;
 			$field->sequence='';
 			$field->pk=false;
 			
@@ -246,7 +247,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 
    		$resultsOfQueryParsing = $this->_parseQuery ($pQueryString, $pParams, $pOffset, $pCount);
         $pQueryString = $resultsOfQueryParsing['query'];
-        
+
     	//Préparation de la requête
     	$stmt = ociparse ($this->_ct, $pQueryString);
     	if ($stmt === false){
@@ -308,7 +309,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
         //retourne les résultats.
 		if ($resultsOfQueryParsing['isSelect']){
 			$results = array ();
-	        while ($o = oci_fetch_array ($stmt, OCI_ASSOC+OCI_RETURN_LOBS)){
+	        while ($o = oci_fetch_array ($stmt, OCI_ASSOC+OCI_RETURN_LOBS+OCI_RETURN_NULLS)){
 	        	$results[] = $this->_getCases ($o, $pQueryString);
 	        }
 		}else{
@@ -329,7 +330,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
         			oci_free_descriptor ($$name);
         		}
         }
-		
+
         oci_free_statement ($stmt);
         return $results;
     }
@@ -430,7 +431,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
             $statementErrors = oci_error ($stmt);
             oci_free_statement ($stmt);
             oci_rollback ($this->_ct);
-        	throw new Exception ('[CopixDB] Impossible d\'exécuter la procédure '.$pProcedure.' - '.var_dump ($statementErrors).' avec les variables '.var_dump ($arVariables));
+        	throw new CopixDBException ('[CopixDB] Impossible d\'exécuter la procédure '.$pProcedure.' - '.var_dump ($statementErrors).' avec les variables '.var_dump ($arVariables));
         }
 
         //analyse des résultats
@@ -441,7 +442,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
         		    oci_free_statement ($$name);
                     oci_free_statement ($stmt);
                     oci_rollback ($this->_ct);
-        			throw new Exception ("Impossible de récupèrer l'ensemble de résultat de la variable $name");;
+        			throw new CopixDBException ("Impossible de récupèrer l'ensemble de résultat de la variable $name");;
         		}
         		$toReturn[':'.$name] = new CopixDBOCIResultSetIterator($$name, $stmt, null);
         	}else{
@@ -511,7 +512,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
             $statementErrors = oci_error ($stmt);
             oci_free_statement ($stmt);
             oci_rollback ($this->_ct);
-        	throw new Exception ('[CopixDB] Impossible d\'exécuter la procédure '.$pProcedure.' - '.var_dump ($statementErrors).' avec les variables '.var_dump ($arVariables));
+        	throw new CopixDBException ('[CopixDB] Impossible d\'exécuter la procédure '.$pProcedure.' - '.var_dump ($statementErrors).' avec les variables '.var_dump ($arVariables));
         }
 
         //analyse des résultats
@@ -522,10 +523,10 @@ class CopixDBConnectionOCI extends CopixDBConnection {
         		    oci_free_statement ($$name);
                     oci_free_statement ($stmt);
                     oci_rollback ($this->_ct);
-        			throw new Exception ("Impossible de récupèrer l'ensemble de résultat de la variable $name");;
+        			throw new CopixDBException ("Impossible de récupèrer l'ensemble de résultat de la variable $name");;
         		}
         		$toReturn[':'.$name] = array ();
-        		while ($r = oci_fetch_array ($$name, OCI_ASSOC+OCI_RETURN_LOBS)){
+        		while ($r = oci_fetch_array ($$name, OCI_ASSOC+OCI_RETURN_LOBS+OCI_RETURN_NULLS)){
                    $toReturn[':'.$name][] = $this->_getCases ($r);        			
         		}
         		oci_free_statement ($$name);
@@ -559,8 +560,6 @@ class CopixDBConnectionOCI extends CopixDBConnection {
      * @return bool
      */
     public static function isAvailable (){
-    	return false;
-    	
     	if (!function_exists ('oci_pconnect')){
     		return false;
     	}

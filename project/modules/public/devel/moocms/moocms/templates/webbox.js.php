@@ -83,6 +83,9 @@ WebBoxes = {
 				el.makeDraggable({
 					'handle': handle,
 					'onBeforeStart': function() {
+						webBoxCols.each(function (col){
+							if(col.getSize().size.y < el.getSize().size.y) col.setStyle('height', el.getSize().size.y+'px');
+						});
 						// Introduce the marking box, change the draging box to absolute
 						// The order the next 4 lines seems to be important for it to work right in Firefox
 						webBoxMarker.injectAfter(el).setStyles({'display': 'block', 'height': el.getStyle('height')});
@@ -109,6 +112,11 @@ WebBoxes = {
 
 						// Remove the marking box
 						webBoxMarker.injectInside($E('body')).setStyles({'display': 'none'});
+						
+						webBoxCols.each(function (col){
+							col.setStyle('height', null);
+						});
+						
 						WebBoxes.checkSize();
 					},
 					'onDrag': function() {
@@ -120,7 +128,10 @@ WebBoxes = {
  
 						// X - Which column?
 					    webBoxCols.each(function(el, i){
-					        if (mouseX > el.getCoordinates().left) webBoxTargetCol = el;
+					        if (mouseX > el.getCoordinates().left && 
+					        mouseY > el.getCoordinates().top && 
+					        mouseY < el.getCoordinates().bottom ) 
+					        webBoxTargetCol = el;
 					    });
  
 					    // Y - If we're half way or more past this webBox then insert it after this one
@@ -133,12 +144,10 @@ WebBoxes = {
 						{
 							// On top
 							if (webBoxTargetCol.getChildren()[0] != webBoxMarker) webBoxMarker.injectTop(webBoxTargetCol);
-						}
-						else
-						{
+						}else{
 							// Or after a webBox
 							if ((webBoxTargetDiv != webBoxMarker) && (webBoxTargetDiv != webBoxMarker.getPrevious())) webBoxMarker.injectAfter(webBoxTargetDiv);
-						}
+						}						
 						WebBoxes.checkSize();
 					}
 				});
@@ -180,6 +189,7 @@ function checkIfEdit(aj,boxname,datas){
 		valid.setText('OK');
 		valid.injectInside(d);
 		valid.addEvent('click',function(){
+			window.fireEvent('savebox');
 			var datas = new Hash();			
 			this.getParent().getElementsBySelector('input,textarea').each(function(input){
 				datas.set(input.name,input.value)
@@ -202,7 +212,6 @@ function checkIfEdit(aj,boxname,datas){
 			id: wb.id,
 			order: 0
 		}
-
 		WebBoxes.boxes.push(box);
 		TB_remove(); //to close the edit box
 	}

@@ -190,7 +190,7 @@ class CopixDBPDOResultSetIterator implements Iterator, ArrayAccess {
 	 * Impossibilité de définir des valeurs dans un resultset
 	 */
 	 function offsetSet ($key, $value) {
-	 	throw new CopixException ('Cannot set directly in a result set');
+	 	throw new CopixDBException ('Cannot set directly in a result set');
 	 }
 	
 	 /**
@@ -200,13 +200,13 @@ class CopixDBPDOResultSetIterator implements Iterator, ArrayAccess {
       */
 	 function offsetGet ($pKey) {
 	 	if (! $this->offsetExists ($pKey)){
-	 		throw new CopixException ('Offset incorrect');	 		
+	 		throw new CopixDBException ('Offset incorrect');	 		
 	 	}
 	 	
 	 	if ($this->_loadKey($pKey)){
 	 		return $this->_loadedResults[$pKey]; 
 	 	}else{
-	 		throw new CopixException ('Buffer insuffisant pour récupérer l\'ensemble de résultat '.$pKey);
+	 		throw new CopixDBException ('Buffer insuffisant pour récupérer l\'ensemble de résultat '.$pKey);
 	 	}
 	 }
 
@@ -217,7 +217,7 @@ class CopixDBPDOResultSetIterator implements Iterator, ArrayAccess {
 	  * @return void
  	  */
 	 function offsetUnset ($key) {
-	 	throw new CopixException ('Impossible de supprimer un élément de l ensemble de résultat');
+	 	throw new CopixDBException ('Impossible de supprimer un élément de l ensemble de résultat');
 	 }
 
 	 /**

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="news_5"  icon="tutorial.png" />
+	</general>
+	<credentials>
+	    <credential name="Voir" />
+	    <credential name="Ecrire" />
+	</credentials>
+    
+</moduledefinition>

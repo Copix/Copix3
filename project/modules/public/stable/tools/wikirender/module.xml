@@ -2,7 +2,7 @@
 <moduledefinition>
 	<general>
 		<default name="wikirender" descriptioni18n="wikirender.moduledescription"
-			longdescriptioni18n="wikirender.longdescription" />
+			longdescriptioni18n="wikirender.longdescription" icon="wikirender.png" />
 	</general>
 	<dependencies>
 		<dependency name="geshi" kind="module" />

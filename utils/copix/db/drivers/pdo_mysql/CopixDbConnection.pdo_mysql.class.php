@@ -19,7 +19,6 @@ class CopixDBConnectionPDO_MySQL extends CopixDBPDOConnection {
      */
     public function __construct ($pProfil) {
         parent::__construct ($pProfil);
-        //$this->_pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
     }
 
     /**
@@ -121,12 +120,12 @@ class CopixDBConnectionPDO_MySQL extends CopixDBPDOConnection {
             $arType = array ('int'=>'int', 'tinyint'=>'int', 'smallint'=>'int', 'mediumint'=>'int', 'bigint'=>'numeric', 'int unsigned'=>'int', 'smallint unsigned'=>'int','mediumint unsigned'=>'int',
             'double'=>'float', 'decimal'=>'float', 'float'=>'float', 'numeric'=>'float', 'real'=>'float', 'char'=>'varchar', 'tinyblob'=>'varchar',
             'blob'=>'varchar', 'tinytext'=>'varchar', 'text'=>'string', 'mediumblob'=>'varchar', 'mediumtext'=>'varchar', 'longblob'=>'varchar', 'longtext'=>'varchar',
-            'date'=>'date', 'datetime'=>'datetime', 'time'=>'date',
+            'date'=>'date', 'datetime'=>'datetime', 'time'=>'time',
             'varchar'=>'varchar');
             if (isset ($arType[$field->type])) {
                 $field->type = $arType[$field->type];
             } else {
-                throw new Exception ("Le type $field->type n'est pas reconnu");
+                throw new CopixDBException ("Le type $field->type n'est pas reconnu");
             }
 
             if ($field->isAutoIncrement && $field->type == 'int') {

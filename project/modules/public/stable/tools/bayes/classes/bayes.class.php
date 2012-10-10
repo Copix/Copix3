@@ -1,16 +1,19 @@
 <?php
 /**
+ * @package tools
+ * @subpackage bayes
+ * @author Patrice Ferlet - <metal3d@copix.org>
+ * @copyright CopixTeam
+ * @licence GNU/GPL
+ */
+
+/**
  * CopixBayes Class
  * Used to get Bayesian values of probabilities
  * @package tools
  * @subpackage bayes
- * @author Patrice Ferlet - <metal3d@copix.org>
- * @copyright CopixTeam (c) 2007-2008
- * @licence GNU/GPL
  */
-
 class Bayes {
-
 	public $categories = array();
 	public $numcat=0;
 	public $mode="static";

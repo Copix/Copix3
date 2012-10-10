@@ -17,6 +17,8 @@
 class ActionGroupAjax extends CopixActionGroup {
     
     public function processGetAutoComplete () {
+    	$ppo = new CopixPPO ();
+    	
         $datasource = CopixDatasourceFactory::get(CopixRequest::get('datasource'),CopixRequest::asArray());
 	    $datasource->addCondition(CopixRequest::get('field'),'like',CopixRequest::get('value').'%');
 	    $results = $datasource->find();
@@ -83,6 +85,7 @@ class ActionGroupAjax extends CopixActionGroup {
 	}
 	
 	public function processGetMultipleSelectContent () {
+		$currentId = null;
 	    $classString = CopixSession::get(CopixRequest::get('class'));
 	    $arClass = explode('::',$classString);
 	    $class = _ioClass($arClass[0]);

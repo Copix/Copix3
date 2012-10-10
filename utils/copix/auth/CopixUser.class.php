@@ -148,7 +148,7 @@ class CopixUser {
      */
     public function assertCredential ($pString){
     	if (!$this->testCredential ($pString)){
-	   		throw new CopixCredentialException ('Pas les droits');
+	   		throw new CopixCredentialException ($pString);
     	}
     }
 
@@ -216,8 +216,18 @@ class CopixUser {
     /**
      * Indique si l'utisateur à été correctement identifié via un driver donné
      * @return boolean
+     * @deprecated
+     * @see CopixUser::isConnectedWith
      */
 	public function isLoggedWith ($pHandlerName){
+		return $this->isConnectedWith ($pHandlerName);
+	}
+	
+	/**
+	 * Indique si l'utilisateur est connecté avec un gestionnaire donné.
+	 * @return boolean
+	 */
+	public function isConnectedWith ($pHandlerName){
 		return isset ($this->_logged[$pHandlerName]) && $this->_logged[$pHandlerName]->getResult ();
 	}
 

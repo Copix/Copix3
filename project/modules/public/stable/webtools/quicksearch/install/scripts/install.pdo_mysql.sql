@@ -1,5 +1,4 @@
 CREATE TABLE quicksearchindex (
-  id_srch bigint(20) NOT NULL auto_increment,
   idobj_srch varchar(255) NOT NULL,
   title_srch varchar(255) NULL default '',
   kind_srch varchar(30) NULL default '',
@@ -7,5 +6,5 @@ CREATE TABLE quicksearchindex (
   summary_srch text,
   content_srch text,
   url_srch varchar(255) NOT NULL default '',
-  PRIMARY KEY  (id_srch)
+  PRIMARY KEY  (idobj_srch, kind_srch)
 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci;

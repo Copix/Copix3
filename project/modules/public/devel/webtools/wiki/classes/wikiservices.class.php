@@ -123,7 +123,7 @@ class wikiservices {
 												addCondition ('title_wiki', "=", $title)->
 												addCondition('lang_wiki','=',$lang)->
 												addCondition('heading_wiki','=',$heading)->
-  					   	  	 		 			orderBy("modificationdate_wiki"));					 
+  					   	  	 		 			orderBy("modificationdate_wiki"))->fetchAll ();					 
 
 		$original = $pages[0]->author_wiki;
 
@@ -135,7 +135,7 @@ class wikiservices {
 				$already[] = $page->author_wiki;
 			}
 		}
-
+		
 		$toReturn = array ();
 		$toReturn['original'] = $original;
 		$toReturn['contributors'] = $contributors;

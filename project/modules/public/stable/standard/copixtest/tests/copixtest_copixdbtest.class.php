@@ -191,7 +191,13 @@ VALUES (1, \'Titre temp\', \'Description de lelement temporaire\', \'20060201\',
 		}
 		$this->assertTrue ($countNow == count (CopixDB::getConnection ()->doQuery ('select * from copixtestmain')) - 1);
 	}
-
-
+	
+	/**
+	* Test les conflits de nom de variable
+	*/
+	function testBindVariableName (){
+		$results = _doQuery ('select * from copixtestmain where titre_test = :v or description_test like :v1', array (':v'=>'test1', ':v1'=>'test2%'));
+		$this->assertEquals (2, count ($results));	
+	}
 } 
 ?>

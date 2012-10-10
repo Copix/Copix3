@@ -24,15 +24,22 @@ class CopixClassesFactory {
 	/**
     * Création d'un objet du type de la classe demandée, via son identifiant Copix
     * @param string $pClassId l'identifiant de la classe
+    * @param array $pArgs Arguments
     */
-	public static function create ($pClassId){
+	public static function create ($pClassId, $pArgs = null){
 		//Récupération des éléments critiques.
 		$file     = CopixSelectorFactory::create ($pClassId);
 		$filePath = $file->getPath () .COPIX_CLASSES_DIR.strtolower ($file->fileName).'.class.php' ;
 
 		Copix::RequireOnce ($filePath);
 		$fileClass = $file->fileName;
-		return new $fileClass ();
+		// depuis PHP 5.1.3, ReflectionClass existe, et permet l'équivalent de call_user_func_array avec un objet
+		if (!is_null ($pArgs)) {
+			$reflectionObj = new ReflectionClass ($fileClass); 
+			return $reflectionObj->newInstanceArgs ($pArgs);
+		} else {
+			return new $fileClass ();
+		}
 	}
 
 	/**

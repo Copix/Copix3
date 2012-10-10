@@ -1,14 +1,15 @@
 CREATE TABLE menu_menus (
-	menu_id SERIAL,
-	menu_nom VARCHAR( 50 ) NOT NULL,
-	PRIMARY KEY(menu_id)
+	id_menu SERIAL,
+	name_menu VARCHAR( 50 ) NOT NULL,
+	PRIMARY KEY (id_menu)
 ) ;
 
-CREATE TABLE menu_rubriques (
-	rub_id SERIAL,
-	rub_id_parent INT NOT NULL default 0,
-	rub_id_menu INT NOT NULL ,
-	rub_nom VARCHAR( 50 ) NOT NULL,
-	rub_classement INT,
-	PRIMARY KEY (rub_id)
+CREATE TABLE `menusitems` (
+  `id_item` int(10) unsigned NOT NULL auto_increment,
+  `id_parent_item` int(10) unsigned NULL,
+  `id_menu` int(10) NOT NULL,
+  `name_item` varchar(50) NOT NULL,
+  `link_item` varchar(255) NOT NULL,
+  `order_item` mediumint(8) NOT NULL,
+  PRIMARY KEY (id_item)
 );

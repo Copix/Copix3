@@ -55,10 +55,11 @@ window.onload = function()
 
 function Ok()
 {
+	oEditor.FCKUndo.SaveUndoStep() ;
+	
 	if ( !oActiveEl )
 	{
-		oActiveEl = oEditor.FCK.EditorDocument.createElement( 'TEXTAREA' ) ;
-		oActiveEl = oEditor.FCK.InsertElementAndGetIt( oActiveEl ) ;
+		oActiveEl = oEditor.FCK.InsertElement( 'textarea' ) ;
 	}
 
 	oActiveEl.name = GetE('txtName').value ;

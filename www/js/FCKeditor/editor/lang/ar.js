@@ -45,6 +45,7 @@ InsertLinkLbl		: "رابط",
 InsertLink			: "إدراج/تحرير رابط",
 RemoveLink			: "إزالة رابط",
 Anchor				: "إدراج/تحرير إشارة مرجعية",
+AnchorDelete		: "Remove Anchor",	//MISSING
 InsertImageLbl		: "صورة",
 InsertImage			: "إدراج/تحرير صورة",
 InsertFlashLbl		: "فلاش",
@@ -70,6 +71,7 @@ RightJustify		: "محاذاة إلى اليمين",
 BlockJustify		: "ضبط",
 DecreaseIndent		: "إنقاص المسافة البادئة",
 IncreaseIndent		: "زيادة المسافة البادئة",
+Blockquote			: "Blockquote",	//MISSING
 Undo				: "تراجع",
 Redo				: "إعادة",
 NumberedListLbl		: "تعداد رقمي",
@@ -103,20 +105,27 @@ SelectionField	: "قائمة منسدلة",
 ImageButton		: "زر صورة",
 
 FitWindow		: "تكبير حجم المحرر",
+ShowBlocks		: "Show Blocks",	//MISSING
 
 // Context Menu
 EditLink			: "تحرير رابط",
 CellCM				: "خلية",
 RowCM				: "صف",
 ColumnCM			: "عمود",
-InsertRow			: "إدراج صف",
+InsertRowAfter		: "Insert Row After",	//MISSING
+InsertRowBefore		: "Insert Row Before",	//MISSING
 DeleteRows			: "حذف صفوف",
-InsertColumn		: "إدراج عمود",
+InsertColumnAfter	: "Insert Column After",	//MISSING
+InsertColumnBefore	: "Insert Column Before",	//MISSING
 DeleteColumns		: "حذف أعمدة",
-InsertCell			: "إدراج خلية",
+InsertCellAfter		: "Insert Cell After",	//MISSING
+InsertCellBefore	: "Insert Cell Before",	//MISSING
 DeleteCells			: "حذف خلايا",
 MergeCells			: "دمج خلايا",
-SplitCell			: "تقسيم خلية",
+MergeRight			: "Merge Right",	//MISSING
+MergeDown			: "Merge Down",	//MISSING
+HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
+VerticalSplitCell	: "Split Cell Vertically",	//MISSING
 TableDelete			: "حذف الجدول",
 CellProperties		: "خصائص الخلية",
 TableProperties		: "خصائص الجدول",
@@ -134,7 +143,7 @@ SelectionFieldProp	: "خصائص القائمة المنسدلة",
 TextareaProp		: "خصائص ناحية النص",
 FormProp			: "خصائص النموذج",
 
-FontFormats			: "عادي;منسّق;دوس;العنوان 1;العنوان  2;العنوان  3;العنوان  4;العنوان  5;العنوان  6",		//REVIEW : Check _getfontformat.html
+FontFormats			: "عادي;منسّق;دوس;العنوان 1;العنوان  2;العنوان  3;العنوان  4;العنوان  5;العنوان  6",
 
 // Alerts and Messages
 ProcessingXHTML		: "إنتظر قليلاً ريثما تتم   معالَجة‏ XHTML. لن يستغرق طويلاً...",
@@ -229,7 +238,7 @@ DlgLnkURL			: "الموقع",
 DlgLnkAnchorSel		: "اختر علامة مرجعية",
 DlgLnkAnchorByName	: "حسب اسم العلامة",
 DlgLnkAnchorById	: "حسب تعريف العنصر",
-DlgLnkNoAnchors		: "<لا يوجد علامات مرجعية في هذا المستند>",		//REVIEW : Change < and > with ( and )
+DlgLnkNoAnchors		: "(لا يوجد علامات مرجعية في هذا المستند)",
 DlgLnkEMail			: "عنوان بريد إلكتروني",
 DlgLnkEMailSubject	: "موضوع الرسالة",
 DlgLnkEMailBody		: "محتوى الرسالة",
@@ -321,6 +330,9 @@ DlgCellCollSpan		: "إمتداد الأعمدة",
 DlgCellBackColor	: "لون الخلفية",
 DlgCellBorderColor	: "لون الحدود",
 DlgCellBtnSelect	: "حدّد...",
+
+// Find and Replace Dialog
+DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
 
 // Find Dialog
 DlgFindTitle		: "بحث",

@@ -46,15 +46,25 @@ FCKXHtml._AppendAttributes = function( xmlNode, htmlNode, node, nodeName )
 			// The following must be done because of a bug on IE regarding the style
 			// attribute. It returns "null" for the nodeValue.
 			else if ( sAttName == 'style' )
+			{
+				var data = FCKTools.ProtectFormStyles( htmlNode ) ;
 				sAttValue = htmlNode.style.cssText.replace( FCKRegexLib.StyleProperties, FCKTools.ToLowerCase ) ;
+				FCKTools.RestoreFormStyles( htmlNode, data ) ;
+			}
 			// There are two cases when the oAttribute.nodeValue must be used:
 			//		- for the "class" attribute
 			//		- for events attributes (on IE only).
-			else if ( sAttName == 'class' || sAttName.indexOf('on') == 0 )
+			else if ( sAttName == 'class' )
+			{
+				sAttValue = oAttribute.nodeValue.replace( FCKRegexLib.FCK_Class, '' ) ;
+				if ( sAttValue.length == 0 )
+					continue ;
+			}
+			else if ( sAttName.indexOf('on') == 0 )
 				sAttValue = oAttribute.nodeValue ;
 			else if ( nodeName == 'body' && sAttName == 'contenteditable' )
 				continue ;
-			// XHTML doens't support attribute minimization like "CHECKED". It must be trasformed to cheched="checked".
+			// XHTML doens't support attribute minimization like "CHECKED". It must be transformed to checked="checked".
 			else if ( oAttribute.nodeValue === true )
 				sAttValue = sAttName ;
 			else
@@ -91,7 +101,7 @@ FCKXHtml.TagProcessors['meta'] = function( node, htmlNode )
 	return node ;
 }
 
-// IE automaticaly changes <FONT> tags to <FONT size=+0>.
+// IE automatically changes <FONT> tags to <FONT size=+0>.
 FCKXHtml.TagProcessors['font'] = function( node, htmlNode )
 {
 	if ( node.attributes.length == 0 )
@@ -142,7 +152,7 @@ FCKXHtml.TagProcessors['area'] = function( node, htmlNode )
 	{
 		var sShape = htmlNode.getAttribute( 'shape', 2 ) ;
 		if ( sShape && sShape.length > 0 )
-			FCKXHtml._AppendAttribute( node, 'shape', sShape ) ;
+			FCKXHtml._AppendAttribute( node, 'shape', sShape.toLowerCase() ) ;
 	}
 
 	return node ;
@@ -163,10 +173,14 @@ FCKXHtml.TagProcessors['form'] = function( node, htmlNode )
 	if ( htmlNode.acceptCharset && htmlNode.acceptCharset.length > 0 && htmlNode.acceptCharset != 'UNKNOWN' )
 		FCKXHtml._AppendAttribute( node, 'accept-charset', htmlNode.acceptCharset ) ;
 
-	if ( htmlNode.name )
-		FCKXHtml._AppendAttribute( node, 'name', htmlNode.name ) ;
+	// IE has a bug and htmlNode.attributes['name'].specified=false if there is
+	// no element with id="name" inside the form (#360 and SF-BUG-1155726).
+	var nameAtt = htmlNode.attributes['name'] ;
 
-	node = FCKXHtml._AppendChildNodes( node, htmlNode ) ;
+	if ( nameAtt && nameAtt.value.length > 0 )
+		FCKXHtml._AppendAttribute( node, 'name', nameAtt.value ) ;
+
+	node = FCKXHtml._AppendChildNodes( node, htmlNode, true ) ;
 
 	return node ;
 }

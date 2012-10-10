@@ -46,7 +46,20 @@ FCKEvents.prototype.FireEvent = function( eventName, params )
 	if ( oCalls )
 	{
 		for ( var i = 0 ; i < oCalls.length ; i++ )
-			bReturnValue = ( oCalls[ i ]( this.Owner, params ) && bReturnValue ) ;
+		{
+			try
+			{
+				bReturnValue = ( oCalls[ i ]( this.Owner, params ) && bReturnValue ) ;
+			}
+			catch(e)
+			{
+				// Ignore the following error. It may happen if pointing to a
+				// script not anymore available (#934):
+				// -2146823277 = Can't execute code from a freed script
+				if ( e.number != -2146823277 )
+					throw e ;
+			}
+		}
 	}
 
 	return bReturnValue ;

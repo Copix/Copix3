@@ -51,6 +51,22 @@ class CopixDAOGenerator {
 			} elseif ($field->type == 'datetime' && $driverName == 'oci') {
 				$values[':'.$fieldName] = '$' . $prefixfield . $fieldName;
 				$formatted[':'.$fieldName] = "to_date (:".$fieldName.", \\'YYYYMMDDHH24MISS\\')";
+			} elseif (($driverName == 'mysql' || $driverName == 'sqlite') && in_array ($field->type, array ('date', 'datetime', 'time'))){
+				//MySQL et SQLite gèrent les entrées sous le même format
+				switch ($field->type){
+					case 'datetime';
+						$values[':'.$fieldName] = 'CopixDateTime::yyyymmddhhiissToFormat ($' . $prefixfield . $fieldName.", 'Y-m-d H:i:s')";
+						$formatted[':'.$fieldName] = ":".$fieldName;
+						break;
+					case 'date':
+						$values[':'.$fieldName] = 'CopixDateTime::yyyymmddToFormat ($' . $prefixfield . $fieldName.", 'Y-m-d')";
+						$formatted[':'.$fieldName] = ":".$fieldName;
+						break;
+					case 'time':
+						$values[':'.$fieldName] = 'CopixDateTime::hhiissToFormat ($' . $prefixfield . $fieldName.", 'H:i:s')";
+						$formatted[':'.$fieldName] = ":".$fieldName;
+						break;
+				}
 			} else {
 				$values[':' . $fieldName] = '$' . $prefixfield . $fieldName;
 				$formatted[':' . $fieldName] = ':' . $fieldName;
@@ -266,7 +282,7 @@ return $toReturn;
 							$fromPassed = true;
 						}
 						$sqlWhere .= ' AND ' . $fieldjoin;
-					} else {
+					} elseif ($driverName == 'pgsql') {
 						$fieldjoin = $ptable['name'] . '.' . $join['pfield'] . '=' . $table['name'] . '.' . $join['ffield'];
 						if ($join['join'] == 'left') {
 							$sqlFrom .= ' LEFT JOIN ' . $sqltable . ' ON (' . $fieldjoin . ')';
@@ -280,6 +296,20 @@ return $toReturn;
 							} else {
 							    $sqlWhere .= ' AND ' . $fieldjoin;
 							}
+						}
+					} else {
+						$fieldjoin = $ptable['name'] . '.' . $join['pfield'] . '=' . $table['name'] . '.' . $join['ffield'];
+						if ($join['join'] == 'left') {
+							$sqlFrom .= ' LEFT JOIN ' . $sqltable . ' ON (' . $fieldjoin . ')';
+						}
+						elseif ($join['join'] == 'right') {
+							$sqlFrom .= ' RIGHT JOIN ' . $sqltable . ' ON (' . $fieldjoin . ')';
+						} else {
+							if (!$fromPassed) {
+								$sqlFrom .= ' JOIN ' . $sqltable;
+								$fromPassed = true;
+							}
+						    $sqlWhere .= ' AND ' . $fieldjoin;
 						}
 					}
 				}
@@ -314,24 +344,58 @@ return $toReturn;
 						}else{
 							$result[] = $table . $prop->fieldName . ' "' . $prop->name . '"';
 						}
-					} else {
-						// DDT 2006-08-30 ajout du convert pour les date, pour mssql, le format de date renvoy par pdo n'tat  pas exploitable en l'tat
-						if ($driverName == 'mssql' && $prop->type == 'varchardate') {
+					} elseif ($driverName == 'mssql') {
+						if ($prop->type == 'varchardate') {
 							$result[] = 'convert(varchar, ' . $table . $prop->fieldName . ', 121) as ' . $prop->name;
-						} elseif ($driverName == 'mssql' && ($prop->type == 'numeric' || $prop->type == 'bigautoincrement' || $prop->type == 'autoincrement')) {
+						} elseif ($prop->type == 'numeric' || $prop->type == 'bigautoincrement' || $prop->type == 'autoincrement') {
 								$result[] = 'convert(varchar, ' . $table . $prop->fieldName . ') as ' . $prop->name;
 						} else {
-								$result[] = $table . $prop->fieldName . ' ' . $prop->name;
+							$result[] = $table . $prop->fieldName . ' ' . $prop->name;
 						}
+					} elseif (($driverName == 'mysql') && in_array ($prop->type, array ('date', 'datetime', 'time'))) {
+						if ($prop->type == 'date'){
+							$result[] = "DATE_FORMAT(".$table . $prop->fieldName.", \\'%Y%m%d\\') " . $prop->name;	
+						}elseif ($prop->type == 'time'){
+							$result[] = "DATE_FORMAT(".$table . $prop->fieldName.", \\'%H%i%s\\') " . $prop->name;
+						}elseif ($prop->type == 'datetime'){
+							$result[] = "DATE_FORMAT(".$table . $prop->fieldName.", \\'%Y%m%d%H%i%s\\') " . $prop->name;							
+						}
+					} elseif (($driverName == 'sqlite') && in_array ($prop->type, array ('date', 'datetime', 'time'))){
+						if ($prop->type == 'date'){
+							$result[] = "strftime(\\'%Y%m%d\\', ".$table . $prop->fieldName.") " . $prop->name;	
+						}elseif ($prop->type == 'time'){
+							$result[] = "strftime(\\'%H%M%S\\', ".$table . $prop->fieldName.") " . $prop->name;
+						}elseif ($prop->type == 'datetime'){
+							$result[] = "strftime(\\'%Y%m%d%H%M%S\\', ".$table . $prop->fieldName.") " . $prop->name;							
+						}
+					} else if ($driverName == 'pgsql') {
+						$result[] = $table . $prop->fieldName . ' AS ' . $prop->name;
+					} else {
+						$result[] = $table . $prop->fieldName . ' ' . $prop->name;
 					}
 				} else {
-					//DDT 2006-08-30 ajout du convert pour les bigint pour mssql (code ajout car pdo renvoie les bigint sous un format scientifique)
 					if ($driverName == 'mssql' && ($prop->type == 'numeric' || $prop->type == 'bigautoincrement' || $prop->type == 'autoincrement')) {
 						$result[] = 'convert(varchar, ' . $table . $prop->fieldName . ') as ' . $prop->fieldName;
 					} elseif ($driverName == 'sqlite') {
 						$result[] = $table . $prop->fieldName . ' ' . $prop->name;
 					} elseif ($driverName == 'oci' && $prop->type == 'datetime') {
-						$result[] = "to_char(".$table.$prop->fieldName.", 'YYYYMMDD24HHMISS')" . ' "' . $prop->fieldName . '"';
+						$result[] = "to_char(".$table.$prop->fieldName.", \\'YYYYMMDDHH24MISS\\')" . ' "' . $prop->fieldName . '"';
+					} elseif (($driverName == 'mysql') && in_array ($prop->type, array ('date', 'datetime', 'time'))) {
+						if ($prop->type == 'date'){
+							$result[] = "DATE_FORMAT(".$table . $prop->fieldName.", \\'%Y%m%d\\') ".$prop->fieldName;	
+						}elseif ($prop->type == 'time'){
+							$result[] = "DATE_FORMAT(".$table . $prop->fieldName.", \\'%H%i%s\\') ".$prop->fieldName;
+						}elseif ($prop->type == 'datetime'){
+							$result[] = "DATE_FORMAT(".$table . $prop->fieldName.", \\'%Y%m%d%H%i%s\\') ".$prop->fieldName;							
+						}
+					} elseif (($driverName == 'sqlite') && in_array ($prop->type, array ('date', 'datetime', 'time'))){
+						if ($prop->type == 'date'){
+							$result[] = "strftime(\\'%Y%m%d\\', ".$table . $prop->fieldName.") " . $prop->fieldName;	
+						}elseif ($prop->type == 'time'){
+							$result[] = "strftime(\\'%H%M%S\\', ".$table . $prop->fieldName.") " . $prop->fieldName;
+						}elseif ($prop->type == 'datetime'){
+							$result[] = "strftime(\\'%Y%m%d%H%M%S\\', ".$table . $prop->fieldName.") " . $prop->fieldName;							
+						}
 					} else {
 						$result[] = $table . $prop->fieldName;
 					}
@@ -449,7 +513,8 @@ return $toReturn;
 					'date',
 					'varchardate',
 					'time',
-					'varchartime'
+					'varchartime',
+					'datetime'
 				)))) {
 				$result .= '  if (strlen ($pRecord->' . $field->name . ') > ' . intval ($field->maxlength) . '){' . "\n";
 				$result .= '      $errorObject->addError (\'' . $field->name . '\', _i18n (\'copix:dao.errors.sizeLimit\',array(';
@@ -500,7 +565,7 @@ return $toReturn;
 					'time',
 					'varchartime'
 				))) {
-				$result .= '     if (CopixDateTime::yyyymmddToTime ($pRecord->' . $field->name . ') === false){' . "\n";
+				$result .= '     if (CopixDateTime::hhiissToTime ($pRecord->' . $field->name . ') === false){' . "\n";
 				$result .= '        $errorObject->addError (\'' . $field->name . '\', _i18n (\'copix:dao.errors.time\',';
 				if ($field->captionI18N !== null) {
 					$result .= '_i18n (\'' . $field->captionI18N . '\')';
@@ -601,20 +666,16 @@ return $toReturn;
 		$driverName = $driverName->getDatabase();
 
 		$pkai = $this->_getAutoIncrementField();
-		if ($pkai !== null) {
-			if (($driverName == 'mysql') || ($driverName == 'mssql') || ($driverName == 'sqlite') || ($driverName == 'pgsql')) {
-				if ($pkai->sequenceName != '') {
-					$result .= 'if (! $pUseId){';
-					$result .= '     $object->' . $pkai->name . '= $ct->lastId(\'' . $pkai->sequenceName . '\');' . "\n";
-					$result .= '}';
-				}
-			}
+		if ($useSequence = (in_array ($driverName, array ('oci')) && ($pkai !== null) && ($pkai->sequenceName != ''))) {
+			$result .= 'if (! $pUseId){';
+			$result .= '     $object->' . $pkai->name . '= $ct->lastId(\'' . $pkai->sequenceName . '\');' . "\n";
+			$result .= '}';
 		}
 
 		$fieldsNoAuto = $this->_definition->getPropertiesBy ('PrimaryFieldsExcludeAutoIncrement');
 		$fields = $this->_definition->getPropertiesBy ('All');
 		
-		if ($pkai !== null) {
+		if ($pkai !== null && !$useSequence) {
 			$result .= 'if (($object->' . $pkai->name .' !== null) && $pUseId){';
 			$result .= '    $query = \'INSERT INTO ' . $this->_definition->getPrimaryTableRealName () . ' (';
 			list ($fields, $values, $formatted) = $this->_prepareValuesForNewDB ($fields, 'object->');

@@ -1,4 +1,3 @@
-<br />
 {if count($ppo->arThemes)}
  <table class="CopixTable">
  <thead>

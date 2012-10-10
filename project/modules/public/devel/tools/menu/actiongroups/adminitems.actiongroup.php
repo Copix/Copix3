@@ -12,26 +12,17 @@
  * @subpackage	menu 
  */
 class ActionGroupAdminItems extends CopixActionGroup {
-
     /**
 	 * Verifications avant l'execution de l'actiongroup
 	 */
 	public function beforeAction ($actionName){
-		// verification si l'utilisateur est connecte
-		CopixAuth::getCurrentUser ()->assertCredential ('basic:admin');
+		_currentUser ()->assertCredential ('module:write@menu');
 		
-		// si on fait n'importe quelle autre action que paste ou default,
-		// on "vide" l'id de rubrique qu'on voulait copier
-		$actions_allowed = array('paste', 'default');
-		if (!in_array (strtolower ($actionName), $actions_allowed)) {
-			CopixSession::set ('menu|items|cut', null);
-		}
-
-		// si on fait n'importe quelle autre action que edit ou valid
-		// on "vide" l'element qu'on ajoutait / modifiait
-		$actions_allowed = array('edit', 'valid');
-		if (!in_array (strtolower ($actionName), $actions_allowed)) {
-			CopixSession::set ('menu|items|edit', null);
+		//on vérifie que l'élément "coupé" existe toujours
+		if (CopixSession::get ('menu|items|cut') !== null){
+			if (! _ioDAO ('menusitems')->get (CopixSession::get ('menu|items|cut'))){
+				CopixSession::set ('menu|items|cut', null);				
+			}
 		}
 	}
     
@@ -39,17 +30,17 @@ class ActionGroupAdminItems extends CopixActionGroup {
      * Fonction par défaut, liste des menus disponibles
      */
     public function processDefault () {
-        CopixRequest::assert('id_menu');
-        
-        $menu = _ioDAO ('menus')->get (_request ('id_menu'));
-        
-		$ppo = new CopixPPO ();
+        CopixRequest::assert ('id_menu');
+
+        if (! ($menu = _ioDAO ('menus')->get (_request ('id_menu')))){
+        	return _arRedirect (_url ('adminmenus|'));
+        }
+
+        $ppo = new CopixPPO ();
 		$ppo->TITLE_PAGE = _i18n ('admin.title_edit_items', $menu->name_menu);
-		
-		$items = _class ('itemsservices');
-		$items->setCutIdItem (CopixSession::get ('menu|items|cut'));
-        $ppo->itemsList = $items->getItemsHTML (_request ('id_menu'), true);
-                
+		$ppo->itemsList = CopixZone::process ('menu', array ('id_menu'=>_request ('id_menu'),
+															 'paste'=>CopixSession::get ('menu|items|cut'), 
+        													 'admin'=>true));
         return _arPPO ($ppo, 'items.list.tpl');
     }
     
@@ -65,24 +56,23 @@ class ActionGroupAdminItems extends CopixActionGroup {
 				CopixSession::set ('menu|items|edit', $toEdit);
 			}
 		}
-  
+		
 		// mode ajout d'element
-		if (($toEdit = CopixSession::get ('menu|items|edit')) === null) {
+		if (((_request ('id_item', null, false)) == '') 
+		     && (($toEdit = CopixSession::get ('menu|items|edit')) === null)) {
 			$toEdit = _record ('menusitems');
 			$toEdit->id_menu = _request ('id_menu');
 			$toEdit->id_parent_item = _request ('id_parent');
-			
 			CopixSession::set ('menu|items|edit', $toEdit);
 		}
-		
+
 		$ppo = new CopixPpo ();
 		$ppo->TITLE_PAGE = ($toEdit->id_item) ? _i18n ('admin.title_edit_item') : _i18n ('admin.title_add_item');
 		$ppo->toEdit = $toEdit;
-		$ppo->submit_caption = ($toEdit->id_item) ? _i18n ('admin.edit') : _i18n ('admin.add');
- 
+		$ppo->submit_caption = ($toEdit->id_item) ? _i18n ('copix:common.buttons.update') : _i18n ('copix:common.buttons.add');
+
 		// messages d'erreurs
   		$ppo->arErrors = _request ('errors') ? _ioDAO ('menusitems')->check ($toEdit) : array ();
-  		
  		return _arPpo ($ppo, 'item.form.tpl');
 	}
 	
@@ -104,20 +94,30 @@ class ActionGroupAdminItems extends CopixActionGroup {
 		
 		// sauvegarde (le check est fait dans les méthodes add et edit)
 		$action_ok = false;
+		if ($toEdit->id_item === null) {
+			if ($last = _ioDao ('menus')->getLastItemForParent ($toEdit->id_parent_item, $toEdit->id_menu)){
+				$toEdit->order_item = $last->order_item + 1;
+			}else{
+				$toEdit->order_item = 0;
+			}
+		}
+		CopixSession::set ('menu|items|edit', $toEdit);
+
+		//On vérifie si les données sont correctes
+		if (_ioDao ('menusitems')->check ($toEdit) !== true){
+			// si l'ajout n'a pas fonctionné (l'insertion génère déja une exception en cas d'erreur)
+			return _arRedirect (_url ('menu|adminitems|edit', array ('errors' => 1, 'id_menu' => _request ('id_menu'))));
+		}
+
+		//On sauvegarde
 		if (!$toEdit->id_item) {
-			$action_ok = _class ('itemsservices')->add ($toEdit);
+			_ioDao ('menusitems')->insert ($toEdit);
 		} else {
-			$action_ok = _class ('itemsservices')->edit ($toEdit);
+			_ioDao ('menusitems')->update ($toEdit);
 		}
-		
-		// si l'ajout n'a pas fonctionné (l'insertion génère déja une exception en cas d'erreur)
-		if (!$action_ok) {
-  			return _arRedirect (_url ('menu|adminitems|edit', array ('errors' => 1, 'id_menu' => _request ('id_menu'))));
-		}
-		
+
 		// on vide la session
 		CopixSession::set ('menu|items|edit', null);
-		
 		return _arRedirect(_url ('menu|adminitems|', array ('id_menu' => _request ('id_menu'))));
 	}
 	
@@ -126,38 +126,31 @@ class ActionGroupAdminItems extends CopixActionGroup {
 	 */
 	public function processDelete () {
 		CopixRequest::assert ('id_menu', 'id_item');
-		
+
 		// mode confirmation
 		if (_request ('confirm') === null) {
-			$item = _ioDao('menusitems')->findBy ( _daoSp ()->addCondition('id_item', '=', _request('id_item')));
-			
 			// élément à supprimer trouvé
-			if (is_object ($item) && count ($item) > 0) {			
+			if ($item = _ioDao ('menusitems')->get (_request('id_item'))) {			
 				return CopixActionGroup::process (
 					'generictools|Messages::getConfirm',
 					array (
-						'message' => _i18n('admin.confirmdeleteitem', array($item[0]->name_item)),
+						'message' => _i18n('admin.confirmdeleteitem', array($item->name_item)),
 						'confirm' => _url ('menu|adminitems|delete', array('confirm' => 1, 'id_item' => _request('id_item'), 'id_menu' => _request('id_menu'))),
 						'cancel' => _url ('menu|adminitems|', array('id_menu' => _request('id_menu')))
 					)
 				);
-				
-			// élément à supprimer non trouvé
 			} else {
+				// élément à supprimer non trouvé
 				return _arRedirect (_url ('menu|adminitems|', array ('id_menu' => _request ('id_menu'))));
 			}
-			
-		// mode suppression (confirmation ok)
 		} else {
-		
+			// mode suppression (confirmation ok)
 			// suppression de l'item, et ses enfants
 			$delete = _class ('itemsservices')->delete (_request ('id_item'));
-			
 			// suppression qui n'a pas fonctionnée
 			if (!$delete) {
 				return _arRedirect (_url ('menu|adminitems|', array ('id_menu' => _request ('id_menu'))));
-			}
-			
+			}			
 			// suppression ok
 			return _arRedirect (_url ('menu|adminitems|', array ('id_menu' => _request ('id_menu'))));
 		}
@@ -168,9 +161,7 @@ class ActionGroupAdminItems extends CopixActionGroup {
 	 */
 	public function processCut () {
 		CopixRequest::assert ('id_menu', 'id_item');
-		
 		CopixSession::set ('menu|items|cut', _request ('id_item'));
-		
 		return _arRedirect (_url ('menu|adminitems|', array ('id_menu' => _request ('id_menu'))));
 	}
 	
@@ -178,16 +169,12 @@ class ActionGroupAdminItems extends CopixActionGroup {
 	 * Colle un element de menu
 	 */
 	public function processPaste () {
-		CopixRequest::assert ('id_menu', 'paste_id_parent');
-		
+		CopixRequest::assert ('id_menu', 'id_item');
+
 		// collage de l'element
-		$item = _class ('itemsservices');
-		$item->setCutIdItem (CopixSession::get ('menu|items|cut'));
-		$paste_id_parent = (_request ('paste_id_parent') == 'null') ? null : _request ('paste_id_parent');
-		$item->paste (_request ('id_menu'), $paste_id_parent);
-		
+		_class ('itemsservices')->moveTo (CopixSession::get ('menu|items|cut'), _request ('id_item'), _request ('id_menu'));
 		CopixSession::set ('menu|items|cut', null);
-		
+
 		return _arRedirect (_url ('menu|adminitems|', array ('id_menu' => _request ('id_menu'))));
 	}
 	
@@ -196,9 +183,7 @@ class ActionGroupAdminItems extends CopixActionGroup {
 	 */
 	public function processUp () {
 		 CopixRequest::assert ('id_menu', 'id_item');
-		 
-		 _class ('itemsservices')->up (_request ('id_item'));
-		 
+		 _class ('itemsservices')->moveUp (_request ('id_item'));
 		return _arRedirect (_url ('menu|adminitems|', array ('id_menu' => _request ('id_menu'))));
 	}
 	
@@ -207,9 +192,7 @@ class ActionGroupAdminItems extends CopixActionGroup {
 	 */
 	public function processDown () {
 		 CopixRequest::assert ('id_menu', 'id_item');
-		 
-		 _class ('itemsservices')->down (_request ('id_item'));
-		 
+		 _class ('itemsservices')->moveDown (_request ('id_item'));
 		return _arRedirect (_url ('menu|adminitems|', array ('id_menu' => _request ('id_menu'))));
 	}
 }

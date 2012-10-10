@@ -27,7 +27,7 @@ class DBUserHandler implements ICopixUserHandler {
 
 		if (count ($results = CopixDB::getConnection ()->doQuery ('select id_dbuser, login_dbuser, password_dbuser, enabled_dbuser from dbuser where login_dbuser=:login', 
 				array ('login'=>$pParams['login'])))){
-			if($results[0]->enabled_dbuser == 0){
+			if ($results[0]->enabled_dbuser == 0){
 				return new CopixUserLogResponse (false, null, null, null);
 			}
 			if ($results[0]->password_dbuser == $this->_cryptPassword (isset ($pParams['password']) ? $pParams['password'] : '')){
@@ -110,7 +110,16 @@ class DBUserHandler implements ICopixUserHandler {
 	 * @return string	le mot de passe crypté
 	 */
 	private function _cryptPassword ($pClearPassword){
-		return md5 ($pClearPassword);
+		switch ($hashMethod = CopixConfig::get ('auth|cryptPassword')){
+			case 'md5':
+				return md5 ($pClearPassword);
+			case 'sha1':
+				return sha1 ($pClearPassword);
+			case 'sha256':
+				return hash ('sha256', $pClearPassword);
+			default :
+				throw new CopixException (_i18n ('auth.error.unknownHashMethod', $hashMethod));				
+		}
 	}
 	
 	/**
@@ -119,9 +128,11 @@ class DBUserHandler implements ICopixUserHandler {
 	 * @return string email de l'utilisateur
 	 */
 	public function getInformations ($pUserId){
-		$objUser = _ioDAO ('dbuser') ->get($pUserId);
-		$myObject->email = $objUser->email_dbuser;
-		return $myObject;
+		if ($objUser = _ioDAO ('dbuser')->get($pUserId)){
+			$myObject->email = $objUser->email_dbuser;
+			return $myObject;
+		}
+		throw new CopixException ('No informations on user '.$pUserId);
 	}
 }
 ?>

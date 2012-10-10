@@ -14,15 +14,7 @@
  * Input: var
  * Output : <pre>var_dump(var)</pre> if xdebug is not present  
  */
-function smarty_modifier_var_dump($string) {
-    ob_start ();
-    var_dump ($string);
-    if (! extension_loaded('xdebug')){
-        return '<pre>'.ob_get_clean ().'</pre>';
-    }else{
-        return ob_get_clean ();
-    }
-
+function smarty_modifier_var_dump ($string) {
+    return CopixDebug::var_dump ($string, true);
 }
-
 ?>

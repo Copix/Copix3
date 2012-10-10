@@ -6,7 +6,7 @@ CREATE TABLE `menus` (
 
 CREATE TABLE `menusitems` (
   `id_item` int(10) unsigned NOT NULL auto_increment,
-  `id_parent_item` int(10) unsigned NOT NULL default 0,
+  `id_parent_item` int(10) unsigned NULL,
   `id_menu` int(10) NOT NULL,
   `name_item` varchar(50) NOT NULL,
   `link_item` varchar(255) NOT NULL,

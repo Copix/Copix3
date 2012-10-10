@@ -251,7 +251,6 @@ class CopixUrl {
 	 *    //affiche "http://"
 	 * </code>
 	 * @return string
-	 * @todo regarder s'il est possible de détecter les protocoles autres tels que ftp par exemple
 	 */
 	public static function getRequestedProtocol (){
 		if (self::$_protocol !== false){
@@ -407,25 +406,31 @@ class CopixUrl {
 		if (($pos = strpos ($pUrl, '?')) !== false){
 			$pUrl  = substr ($pUrl, 0, $pos);
 		}
+		
+		// si la chaine contient le SCRIPT_NAME, on doit l'enlever
+		$posScriptName = strpos ($pUrl, $_SERVER['SCRIPT_NAME']);
+		if ($posScriptName !== false) {
+			$pUrl = substr ($pUrl, $posScriptName + strlen ($_SERVER['SCRIPT_NAME']));		
+		}
 
 		$config = CopixConfig::instance ();
 		switch ($config->significant_url_mode){
 			case 'default':
-			$vars = array ();
-			break;
+				$vars = array ();
+				break;
 
 			case 'prependIIS':
-			if (isset ($_GET[$config->significant_url_prependIIS_path_key])){
-				$pUrl = $_GET[$config->significant_url_prependIIS_path_key];
-				$pUrl = $config->stripslashes_prependIIS_path_key === true ? stripslashes($pUrl) : $pUrl;
-			}
+				if (isset ($_GET[$config->significant_url_prependIIS_path_key])){
+					$pUrl = $_GET[$config->significant_url_prependIIS_path_key];
+					$pUrl = $config->stripslashes_prependIIS_path_key === true ? stripslashes($pUrl) : $pUrl;
+				}
 
 			case 'prepend':
-			$vars = self::_parsePrepend ($pUrl);
-			break;
+				$vars = self::_parsePrepend ($pUrl);
+				break;
 
 			default:
-			trigger_error ('Unknown significant url handler', E_USER_ERROR);
+				throw new CopixException ('Unknown significant url handler in $config->significant_url_mode '.$config->significant_url_mode);
 		}
 		
 		if ($pFromString){
@@ -478,7 +483,7 @@ class CopixUrl {
 				}
 			}
 		}
-
+		
 		//Aucun handler trouvé
 		if ($countUrl >= 2){
 			$group = $urlX[1];
@@ -491,7 +496,7 @@ class CopixUrl {
 		}else{
 			$action = 'default';
 		}
-
+		
 		return array ('module'=>$module, 'group'=>$group, 'action'=>$action);
 	}
 
@@ -532,7 +537,7 @@ class CopixUrl {
 			return self::_getPrepend ($pDest, $pParams, $pForXML);
 
 			default:
-			trigger_error ('Unknown significant url handler', E_USER_ERROR);
+				throw new CopixException ('Unknown significant url handler in $config->significant_url_mode '.CopixConfig::instance ()->significant_url_mode);
 		}
 	}
 
@@ -849,6 +854,11 @@ class CopixUrl {
 	 * @return	string	le $ressourcePath complet en fonction des thèmes
 	 */
 	public static function getResourcePath ($pResourcePath) {
+		static $calculated = array ();
+		if (isset ($calculated[$pResourcePath])){
+			return $calculated[$pResourcePath]; 
+		}
+
 		//On enlève le premier slash au cas ou l'utilisateur l'a saisi
         if (strpos ($pResourcePath, '/') === 0){
         	$pResourcePath = substr ($pResourcePath, 1);
@@ -861,24 +871,23 @@ class CopixUrl {
     	$resourceBasePath ='./themes/';
 
 		if ($config->i18n_path_enabled && file_exists ($resourceFilePath = $resourceBasePath.CopixTpl::getTheme ().'/'.$pResourceDir.'/'.CopixI18N::getLang ().'_'.CopixI18N::getCountry().'/'.$pResourceName)){
-    		return $resourceFilePath;
+    		return $calculated[$pResourcePath] = $resourceFilePath;
     	}elseif ($config->i18n_path_enabled && file_exists ($resourceFilePath = $resourceBasePath.CopixTpl::getTheme ().'/'.$pResourceDir.'/'.CopixI18N::getLang ().'/'.$pResourceName)){
-    		return $resourceFilePath;
+    		return $calculated[$pResourcePath] = $resourceFilePath;
     	}elseif (file_exists ($resourceFilePath = $resourceBasePath.CopixTpl::getTheme ().'/'.$pResourceDir.'/'.$pResourceName)){
-    		
-    		return $resourceFilePath;
+    		return $calculated[$pResourcePath] = $resourceFilePath;
     	}       	
     	if (CopixTpl::getTheme () !== "default"){
         	if ($config->i18n_path_enabled && file_exists ($resourceFilePath = $resourceBasePath.'default/'.$pResourceDir.'/'.CopixI18N::getLang ().'_'.CopixI18N::getCountry().'/'.$pResourceName)){
-        		return $resourceFilePath;
+        		return $calculated[$pResourcePath] = $resourceFilePath;
         	}elseif ($config->i18n_path_enabled && file_exists ($resourceFilePath = $resourceBasePath.'default/'.$pResourceDir.'/'.CopixI18N::getLang ().'/'.$pResourceName)){
-        		return $resourceFilePath;
+        		return $calculated[$pResourcePath] = $resourceFilePath;
         	}elseif (file_exists ($resourceFilePath = $resourceBasePath.'default/'.$pResourceDir.'/'.$pResourceName)){
-        		return $resourceFilePath;
+        		return $calculated[$pResourcePath] = $resourceFilePath;
         	}       	        		
     	}
     	
-    	return $pResourcePath;
+    	return $calculated[$pResourcePath] = $pResourcePath;
 	}
 	
 	/**

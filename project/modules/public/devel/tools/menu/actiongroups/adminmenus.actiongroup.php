@@ -12,16 +12,11 @@
  * @subpackage	menu 
  */
 class ActionGroupAdminMenus extends CopixActionGroup {
-
     /**
 	 * Verifications avant l'execution de l'actiongroup
 	 */
 	public function beforeAction ($actionName){
-		// verification si l'utilisateur est connecte
-		CopixAuth::getCurrentUser ()->assertCredential ('basic:admin');
-		
-		// on "vide" l'id de rubrique qu'on voulait copier
-		CopixSession::set ('menu|items|cut', null);			
+		_currentUser ()->assertCredential ('module:write@menu');
 	}
     
     /**
@@ -30,15 +25,7 @@ class ActionGroupAdminMenus extends CopixActionGroup {
     public function processDefault () {
         $ppo = new CopixPPO ();
         $ppo->TITLE_PAGE = _i18n ('admin.title_gestion_menus');
-        
-        $ppo->arrMenus = _ioDao('menus')->findBy(_daoSP ()->orderBy ('name_menu'));
-        
-        // affichage des messsages d'erreur si besoin est
-		$ppo->arErrors = _request ('errors') ? _ioDAO ('menus')->check (CopixSession::get ('menu|menus|edit')) : array ();
-        
-        // mise en session du mode ajout de menu
-		CopixSession::set ('menu|menus|edit', _record ('menus'));
-		CopixSession::set ('menu|menus|editmode', 'add');
+        $ppo->arrMenus = _ioDao('menus')->findBy (_daoSP ()->orderBy ('name_menu'));
         
         return _arPPO ($ppo, 'menus.list.tpl');
     }
@@ -48,36 +35,34 @@ class ActionGroupAdminMenus extends CopixActionGroup {
      */
     public function processEdit () {
     	// si on est en mode modification, sans erreur à afficher
-		if (is_null (_request ('errors')) && $menu_id = CopixRequest::getInt ('id_menu')) {
+		if ($menu_id = CopixRequest::getInt ('id_menu')) {
 			if ($toEdit = _ioDAO ('menus')->get ($menu_id)) {
 				CopixSession::set ('menu|menus|edit', $toEdit);
-				CopixSession::set ('menu|menus|editmode', 'edit');
 			}
-			
-		// si on est en mode modification, avec erreur à afficher
-		} elseif (!is_null (_request ('errors'))) {
+		} else {
 			$toEdit = CopixSession::get ('menu|menus|edit');
 		} 
-  
+
 		$ppo = new CopixPpo ();
 		$ppo->TITLE_PAGE = _i18n ('admin.title_edit_menu');
-		$ppo->toEdit = $toEdit;
+		$ppo->editedMenu = $toEdit;
  
 		// si on demande à afficher les messages d'erreurs
 		$ppo->arErrors = (_request ('errors')) ? _ioDAO ('menus')->check ($toEdit) : array ();
-		
-		//var_dump($toEdit);
-		
-		return _arPpo ($ppo, 'editmenu.form.tpl');
+        $ppo->arrMenus = _ioDao('menus')->findBy (_daoSP ()->orderBy ('name_menu'));
+
+        return _arPpo ($ppo, 'menus.list.tpl');
     }
     
     /**
      * Validation d'un ajout / modification
      */
     public function processValid () {
+    	CopixRequest::assert ('name_menu');
+
 		// on vérifie que l'on est bien en train de modifier / ajouter un élément, sinon on retourne à la liste.
 		if (($toEdit = CopixSession::get ('menu|menus|edit')) === null){
- 			return _arRedirect (_url ('menu|adminmenus|'));
+ 			$toEdit = _record ('menus');
 		}
 
 		// validation des modification depuis le formulaire
@@ -86,22 +71,20 @@ class ActionGroupAdminMenus extends CopixActionGroup {
 		
 		// sauvegarde (le check est fait dans les méthodes add et edit)
 		$action_ok = false;
+		if (_ioDAO ('menus')->check ($toEdit) !== true){
+  			return _arRedirect (_url ('adminmenus|edit', array ('errors' => 1)));
+		}
+
+		//Ajout ou modification ?
 		if (!$toEdit->id_menu) {
-			$action_ok = _class ('menusservices')->add ($toEdit);
+			_ioDAO ('menus')->insert ($toEdit);
 		} else {
-			$action_ok = _class ('menusservices')->edit ($toEdit);
+			_ioDAO ('menus')->update ($toEdit);
 		}
-		
-		// // si l'ajout n'a pas fonctionné (l'insertion génère déja une exception en cas d'erreur)
-		if (!$action_ok) {
-			$url = (CopixSession::get ('menu|menus|editmode') == 'add') ? _url ('menu|adminmenus|', array ('errors' => 1)) : _url ('menu|adminmenus|edit', array ('errors' => 1, 'id_menu' => _request ('id_menu')));
-  			return _arRedirect ($url);
-		}
-		
+
 		// on vide la session
 		CopixSession::set ('menu|menus|edit', null);
-		
-		return _arRedirect(_url ('menu|adminmenus|'));
+		return _arRedirect(_url ('adminmenus|'));
     }
     
     /**
@@ -110,26 +93,31 @@ class ActionGroupAdminMenus extends CopixActionGroup {
     public function processDelete () {
     	// verification des parametres
 		CopixRequest::assert ('id_menu');
-		
-		$menu = _ioDao('menus')->findBy ( _daoSp ()->addCondition('id_menu', '=', _request ('id_menu')));
-		
+		$menu = _ioDao('menus')->get (_request ('id_menu'));
+
 		// affichage du message de confirmation
 		if (_request ('confirm') === null) {
 			return CopixActionGroup::process (
 				'generictools|Messages::getConfirm',
 				array (
-					'message' => _i18n ('admin.confirmdeletemenu', array ($menu[0]->name_menu)),
-					'confirm' => _url ('menu|adminmenus|delete', array ('id_menu' => _request ('id_menu'), 'confirm' => 1)),
-					'cancel' => _url ('menu|adminmenus|')
+					'message' => _i18n ('admin.confirmdeletemenu', array ($menu->name_menu)),
+					'confirm' => _url ('adminmenus|delete', array ('id_menu' => _request ('id_menu'), 'confirm' => 1)),
+					'cancel' => _url ('adminmenus|')
 				)
 			);
-			
-		// suppression du menu
 		} else {
+			// suppression du menu
 			_class ('menusservices')->delete (_request ('id_menu'));
 		}
-		
-		return _arRedirect (_url ('menu|adminmenus|'));
+		return _arRedirect (_url ('adminmenus|'));
     }
+    
+    /**
+     * Annulation d'une modification en cours
+     */
+    public function processCancel (){
+		CopixSession::set ('menu|menus|edit', null);
+		return _arRedirect(_url ('adminmenus|'));
+    } 
 }
 ?>

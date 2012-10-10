@@ -15,12 +15,12 @@ require ($path.'/../utils/copix/copix.inc.php');
 require ($path.'/../project/project.inc.php');
 
 try {	
-   $coord = new ProjectController ($path.'/../project/config/copix.conf.php');
-   $coord->process ();
-}catch (CopixCredentialException $e){
+	$coord = new ProjectController ($path.'/../project/config/copix.conf.php');
+	$coord->process ();
+} catch (CopixCredentialException $e) {
 	header ('location: '.CopixUrl::get ('auth||', array ('noCredential'=>1, 'auth_url_return'=>_url ('#'))));
-	exit;
-}catch (Exception $e){
+	exit ();
+} catch (Exception $e) {
 	$coord->showException ($e);
 }
 ?>

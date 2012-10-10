@@ -45,7 +45,8 @@ window.onload = function ()
 
 function InsertSmiley( url )
 {
-	var oImg = oEditor.FCK.CreateElement( 'IMG' ) ;
+	oEditor.FCKUndo.SaveUndoStep() ;
+	var oImg = oEditor.FCK.InsertElement( 'img' ) ;
 	oImg.src = url ;
 	oImg.setAttribute( '_fcksavedurl', url ) ;
 

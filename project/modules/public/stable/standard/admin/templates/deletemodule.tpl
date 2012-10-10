@@ -2,7 +2,7 @@
 {i18n key="install.module.confirmDelete" module=$ppo->module}<br />
 <input id="yes" type="button" value="{i18n key="Copix:common.buttons.yes"}" /><input type="button" value="{i18n key="Copix:common.buttons.no"}" onclick="javascript:document.location.href='{copixurl dest="admin|install|manageModules"}'" />
 </div>
-{ajax_divzone id="divinstall" zone='admin|deletemodulewithdep' moduleName=$ppo->module}
+{copixzone id="divinstall" process='admin|deletemodulewithdep' moduleName=$ppo->module ajax=true}
 
 {copixhtmlheader kind="jsCode"}
 {literal}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <moduledefinition>
     <general>
-        <default name="generictools" descriptioni18n="messages.description" longdescriptioni18n="messages.longdescription" icon="default.gif" />
+        <default name="generictools" descriptioni18n="messages.description" longdescriptioni18n="messages.longdescription" icon="generictools.png" />
     </general>
     <parameters>
      <parameter name="excludeFromPassword" captioni18n="generictools.parameter.excludeFromPassword" default="l;1" />

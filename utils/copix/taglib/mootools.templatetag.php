@@ -27,12 +27,22 @@ class TemplateTagMootools extends CopixTemplateTag {
 			}
 
 			foreach ($pParams['plugin'] as $pluginName){
-				if (!file_exists (str_replace ($basePath, './', $pluginPath = _resource ('js/mootools/plugins/'.$pluginName.'.js.php'))) &&
-					!file_exists (str_replace ($basePath, './', $pluginPath = _resource ('js/mootools/plugins/'.$pluginName.'.js')))
-				){
-					throw new CopixException ('[Mootools] Plugin '.$pluginName.' not found in '.$pluginPath);
+				$pluginPath = false;
+				if (file_exists (CopixUrl::getResourcePath ('js/mootools/plugins/'.$pluginName.'.js'))){
+					$pluginPath = _resource ('js/mootools/plugins/'.$pluginName.'.js');
 				}
-				CopixHTMLHeader::addJSLink ($pluginPath);
+				if (file_exists (CopixUrl::getResourcePath ('js/mootools/plugins/'.$pluginName.'.js.php'))){
+					$pluginPath = _resource ('js/mootools/plugins/'.$pluginName.'.js.php'); 
+				}
+				if ($pluginPath === false){
+					throw new CopixException ('[Mootools] Plugin '.$pluginName.' not found in '.$pluginPath);
+				}else{
+					CopixHTMLHeader::addJSLink ($pluginPath);
+				}
+
+				if (file_exists (CopixUrl::getResourcePath ('js/mootools/css/'.$pluginName.'.css'))){
+					CopixHtmlHeader::addCssLink (_resource ('js/mootools/css/'.$pluginName.'.css'));
+				}
 			}
 		}
 	}

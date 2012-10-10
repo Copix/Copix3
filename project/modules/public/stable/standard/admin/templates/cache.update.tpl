@@ -1,5 +1,6 @@
+<br />
 <form action="{copixurl dest="cache|valid"}" method="POST">
-<table class="CopixTable">
+<table class="CopixVerticalTable">
  <tr>
   <th>{i18n key="cache.name"}</th>
   <td>{$ppo->cache.name}</td>
@@ -53,7 +54,7 @@
 		</td> 	
  </tr>
  
-  <tr class="alternate">
+  <tr>
  	<th>{i18n key="cache.duration"}</th>
 		<td>
 		{if ($ppo->cache.duration == 0)}
@@ -68,11 +69,12 @@
 		</td> 	
  </tr>
  
- <tr>
+ <tr class="alternate">
   <th>{i18n key="cache.enabled"}</th>
   <td><input type="checkbox" value="1" name="enabled" {if $ppo->cache.enabled}checked="checked"{/if} /></td>
  </tr>
 </table>
+<br />
 <input type="submit" value="{i18n key="copix:common.buttons.valid"}" name="save" /> 
-<a href="{copixurl dest="admin|cache|admin"}"><input type="button" value="{i18n key="copix:common.buttons.back"}" /></a>
+<input type="button" value="{i18n key="copix:common.buttons.back"}" onclick="javascript:document.location='{copixurl dest="admin|cache|admin"}'" />
 </form>

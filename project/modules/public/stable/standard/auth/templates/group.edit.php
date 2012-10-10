@@ -76,9 +76,8 @@ function doUrl (pUrl) {
 <p><a href="<?php echo _url ('auth|groups|selectUsers');?>" onclick="return doUrl ('<?php echo _url ('auth|groups|selectUsers');?>');"><img
 	src="<?php echo _resource ('img/tools/add.png'); ?>"
 	alt="<?php echo _etag ('i18n', "copix:common.buttons.new"); ?>" /><?php _etag ('i18n', 'auth.group.addUser'); ?></a></p> 
-	
 	<?php if (CopixConfig::instance()->copixauth_isRegisteredCredentialHandler ('auth|dbmodulecredentialhandler')) { ?>
-<p><a href="<?php echo _url('auth|module|list',array('id_group'=>$ppo->group->id_dbgroup, 'handler_group'=>'auth|dbgrouphandler', 'url_return'=>_url('#'))); ?>" >
+<p><a href="<?php echo _url('auth|module|list',array('id_group'=>$ppo->group->id_dbgroup, 'handler_group'=>'auth|dbgrouphandler', 'url_return'=>_url('#'))); ?>">
    <img
 	src="<?php echo _resource ('img/tools/update.png'); ?>"
 	alt="<?php echo _etag ('i18n', "copix:common.buttons.new"); ?>" /><?php _etag ('i18n', 'auth.group.editModuleCredential'); ?></a>

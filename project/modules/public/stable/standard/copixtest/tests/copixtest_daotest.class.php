@@ -608,6 +608,7 @@ class CopixTest_DAOTest extends CopixTest {
   }
   
   public function testInsertNotNullWithEmptyValues (){
+  	//on test que chaine vide passe.
   	$record = _record ('copixtestautodao');
   	$record->type_test  = '1';
     $record->titre_test = 'Titre X';
@@ -615,6 +616,7 @@ class CopixTest_DAOTest extends CopixTest {
     $record->date_test = '20060203';
     _dao ('copixtestautodao')->insert ($record);
   	
+    //On test que null ne passe pas.
     try {
 	  	$record = _record ('copixtestautodao');
 	  	$record->type_test  = '1';
@@ -666,6 +668,97 @@ class CopixTest_DAOTest extends CopixTest {
     }catch (CopixException $e){
     	$this->assertTrue (true);
     }
+  }
+  
+  public function testDateTime (){
+  	_dao ('datetimetests')->deleteBy (_daoSp ());
+
+  	$record = _record ('datetimetests');
+  	$record->date_dtt = '20071121';
+  	$record->datetime_dtt = '20071129101222';
+  	$record->time_dtt = '101222';
+  	_dao ('datetimetests')->insert ($record);
+  	
+  	$record = _record ('datetimetests');
+  	$record->date_dtt = '20071120';
+  	$record->datetime_dtt = '20071120101242';
+  	$record->time_dtt = '101242';
+  	_dao ('datetimetests')->insert ($record);
+
+  	$results = _dao ('datetimetests')->findAll ();
+  	
+  	//premier enregistrement
+  	$this->assertEquals ($results[0]->date_dtt, '20071121');
+  	$this->assertEquals ($results[0]->datetime_dtt, '20071129101222');
+  	$this->assertEquals ($results[0]->time_dtt, '101222');
+  	
+  	//second enregistrement
+  	$this->assertEquals ($results[1]->date_dtt, '20071120');
+  	$this->assertEquals ($results[1]->datetime_dtt, '20071120101242');
+  	$this->assertEquals ($results[1]->time_dtt, '101242');
+  	
+  	//vérification des findBy
+  	
+	//doit récupérer le premier enregistrement
+  	$sp = _daoSP ()->addCondition ('date_dtt', '=', '20071121');
+  	$results = _dao ('datetimetests')->findBy ($sp);
+  	$this->assertEquals (count ($results), 1);
+  	$this->assertEquals ($results[0]->date_dtt, '20071121');
+  	$this->assertEquals ($results[0]->datetime_dtt, '20071129101222');
+  	$this->assertEquals ($results[0]->time_dtt, '101222');
+  	
+  	$sp = _daoSP ()->addCondition ('datetime_dtt', '=', '20071129101222');
+  	$results = _dao ('datetimetests')->findBy ($sp);
+  	$this->assertEquals (count ($results), 1);
+  	$this->assertEquals ($results[0]->date_dtt, '20071121');
+  	$this->assertEquals ($results[0]->datetime_dtt, '20071129101222');
+  	$this->assertEquals ($results[0]->time_dtt, '101222');
+  	
+  	$sp = _daoSP ()->addCondition ('time_dtt', '=', '101222');
+  	$results = _dao ('datetimetests')->findBy ($sp);
+  	$this->assertEquals (count ($results), 1);
+  	$this->assertEquals ($results[0]->date_dtt, '20071121');
+  	$this->assertEquals ($results[0]->datetime_dtt, '20071129101222');
+  	$this->assertEquals ($results[0]->time_dtt, '101222');
+  	
+  	//doit récupérer le second enregistrement
+  	$sp = _daoSP ()->addCondition ('date_dtt', '=', '20071120');
+  	$results = _dao ('datetimetests')->findBy ($sp);
+  	$this->assertEquals (count ($results), 1);
+	$this->assertEquals ($results[0]->date_dtt, '20071120');
+  	$this->assertEquals ($results[0]->datetime_dtt, '20071120101242');
+  	$this->assertEquals ($results[0]->time_dtt, '101242');
+  	
+  	$sp = _daoSP ()->addCondition ('datetime_dtt', '=', '20071120101242');
+  	$results = _dao ('datetimetests')->findBy ($sp);
+  	$this->assertEquals (count ($results), 1);
+	$this->assertEquals ($results[0]->date_dtt, '20071120');
+  	$this->assertEquals ($results[0]->datetime_dtt, '20071120101242');
+  	$this->assertEquals ($results[0]->time_dtt, '101242');
+  	
+  	$sp = _daoSP ()->addCondition ('time_dtt', '=', '101242');
+  	$results = _dao ('datetimetests')->findBy ($sp);
+  	$this->assertEquals (count ($results), 1);
+	$this->assertEquals ($results[0]->date_dtt, '20071120');
+  	$this->assertEquals ($results[0]->datetime_dtt, '20071120101242');
+  	$this->assertEquals ($results[0]->time_dtt, '101242');
+  }
+  
+  /**
+   * On test que l'on arrive bien a mettre null dans les datetime
+   */
+  function testDateTimeNullable (){
+  	_dao ('datetimetests')->deleteBy (_daoSp ());
+  	$record = _record ('datetimetests');
+  	$record->date_dtt = null;
+  	$record->datetime_dtt = null;
+  	$record->time_dtt = null;
+  	_dao ('datetimetests')->insert ($record);
+
+  	$readRecord = _dao ('datetimetests')->get ($record->id_dtt);
+  	$this->assertTrue ($readRecord->date_dtt === null); 
+  	$this->assertTrue ($readRecord->datetime_dtt === null); 
+  	$this->assertTrue ($readRecord->time_dtt === null); 
   }
   
   /**

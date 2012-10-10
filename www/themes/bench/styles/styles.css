@@ -30,8 +30,7 @@ pre {
    background-color:#F6F4E4;
    }
 
-#main a { color:#CCB494; text-decoration:none; }
-#main a:visited { color: #002830;}
+#main a { color: #002830; text-decoration:none; }
 #main a:hover { color: #CCB494; background-color: #0594c8; font-style:italic;text-decoration:underline;}
 #main h1 { color: #F6F4E4; padding:5px; background-color:#566E79;     }
 #main h2 { color: #663300; border-bottom:2px solid #663300; margin:1em 0 0.5em 0; }

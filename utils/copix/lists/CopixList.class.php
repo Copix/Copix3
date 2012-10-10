@@ -393,9 +393,9 @@ class CopixList {
         
         //Si on demande la recherche au démarrage on lance la génération du tableau 
         if ($this->_startupSearch) {
-         	return $this->generateTable ();
+         	return '<div id="divlist_'.$this->_id.'">'.$this->generateTable ().'</div>';
         }
-        return '';
+        return '<div id="divlist_'.$this->_id.'"></div>';
         
     }
 
@@ -455,6 +455,8 @@ class CopixList {
 	        if (_request ('order_'.$this->_id, null)===null) {
 	            $currentOrder = $this->_currentOrder;
 	        }
+	        _log('ORDER : '.$currentOrder,'ORDER');
+	        _log('LAST : '.$this->_currentOrder,'ORDER');
 	        if ($currentOrder!==null && _request ('order_'.$this->_id, null)===$this->_currentOrder) {
 	            $this->_sens = ($this->_sens === 'ASC') ? 'DESC' : 'ASC';
 	        } else {
@@ -469,9 +471,8 @@ class CopixList {
 	        $results = $e->getMessage();
 			//return $html;
 		}
-        $html .= '<div id="divlist_'.$this->_id.'">';
+        
         $html .= $this->_makeHtml($results);        
-        $html .= '</div>';
         
         //CopixListFactory::popCurrentId();
         
@@ -595,28 +596,45 @@ class CopixList {
 				load: function () {
 				    if (loader.divloader == null) {
     					loader.divloader = new Element('div');
-    					loader.divloader.setStyles({'background-color':'white','border':'1px solid black','width':'50px','height':'50px','top': window.getScrollTop().toInt()+window.getHeight ().toInt()/2-25+'px','left':window.getScrollLeft().toInt()+window.getWidth ().toInt()/2-25+'px','position':'absolute','text-align':'center','background-image':'url(".CopixUrl::getResource('img/tools/load.gif').")','background-repeat':'no-repeat','background-position':'center','zIndex':10});
+    					loader.divloader.setStyles({'vertical-align':'bottom','background-color':'white','border':'1px solid black','width':'100px','height':'100px','top': window.getScrollTop().toInt()+window.getHeight ().toInt()/2-50+'px','left':window.getScrollLeft().toInt()+window.getWidth ().toInt()/2-50+'px','position':'absolute','text-align':'center','background-image':'url(".CopixUrl::getResource('img/tools/load.gif').")','background-repeat':'no-repeat','background-position':'center','zIndex':999});
     					loader.divloader.injectInside(document.body);
+						cancel = new Element('input');
+						cancel.setProperty('type','button');
+						cancel.setProperty('value','Annuler');
+						cancel.setStyle('margin-top','75px');
+						cancel.addClass('copixlist_cancel');
+						cancel.injectInside(loader.divloader);
+						cancel.addEvent('click', function () {
+    						if (javascripts$this->_id.currentAjax != null) {
+    							javascripts$this->_id.currentAjax.cancel();
+								javascripts$this->_id.currentAjax = null;
+    							loader.unload();
+            					$('submit_$this->_id').setOpacity(1);
+    						}
+						});
 						loader.divfond = new Element('div');
-						loader.divfond.setStyles({'width':window.getWidth(),'height':window.getHeight(),'top': window.getScrollTop(),'left':window.getScrollLeft(),'position':'absolute','text-align':'center','background-color':'black'});
+						loader.divfond.setStyles({'width':window.getWidth(),'height':window.getHeight(),'top': window.getScrollTop(),'left':window.getScrollLeft(),'position':'absolute','text-align':'center','background-color':'black','zIndex':998});
 						loader.divfond.setOpacity(0.5);
 						loader.divfond.injectInside(document.body);
     				} else {
-						loader.divloader.setStyles({'background-color':'white','border':'1px solid black','width':'50px','height':'50px','top': window.getScrollTop().toInt()+window.getHeight ().toInt()/2-25+'px','left':window.getScrollLeft().toInt()+window.getWidth ().toInt()/2-25+'px','position':'absolute','text-align':'center','background-image':'url(".CopixUrl::getResource('img/tools/load.gif').")','background-repeat':'no-repeat','background-position':'center','zIndex':9});
-						loader.divfond.setStyles({'width':window.getWidth(),'height':window.getHeight(),'top': window.getScrollTop(),'left':window.getScrollLeft(),'position':'absolute','text-align':'center','background-color':'black'});
+						loader.divloader.setStyles({'background-color':'white','border':'1px solid black','width':'100px','height':'100px','top': window.getScrollTop().toInt()+window.getHeight ().toInt()/2-50+'px','left':window.getScrollLeft().toInt()+window.getWidth ().toInt()/2-50+'px','position':'absolute','text-align':'center','background-image':'url(".CopixUrl::getResource('img/tools/load.gif').")','background-repeat':'no-repeat','background-position':'center','zIndex':999});
+						loader.divfond.setStyles({'width':window.getWidth(),'height':window.getHeight(),'top': window.getScrollTop(),'left':window.getScrollLeft(),'position':'absolute','text-align':'center','background-color':'black','zIndex':998});
     					loader.divloader.setStyle('visibility','');
 						loader.divfond.setStyle('visibility','');
     				}
+					loader.divfond.fixdivShow();
 				},
 				unload: function () {
 					if (loader.divloader != null) {
 				    	loader.divloader.setStyle('visibility','hidden');
 						loader.divfond.setStyle('visibility','hidden');
 				   	}
+					loader.divfond.fixdivHide();
 				}
 				
 				};
         		var javascripts$this->_id = {
+					currentAjax: null,
         			gettable : function () {
 						try {
         					$$('#searchform$this->_id input, #searchform$this->_id select ').each(function (el) { el.fireEvent('formsubmit'); });
@@ -625,17 +643,19 @@ class CopixList {
         					$('submit_$this->_id').setOpacity(0);
 						} catch (e) {}
 						loader.load();
-        				new Ajax('"._url ('generictools|copixlist|getTable',array('table_id'=>$this->_id))."', {
+        				this.currentAjax = new Ajax('"._url ('generictools|copixlist|getTable',array('table_id'=>$this->_id))."', {
         					method: 'post',
         					postBody: $('searchform$this->_id'),
         					update: $('divlist_$this->_id'),
         					evalScripts : true,
         					onComplete: function () {
+								javascripts$this->_id.currentAjax = null;
 								loader.unload();
         						$('submit_$this->_id').setOpacity(1);
-    							todo.doEvent ();
+    							todo_$this->_id.doEvent ();
         					}
-        				}).request();
+        				});
+						this.currentAjax.request();
         			},
 					goToPage : function (page) {
 						loader.load();
@@ -646,7 +666,7 @@ class CopixList {
 							data : { 'page_$this->_id':page },
         					onComplete: function () {
 								loader.unload();
-								todo.doEvent ();
+								todo_$this->_id.doEvent ();
         					}
         				}).request();
 					},
@@ -659,7 +679,7 @@ class CopixList {
 							data : { 'order_$this->_id':champ },
         					onComplete: function () {
 								loader.unload();
-								todo.doEvent ();
+								todo_$this->_id.doEvent ();
         					}
         				}).request();
 					}
@@ -689,7 +709,7 @@ class CopixList {
 
         
         $domready = "
-		var todo = {
+		var todo_$this->_id = {
 					doEvent: function () {
 						$$('.copixlistorder$this->_id').each(function (el) {
 							var rel = el.getProperty('rel'); 
@@ -740,7 +760,7 @@ class CopixList {
     					});
     				});
 				}
-			todo.doEvent ();
+			todo_$this->_id.doEvent ();
 		});
 		";
         CopixHTMLHeader::addJSCode($domready);

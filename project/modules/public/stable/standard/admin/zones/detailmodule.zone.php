@@ -21,19 +21,20 @@ class ZoneDetailModule extends CopixZone {
             foreach ($arDependencies as $key=>$dependency) {
                 if ($dependency->kind === 'module') {
                     if (CopixModule::testDependency($dependency)) {
-                        $dependency->ok = true;
+                        $dependency->exists = true;
+                        $dependency->isInabled = CopixModule::isEnabled ($dependency->name);
                         $arModule[] = $dependency;
                     } else {
-                        $dependency->ok = false;
+                        $dependency->exists = false;
                         $install = false;
                         $arModule[] = $dependency;
                     }
                 } else {
                     if (CopixModule::testDependency($dependency)) {
-                        $dependency->ok = true;
+                        $dependency->exists = true;
                         $arExtension[] = $dependency;
                     } else {
-                        $dependency->ok = false;
+                        $dependency->exists = false;
                         $install = false;
                         $arExtension[] = $dependency;
                     }

@@ -8,8 +8,6 @@
    <input type="submit" value="{i18n key="copix:common.buttons.ok"}" />
 </form>
 
-<h2>{i18n key='params.paramList'}</h2>
-
 {if $error != ''}
   <div class="errorMessage">
   <h1>{i18n key="params.title.error"}</h1>
@@ -19,17 +17,35 @@
 {/if}
 
 {if count ($paramsList)}
+{assign var=exGroup value=null}
+{assign var=isFirst value=true}
+{foreach from=$paramsList item=params}
+{if ($params.Group neq $exGroup)}
+{assign var=exGroup value=$params.Group}
+{if (!$isFirst)}
+   </tbody>
+</table>
+{/if}
+{assign var=isFirst value=false}
+<h2>
+{if ($params.Group eq 'no-group')}
+	{i18n key="params.group.no-group"}
+{else}
+	{$params.Group}
+{/if}
+</h2>
 <table class="CopixTable">
    <thead>
    <tr>
-      <th>{i18n key='params.paramsName'}</th>
-      <th>{i18n key='params.paramsDefault'}</th>
-      <th>{i18n key='params.paramsCurrentValue'}</th>
-      <th class="actions">{i18n key='params.paramsOptions'}</th>
+      <th>&nbsp;{i18n key='params.paramsName'}&nbsp;</th>
+      <th>&nbsp;{i18n key='params.paramsDefault'}&nbsp;</th>
+      <th>&nbsp;{i18n key='params.paramsCurrentValue'}&nbsp;</th>
+      <th class="actions">&nbsp;{i18n key='params.paramsOptions'}&nbsp;</th>
    </tr>
    </thead>
    <tbody>
-   {foreach from=$paramsList item=params}
+   {/if}
+   
       <tr {cycle values=',class="alternate"'}>
          <td>{$params.Caption|escape}</td>
          <td>{$params.DefaultStr|escape}</td>
@@ -59,17 +75,23 @@
 				<input type="text" name="value" value="{$params.Value|escape}" size="20" />
 				{/if}
 			</td>
-            <td><input type="image" src="{copixresource path="img/tools/valid.png"}" value="{i18n key="copix:common.buttons.ok"}" title="{i18n key="copix:common.buttons.ok"}" /></form><a href="{copixurl dest="admin|parameters|" choiceModule=$choiceModule}"><img src="{copixresource path="img/tools/cancel.png"}" title="{i18n key="copix:common.buttons.cancel"}" alt="{i18n key="copix:common.buttons.cancel"}" /></a></td>
+            <td width="5px" align="right">
+            	<input type="image" src="{copixresource path="img/tools/valid.png"}" value="{i18n key="copix:common.buttons.ok"}" title="{i18n key="copix:common.buttons.ok"}" />
+            	</form>
+            	<a href="{copixurl dest="admin|parameters|" choiceModule=$choiceModule}"><img src="{copixresource path="img/tools/cancel.png"}" title="{i18n key="copix:common.buttons.cancel"}" alt="{i18n key="copix:common.buttons.cancel"}" /></a>
+            	&nbsp;
+            </td>
          {else}
             <td>{$params.ValueStr|escape}</td>
-            <td><a href="{copixurl dest="admin|parameters|" choiceModule=$choiceModule editParam=$params.Name}"><img src="{copixresource path="img/tools/update.png"}" alt="{i18n key='copix:common.buttons.update'}" title="{i18n key='copix:common.buttons.update'}" /></a></td>
+            <td width="5px" align="right">
+            	<a href="{copixurl dest="admin|parameters|" choiceModule=$choiceModule editParam=$params.Name}"><img src="{copixresource path="img/tools/update.png"}" alt="{i18n key='copix:common.buttons.update'}" title="{i18n key='copix:common.buttons.update'}" /></a>
+            	&nbsp;
+            </td>
          {/if}
       </tr>
-   {/foreach}
-   </tbody>
+{/foreach}
+</tbody>
 </table>
-{else}
-<p>{i18n key='params.noParam'}</p>
 {/if}
 
 <br />

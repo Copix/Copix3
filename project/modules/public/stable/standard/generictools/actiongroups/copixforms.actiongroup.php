@@ -30,6 +30,8 @@ class ActionGroupCopixForms extends CopixActionGroup {
      * elle renvoi le code HTML d'un champ en fonction de son mode (et de son type)
      */
 	public function processGetInput() {
+		$ppo = new CopixPPO ();
+		
 	    $id = CopixRequest::get ('form_id');
 	    $form = CopixFormFactory::get ($id);
 	    $params['mode_'.CopixRequest::get('form_id')] = CopixRequest::get('mode_'.CopixRequest::get('form_id'),'view');
@@ -44,16 +46,17 @@ class ActionGroupCopixForms extends CopixActionGroup {
 	public function processCheckRecord() {
 	    $validUrl  = CopixRequest::get('validUrl');
         $urlParams = array();
-   	    $urlParams['mode_'.CopixRequest::get('form_id')]='view';
+   	    $urlParams['mode_'.CopixRequest::get('form_id')] = 'view';
+   	    $urlParams['error_'.CopixRequest::get('form_id')]=false;
 	    $form = CopixFormFactory::get (CopixRequest::get('form_id'));
 	    $arPk = array();
 	    try {
 	        $arPk = $form->doRecord();
 	    } catch(CopixFormException $e) {
-	        $urlParams['mode_'.CopixRequest::get('form_id')]='edit';
-	        $urlParams['error_'.CopixRequest::get('form_id')]='true';
+            $urlParams['mode_'.CopixRequest::get('form_id')]='edit';
+	        $urlParams['error_'.CopixRequest::get('form_id')]=true;
 	    }
-	    if ($validUrl !== null && !$urlParams['error_'.CopixRequest::get('form_id')]) {
+	    if ($validUrl !== null && !$urlParams['error_'.CopixRequest::get('form_id')] ) {
     	    return _arRedirect(CopixUrl::get($validUrl));	        
 	    } else {
     	    return _arRedirect(CopixUrl::get(CopixRequest::get('url'), array_merge($urlParams,$arPk)));

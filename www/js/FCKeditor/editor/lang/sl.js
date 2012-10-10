@@ -45,6 +45,7 @@ InsertLinkLbl		: "Povezava",
 InsertLink			: "Vstavi/uredi povezavo",
 RemoveLink			: "Odstrani povezavo",
 Anchor				: "Vstavi/uredi zaznamek",
+AnchorDelete		: "Remove Anchor",	//MISSING
 InsertImageLbl		: "Slika",
 InsertImage			: "Vstavi/uredi sliko",
 InsertFlashLbl		: "Flash",
@@ -70,6 +71,7 @@ RightJustify		: "Desna poravnava",
 BlockJustify		: "Obojestranska poravnava",
 DecreaseIndent		: "Zmanjšaj zamik",
 IncreaseIndent		: "Povečaj zamik",
+Blockquote			: "Blockquote",	//MISSING
 Undo				: "Razveljavi",
 Redo				: "Ponovi",
 NumberedListLbl		: "Oštevilčen seznam",
@@ -103,20 +105,27 @@ SelectionField	: "Spustni seznam",
 ImageButton		: "Gumb s sliko",
 
 FitWindow		: "Maximize the editor size",	//MISSING
+ShowBlocks		: "Show Blocks",	//MISSING
 
 // Context Menu
 EditLink			: "Uredi povezavo",
 CellCM				: "Cell",	//MISSING
 RowCM				: "Row",	//MISSING
 ColumnCM			: "Column",	//MISSING
-InsertRow			: "Vstavi vrstico",
+InsertRowAfter		: "Insert Row After",	//MISSING
+InsertRowBefore		: "Insert Row Before",	//MISSING
 DeleteRows			: "Izbriši vrstice",
-InsertColumn		: "Vstavi stolpec",
+InsertColumnAfter	: "Insert Column After",	//MISSING
+InsertColumnBefore	: "Insert Column Before",	//MISSING
 DeleteColumns		: "Izbriši stolpce",
-InsertCell			: "Vstavi celico",
+InsertCellAfter		: "Insert Cell After",	//MISSING
+InsertCellBefore	: "Insert Cell Before",	//MISSING
 DeleteCells			: "Izbriši celice",
 MergeCells			: "Združi celice",
-SplitCell			: "Razdeli celico",
+MergeRight			: "Merge Right",	//MISSING
+MergeDown			: "Merge Down",	//MISSING
+HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
+VerticalSplitCell	: "Split Cell Vertically",	//MISSING
 TableDelete			: "Izbriši tabelo",
 CellProperties		: "Lastnosti celice",
 TableProperties		: "Lastnosti tabele",
@@ -134,7 +143,7 @@ SelectionFieldProp	: "Lastnosti spustnega seznama",
 TextareaProp		: "Lastnosti vnosnega območja",
 FormProp			: "Lastnosti obrazca",
 
-FontFormats			: "Navaden;Oblikovan;Napis;Naslov 1;Naslov 2;Naslov 3;Naslov 4;Naslov 5;Naslov 6",		//REVIEW : Check _getfontformat.html
+FontFormats			: "Navaden;Oblikovan;Napis;Naslov 1;Naslov 2;Naslov 3;Naslov 4;Naslov 5;Naslov 6",
 
 // Alerts and Messages
 ProcessingXHTML		: "Obdelujem XHTML. Prosim počakajte...",
@@ -229,7 +238,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Izberi zaznamek",
 DlgLnkAnchorByName	: "Po imenu zaznamka",
 DlgLnkAnchorById	: "Po ID-ju elementa",
-DlgLnkNoAnchors		: "<V tem dokumentu ni zaznamkov>",		//REVIEW : Change < and > with ( and )
+DlgLnkNoAnchors		: "(V tem dokumentu ni zaznamkov)",
 DlgLnkEMail			: "Elektronski naslov",
 DlgLnkEMailSubject	: "Predmet sporočila",
 DlgLnkEMailBody		: "Vsebina sporočila",
@@ -321,6 +330,9 @@ DlgCellCollSpan		: "Spojenih stolpcev (col-span)",
 DlgCellBackColor	: "Barva ozadja",
 DlgCellBorderColor	: "Barva obrobe",
 DlgCellBtnSelect	: "Izberi...",
+
+// Find and Replace Dialog
+DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
 
 // Find Dialog
 DlgFindTitle		: "Najdi",

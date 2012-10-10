@@ -116,7 +116,7 @@ class CopixDBConnectionPDO_MsSQL extends CopixDBPDOConnection {
 
 							return $queryString;
 					 } else {
-							throw new CopixDBConnectionException ('ERREUR REQUETE ( '.$pSQL.') : La clause "order" est manquante dans la requête MSSQL. L\'utilisation d\'un offset dans une requête nécessite obligatoirement l\'ajout d\'un "order by".');
+							throw new CopixDBException ('ERREUR REQUETE ( '.$pSQL.') : La clause "order" est manquante dans la requête MSSQL. L\'utilisation d\'un offset dans une requête nécessite obligatoirement l\'ajout d\'un "order by".');
 					 }
   			 } 
 

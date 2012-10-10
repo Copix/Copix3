@@ -135,6 +135,7 @@ class CopixI18N {
 	}
 
 	public static function getDateTimeMask($separator) {
+		$toReturn = new stdClass ();
 		switch ($lang = self :: getLang()) {
 			case 'fr' :
 				$mask = "%d" . $separator . "%d" . $separator . "%d %d:%d:%d";

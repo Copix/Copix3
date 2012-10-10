@@ -19,14 +19,7 @@ class WikiAuth {
 	 * @return boolean
 	 */
 	public function canRead() {
-		switch (CopixConfig::get ('wiki|readLevel')){
-			case 'public':
-				return true;
-			case 'registered':
-				return CopixAuth::getCurrentUser ()->testCredential ('basic:registered');
-			default:
-				return CopixAuth::getCurrentUser ()->testCredential ('basic:admin');
-		}
+		return CopixAuth::getCurrentUser ()->testCredential ('module:read@wiki');
 	}
 
 	/**
@@ -34,14 +27,7 @@ class WikiAuth {
 	 * @return boolean true or false for current user
 	 */
 	public function canWrite() {
-		switch (CopixConfig::get ('wiki|writeLevel')){
-			case 'public':
-				return true;
-			case 'registered':
-				return CopixAuth::getCurrentUser ()->testCredential ('basic:registered');
-			default:
-				return CopixAuth::getCurrentUser ()->testCredential ('basic:admin');
-		}
+		return CopixAuth::getCurrentUser ()->testCredential ('module:write@wiki');
 	}
 	
 	/**

@@ -30,12 +30,12 @@
  * @param Smarty clever simulation of a method
  * @return string string $content re-formatted
  */
-function smarty_block_popupinformation($params, $content, &$me) {
-	if (is_null ($content)){
-		return;
+function smarty_block_popupinformation($params, $content, &$me, $first) {
+    if (is_null ($pContent) && $first === true) {
+		return ;
 	}
 	if (isset ($params['assign'])){
-		$me->assign ($params['assign'], _tag ('select', $params, $content));
+		$me->assign ($params['assign'], _tag ('popupinformation', $params, $content));
 	}
 	return _tag ('popupinformation', $params, $content);
 }

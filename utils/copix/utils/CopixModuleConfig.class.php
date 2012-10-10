@@ -90,7 +90,11 @@ class CopixModuleConfig {
 
 		//we needs to compile if the xml file is newer than de PHPCache file
 		$select = CopixSelectorFactory::create ($this->module.'module.xml');
-		return filemtime ($select->getPath ('module.xml')) > filemtime ($this->_getCompiledFileName());
+		$moduleXmlPath = $select->getPath ('module.xml');
+		if (!file_exists ($moduleXmlPath)) {
+			throw new CopixException (_i18n ('copix:errors.moduleXmlNotFound', array ($moduleXmlPath)));
+		}
+		return filemtime ($moduleXmlPath) > filemtime ($this->_getCompiledFileName ());
 	}
 
 	/**
@@ -122,6 +126,7 @@ class CopixModuleConfig {
 			$paramInfos = $this->_getParam ($paramName);
 			
 			if (isset ($this->_configVars[$vars->id_ccfg])){
+				
 				$this->_configVars[$vars->id_ccfg]['Value'] = $vars->value_ccfg;
 				
 				$listValues = $this->_strToArray ($paramInfos['ListValues']);
@@ -271,20 +276,54 @@ class CopixModuleConfig {
 
 		$this->_configVars = array ();
 		$xml = simplexml_load_file ($fileName);
-		if (isset ($xml->parameters->parameter)){
-			$this->_xmlParameters[$this->module] = $xml->parameters;
+		if (isset ($xml->parameters->parameter) || isset ($xml->parameters->group)){
+			// nodes parameter sans group
+			if (isset ($xml->parameters->parameter)) {
+				$this->_xmlParameters[$this->module]['no-group'] = $xml->parameters->parameter;
+				foreach ($xml->parameters->parameter as $key=>$child){
+					$this->_loadParameterFromNode ($module, $child);
+				}
+			}
 			
-			foreach ($xml->parameters->parameter as $key=>$child){
-				$attributes = $child->attributes ();
-				//we stores in a key with the following format module|attributeName
-				CopixContext::push ($module);
-				
-				$this->_configVars[$this->module.$attributes['name']] = $this->_getParam ($attributes['name']); 
-				
-				$this->_values[$this->module.$attributes['name']] = utf8_decode ((string) $attributes['default']);
-				CopixContext::pop ();
+			// nodes parameter dans un group
+			if (isset ($xml->parameters->group)) {
+				$temp = 0;
+				foreach ($xml->parameters->group as $groupKey => $groupChild) {
+					$attributes = $groupChild->attributes ();
+					if (isset ($attributes['caption'])) {
+						$groupName = $attributes['caption'];
+					} else if (isset ($attributes['captioni18n'])) {
+						CopixContext::push ($module);
+						$groupName = _i18n ((string)$attributes['captioni18n']);
+						CopixContext::pop ();
+					} else {
+						throw new CopixException (_i18n ('copix:copixmodule.error.parametersGroupCaptionEmpty', array ($module)));
+					}
+					$this->_xmlParameters[$this->module][$groupName] = $groupChild;
+					foreach ($groupChild as $key => $child) {
+						$this->_loadParameterFromNode ($module, $child);
+					}
+					$temp++;
+				}
 			}
 		}
+		
+		//echo '<pre>';
+		//print_r ($this->_xmlParameters);
+	}
+	
+	/**
+	 * Charge un paramètre depuis une node
+	 * 
+	 * @param simpleXlmNode $pNode Node qui contient des infos sur un paramètre
+	 */
+	private function _loadParameterFromNode ($pModule, $pNode) {
+		$attributes = $pNode->attributes ();
+		//we stores in a key with the following format module|attributeName
+		CopixContext::push ($pModule);		
+		$this->_configVars[$this->module.$attributes['name']] = $this->_getParam ($attributes['name']);		
+		$this->_values[$this->module.$attributes['name']] = utf8_decode ((string)$attributes['default']);
+		CopixContext::pop ();
 	}
 	
 	/**
@@ -310,48 +349,52 @@ class CopixModuleConfig {
 	 */
 	private function _getParam ($pParam) {
 		// ce module n'a pas de paramètres sauvegardés
-		if (!isset ($this->_xmlParameters[$this->module]->parameter)) {
+		if (!isset ($this->_xmlParameters[$this->module]) || count ($this->_xmlParameters[$this->module]) == 0) {
 			return null;			
 		}
 				
 		$module = $this->module === "|" ? "default" : substr ($this->module, 0, -1);
 		CopixContext::push ($module);
-		
+
 		// boucle sur tous les paramètres
-		foreach ($this->_xmlParameters[$this->module]->parameter as $key => $child) {
-			$attributes = $child->attributes ();
-			
-			// si c'est le paramètre $pParam
-			if (isset ($attributes['name']) && $attributes['name'] == $pParam) {
-				$type = (isset ($attributes['type']) && in_array ($attributes['type'], $this->_allowedTypes)) ? (String)$attributes['type'] : 'text';
-				$default = (string) $attributes['default'];
+		foreach ($this->_xmlParameters[$this->module] as $groupKey => $groupChild) {
+			foreach ($groupChild as $key => $child) {
+				$attributes = $child->attributes ();
 				
-				// récupération de la valeur par défaut "à afficher"
-				if ($type == 'select' || $type == 'multiSelect') {
-					$values = $this->_strToArray ((string) $attributes['listValues']);
-					$defaultStr = (isset ($values[$default])) ? trim ($values[$default]) : $default;
-				} else if ($type == 'bool') { 
-					$defaultStr = ($default == 0) ? _i18n ('copix:copix.no') : _i18n ('copix:copix.yes');
-				} else {
-					$defaultStr = (string) $attributes['default'];
+				// si c'est le paramètre $pParam
+				if (isset ($attributes['name']) && $attributes['name'] == $pParam) {
+					$type = (isset ($attributes['type']) && in_array ($attributes['type'], $this->_allowedTypes)) ? (string)$attributes['type'] : 'text';
+					$default = (string) $attributes['default'];
+					
+					// récupération de la valeur par défaut "à afficher"
+					if ($type == 'select' || $type == 'multiSelect') {
+						$values = $this->_strToArray ((string) $attributes['listValues']);
+						$defaultStr = (isset ($values[$default])) ? trim ($values[$default]) : $default;
+					} else if ($type == 'bool') { 
+						//echo '[$groupKey] [' . $groupKey . '] [$attributes] [' . $attributes['name'] . '] [$type] [' . $type . ']<br />';
+						$defaultStr = ($default == 0) ? _i18n ('copix:copix.no') : _i18n ('copix:copix.yes');
+					} else {
+						$defaultStr = (string) $attributes['default'];
+					}
+					
+					$toReturn = array (
+						'Name' => (string) $attributes['name'],
+						'Caption' => (isset ($attributes['captioni18n']) ? _i18n ((string) $attributes['captioni18n']) : utf8_decode ((string) $attributes['caption'])),
+						'Default' => utf8_decode ($default),
+						'DefaultStr' => $defaultStr,
+						'Value' => $default,
+						'ValueStr' => $defaultStr,
+						'Type' => $type,
+						'MinValue' => (isset ($attributes['minValue'])) ? (string) $attributes['minValue'] : null,
+						'MaxValue' => (isset ($attributes['maxValue'])) ? (string) $attributes['maxValue'] : null,
+						'MaxLength' => (isset ($attributes['maxLength'])) ? (string) $attributes['maxLength'] : null,
+						'ListValues' => (isset ($attributes['listValues'])) ? (string) $attributes['listValues'] : null,
+						'Group' => $groupKey
+					);
+						
+					CopixContext::pop ();
+					return $toReturn;
 				}
-				
-				$toReturn = array (
-					'Name' => (string) $attributes['name'],
-					'Caption' => (isset ($attributes['captioni18n']) ? _i18n ((string) $attributes['captioni18n']) : utf8_decode ((string) $attributes['caption'])),
-					'Default' => utf8_decode ($default),
-					'DefaultStr' => $defaultStr,
-					'Value' => $default,
-					'ValueStr' => $defaultStr,
-					'Type' => $type,
-					'MinValue' => (isset ($attributes['minValue'])) ? (string) $attributes['minValue'] : null,
-					'MaxValue' => (isset ($attributes['maxValue'])) ? (string) $attributes['maxValue'] : null,
-					'MaxLength' => (isset ($attributes['maxLength'])) ? (string) $attributes['maxLength'] : null,
-					'ListValues' => (isset ($attributes['listValues'])) ? (string) $attributes['listValues'] : null
-				);
-				
-				CopixContext::pop ();
-				return $toReturn;
 			}
 		}
 

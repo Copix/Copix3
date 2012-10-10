@@ -70,10 +70,8 @@ class ActionGroupModule extends CopixActionGroup {
             //Fin de création des droits
         }
         
-        
         $arData = array();
         $arModuleCredential = _dao('modulecredentials')->findBy(_daoSP()->groupBy('module_mc'));
-        
         
         foreach ($arModuleCredential as $module) {
             $module = $module->module_mc;
@@ -138,8 +136,17 @@ class ActionGroupModule extends CopixActionGroup {
             $droits->data = $arDroitMc;
 
             $arData[] = $droits;
-        }        
-        return _arPpo (new CopixPpo(array('id_group'=>$id_group,'handler_group'=>$handler_group,'list'=>$arData,'url_return'=>_request('url_return',_url('#')))), 'modules.list.php');
+        }
+
+        //Le groupe en cours de modification est en session, on peut le récupérer.
+        if ($group = CopixSession::get ('auth|group')){
+        	$groupName = $group->id_dbgroup  === null ? _i18n ('auth.newGroup') : $group->caption_dbgroup;
+        }else{
+        	$groupName = _i18n ('auth.newGroup'); 
+        }
+        return _arPpo (new CopixPpo(array('TITLE_PAGE'=>_i18n ('auth.editModuleCredentials', $groupName), 'id_group'=>$id_group, 
+        								'handler_group'=>$handler_group, 'list'=>$arData, 
+        								'url_return'=>_request('url_return',_url('#')))), 'modules.list.php');
     }
     
     /**
@@ -173,7 +180,7 @@ class ActionGroupModule extends CopixActionGroup {
             $module = _request('moduleToDelete');
             foreach (_dao('modulecredentials')->findBy(_daoSP()->addCondition('module_mc','=',$module)) as $mc) {
                 _dao('modulecredentials')->delete($mc->id_mc);
-                _dao('modulecredentialsgroups')->deleteBy(_daoSP()->addCondition('id_mc','=',$id_mc));
+                _dao('modulecredentialsgroups')->deleteBy(_daoSP()->addCondition('id_mc','=',$mc->id_mc));
             }
             
         }

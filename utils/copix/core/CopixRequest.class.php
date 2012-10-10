@@ -71,7 +71,7 @@ class CopixRequestException extends CopixException {
  	 */
  	public static function get ($pVarName, $pDefaultValue = null, $pDefaultIfEmpty = true){
 		if (array_key_exists ($pVarName, self::$_vars)){
-		    if (is_array(self::$_vars[$pVarName]) || trim(self::$_vars[$pVarName])!==''){
+		    if (is_array(self::$_vars[$pVarName]) || is_object (self::$_vars[$pVarName]) || trim(self::$_vars[$pVarName])!==''){
 		        return self::$_vars[$pVarName];		 
 		    }else{
 		        if (! $pDefaultIfEmpty){

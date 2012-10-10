@@ -1,6 +1,9 @@
 <?php
 class ActionGroupAdmin extends CopixActionGroup{
 
+	public function beforeAction($pAction){
+		_eTag('mootools');
+	}
 	
 	public function processDefault(){
 		
@@ -10,8 +13,10 @@ class ActionGroupAdmin extends CopixActionGroup{
 		
 		$ppo = new CopixPPO;
 		$ppo->pages = $pages;
-		$templates = array("3 colonnes don 2 à droite plus petites"=>'display.1large.2smalls.tpl',
-						"2 colonnes de 50%"=>'display.2cols.tpl');
+		$templates = array("3 colonnes dont 2 à droite plus petites"=>'display.1large.2smalls.tpl',
+						"2 colonnes de 50%"=>'display.2cols.tpl',
+						"1 colonne en haut, 2 colonnes de 50%, 1 colonne en bas"=>'display.1_2_1.tpl'
+		);
 		$ppo->templates = $templates;
 		return _arPPO($ppo,"admin.page.php");
 		

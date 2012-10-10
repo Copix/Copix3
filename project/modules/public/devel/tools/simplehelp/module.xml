@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <moduledefinition>
     <general>
-        <default name="simplehelp" descriptioni18n="simplehelp.shortDescription"/>
+        <default name="simplehelp" descriptioni18n="simplehelp.shortDescription" icon="simplehelp.png" />
     </general>
     <admin>
 		<link url="simplehelp|admin|listaide" captioni18n="simplehelp.title.list" credentials="basic:admin"></link>

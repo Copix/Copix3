@@ -13,7 +13,6 @@
   
   $root = $_GET['copixurl'];
 ?>
-
 @CHARSET "UTF-8";
 
 /** WIKI **/
