@@ -1,0 +1,18 @@
+
+.CopixModalBox {
+	background-color: white;
+	border: solid black 1px;
+	width: auto;
+	padding: 2px;
+}
+
+.CopixModalBox thead th {
+	text-align: center;
+	padding: 4px;
+}
+
+.CopixModalBox td {
+	text-align: left;
+	height: auto;
+	padding: 4px;
+}

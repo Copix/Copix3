@@ -107,11 +107,11 @@ function smarty_function_html_select_date($params, &$smarty)
             case 'month_empty':
             case 'day_empty':
             case 'year_empty':
-                $$_key = (string)$_value;
+                $$_key = _toString($_value);
                 break;
 
             case 'all_empty':
-                $$_key = (string)$_value;
+                $$_key = _toString($_value);
                 $day_empty = $month_empty = $year_empty = $all_empty;
                 break;
 

@@ -26,15 +26,11 @@
 				<?php
 				if (_currentUser ()->isConnected ()) {
 					echo '<a href="' . _url ('auth|log|out') . '">Déconnexion [' . _currentUser ()->getCaption () . ']</a>';
-					try {
-						_currentUser ()->assertCredential ('basic:admin');
+					if (_currentUser ()->testCredential ('basic:admin')) {
 						echo ' | <a href="' . _url ('admin||') . '">Administration</a>';
-					} catch (Exception $e) {
-						
 					}
 				} else {
-					echo '<a href="' . _url ('auth||') . '">Connexion</a> | ';
-					echo 'S\'enregistrer';
+					echo '<a href="' . _url ('auth||') . '">Connexion</a>';
 				}
 				?>
 				<div style="height:5px"></div>

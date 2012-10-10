@@ -12,7 +12,7 @@
   <tr {cycle values=',class="alternate"'}>
    <td>
    	 <br />
-     <a href="{copixurl dest=admin|themes|doSelectTheme id_ctpt=$theme->id}">
+     <a href="{copixurl dest=admin|themes|doSelectTheme id_ctpt=''}">
        <img src="{copixurl dest=admin|themes|getImage id=default name=default.png}" border="0"
      /></a>
      
@@ -22,7 +22,7 @@
    <td>
      <br />
      <center>
-     <b>Copix 3</b>{if $ppo->selectedTheme == $theme->id_ctpt} ({i18n key="themes.theme.actual"}){/if}     
+     <b>Copix 3</b>{if $ppo->selectedTheme == ''} ({i18n key="themes.theme.actual"}){/if}     
      </center>
      <br />
      {i18n key=themes.theme.author} : {i18n key="themes.defaultTheme.author"}<br />

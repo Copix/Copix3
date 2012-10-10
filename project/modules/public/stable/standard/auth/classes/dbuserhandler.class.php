@@ -9,6 +9,98 @@
  */
 
 /**
+ * Utilisateur décrit en base de données.
+ *
+ */
+class DBUser implements ICopixUser {
+	
+	/**
+	 * Libellé.
+	 *
+	 * @var string
+	 */
+	public $caption;
+
+	/**
+	 * Login.
+	 *
+	 * @var string
+	 */
+	public $login;
+	
+	/**
+	 * Identifiant.
+	 *
+	 * @var integer
+	 */
+	public $id;
+	
+	/**
+	 * Adresse e-mail.
+	 *
+	 * @var string
+	 */
+	public $email;
+	
+	/**
+	 * Enter description here...
+	 *
+	 * @var integer
+	 */
+	public $enabled;
+	
+	/**
+	 * Construit un DBUser à partir d'un enregistrement en base.
+	 *
+	 * @param ICopixDAORecord $record
+	 */
+	public function __construct(ICopixDAORecord $record) {
+		$this->caption = $record->login_dbuser;
+		$this->login   = $record->login_dbuser;
+		$this->id      = intval($record->id_dbuser);
+		$this->email   = $record->email_dbuser;
+		$this->enabled = $record->enabled_dbuser ? true : false;
+	}
+	
+	/**
+	 * Retourne le libellé de l'utilisateur.
+	 *
+	 * @return string
+	 */
+	public function getCaption() {
+		return $this->caption;
+	}
+	
+	/**
+	 * Retourne le login de l'utilisateur.
+	 * 
+	 * @return string
+	 */
+	public function getLogin() {
+		return $this->login;
+	}
+
+	/**
+	 * Retourne l'identifiant technique de l'utilisateur. 
+	 *
+	 * @return mixed
+	 */
+	public function getId() {
+		return $this->id;
+	}
+	
+	/**
+	 * Retourne le nom du handler responsable de cet utilisateur.
+	 *
+	 * @return string
+	 */
+	public function getHandler() {
+		return 'auth|dbuserhandler';
+	}
+
+}
+
+/**
  * Gestionnaire des utilisateurs depuis la base de données
  * @package standard
  * @subpackage auth
@@ -31,7 +123,7 @@ class DBUserHandler implements ICopixUserHandler {
 				return new CopixUserLogResponse (false, null, null, null);
 			}
 			if ($results[0]->password_dbuser == $this->_cryptPassword (isset ($pParams['password']) ? $pParams['password'] : '')){
-				return new CopixUserLogResponse (true, 'dbuserhandler', $results[0]->id_dbuser, $results[0]->login_dbuser);
+				return new CopixUserLogResponse (true, 'auth|dbuserhandler', $results[0]->id_dbuser, $results[0]->login_dbuser);
 			}
 		}
 		return new CopixUserLogResponse (false, null, null, null);
@@ -51,7 +143,7 @@ class DBUserHandler implements ICopixUserHandler {
 	 * Récupération d'une liste d'utilisateurs (id, login, caption, email, enabled)
 	 * @param 	array	$pMatchPatterns	tableau d'éléments de recherche
 	 * @todo	Implémenter les patterns de recherche	
-	 * @return array
+	 * @return array of DBUser
 	 */
 	public function find ($pParams = array ()){
 		$sp = CopixDAOfactory::createSearchParams ();
@@ -93,13 +185,7 @@ class DBUserHandler implements ICopixUserHandler {
 
 		$results = array ();
 		foreach (_ioDAO ('dbuser')->findBy ($sp) as $result){
-			$result->caption = $result->login_dbuser;
-			unset ($result->password_dbuser);
-			$result->login = $result->login_dbuser;
-			$result->id = $result->id_dbuser;
-			$result->email = $result->email_dbuser;
-			$result->enabled = $result->enabled_dbuser;
-			$results[] = $result;
+			$results[] = new DBUser ($result);
 		}
 		return $results;
 	}
@@ -125,12 +211,11 @@ class DBUserHandler implements ICopixUserHandler {
 	/**
 	 * L'email de l'utilisateur est renvoyé
 	 * @param integer identifiant de l'utilisateur
-	 * @return string email de l'utilisateur
+	 * @return DBUser L'utilisateur
 	 */
 	public function getInformations ($pUserId){
 		if ($objUser = _ioDAO ('dbuser')->get($pUserId)){
-			$myObject->email = $objUser->email_dbuser;
-			return $myObject;
+			return new DBUser($objUser);
 		}
 		throw new CopixException ('No informations on user '.$pUserId);
 	}

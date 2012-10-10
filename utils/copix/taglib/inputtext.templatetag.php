@@ -12,7 +12,7 @@
  * @package		copix
  * @subpackage	taglib
  */
-class TemplateTagInputText {
+class TemplateTagInputText extends CopixTemplateTag {
 	/**
     * Construction de l'input
     * @param	mixed	$pParams	tableau de paramètre ou clef
@@ -42,10 +42,20 @@ class TemplateTagInputText {
         }elseif (!isset ($pParams['name'])){
         	$pParams['name'] = $pParams['id'];
         }
+        $readonly = '';
+        if (isset ($pParams['readonly'])){
+        	if($pParams['readonly']){
+        		$readonly = 'readonly="readonly"';
+        	}
+        	unset ($pParams['readonly']);
+        }   
+        
         if (!isset($extra)) {
             $extra='';
+        } else {
+            unset($pParams['extra']);
         }
-        $toReturn  = '<input type="text" '.$extra.' ';
+        $toReturn  = '<input type="text" '.$readonly.' '.$extra.' ';
         foreach ($pParams as $key=>$param) {
             if ($key!='next' && $key!='previous') {
                 $toReturn .= $key.'="'.$param.'" ';
@@ -55,63 +65,7 @@ class TemplateTagInputText {
             $maxlength='1';
         } 
         if ((isset($next) && $next!=null && $maxlength!=null) || (isset($previous) && $previous!=null)) {
-            CopixHTMLHeader::addJSCode('
-			function autofocus(theField,len,e,previous) {
-				var keyCode = e.keyCode; 
-				var filter = [0,8,9,16,17,18,37,38,39,40,46];
-				if(theField.value.length >= len && !containsElement(filter,keyCode)) {
-					theField.form[(getIndex(theField)+1) % theField.form.length].focus();
-				}
-				if (keyCode==8 && theField.value.length==0 && previous!=null) {
-					focusprevious(theField,previous);
-				}
-				return true;
-			}
-
-			function focusid(theField,len,e,id,previous) {
-				var keyCode = e.keyCode; 
-				var filter = [0,8,9,16,17,18,37,38,39,40,46];
-				if(document.getElementById(id) && theField.value.length >= len && !containsElement(filter,keyCode)) {
-					document.getElementById(id).focus();
-				}
-				if (keyCode==8 && theField.value.length==0 && previous!=null) {
-					focusprevious(theField,previous);
-				}				
-				return true;
-			}
-
-			function focusprevious(theField,previous) {
-				if (previous==true) {
-				    if (getIndex(theField)!=1 && previous!=null) {
-					    theField.form[(getIndex(theField)-1) % theField.form.length].focus();
-				    }
-                } else {
-					if (document.getElementById(previous)) {
-						document.getElementById(previous).focus();
-					}
-				}
-            }
-
-			function containsElement(arr, ele) {
-				var found = false, index = 0;
-				while(!found && index < arr.length)
-					if(arr[index] == ele)
-						found = true;
-					else
-						index++;
-				return found;
-			}
-
-			function getIndex(input) {
-				var index = -1, i = 0, found = false;
-				while (i < input.form.length && index == -1)
-					if (input.form[i] == input)
-						index = i;
-					else 
-						i++;
-				return index;
-			}
-			','autofocus');
+            CopixHTMLHeader::addJSLink(_resource('js/taglib/tag_inputtext.js'));
             if (!isset($previous)) {
                 $previous='null';
             }

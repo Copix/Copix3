@@ -15,8 +15,9 @@
  */
 class CopixTest_FormatterTest extends CopixTest {
 	function testReduce (){
-		$this->assertTrue (strlen (CopixFormatter::getReduced ('une_super_longue_variable_qui_tue_tellement_elle_est_longue', 0, 20)) <= 20);			
-		$this->assertTrue (strlen (CopixFormatter::getReduced ('uneSuperLongueVariable', 0, 20)) <= 20);
+		$this->assertTrue (strlen (CopixFormatter::getReduced ('une_super_longue_variable_qui_tue_tellement_elle_est_longue', 20)) <= 20);			
+		$this->assertTrue (strlen (CopixFormatter::getReduced ('uneSuperLongueVariable', 20)) <= 20);
+		$this->assertEquals (strlen (CopixFormatter::getReduced ('abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz_abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz', 20)), 20);
 	}
 
 	function testExplodeCapitalized (){

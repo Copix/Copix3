@@ -11,7 +11,7 @@ CREATE TABLE bugtrax (
    modificationdate_bug varchar(14) not null,
    id_bughead integer default NULL,
    PRIMARY KEY (id_bug)
-);
+) CHARACTER SET utf8;
 
 CREATE TABLE bugtraxheadings (
    id_bughead INTEGER auto_increment,
@@ -19,4 +19,4 @@ CREATE TABLE bugtraxheadings (
    lead_bughead varchar (50) NOT NULL,
    version_bughead varchar (50) NOT NULL,
    PRIMARY KEY (id_bughead)
-);
+) CHARACTER SET utf8;

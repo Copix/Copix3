@@ -42,16 +42,31 @@ class CopixDAOGenerator {
 		$config = CopixConfig::instance ();
 		$driverName = $config->copixdb_getProfile ($this->_definition->getConnectionName());
 		$driverName = $driverName->getDatabase ();
-
-		$values = $fields = array ();
+		
+		$values = $fields = $formatted = array ();
 		foreach ((array) $fieldList as $fieldName => $field) {
 			if ($field->type == 'version') {
 				$values[':' . $fieldName] = '(intval($' . $prefixfield . $fieldName . ') + 1)';
 				$formatted[':' . $fieldName] = ':' . $fieldName;
-			} elseif ($field->type == 'datetime' && $driverName == 'oci') {
+			} elseif (isset ($field->method) && $field->method !== null){
 				$values[':'.$fieldName] = '$' . $prefixfield . $fieldName;
-				$formatted[':'.$fieldName] = "to_date (:".$fieldName.", \\'YYYYMMDDHH24MISS\\')";
-			} elseif (($driverName == 'mysql' || $driverName == 'sqlite') && in_array ($field->type, array ('date', 'datetime', 'time'))){
+				$formatted[':'.$fieldName] = $field->method." (:".$fieldName.")";
+			} elseif ($driverName == 'oci' && in_array ($field->type, array ('date', 'datetime', 'time'))) {
+				switch ($field->type){
+					case 'datetime';
+						$values[':'.$fieldName] = '$' . $prefixfield . $fieldName;
+						$formatted[':'.$fieldName] = "to_date (:".$fieldName.", \\'YYYYMMDDHH24MISS\\')";
+					break;
+					case 'date':
+						$values[':'.$fieldName] = '$' . $prefixfield . $fieldName;
+						$formatted[':'.$fieldName] = "to_date (:".$fieldName.", \\'YYYYMMDD\\')";
+					break;
+					case 'time':
+						$values[':'.$fieldName] = '$' . $prefixfield . $fieldName;
+						$formatted[':'.$fieldName] = "to_date (:".$fieldName.", \\'HH24MISS\\')";
+					break;
+				}
+			} elseif (($driverName == 'mysql' || $driverName == 'sqlite' || $driverName == 'pgsql') && in_array ($field->type, array ('date', 'datetime', 'time'))){
 				//MySQL et SQLite gèrent les entrées sous le même format
 				switch ($field->type){
 					case 'datetime';
@@ -339,9 +354,13 @@ return $toReturn;
 				if ($prop->fieldName != $prop->name) {
 					//in oracle we must escape name
 					if ($driverName == 'oci') {
-						if ($prop->type == 'datetime'){
+						if ($prop->type == 'datetime') {
 							$result[] = "to_char(".$table.$prop->fieldName.", \\'YYYYMMDDHH24MISS\\')" . ' "' . $prop->name . '"';
-						}else{
+						} elseif ($prop->type == 'date') {
+							$result[] = "to_char(".$table.$prop->fieldName.", \\'YYYYMMDD\\')" . ' "' . $prop->name . '"';
+						} elseif ($prop->type == 'time') {
+							$result[] = "to_char(".$table.$prop->fieldName.", \\'HH24MISS\\')" . ' "' . $prop->name . '"';
+						} else {
 							$result[] = $table . $prop->fieldName . ' "' . $prop->name . '"';
 						}
 					} elseif ($driverName == 'mssql') {
@@ -378,8 +397,14 @@ return $toReturn;
 						$result[] = 'convert(varchar, ' . $table . $prop->fieldName . ') as ' . $prop->fieldName;
 					} elseif ($driverName == 'sqlite') {
 						$result[] = $table . $prop->fieldName . ' ' . $prop->name;
-					} elseif ($driverName == 'oci' && $prop->type == 'datetime') {
-						$result[] = "to_char(".$table.$prop->fieldName.", \\'YYYYMMDDHH24MISS\\')" . ' "' . $prop->fieldName . '"';
+					} elseif ($driverName == 'oci' && in_array ($prop->type, array ('date', 'datetime', 'time'))) {
+						if ($prop->type == 'datetime') {
+							$result[] = "to_char(".$table.$prop->fieldName.", \\'YYYYMMDDHH24MISS\\')" . ' "' . $prop->fieldName . '"';
+						} elseif ($prop->type == 'date') {
+							$result[] = "to_char(".$table.$prop->fieldName.", \\'YYYYMMDD\\')" . ' "' . $prop->fieldName . '"';
+						} elseif ($prop->type == 'time') {
+							$result[] = "to_char(".$table.$prop->fieldName.", \\'HH24MISS\\')" . ' "' . $prop->fieldName . '"';
+						}				
 					} elseif (($driverName == 'mysql') && in_array ($prop->type, array ('date', 'datetime', 'time'))) {
 						if ($prop->type == 'date'){
 							$result[] = "DATE_FORMAT(".$table . $prop->fieldName.", \\'%Y%m%d\\') ".$prop->fieldName;	
@@ -669,7 +694,7 @@ return $toReturn;
 		if ($useSequence = (in_array ($driverName, array ('oci')) && ($pkai !== null) && ($pkai->sequenceName != ''))) {
 			$result .= 'if (! $pUseId){';
 			$result .= '     $object->' . $pkai->name . '= $ct->lastId(\'' . $pkai->sequenceName . '\');' . "\n";
-			$result .= '}';
+			$result .= "}\n";
 		}
 
 		$fieldsNoAuto = $this->_definition->getPropertiesBy ('PrimaryFieldsExcludeAutoIncrement');
@@ -705,10 +730,23 @@ return $toReturn;
 
 		//return lastid after inserting for mysql
 		if ($pkai !== null) {
-			if (($driverName == 'mysql') || ($driverName == 'mssql') || ($driverName == 'sqlite')) {
-				$result .= 'if (! $pUseId){';
-				$result .= '	$object->' . $pkai->name . '= $ct->lastId();' . "\n";
-				$result .= '}';
+			switch($driverName) {
+				case 'pgsql':
+					if($pkai->sequenceName) {
+						$result .= 'if (! $pUseId){';
+						$result .= '$object->' . $pkai->name . '= $ct->lastId(\''.$pkai->sequenceName.'\');';
+						$result .= "}\n";
+						break;
+					}				
+				
+				case 'mysql':
+				case 'mssql':
+				case 'sqlite':
+					$result .= 'if (! $pUseId){';
+					$result .= '$object->' . $pkai->name . '= $ct->lastId();';
+					$result .= "}\n";
+				break;
+				
 			}
 		}
 
@@ -819,12 +857,17 @@ return $toReturn;
 		$fieldsTranslation = array ();
 
 		foreach ($this->_definition->getProperties() as $name => $field) {
-			$fieldsTranslation[] = '\'' . $field->name . '\'=>array(\'' . $field->fieldName . '\', \'' . $field->type . '\',\'' . $field->table . '\',\'' . str_replace("'", "\\'", $field->selectMotif) . '\')';
+			//ajout pour appliquer une method
+			$method = '';
+			if($field->method !== null){
+				$method = '\',\'' . $field->method;
+			}
+			$fieldsTranslation[] = '\'' . $field->name . '\'=>array(\'' . $field->fieldName . '\', \'' . $field->type . '\',\'' . $field->table . '\',\'' . str_replace("'", "\\'", $field->selectMotif) .$method. '\')';
 		}
 		$fieldsTranslation = '         array(' . implode(', ', $fieldsTranslation) . ')';
 
 		//fin de la requete
-		$result .= '      list ($querySql, $params) = $searchParams->explainSQL (' . "\n" . $fieldsTranslation . ');' . "\n";
+		$result .= '      list ($querySql, $params) = $searchParams->explainSQL (' . "\n" . $fieldsTranslation . ', $ct);' . "\n";
 		$result .= '      $query .= $querySql;' . "\n";
 		$result .= "    }\n";
 		$result .= '    return $ct->doQuery ($query, $params);' . "\n";
@@ -854,12 +897,17 @@ return $toReturn;
 		$fieldsTranslation = array ();
 
 		foreach ($this->_definition->getProperties() as $name => $field) {
-			$fieldsTranslation[] = '\'' . $field->name . '\'=>array(\'' . $field->fieldName . '\', \'' . $field->type . '\',\'' . $field->table . '\',\'' . str_replace("'", "\\'", $field->selectMotif) . '\')';
+			//ajout pour appliquer une method
+			$method = '';
+			if($field->method !== null){
+				$method = '\',\'' . $field->method;
+			}
+			$fieldsTranslation[] = '\'' . $field->name . '\'=>array(\'' . $field->fieldName . '\', \'' . $field->type . '\',\'' . $field->table . '\',\'' . str_replace("'", "\\'", $field->selectMotif) .$method. '\')';
 		}
 		$fieldsTranslation = '         array(' . implode(', ', $fieldsTranslation) . ')';
 
 		//fin de la requete
-		$result .= '      list ($querySql, $params) = $searchParams->explainSQL (' . "\n" . $fieldsTranslation . ');' . "\n";
+		$result .= '      list ($querySql, $params) = $searchParams->explainSQL (' . "\n" . $fieldsTranslation . ', $ct);' . "\n";
 		$result .= '      $query .= $querySql;' . "\n";
 		$result .= "    }\n";
 		$result .= '    $result = $ct->doQuery ($query, $params);' . "\n";
@@ -908,7 +956,12 @@ JOIN;
 		$fieldsTranslation = array ();
 
 		foreach ($this->_definition->getProperties() as $name => $field) {
-			$fieldsTranslation[] = '\'' . $field->name . '\'=>array(\'' . $field->fieldName . '\', \'' . $field->type . '\',\'' . $field->table . '\',\'' . str_replace("'", "\\'", $field->selectMotif) . '\')';
+			//ajout pour appliquer une method
+			$method = '';
+			if($field->method !== null){
+				$method = '\',\'' . $field->method;
+			}
+			$fieldsTranslation[] = '\'' . $field->name . '\'=>array(\'' . $field->fieldName . '\', \'' . $field->type . '\',\'' . $field->table . '\',\'' . str_replace("'", "\\'", $field->selectMotif) .$method. '\')';
 		}
 		$fieldsTranslation = '         array(' . implode(', ', $fieldsTranslation) . ')';
 

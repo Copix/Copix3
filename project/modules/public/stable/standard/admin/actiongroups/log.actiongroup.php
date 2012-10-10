@@ -34,11 +34,13 @@ class ActionGroupLog extends CopixActionGroup {
 	 */
    	public function processShow(){
 	   	$ppo = new CopixPPO ();
-	   	$profil = CopixRequest::get ('profile');
+	   	$profil = _request ('profile');
+        $nbitems = _request ('nbitems', 20);
 	   	
 		$ppo->TITLE_PAGE = _i18n ('logs.show');
 	   	$ppo->profil  = $profil;
-	   	$page = (CopixRequest::get ('page', null) !== null) ? CopixRequest::get ('page', null) : 1;
+        $ppo->nbitems  = $nbitems;
+	   	$page = (_request ('page', null) !== null) ? _request ('page', null) : 1;
 	   	CopixSession::set ('log|numpage', $page);
 	   	
 	   	foreach (CopixConfig::instance()->copixlog_getRegistered () as $profil){
@@ -51,7 +53,7 @@ class ActionGroupLog extends CopixActionGroup {
 	 * Vide un log donné
 	 */
 	public function processDelete (){
-		CopixLog::deleteProfile ($profil = CopixRequest::get ('profile'));
+		CopixLog::deleteProfile ($profil = _request ('profile'));
 		_log (_i18n ('logs.action.emptyLog').'['.$profil.']');
 		return _arRedirect (_url ('log|show', array ('profile'=>$profil)));
 	}
@@ -62,8 +64,7 @@ class ActionGroupLog extends CopixActionGroup {
 	public function processAdmin (){
 		$ppo = new CopixPPO ();
 		$ppo->TITLE_PAGE = _i18n ('logs.admin');
-		$ppo->arRegistered = CopixConfig::instance ()->copixlog_getRegistered ();
-		
+		$ppo->arRegistered = CopixConfig::instance ()->copixlog_getRegisteredProfiles ();
 		return _arPpo ($ppo, 'logs.admin.tpl');
 	}
 	
@@ -71,7 +72,7 @@ class ActionGroupLog extends CopixActionGroup {
 	 * Modification d'un profil de log
 	 */
 	public function processEdit (){
-		if ($profile = CopixRequest::get ('profile')){
+		if ($profile = _request ('profile')){
 			if (!in_array ($profile, CopixConfig::instance ()->copixLog_getRegistered ())){
 				return _arRedirect (_url ('admin||'));
 			}
@@ -100,7 +101,7 @@ class ActionGroupLog extends CopixActionGroup {
 	 * Création d'un profil de log
 	 */
 	public function processCreate (){
-		$profile = CopixRequest::get ('profile', null, true);
+		$profile = _request ('profile', null, true);
 		if ($profile === null ) {
 			return CopixActionGroup::process ('genericTools|Messages::getError',array ('message'=>CopixI18N::get ('logs.error.noname'), 'back'=>_url('admin|log|admin')));
 		}
@@ -118,18 +119,18 @@ class ActionGroupLog extends CopixActionGroup {
 	 */
 	public function processValid (){
 		$profile = CopixSession::get ('admin|log|edit');
-		if (CopixRequest::get ('enabled')){
+		if (_request ('enabled')){
 			$profile['enabled'] = true;
 		} else {
 		    $profile['enabled'] = false;
 		}
 		
-		$profile['strategy'] = CopixRequest::get ('strategy');
-		if (CopixRequest::get ('strategy_class', null, true)){
-			$profile['strategy'] = CopixRequest::get ('strategy_class'); 			
+		$profile['strategy'] = _request ('strategy');
+		if (_request ('strategy_class', null, true)){
+			$profile['strategy'] = _request ('strategy_class'); 			
 		}
-		$profile['level'] = CopixRequest::get ('level');
-		if ($handle = CopixRequest::get ('handle', null, true)){
+		$profile['level'] = _request ('level');
+		if ($handle = _request ('handle', null, true)){
 			if (is_array ($profile['handle'])){
 				if (!in_array ($handle, $profile['handle'])){
 					$profile['handle'][] = $handle;	
@@ -142,7 +143,7 @@ class ActionGroupLog extends CopixActionGroup {
 		    $profile['handleExcept'] = array ();
 		}
 		if(!is_array($profile['handle'])){
-			if ($handleExcept = CopixRequest::get ('handleExcept', null, true)){
+			if ($handleExcept = _request ('handleExcept', null, true)){
 				if (is_array ($profile['handleExcept'])){
 					if (!in_array ($handleExcept, $profile['handleExcept'])){
 						$profile['handleExcept'][] = $handleExcept;	
@@ -171,7 +172,7 @@ class ActionGroupLog extends CopixActionGroup {
 		
 		CopixSession::set ('admin|log|edit', $profile);
 		
-		if (CopixRequest::get ('save')){
+		if (_request ('save')){
 			$profiles = CopixConfig::instance ()->copixlog_getRegisteredProfiles ();
 			$profiles[$profile['name']] = $profile;
 			_class ('LogConfigurationFile')->write ($profiles);
@@ -185,7 +186,6 @@ class ActionGroupLog extends CopixActionGroup {
 					_class ('PluginsConfigurationFile')->write ($arPlugins);
 				}
 			}
-			
 			return _arRedirect (_url ('log|admin'));
 		}else{
 			return _arRedirect (_url ('log|edit'));
@@ -196,7 +196,7 @@ class ActionGroupLog extends CopixActionGroup {
 	 * Supression d'un handler pour le profil en cours de modification
 	 */
 	public function processRemoveHandle (){
-		if ($handleToRemove = CopixRequest::get ('handle')){
+		if ($handleToRemove = _request ('handle')){
 			if ($profile = CopixSession::get ('admin|log|edit')){
 				$handle = $profile['handle'];
 				if (is_array ($handle)){
@@ -217,11 +217,12 @@ class ActionGroupLog extends CopixActionGroup {
 		}
 		return _arRedirect (_url ('log|edit'));
 	}
+
 	/**
 	 * Supression d'un handleExcept pour le profil en cours de modification
 	 */
 	public function processRemoveHandleExcept (){
-		if ($handleExceptToRemove = CopixRequest::get ('handleExcept')){
+		if ($handleExceptToRemove = _request ('handleExcept')){
 			if ($profile = CopixSession::get ('admin|log|edit')){
 				unset($profile['handleExcept'][array_search($handleExceptToRemove, $profile['handleExcept'])]);
 				CopixSession::set ('admin|log|edit', $profile);
@@ -235,7 +236,7 @@ class ActionGroupLog extends CopixActionGroup {
 	 * Supression d'un log
 	 */
 	public function processDeleteProfile (){
-		$profile = CopixRequest::get ('profile');
+		$profile = _request ('profile');
 		
 		if (CopixRequest::getInt ('confirm') == 1){
 			CopixLog::deleteProfile ($profile);

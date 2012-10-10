@@ -12,7 +12,7 @@
  * @package		copix
  * @subpackage	taglib
  */
-class TemplateTagHtmlEditor {
+class TemplateTagHtmlEditor extends CopixTemplateTag {
     public function process($pParams) {
         static $_init = false;
         static $htmlPath = '';

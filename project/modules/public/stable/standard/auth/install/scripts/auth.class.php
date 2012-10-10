@@ -13,20 +13,24 @@
  */
 class CopixModuleInstallerAuth implements ICopixModuleInstaller {
 	
-	public function processInstall () {
+	public function processPreInstall () {
 		$user = _ioDAO ('dbuser')->get (1);
 		$user->password_dbuser = md5 ($pass = substr (UniqId ('p'), -5));
 		_ioDAO ('dbuser')->update ($user);
 		CopixSession::set ('admin|database|loginInformations', array ('login'=>'admin', 'password'=>$pass));
 	}
 	
-	public function processDelete () {
+	public function processPostInstall () {
+	}
+
+	public function processPreDelete () {
 		CopixSession::set ('admin|database|loginInformations', null);
+	}
+	public function processPostDelete () {
 	}
 	
 	public function processUpdate () {
 		
 	}
 }
-
 ?>

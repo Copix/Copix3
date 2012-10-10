@@ -227,3 +227,28 @@ table.calendar  {
    padding:3px;
    position:absolute;
 }
+
+.menu-onglet {                      /* boite qui contient le menu (les onglets) */
+  border-bottom:solid 1px black ;   /* crée le trait noir en-dessous des onglets */
+  padding-top:12px ;                /* marge intérieure haute */
+  padding-bottom:7px                /* marge intérieure basse */
+} 
+
+.onglet {                           /* style des onglets inactifs */
+  border:solid 1px black ;          /* encadrement */
+  margin:5px 5px 0px 5px ;          /* marge extérieure */
+  padding:7px 3px 7px 3px           /* marge intérieure */
+} 
+
+a.onglet {                          /* style des liens se trouvant dans un onglet inactif */
+  background-color:#E7E4E4 ;        /* le fond de l'onglet est gris */
+  text-decoration:none              /* les liens ne sont pas soulignés */
+} 
+
+.onglet-actif {                     /* style de l'onglet de la page active */
+   border:solid 1px black ;         /* l'encadrement est porté à 2 pixels */
+   border-bottom:solid 3px white ;  /* le trait inférieur est effacé */
+   margin:5px 5px 0px 5px ;         /* marges intérieures */
+   padding:7px 3px 5px 3px ;        /* marges extérieures */  
+   background-color:white           /* le fond de l'onglet actif est blanc*/
+} 

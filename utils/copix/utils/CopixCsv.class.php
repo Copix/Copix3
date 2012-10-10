@@ -17,6 +17,16 @@
 class CopixCsv {
 
     /**
+     * Constante définissant un iterateur ave entête 
+     */
+    const HEADED = true;
+
+    /**
+     * Constante définissant un iterateur sans entête 
+     */
+    const NUMBERED = false;
+    
+    /**
      * Nom du fichier CSV
      */
     private $_filename;
@@ -59,7 +69,7 @@ class CopixCsv {
      * Récupération de l'iterateur CSV sur le fichier
      *
      */
-    public function getIterator ($pIsHeaded = false){
+    public function getIterator ($pIsHeaded = self::NUMBERED){
         return new CopixCsvIterator($this->_filename, $this->_delimiter, $this->_enclosure, $pIsHeaded);
     }
 
@@ -75,12 +85,12 @@ class CopixCsv {
                 fputcsv ($fd, $arParams, $this->_delimiter, $this->_enclosure);
                 $this->_nblines++;
                 fclose ($fd);
+                return true;
             }else{
                 return false;
             }
         } else {
-            trigger_error(CopixI18N::get ("copix:copix.error.cache.creatingDirectory", array ($_dirname)));
-            return false;
+            throw new CopixException (_i18n ("copix:copix.error.cache.creatingDirectory", array ($_dirname)));
         }
     }
 
@@ -99,13 +109,16 @@ class CopixCsvIterator extends LimitIterator implements Countable {
     protected $_enclosure;
     protected $_keys = null;
     const ROW_SIZE = 4096;
+    
+    protected $_filename = null;
 
 
     function __construct ($pFile, $pDelimiter, $pEnclosure, $pIsHeaded){
+    	$this->_filename = $pFile;
         $this->_filehandler = fopen ($pFile,'r');
         $this->_delimiter = $pDelimiter;
         $this->_enclosure = $pEnclosure;
-        if ($pIsHeaded === true) {
+        if ($pIsHeaded === CopixCSV::HEADED) {
             $this->_keys = fgetcsv($this->_filehandler, self::ROW_SIZE, $this->_delimiter, $this->_enclosure);
             $this->_current = array_combine ($this->_keys, fgetcsv($this->_filehandler, self::ROW_SIZE, $this->_delimiter, $this->_enclosure));
         } else {
@@ -136,7 +149,7 @@ class CopixCsvIterator extends LimitIterator implements Countable {
     function rewind (){
         $this->_counter = 0;
         rewind ($this->_filehandler);
-        $this->_current = null;
+        $this->_current = fgetcsv($this->_filehandler, self::ROW_SIZE, $this->_delimiter, $this->_enclosure);
     }
 
     function valid (){
@@ -162,12 +175,14 @@ class CopixCsvIterator extends LimitIterator implements Countable {
     }
 
     function count() {
-        $this->rewind();
-        while ($this->next()) {
-            continue;
-        }
-        $this->rewind();
-        return $this->_counter;
+    	//@todo pour les fichiers peu volumineux, un return count (file ($this->_filename)); est plus rapide
+    	$file = fopen ($this->_filename,'r');
+    	$count = 0;
+		while (fgets ($file)){
+			$count++;
+		}
+		fclose ($file);
+		return $count;
     }
 
     function __destruct (){

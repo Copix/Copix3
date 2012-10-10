@@ -42,7 +42,7 @@ class CopixServices {
 	protected static function _extractPath ($pServiceId){
 		$extract = explode ('|', $pServiceId);
 		if (count ($extract) == 1){
-			return CopixServices::_extractPath (CopixContext::get ().'|'.$pServiceId);
+			return self::_extractPath (CopixContext::get ().'|'.$pServiceId);
 		}
 
 		$extractMethod = explode ('::', $extract[1]);
@@ -62,13 +62,13 @@ class CopixServices {
 	* Création d'une instance d'un objet service
 	* @param Object $pServiceDescription un objet qui décrit les composantes du service (avec les propriétés module, service, methode)
 	*/
-	private function _create ($pServiceDescription, $pParams = array ()){
+	private static function _create ($pServiceDescription, $pParams = array ()){
         $serviceID = $pServiceDescription->module.'|'.$pServiceDescription->service;
 
         $execPath = CopixModule::getPath ($pServiceDescription->module);
 		$fileName = $execPath.COPIX_CLASSES_DIR.strtolower (strtolower ($pServiceDescription->service)).'.services.php';
 		if (! Copix::RequireOnce ($fileName)){
-			throw new ServicesException ('Cannot load service from '.$fileName);
+			throw new CopixServicesException ('Cannot load service from '.$fileName);
 		}
 
 		//Nom des objets/méthodes à utiliser.
@@ -81,10 +81,10 @@ class CopixServices {
     * @param string $pServiceId L'identifiant du service que l'on souhaite lancer
     * @param array $vars parameters
     */
-	function process ($pServiceId, $pParams=array (), $pTransactionContext = null){
-		$extractedPath = CopixServices::_extractPath ($pServiceId);
+	public static function process ($pServiceId, $pParams=array (), $pTransactionContext = null){
+		$extractedPath = self::_extractPath ($pServiceId);
 	
-		$service = CopixServices::_create ($extractedPath, $pParams);
+		$service = self::_create ($extractedPath, $pParams);
 		$methName = $extractedPath->method;
 
 		CopixContext::push ($extractedPath->module);

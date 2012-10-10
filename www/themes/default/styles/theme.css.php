@@ -11,8 +11,6 @@
   $hardgrey='#868e74';
   $importantcolor= "#AA2314";
   $titlecolor = "#b60000";
-  
-  
   $contentwidth = "75%";
   
   $root = $_GET['copixurl'];
@@ -174,7 +172,7 @@ img{
 }
 
 a{
-	color: #db994b;
+	color: #c97729;
 	text-decoration: none;
 	font-weight: bold;
 }

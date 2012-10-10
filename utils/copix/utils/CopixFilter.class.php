@@ -31,9 +31,9 @@ class CopixFilter {
 	 */
 	public static function getNumeric ($pNumeric, $pWithComma = false){
 		if ($pWithComma){
-           return preg_replace('/[^\d.]/', '', str_replace (',', '.', $pNumeric));
+           return preg_replace('/[-+]?[^\d.]/', '', str_replace (',', '.', _toString($pNumeric)));
 		}else{
-           return preg_replace('/[^\d]/', '', $pNumeric);
+           return preg_replace('/[-+]?[^\d]/', '', _toString($pNumeric));
 		}
 	}
 	
@@ -44,9 +44,9 @@ class CopixFilter {
 	 */
 	public static function getAlpha ($pAlpha, $pWithSpaces=true){
 		if ($pWithSpaces){
-			return preg_replace('/[^a-zA-ZàâäéèêëîïÿôöùüçñÀÂÄÉÈÊËÎÏŸÔÖÙÜÇÑ ]/', '', $pAlpha);
+			return preg_replace('/[^a-zA-ZàâäéèêëîïÿôöùüçñÀÂÄÉÈÊËÎÏŸÔÖÙÜÇÑ ]/', '', _toString($pAlpha));
 		}else{
-			return preg_replace('/[^a-zA-ZàâäéèêëîïÿôöùüçñÀÂÄÉÈÊËÎÏŸÔÖÙÜÇÑ]/', '', $pAlpha);
+			return preg_replace('/[^a-zA-ZàâäéèêëîïÿôöùüçñÀÂÄÉÈÊËÎÏŸÔÖÙÜÇÑ]/', '', _toString($pAlpha));
 		}
 	}
 	
@@ -60,9 +60,9 @@ class CopixFilter {
 		// \w <=> [a-zA-Z0-9_] et a-z contient les accent si système est en fr.
 		// \W tout ce qui n'est pas \w
 		if ($pWithSpaces){
- 	       return preg_replace('/[^a-zA-Z0-9àâäéèêëîïÿôöùüçñÀÂÄÉÈÊËÎÏŸÔÖÙÜÇÑ ]/', '', $pAlphaNum);
+ 	       return preg_replace('/[^a-zA-Z0-9àâäéèêëîïÿôöùüçñÀÂÄÉÈÊËÎÏŸÔÖÙÜÇÑ ]/', '', _toString($pAlphaNum));
 		}else{
-			return preg_replace('/[^a-zA-Z0-9àâäéèêëîïÿôöùüçñÀÂÄÉÈÊËÎÏŸÔÖÙÜÇÑ]/', '', $pAlphaNum);
+			return preg_replace('/[^a-zA-Z0-9àâäéèêëîïÿôöùüçñÀÂÄÉÈÊËÎÏŸÔÖÙÜÇÑ]/', '', _toString($pAlphaNum));
 		}		
 	}
 	
@@ -74,5 +74,26 @@ class CopixFilter {
 	public static function getFloat ($pFloat){
  		return floatval (str_replace (',', '.', self::getNumeric ($pFloat, true)));
 	} 
+	
+	/**
+	 * Retourne un booléen à partir d'une entrée.
+	 * 
+	 * Evalue les chaînes suivantes comme vrai : yes, true, enable, enabled, 1.
+	 * Evalue les chaînes suivantes comme faux:  no, false, disable, disabled, 0.
+	 * Si cela ne colle pas, transforme la chaîne en entier, 0 s'évalue comme faux et tout le reste comme vrai. 
+	 *
+	 * @param mixed $pBoolean L'élément à transformer.
+	 * @return boolean
+	 */
+	public static function getBoolean ($pBoolean) {
+		switch(strtolower(_toString ($pBoolean))) {
+			case 'yes': case 'true': case 'enable': case 'enabled': case '1':
+				return true;
+			case 'no': case 'false': case 'disable': case 'disabled': case '0': case '':
+				return false;
+			default:
+				return self::getInt($pBoolean) != 0;
+		}
+	}
 } 
 ?>

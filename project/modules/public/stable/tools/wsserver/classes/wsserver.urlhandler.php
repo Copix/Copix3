@@ -23,33 +23,45 @@ class UrlHandlerWSServer extends CopixUrlHandler {
      * @param $mode
      * @return array
      */
-    function parse ($path, $mode) {
-		if ($mode!='prepend'){
-			return false;
-		}
-		if ($path[0] != 'wsserver') {
-			return false;
-		}
-		
-		if (count ($path) == 2 &&  $path[1] == 'wsdl') {
-			$toReturn['module']  = 'wsserver';
-			$toReturn['desc']    = 'default';
-            $toreturn['action'] = $path[1];		
-		} else if (count ($path) == 2) {
-			$toReturn['module']  = 'wsserver';
-			$toReturn['desc']    = 'default';
-			$toReturn['action']  = 'default';
-			$toReturn['wsname']  = $path[1];
-		} else if ( count ($path) == 4 ) {
-			$toReturn['module']  = $path[0];
-			$toReturn['desc']    = $path[1];
-			$toReturn['action']  = $path[2];
-			$toReturn['wsname']  = $path[3];
-		} else {
-			return false;
-		}
-		return $toReturn;
-	}
+     function parse ($path, $mode) {
+        if ($mode!='prepend'){
+            return false;
+        }
+
+        if ($path[0] != 'wsserver') {
+            return false;
+        }
+
+        if (count ($path) == 2 &&  $path[1] == 'wsdl') {
+            $toReturn['module']  = 'wsserver';
+            $toReturn['desc']    = 'default';
+            $toreturn['action'] = $path[1];
+        } else if (count ($path) == 2) {
+            $toReturn['module']  = 'wsserver';
+            $toReturn['desc']    = 'default';
+            $toReturn['action']  = 'default';
+            $toReturn['wsname']  = $path[1];
+        } else if (count ($path) == 3 && $path[1] != 'admin') {
+            $toReturn['module']  = 'wsserver';
+            $toReturn['desc']    = 'default';
+            if ($path [2] == 'wsdl') {
+                $toReturn['action']  = $path[2];
+                $toReturn['wsname']  = $path[1];
+            } else {
+                $toReturn['action']  = $path[1];
+                $toReturn['wsname']  = $path[2];
+            }
+
+        } else if ( count ($path) == 4 ) {
+            $toReturn['module']  = $path[0];
+            $toReturn['desc']    = $path[1];
+            $toReturn['action']  = $path[2];
+            $toReturn['wsname']  = $path[3];
+        } else {
+            return false;
+        }
+        return $toReturn;
+     }
 	
 	/**
 	 * Recupère les éléments de l'URL

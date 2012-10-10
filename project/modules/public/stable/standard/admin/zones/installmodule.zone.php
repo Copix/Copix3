@@ -5,10 +5,17 @@ class ZoneInstallModule extends CopixZone {
         $arModuleToInstall = CopixSession::get('arModuleToInstall','copix');
         $arInstalledModule = CopixSession::get('arInstalledModule','copix');
         $moduleName = array_pop($arModuleToInstall);
+        $url = $this->getParam('url');
         if (($message = CopixModule::installModule($moduleName))===true) {
             $toReturn = _i18n('install.module.install').' '.$moduleName.' <img src="'._resource('img/tools/valid.png').'" />';
             if (count($arModuleToInstall)>0) {
-                $toReturn .= _tag('copixzone',array ('id'=>uniqid(),'process'=>'admin|installmodule','auto'=>true, 'ajax'=>true));
+                $toReturn .= _tag('copixzone',array ('id'=>uniqid(),'process'=>'admin|installmodule','url'=>$url,'auto'=>true,'ajax'=>true));
+            } elseif($url) {
+            	$toReturn .= sprintf(
+            		'<form action="%s" method="post"><input type="submit" value="%s"/></form>',
+            		htmlspecialchars($url),
+            		_i18n('copix:common.buttons.next')
+            	);
             } else {
             	$toReturn .= "<script>$('back').setStyle('display','');</script>";
             }

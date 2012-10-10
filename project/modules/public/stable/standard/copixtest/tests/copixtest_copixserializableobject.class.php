@@ -1,11 +1,11 @@
 <?php
 /**
- * @package standard
+ * @package    standard
  * @subpackage copixtest
- * @author		Croës Gérald
- * @copyright	CopixTeam
- * @link		http://copix.org
- * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ * @author     Guillaume Perréal
+ * @copyright  CopixTeam
+ * @link       http://copix.org
+ * @license    http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
  */
 
 /**
@@ -31,7 +31,7 @@ class CopixTest_CopixSerializableObject extends CopixTest {
 	
 	public function testAutoloadedObject (){
 		//Ici ce n'est pas vraiment un objet autoloadé, mais l'effet sera le même pour notre test.
-		$element = new CopixSerializableObject ($this, CopixSerializableObject::AUTOLOADED);
+		$element = new CopixSerializableObject ($this);
 		$serialized = serialize ($element);
 		$elementBack = unserialize ($serialized);
 	}
@@ -46,7 +46,7 @@ class CopixTest_CopixSerializableObject extends CopixTest {
 		$serialized = serialize ($element);
 		$elementBack = unserialize ($serialized);
 		
-		$elementBack->findAll ();//vérifie que le contexte est toujours ok et qu'on peut manipuler le dao
+		$elementBack-> findAll ();//vérifie que le contexte est toujours ok et qu'on peut manipuler le dao	
 	}
 	
 	public function testDAOXML (){

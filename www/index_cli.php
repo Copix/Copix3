@@ -32,8 +32,4 @@ if($is){
 }else {
 	echo($cli->message);
 }
-
-
-
-
 ?>

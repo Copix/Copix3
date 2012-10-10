@@ -482,6 +482,8 @@ class CopixPropertyForDAO {
 
     var $table=null;
     var $selectMotif='%s';
+    
+    var $method = null;
 
     var $fkTable=null;
     var $fkFieldName=null;
@@ -519,7 +521,8 @@ class CopixPropertyForDAO {
         $this->name       = $params['name'];
         $this->fieldName  = isset ($params['fieldname']) ? $params['fieldname'] : $this->name;
         $this->table      = isset ($params['table']) ? $params['table'] : $def->getPrimaryTableName ();
-
+        $this->method	  = isset($params['method']) ?$params['method']:null;
+                
         if(!$def->getTable ($this->table)){
             throw new Exception (_i18n ('copix:dao.error.definitionfile.property.unknow.table', array($this->name,$this->table)));
         }

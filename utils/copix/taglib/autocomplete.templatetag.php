@@ -12,7 +12,7 @@
  * @package		copix
  * @subpackage	taglib
  */
-class TemplateTagAutoComplete {
+class TemplateTagAutoComplete  extends CopixTemplateTag {
     public function process ($pParams) {
     	extract ($pParams);
     	
@@ -69,42 +69,16 @@ class TemplateTagAutoComplete {
         $length = isset ($length) ? $length : 1;
         $pParams['view'] = isset ($pParams['view']) ? $pParams['view'] : $field; 
 
-        $jsCode = "
-window.addEvent('domready',function () {
-	var elem = $('$id');
-	$('autocompleteload_$name').setStyle('display', 'none');
-	var completer$name = new Autocompleter.Ajax.Xhtml(elem, '"._url ($url)."', {
-        'postData': {nb:10,
-					 tomaj: '".$toMaj."'
-";
-         foreach ($pParams as $key=>$param) {
-             $jsCode .= ",\n'$key':'$param'";
-         }
-		 $jsCode .= "
-		},
-		'onRequest': function(el) {			
-			$('autocompleteload_$name').setStyle('display', '');
-			$onRequest
-		},
-		'onComplete': function(el) {
-			$('autocompleteload_$name').setStyle('display', 'none');
-		},
-		'onSelect': function (el,eleme,element) {
-			$onSelect
-		},
-		'parseChoices': function(el) {
-		    try{
-				var value = el.getFirst().innerHTML;
-				el.inputValue = value;
-				this.addChoiceEvents(el).getFirst().setStyles({'width':'200px'}).setHTML(this.markQueryValue(value));
-			}catch (e){};
-		 },
-		 minLength:$length,
-		 maxChoices: 3
-    });
-});"; 
-
-        CopixHTMLHeader::addJSCode ($jsCode);
+        $tab = array();
+        foreach ($pParams as $key=>$param) {
+             $tab[$key]=$param;
+        }
+        $tab['nb'] = 10;
+        $tab['tomaj'] = $toMaj;
+		$js = new CopixJSWidget();
+		$js->tag_autocomplete($id,$name,$length,$tab,_url($url),$js->function_(null, 'el', $onRequest),$js->function_(null,'el,eleme,element',$onSelect));
+        CopixHTMLHeader::addJSDOMReadyCode($js);
+        CopixHTMLHeader::addJSLink(_resource('js/taglib/tag_autocomplete.js'));
         _eTag("mootools",array('plugin'=>"observer;autocompleter"));
         $toReturn  = '<input type="text" id="'.$name.'" name="'.$name.'" value="'.$value.'" '.$extra.' /><span id="autocompleteload_'.$name.'"><img src="'.CopixUrl::getResource('img/tools/load.gif').'" /></span>';
         return $toReturn;

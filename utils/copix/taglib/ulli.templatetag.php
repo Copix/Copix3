@@ -12,7 +12,7 @@
  * @package		copix
  * @subpackage	taglib
  */
-class TemplateTagUlLi {
+class TemplateTagUlLi extends CopixTemplateTag {
     public function process ($pParams) {
         extract ($pParams);
         if (!isset ($values)) {

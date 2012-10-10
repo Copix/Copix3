@@ -4,4 +4,4 @@ CREATE TABLE `simplehelp` (
 	`contenu_sh` TEXT NOT NULL ,
 	`page_sh` VARCHAR( 255 ) NOT NULL ,
 	`key_sh` VARCHAR( 255 ) NOT NULL
-) ENGINE = MYISAM ;
+) CHARACTER SET utf8;

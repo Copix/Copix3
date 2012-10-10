@@ -20,7 +20,7 @@ class PluginPrint extends CopixPlugin {
 	*/
 	function beforeSessionStart(){
 		if ($this->shouldPrint ()){
-			CopixConfig::instance ()->mainTemplate = $this->config->_templatePrint;
+			CopixConfig::instance ()->mainTemplate = $this->config->templatePrint;
 		}
 	}
 	
@@ -29,7 +29,7 @@ class PluginPrint extends CopixPlugin {
     * @return bool
     */
 	function shouldPrint (){
-		foreach ($this->config->_runPrintUrl as $name=>$value){
+		foreach ($this->config->runPrintUrl as $name=>$value){
 			if (_request ($name) != $value){
 				return false;
 			}
@@ -41,12 +41,7 @@ class PluginPrint extends CopixPlugin {
     * Gets the url of the current page, with the "ask for print" informations.
     */
 	function getPrintableUrl (){
-		//include_once (COPIX_UTILS_PATH.'CopixUtils.lib.php');
-		$urlTab = CopixRequest::asArray ();
-		foreach ($this->config->_runPrintUrl as $key=>$elem){
-			$urlTab[$key] = $this->config->_runPrintUrl[$key];
-		}
-		return 'index.php?'.urlParams ($urlTab);
+		return _url ('#', $this->config->runPrintUrl);
 	}
 }
 ?>

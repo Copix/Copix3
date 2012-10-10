@@ -59,20 +59,13 @@ Element.extend({
 			this.fix = new OverlayFixDiv(this);
 		}
 		this.fix.show();
-	}
-});
-
-Element.extend({
+	},
 	fixdivHide: function(){
 		if (this.fix == null) {
 			this.fix = new OverlayFixDiv(this);
 		}
 		this.fix.hide();
-	}
-	
-});
-
-Element.extend({
+	},
 	fixdivUpdate: function(){
 		if (this.fix == null) {
 			this.fix = new OverlayFixDiv(this);

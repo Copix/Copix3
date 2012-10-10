@@ -133,7 +133,8 @@ class CopixTest_CopixFileTest extends CopixTest {
 		 
 		$this->assertTrue (CopixFile::write ($pFileName, $this->_bigData));
 		$this->assertTrue (CopixFile::read ($pFileName) === $this->_bigData);
-		unlink ($pFileName);
+		$this->assertTrue (CopixFile::delete ($pFileName));
+		$this->assertFalse (file_exists ($pFileName));
 	}
 
 	/**
@@ -190,6 +191,10 @@ class CopixTest_CopixFileTest extends CopixTest {
    	    CopixFile::removeDir(COPIX_TEMP_PATH.'unitfiletest');
 	}
 	
-	
+	function testOtherFunctions (){
+		$this->assertEquals (CopixFile::extractFileExt ('file.ext'), '.ext');
+		$this->assertEquals (CopixFile::extractFileExt ('filenoext'), null);
+		$this->assertEquals (CopixFile::extractFileName ('/chemin/pour/geraldc/'), 'geraldc');
+	}
 }
 ?>

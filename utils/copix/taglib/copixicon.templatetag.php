@@ -12,7 +12,7 @@
  * Tag permettant de générer facilement une image et éventuellement un lien avec une image dans 
  *  img/tools
  */
-class TemplateTagCopixIcon {
+class TemplateTagCopixIcon extends CopixTemplateTag {
 	/**
 	 * Génération du code HTML
 	 * @return string
@@ -36,6 +36,14 @@ class TemplateTagCopixIcon {
         	throw new CopixException ('You must enter an existing type');
         }
         
+        //identifiant sur le href
+		$idimg = '';
+		$idhref = '';
+	 	if (isset ($pParams['id'])){
+        	$idimg =  'id="'.$pParams['id'].'_img"';
+        	$idhref = 'id="'.$pParams['id'].'_href"';
+	 	}
+        
         //Initialisation du type
         if (isset ($pParams['title'])){
         	$title = $pParams['title'];	
@@ -52,13 +60,19 @@ class TemplateTagCopixIcon {
 		} else {
 		    throw new CopixException ('No icon does not correspond to your application');
 		}
+		
+		if (isset ($pParams['text'])){
+			$text = $pParams['text'];
+		}else{
+			$text = '';
+		}
 	
 		//si une url a été renseignée
 		if (isset ($pParams['href'])){
 			$href = $pParams['href'];
-			return '<a href="'.$href.'" title="'.$title.'"><img src="'.$src.'" alt="'.$alt.'"/></a>';
+			return '<a href="'.$href.'" '.$idhref.' title="'.$title.'"><img src="'.$src.'" '.$idimg.' alt="'.$alt.'"/>'.$text.'</a>';
 		}else{
-			return '<img src="'.$src.'" alt="'.$alt.'" title="'.$title.'"  />';
+			return '<img src="'.$src.'" '.$idimg.' alt="'.$alt.'" title="'.$title.'"  />'.$text;
 		}
     }
 }

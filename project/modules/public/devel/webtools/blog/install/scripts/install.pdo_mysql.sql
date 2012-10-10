@@ -7,10 +7,10 @@ CREATE TABLE blog_ticket (
     date_blog    varchar (14) NOT NULL,
     tags_blog    varchar (255) default '',
     primary key(id_blog)
-);
+) CHARACTER SET utf8;
 
 CREATE TABLE blog_heading(
     heading_blog varchar(50),
     description_blog varchar (512),
     PRIMARY KEY (heading_blog)
-);
+) CHARACTER SET utf8;

@@ -298,6 +298,7 @@ var DatePicker = new Class({
 				this.year = "";
 				this.month = "";
 				this.firstClick = true;
+				this.input.fireEvent('change');
 				}.bind(this);
 			}.bind(this));
 		

@@ -3,8 +3,8 @@
  * @package		copix
  * @subpackage	core
  * @author		Croës Gérald, Salleyron Julien
- * @copyright	2001-2006 CopixTeam
- * @link			http://copix.org
+ * @copyright	2001-2008 CopixTeam
+ * @link		http://copix.org
  * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
  */
 
@@ -34,19 +34,15 @@ class CopixModule {
 
     /**
      * Indique si une base à été configurée
-     * @return true
+     * @return boolean true si une base est configurée, faux sinon
      */
     private static function _dbConfigured (){
-        try {
-            CopixConfig::instance ()->copixdb_getDefaultProfileName ();
-            return true;
-        }catch (Exception $e){
-            return false;
-        }
+        $defaultProfileName = CopixConfig::instance ()->copixdb_getDefaultProfileName ();
+        return isset($defaultProfileName);
     }
 
     /**
-     * Supprime le cache de recherche des modules
+     * Supprime de façon logique tous les modules installés.
      */
     public static function reset (){
         $cacheFile = self::_getCompiledFileName ();
@@ -56,6 +52,7 @@ class CopixModule {
         if (self::_dbConfigured ()){
             _ioDAO ('copix:CopixModule')->deleteBy (_daoSP ());
         }
+        CopixListenerFactory::clearCompiledFile ();
     }
 
     /**
@@ -69,6 +66,19 @@ class CopixModule {
         //on ne souhaites que les noms de module, pas les chemins
         return array_keys (self::getFullList ($pRestrictedList, $pGroupId));
     }
+
+    /**
+     * Rafraichit la liste des modules
+     */
+    public static function clearCache () {
+        $cacheFile = self::_getCompiledFileName ();
+        if (is_file($cacheFile)) {
+            unlink($cacheFile);
+        }
+    	self::$_hdCache = false;
+    	self::$_arModuleList = false;
+    }
+    
 
     /**
      * Le premier module trouvé dans un répertoire (dans l'ordre de déclaration des répertoires fait foi) 
@@ -94,21 +104,9 @@ class CopixModule {
                 }
             }
             self::$_hdCache = $toReturn;
-            
 		// si on ne veut que les modules installés
         }else{
-            if (self::$_arModuleList !== false){
-                return self::$_arModuleList;
-            }
-            $cacheFile = self::_getCompiledFileName();
-            if (! is_readable ($cacheFile)) {
-                self::_loadPHPCacheFromDatabase ();
-            }
-
-            $arModules = array ();
-            //le fichier cacheFile doit contenir la dclaration complète de arModules
-            include ($cacheFile);
-            $toReturn = self::$_arModuleList = $arModules;
+        	$toReturn = self::_loadModuleList();
         }
         
         // si on ne veut qu'un certain group de module
@@ -129,14 +127,6 @@ class CopixModule {
         }
         
         return $toReturn;
-    }
-    
-    /**
-     * Rafraichit la liste des modules
-     */
-    public static function refreshList () {
-    	self::$_hdCache = false;
-    	self::$_arModuleList = false;
     }
     
     /**
@@ -178,17 +168,130 @@ class CopixModule {
      */
     private static function _loadPHPCacheFromDatabase () {
         try {
-            $arTemp = _ioDAO ('copix:CopixModule')->findAll ();
+        	$arTemp = _ioDAO ('copix:CopixModule')->findAll ();
             $arModules = array();
-            foreach ($arTemp as $module){
-                $arModules[$module->name_cpm] = $module->path_cpm;
+            foreach ($arTemp as $module){          	
+           		$arModules[$module->name_cpm] = $module->path_cpm;
             }
-        }catch (Exception $e){
-            $arModules = array ();
-        }
-        self::_writeInPHPCache ($arModules);
+        	return $arModules;
+        	
+        } catch (CopixDBException $e) {
+        	// Jette les exceptions de base et crée un fichier vide
+        	return array();
+    	}
     }
 
+    /**
+     * Charge la liste des modules depuis un fichier de cache.
+     *
+     * @param string $pFilePath
+     * @return array Liste des modules
+     */
+    private static function _loadPHPCacheFromFile($pFilePath) {
+		include ($pFilePath);
+		return $arModules;	
+    }
+    
+    /**
+     * Charge la liste des modules.
+     * 
+     * Si le fichier de cache existe et que CopixConfig::instance ()->force_compile 
+     * est faux, on le charge. Sinon, on charge la liste depuis la base de données.
+     * 
+     * Lorsque l'on charge la liste depuis la base ou que CopixConfig::instance ()->compile_check 
+     * est vrai, la liste des modules est vérifiée. Pour chaque module, on vérifie alors que :
+     *  - le module existe bien dans le chemin indiqué,
+     *  - le chemin indiqué est bien listé dans CopixConfig::instance ()->arModulesPath.
+     * 
+     * Si la vérification n'est pas satisfaite, on recherche à nouveau le module dans l'installation
+     * locale. S'il est trouvé, on enregistre son chemin dans le fichier de cache (la base n'est
+     * pas modifiée). S'il n'est pas trouvé, on log un message d'erreur.
+     *  
+     * Crée des logs de type 'modules'. 
+     *
+     * @param boolean $pForceReload Force un rechargement à partir de la base.
+     */
+    private static function _loadModuleList($pForceReload = false) {
+		if (!$pForceReload && self::$_arModuleList !== false){
+			return self::$_arModuleList;
+		}
+
+		$conf = CopixConfig::instance ();
+		
+		// Récupère la liste des modules
+		$cacheFile = self::_getCompiledFileName ();
+		if (!$pForceReload && is_readable ($cacheFile) && !$conf->force_compile) {
+			// Depuis le fichier de cache
+			$dirty = false;
+			$arModules = self::_loadPHPCacheFromFile ($cacheFile);
+		} else {
+			// Depuis la base
+			$dirty = true;
+			$arModules = self::_loadPHPCacheFromDatabase ();
+		}
+		
+		// Vérifie la liste
+		if ($dirty || $conf->compile_check) {
+			
+			$modulePaths = array_map(array($conf, 'getRealPath'), $conf->arModulesPath);
+			
+			$toSearch = array();			
+			// Vérifie les des modules
+			foreach ($arModules as $module=>$path) {
+				
+				// Résoud le chemin
+				$realPath = $conf->getRealPath($path);
+				
+				// Vérifie qu'il appartient bien à notre installation
+				if (! ($realPath && in_array ($realPath, $modulePaths))) {
+					_log (_i18n ('copix:copix.error.module.unknownBasePath', array ($module, $path)), 'modules', CopixLog::WARNING);
+					$toSearch[$module] = true;
+				
+				// S'il fait bien partie de notre installation vérifie qu'il soit valide
+				} elseif (!is_readable ($realPath.$module.DIRECTORY_SEPARATOR.'module.xml')) {
+					_log (_i18n ('copix:copix.error.module.doesntExist', array ($module, $path)), 'modules', CopixLog::WARNING);
+					$toSearch[$module] = true;
+				
+				// Sinon tout va bien					
+				} else {				
+					// Mémorise le chemin réel
+					$arModules[$module] = $realPath;
+				}
+			}
+
+			// S'il y a des modules à rechercher
+			if (count ($toSearch) > 0) {
+				$dirty = true;
+				// Recherche chaque module
+				foreach ($toSearch as $module=>$dummy) {
+					unset ($arModules[$module]);            	
+					// Cherche le module dans l'installation
+					foreach ($modulePaths as $path) {
+						if (is_readable ($path.$module.DIRECTORY_SEPARATOR.'module.xml')) {
+							// On l'a trouvé !
+							_log (_i18n ('copix:copix.error.module.foundIn', array ($module, $path)), 'modules', CopixLog::WARNING);
+							$arModules[$module] = $path;
+							unset ($toSearch[$module]);
+							break;
+						}
+					}
+				}
+				// S'il reste des modules non trouvés, log une erreur
+				if (count ($toSearch)) {
+					_log (_i18n ('copix:copix.error.module.notFound', join(', ', array_keys ($toSearch))), 'modules', CopixLog::ERROR);
+				}
+			}
+		}
+		
+		
+		// Récrée le fichier de cache si nécessaire (et que la liste n'est pas vide)
+		if ($dirty && count($arModules) > 0) {
+			self::_writeInPHPCache ($arModules);
+		}
+		
+		return self::$_arModuleList = $arModules;
+    }
+    
     /**
      * Ecriture d'un fichier PHP dans lequel existera un tableau associatif (nommodule=>chemin)
      * @param array $arModules le tableau que l'on souhaites crire.
@@ -216,14 +319,13 @@ class CopixModule {
             throw new CopixException ('Nom de module '.$moduleName.' invalide');
         }
 
-        $toReturn = null;
+        $toReturn = new CopixModuleDescription ();
         $parsedFile = simplexml_load_file (self::getPath ($moduleName).'module.xml');
-        if (isset($parsedFile->general)) {
+        if (isset ($parsedFile->general)) {
             $defaultAttr    = $parsedFile->general->default->attributes ();
-            $toReturn = new StdClass ();
             $toReturn->name = _copix_utf8_decode ((string) $defaultAttr['name']);
             //Récupération de la version des sources
-            $toReturn->version = null;
+            $toReturn->version = 0;
             if (isset($defaultAttr['version'])) {
                 $toReturn->version = _copix_utf8_decode ((string) $defaultAttr['version']);
             }
@@ -260,6 +362,7 @@ class CopixModule {
 			
 			// dépendances
             $toReturn->dependencies = array();
+            $toReturn->XMLDependencies = isset($parsedFile->dependencies) ? $parsedFile->dependencies : null;
             if (isset ($parsedFile->dependencies)) {
                 foreach ($parsedFile->dependencies->dependency as $dependency){
                     $attributes = $dependency->attributes ();
@@ -334,9 +437,7 @@ class CopixModule {
                     $toReturn->update[] = $currentUpdate;
                 }
             }
-            	
-            	
-            CopixContext::pop();
+            CopixContext::pop ();
             	
         }else{
             throw new Exception ('Impossible de lire le fichier '.self::getPath ($moduleName).'module.xml');
@@ -553,10 +654,31 @@ class CopixModule {
                 } elseif (isset($arDependency[1])) {
                     if (@include_once($arDependency[1])) {
                         return class_exists($arDependency[0]);
-                    } else {
-                        return false;
                     }
                 }
+                return false;
+            case 'copix':
+                $arDependency = explode('.',$pDependency->name);
+                if (COPIX_VERSION_MAJOR < $arDependency[0]) {
+                    return false;  
+                } else if (COPIX_VERSION_MAJOR > $arDependency[0]) {
+                    return true;
+                }
+                if (!isset($arDependency[1])) {
+                    return true;
+                }
+                if (COPIX_VERSION_MINOR < $arDependency[1]) {
+                    return false;
+                } else if (COPIX_VERSION_MINOR > $arDependency[1]) {
+                    return true;
+                }
+                if (!isset($arDependency[2])) {
+                    return true;
+                }
+                if (COPIX_VERSION_FIX < $arDependency[2]) {
+                    return false;  
+                }
+                return true;
         }
         return false;
     }
@@ -588,14 +710,20 @@ class CopixModule {
 			// execution d'un script après l'install de la base de données
             $moduleInstaller = self::_getModuleInstaller ($pModuleName);
             if ($moduleInstaller !== null) {
-                $moduleInstaller->processInstall ();
+                $moduleInstaller->processPreInstall ();
             }
             
 			// recréé le cache des modules
             self::$_arModuleList = false;
             self::_addModuleInDatabase ($pModuleName);
-            self::_loadPHPCacheFromDatabase ();
+            self::_loadModuleList (true);
+            self::_clearRegistryCache();
+            
             CopixListenerFactory::clearCompiledFile ();
+            
+            if ($moduleInstaller !== null) {
+                $moduleInstaller->processPostInstall ();
+            }
             
             // evenement après l'installation du module. si un listener retourne false, on annule l'installation
         	$response = CopixEventNotifier::notify (new CopixEvent ('afterInstallModule', array ('moduleName' => $pModuleName)));
@@ -629,23 +757,27 @@ class CopixModule {
         		}
         	}
         	
+            $moduleInstaller = self::_getModuleInstaller ($pModuleName);
+            if ($moduleInstaller !== null) {
+                $moduleInstaller->processPreDelete ();
+            }
+                    	
             $scriptFile = self::_getDeleteFile ($pModuleName);
             if ($scriptFile) {
                 $ct = CopixDB::getConnection () ;
                 $ct->doSQLScript ($scriptFile);
             }
 
-            $moduleInstaller = self::_getModuleInstaller ($pModuleName);
-
-            if ($moduleInstaller !== null) {
-                $moduleInstaller->processDelete ();
-            }
-
             self::$_arModuleList = false;
             self::_deleteModuleInDatabase ($pModuleName);
-            self::_loadPHPCacheFromDatabase ();//on demande de rafrachir le cache PHP une fois termin.
+            self::_loadModuleList (true);//on demande de rafrachir le cache PHP une fois termin.
+            self::_clearRegistryCache();
             CopixListenerFactory::clearCompiledFile ();
             
+            if ($moduleInstaller !== null) {
+                $moduleInstaller->processPostDelete ();
+            }
+                    	            
             // evenement après la désinstallation du module
         	$response = CopixEventNotifier::notify (new CopixEvent ('afterUninstallModule', array ('moduleName' => $pModuleName)));
         	
@@ -669,6 +801,7 @@ class CopixModule {
         }
 
         $error = false;
+        $moduleInstaller = self::_getModuleInstaller ($pModuleName);
         while ($currentVersion->version_cpm != $moduleVersion && !$error) {
             $error = true;
             foreach ($infos->update as $version) {
@@ -678,12 +811,6 @@ class CopixModule {
                         if ($scriptFile) {
                             $ct = CopixDB::getConnection () ;
                             $ct->doSQLScript ($scriptFile);
-                        }
-
-                        $moduleInstaller = self::_getModuleInstaller ($pModuleName);
-
-                        if ($moduleInstaller !== null) {
-                            $moduleInstaller->processUpdate ();
                         }
 
                         $method = 'process'.$version->script;
@@ -732,7 +859,6 @@ class CopixModule {
     private static function _deleteModuleInDatabase ($moduleName){
         _ioDAO ('copix:CopixModule')->delete ($moduleName);
     }
-
 
 
     /**
@@ -834,5 +960,145 @@ class CopixModule {
         }
         return null;
     }
+    
+    /**
+     * Utilise self::getParsedModuleInformation pour extraire les informations de tags contenus dans <registry>.
+     * 
+     * @see getParsedModuleInformation()
+     *
+     * @param string $pEntryId Identifiant de l'entrée recherchée
+     * @param callback $pParserCallback Callback du parser
+     * @return mixed Valeur de retour du parser passé en paramètre.
+     */
+    static public function getParsedRegistryEntries($pEntryId, $pParserCallback) {
+    	return self::getParsedModuleInformation('entry-'.$pEntryId, "/moduledefinition/registry/entry[@id='".$pEntryId."']", $pParserCallback);
+    }
+    
+    /**
+     * Retourne le chemin du cache de registre.
+     *
+     * @return string Chemin du cache de registre.
+     */
+    static private function _getRegistryCachePath() {
+    	return COPIX_TEMP_PATH.'modules/registry/';
+    }
+    
+    /**
+     * Détermine le chemin du fichier de cache du registre.
+     *
+     * @param string $pCacheKey Clef de cache
+     * @return string Chemin du fichier de cache.
+     */
+    static private function _getRegistryCacheFile($pCacheKey) {
+    	return self::_getRegistryCachePath().preg_replace('@[:/\\\]@', '_', $pCacheKey).'.bin';
+    }
+    
+    /**
+     * Cache mémoire du registre.
+     *
+     * @var array "clef_de_cache" => "valeur"
+     */
+    static private $_registryCache = array();
+    
+    /**
+     * Nettoie le cache de regitre.
+     */
+    static private function _clearRegistryCache() {
+    	self::$_registryCache = array();
+    	$path = self::_getRegistryCachePath();
+    	if(file_exists($path) && is_dir($path)) {
+    		CopixFile::removeFileFromPath($path);
+    	}
+    }
+    
+    /**
+     * Extrait des informations de l'ensemble des fichiers module.xml des modules installés. 
+     *
+     * @param string $pCacheKey Clef pour la mise en cache.
+     * @param string $pXPath Expression XPath de sélection des 
+     * @param callback $pParserCallback
+     * @return mixed La valeur retournée par $pParserCallback.
+     */
+    static public function getParsedModuleInformation($pCacheKey, $pXPath, $pParserCallback) {
+    	if(!is_callable($pParserCallback)) {
+    		$final = '';
+    		if (is_array ($pParserCallback)){
+    			foreach ($pParserCallback as $name){
+    				$final .= $name;
+    			}
+    		}
+    		throw new Exception("getParsedModuleInformation: $final should be callable");
+    	}
+    	
+    	$config = CopixConfig::instance();
+    	$force_compile = $config->force_compile;
+    	$compile_check = $config->compile_check;
+    	//var_dump($force_compile, $compile_check);
+    	
+    	if(!isset(self::$_registryCache[$pCacheKey])) {
+    		
+    		$cacheFile = self::_getRegistryCacheFile($pCacheKey);
+    		
+    		$must_compile = (!file_exists($cacheFile) || $force_compile);
+    		
+    		if(!$must_compile && $compile_check) {
+	    		// Test les fichiers si compile_check est vrai
+    			_log("Vérification du cache pour $pCacheKey ($cacheFile)", "registry", CopixLog::NOTICE);
+    			$cacheDate = filemtime($cacheFile);
+    			foreach(self::getList(true) as $moduleName) {
+    				$descriptorPath = self::getPath($moduleName).'module.xml';
+    				if(filemtime($descriptorPath) > $cacheDate) {
+    					_log("$descriptorPath est plus récent que $cacheFile", "registry", CopixLog::NOTICE);
+    					$must_compile = true;
+    					break;
+    				}
+    			}
+    		}
+    		
+    		if($must_compile) {
+    			_log("Génération du cache pour $pCacheKey ($cacheFile)", "registry", CopixLog::NOTICE);
+    			
+    			// Liste les modules
+    			$nodes = array();
+    			foreach(self::getList(true) as $moduleName) {    				
+    				$xml = simplexml_load_file(self::getPath($moduleName).'module.xml');
+    				
+    				// Extrait les infos
+    				$moduleNodes = $xml->xpath($pXPath);
+    				
+    				// N'ajoute dans la liste que si on trouve quelque chose
+    				if(is_array($moduleNodes) && count($moduleNodes) > 0) {
+    					$nodes[$moduleName] = $xml->xpath($pXPath);
+    				}    				
+    			}
+    			
+    			// Compile le tout
+   				self::$_registryCache[$pCacheKey] = call_user_func($pParserCallback, $nodes);
+
+   				// Ecrit le cache
+   				CopixFile::write($cacheFile, serialize(self::$_registryCache[$pCacheKey]));
+    			
+    		} else {
+    			_log("Chargement du cache pour $pCacheKey ($cacheFile)", "registry", CopixLog::NOTICE);
+    			self::$_registryCache[$pCacheKey] = unserialize(CopixFile::read($cacheFile));
+    		}
+    	}
+    	
+    	return self::$_registryCache[$pCacheKey];
+    }
+}
+
+/**
+ * Description d'un module
+ * @package copix
+ * @subpackage utils
+ */
+class CopixModuleDescription {
+	public $admin_links_group;
+	public $group;
+	function __construct (){
+		$this->admin_links_group = new StdClass ();
+		$this->group = new StdClass ();
+	}
 }
 ?>

@@ -23,10 +23,13 @@ class ZoneShowLog extends CopixZone{
     function _createContent (& $toReturn){        
     	$tpl    = new CopixTpl ();
     	$profil = $this->getParam  ('profil');
+        $nbitems = $this->getParam  ('nbitems');
     	        		
-	   	$niveau = CopixLog::getLog ($profil);
+	   	$niveau = CopixLog::getLog ($profil, $nbitems);
 	   	$tpl->assign ('logs', $niveau);
 	   	$tpl->assign ('profil', $profil);
+	   	$tpl->assign ('nbitems', $nbitems);
+        
 	   	//$tpl->assign ('page', $page);
 	   	$toReturn = $tpl->fetch ('logs.list.php');
         return true;

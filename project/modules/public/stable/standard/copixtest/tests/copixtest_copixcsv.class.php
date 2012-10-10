@@ -26,12 +26,20 @@ class CopixTest_CopixCSV extends CopixTest {
 	 * Test de création d'un fichier CSV
 	 */
 	public function testCreateCsvFile (){
-		//on test que le fichier est bien créé
+		
+        if (file_exists (COPIX_TEMP_PATH.'file.csv')) {
+            unlink (COPIX_TEMP_PATH.'file.csv');
+        }
 		$csvFile = new CopixCSV (COPIX_TEMP_PATH.'file.csv');
         for ($i = 0 ; $i < 4; $i ++) {
             $csvFile->addLine(array("test", "test", "test"));
         }
+        
+        //on teste que le fichier est bien créé
         $this->assertTrue (file_exists (COPIX_TEMP_PATH.'file.csv'));
+        // On test le nombre de lignes
+        $itCsv = $csvFile->getIterator ();
+        $this->assertEquals ($itCsv->count(), 4);
 	}
     
 	/**
@@ -41,23 +49,24 @@ class CopixTest_CopixCSV extends CopixTest {
 		//on test que le fichier est rempli et est correctement parcouru
 		$csvFile = new CopixCsv  (COPIX_TEMP_PATH.'file.csv');
         $itCsv = $csvFile->getIterator ();
-        $nbLine = $itCsv->count();
         
         $i=0;
         foreach ($itCsv as $line) {
             $i++;
         }
+        
+        $nbLine = $itCsv->count();
 
         $this->assertEquals ($i, $nbLine);
 
 	}
 	
 	/**
-	 * Test des CSV en en-tête
+	 * Test des CSV avec en-tête
 	 */
 	public function testCsvHeaded (){
 	    $csvFile = new CopixCsv  (COPIX_TEMP_PATH.'file.csv');
-	    $itCsv = $csvFile->getIterator (true);
+	    $itCsv = $csvFile->getIterator (CopixCSV::HEADED);
 	    $arInfo = $itCsv->current();
 	    $arKeys = array_keys ($arInfo); 
 	    $this->assertEquals ($arKeys[0], 'test');

@@ -49,8 +49,7 @@ professionnel... 200% efficace.</span></div>
 
 <?php if($PHPUnitTest){ ?>
 
-<form action="test.php"
-	method="POST" />
+<form action="test.php" method="post" />
 <ul>
 	<li><a style="color: black" href="./test.php?tests=all" />Tout</a></li>
 	<?php

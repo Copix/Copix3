@@ -9,4 +9,4 @@ CREATE TABLE storedfile (
 	storedfile_uploader VARCHAR(255),
 	storedfile_uploaddate DATETIME,
 	storedfile_nbdownload INT	
-) ENGINE = INNODB;	
+) CHARACTER SET utf8;

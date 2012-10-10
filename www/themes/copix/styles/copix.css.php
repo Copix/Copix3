@@ -91,7 +91,7 @@
 }
 
 .alternate {
-   background-color: #868e74;
+   background-color: #ecefda;
 }
 
 .resizable{
@@ -167,7 +167,7 @@ ul.autocompleter-choices li.autocompleter-selected span.autocompleter-queried {
 	top: 1px;
 	display: block;
 	padding: 10px 0 30px 0;
-	background: transparent url('../img/tools/comments_start.png') no-repeat 30% 100%;
+	background: transparent url('../img/comments_start.png') no-repeat 30% 100%;
 }
 
 .comments dd {

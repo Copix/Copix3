@@ -104,16 +104,16 @@ class CopixSession {
 	 * @param	string	$pNamespace le nom du namespace dans lequel est l'élément
 	 * @return  mixed la valeur de l'élément ou null 
 	 */
-	public static function get ($pPath, $pNamespace = 'default'){
-		if (isset ($_SESSION['COPIX'][$pNamespace][$pPath])){
-			if ((is_object ($_SESSION['COPIX'][$pNamespace][$pPath]))  
-			    && ($_SESSION['COPIX'][$pNamespace][$pPath] instanceof CopixSessionObject)) {
-				return $_SESSION['COPIX'][$pNamespace][$pPath]->getSessionObject ();
-			}else{
+	public static function &get ($pPath, $pNamespace = 'default'){
+		$value = null;
+		if (isset ($_SESSION['COPIX'][$pNamespace][$pPath])) {
+			if($_SESSION['COPIX'][$pNamespace][$pPath] instanceof CopixSessionObject) {
+				$value = $_SESSION['COPIX'][$pNamespace][$pPath]->getSessionObject ();
+			} else {
 				return $_SESSION['COPIX'][$pNamespace][$pPath];
 			}
 		}
-		return null;
+		return $value;
 	}
 }
 

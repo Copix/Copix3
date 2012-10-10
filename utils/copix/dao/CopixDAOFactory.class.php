@@ -8,6 +8,17 @@
 * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
 */
 
+
+/**
+Modifications à faire sur les DAO pour la version 3.1
+Nom de fichier dépendant du driver
+Nom de classe dépendant du driver
+Ajouter une interface dans le "sans driver"
+
+un fichier .dao.php qui contient l'objet manipulé.
+un fichier .dao.driver.php qui contient l'objet spécifique au driver et porte comme nom de classe DAODriverTable
+*/
+
 /**
  * Définition de l'interface CopixDAO
  * @package copix
@@ -35,20 +46,21 @@ interface ICopixDAORecord {}
  */
 class CopixDAORecordIterator implements Iterator, ArrayAccess, Countable {
 	/**
-	 * Quel est le type de record que l'on décide de parcourir.
+	 * Type de record que l'on décide de parcourir
+	 * 
 	 * @var string
 	 */
 	private $_recordId = null;
 	
 	/**
-	 * Résultats de la requêtes
+	 * Résultats de la requête
 	 *
 	 * @var CopixDBResultSet
 	 */
 	private $_resultSet;
 	
 	/**
-	 * L'offset courant
+	 * Offset courant
 	 *
 	 * @var int
 	 */
@@ -56,30 +68,54 @@ class CopixDAORecordIterator implements Iterator, ArrayAccess, Countable {
 	
 	/**
 	 * Construction en indiquant le type de DAO en paramètre
+	 * 
+	 * @param array $pArray Résultats de la requête
+	 * @param string $pRecordId Type de record que l'on décide de parcourir
 	 */
-	function __construct ($pArray, $pRecordId){
+	public function __construct ($pArray, $pRecordId) {
 		$this->_resultSet = $pArray;
 		$this->_recordId = $pRecordId;
 	}
 
 	/**
-	 * Retourne l'élément d'indice donné.
+	 * Retourne l'élément d'indice donné
+	 * 
+	 * @param string $pOffset
+	 * @return object
 	 */
-	function offsetGet ($pOffset){
-		return _record ($this->_recordId)->initFromDBObject ($this->_resultSet[$pOffset]);
+	public function offsetGet ($pOffset) {
+		return $this->_makeRecordIfNot ($pOffset);
 	}
 
 	/**
 	 * Retourne l'élément courant
-	 * @return StdClass 
+	 * 
+	 * @return object 
 	 */
-	function current (){
-		return $this->_resultSet[$this->_currentOffset];
+	public function current () {
+		return $this->_makeRecordIfNot ($this->_currentOffset);
+	}
+	
+	/**
+	 * Création d'un enregistrement a partir d'un élément
+	 * 
+	 * @param	mixed	offset (integer)	
+	 * @return ICopixDAORecord 
+	 */
+	private function _makeRecordIfNot ($pOffset){
+		if (isset ($this->_resultSet[$pOffset])){
+			if ($this->_resultSet[$pOffset] instanceof ICopixDAORecord){
+				return $this->_resultSet[$pOffset];
+			}else{
+				return $this->_resultSet[$pOffset] = _record ($this->_recordId)->initFromDBObject ($this->_resultSet[$pOffset]);				
+			}
+		}else{
+			return null;
+		}
 	}
 
 	/**
-	 * Mise à jour du compteur de position
-	 * @return void
+	 * Passe à l'enregistrement suivant
 	 */
 	public function next () {
 		$this->_currentOffset++;
@@ -87,73 +123,81 @@ class CopixDAORecordIterator implements Iterator, ArrayAccess, Countable {
 
 	/**
 	 * Retourne la clef courante
+	 * 
 	 * @return int
 	 */
-	public function key (){
+	public function key () {
 		return $this->_currentOffset;
-    }
-    
-    /**
-     * Indique si l'élément courant est valide.
-     * @return boolean 
-     */
-    public function valid (){
-    	return isset ($this->_resultSet[$this->_currentOffset]);
-    }
-    
-    /**
-     * Réinitialisation du parcours des éléments au premier indice 
-     * @return void
-     */
-    public function rewind (){
-    	$this->_currentOffset = 0;
-    }
-    
-     /**
-	 * Impossibilité de définir des valeurs dans un resultset
+	}
+	
+	/**
+	 * Indique si l'élément courant est valide
+	 * 
+	 * @return boolean 
 	 */
-	 function offsetSet ($key, $value) {
-	 	throw new Exception ('Cannot set directly in a result set');
-	 }
+	public function valid () {
+		return isset ($this->_resultSet[$this->_currentOffset]);
+	}
 	
-	 /**
-  	  * Defined by ArrayAccess interface
-	  * Unset a value by it's key e.g. unset($A['title']);
-	  * @param mixed key (string or integer)
-	  * @return void
- 	  */
-	 function offsetUnset ($key) {
-	 	throw new Exception ('Impossible de supprimer un élément de l ensemble de résultat');
-	 }
+	/**
+	 * Réinitialisation du parcours des éléments au premier indice
+	 */
+	public function rewind () {
+		$this->_currentOffset = 0;
+	}
 	
-	 /**
-	 * Defined by ArrayAccess interface
-	 * Check value exists, given it's key e.g. isset($A['title'])
-	 * @param mixed key (string or integer)
+	/**
+	 * Blocage de la possibilité de définir un enregistrement. Déclenche une exception.
+	 * 
+	 * @param mixed $pKey Clef à modifier, type string ou int
+	 * @param mixed $pValue Nouvelle valeur pour la clef $pKey
+	 * @throws Exception 
+	 */
+	public function offsetSet ($pKey, $pValue) {
+		throw new Exception (_i18n ('copix:dao.error.offsetSet'));
+	}
+	
+	/**
+	 * Blocage de la possibilité de supprimer un enregistrement. Déclenche une exception.
+	 * 
+	 * @param mixed $pKey Clef à supprimer, type string ou int
+	 * @throws Exception
+	 */
+	public function offsetUnset ($pKey) {
+		throw new Exception (_i18n ('copix:dao.error.offsetUnset'));
+	}
+	
+	/**
+	 * Indique si $pOffset existe
+	 * 
+	 * @param mixed $pOffset Clef dont on veut vérifier l'existance
 	 * @return boolean
 	 */
-	 function offsetExists ($pOffset) {
-	 	return isset ($this->_resultSet[$pOffset]);
-	 }
+	public function offsetExists ($pOffset) {
+		return isset ($this->_resultSet[$pOffset]);
+	}
 	 
-	 /**
-	  * Indique le nombre d'éléments qu'il existe dans le résulat
-	  */
-	 public function count (){
-	 	return count ($this->_resultSet);
-	 }
+	/**
+	 * Retourne le nombre d'éléments qui existent dans le résulat
+	 * 
+	 * @return int
+	 */
+	public function count () {
+		return count ($this->_resultSet);
+	}
 	 
-	 /**
-	  * Récupère l'ensemble des enregistrements dans un tableau
-	  * @return array
-	  */
-	 public function fetchAll (){
-	 	$results = array ();
-	 	foreach ($this->_resultSet as $key=>$element){
-	 		$results[$key] = _record ($this->_recordId)->initFromDBObject ($element); 
-	 	}
-	 	return $results;
-	 }
+	/**
+	 * Récupère l'ensemble des enregistrements dans un tableau
+	 * 
+	 * @return array
+	 */
+	public function fetchAll () {
+		$results = array ();
+		foreach ($this->_resultSet as $key => $element) {
+			$results[$key] = _record ($this->_recordId)->initFromDBObject ($element); 
+		}
+		return $results;
+	}
 }
 
 /**
@@ -431,7 +475,6 @@ class CopixDAOFactory {
 	    	if (isset ($parsedFile->parameter) && ($parsedFile->parameter['value'] == 'auto') ){
 	    		return new CopixDAODefinitionXmlAutoBuilder ($pFullyQualifiedDAO, array ('xmlFilePath'=>$fileName, 'phpClassFilePath'=>$fileClassName, 'connection'=>$pConnectionName));
 	    	}
-	    	
         	return new CopixDAODefinitionXmlBuilder ($pFullyQualifiedDAO, array ('xmlFilePath'=>$fileName, 'phpClassFilePath'=>$fileClassName, 'connection'=>$pConnectionName));
         }else{
         	return new CopixDAODefinitionDBBuilder ($pFullyQualifiedDAO, array ('tableName'=>$pFullyQualifiedDAO, 'phpClassFilePath'=>$fileClassName, 'connection'=>$pConnectionName));

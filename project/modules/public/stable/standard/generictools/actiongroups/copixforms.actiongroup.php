@@ -14,17 +14,7 @@
  * @subpackage	generictools
  */
 class ActionGroupCopixForms extends CopixActionGroup {
-    /**
-     * méthode qui lance la validation des champs et qui lance l'enregistrement
-     */
-    public function processValidForm () {
-	    $id = CopixRequest::get ('form_id');
-	    $url = CopixUrl::get (CopixRequest::get ('url_param'));
-	    $form = CopixFormFactory::get ($id);
-	    $form->doRecord();
-	    return _arRedirect($url);
-	}
-	
+    
     /**
      * méthode qui repond pour ajax
      * elle renvoi le code HTML d'un champ en fonction de son mode (et de son type)
@@ -32,10 +22,10 @@ class ActionGroupCopixForms extends CopixActionGroup {
 	public function processGetInput() {
 		$ppo = new CopixPPO ();
 		
-	    $id = CopixRequest::get ('form_id');
+	    $id = _request ('form_id');
 	    $form = CopixFormFactory::get ($id);
-	    $params['mode_'.CopixRequest::get('form_id')] = CopixRequest::get('mode_'.CopixRequest::get('form_id'),'view');
-	    $ppo->MAIN = $form->getInput(CopixRequest::get('field'),$params);
+	    $params['mode_'._request('form_id')] = _request('mode_'._request('form_id'),'view');
+	    $ppo->MAIN = $form->getInput(_request('field'),$params);
 	    return _arDirectPPO($ppo,'blank.tpl');
 	}
 
@@ -44,30 +34,36 @@ class ActionGroupCopixForms extends CopixActionGroup {
 	 *
 	 */
 	public function processCheckRecord() {
-	    $validUrl  = CopixRequest::get('validUrl');
-        $urlParams = array();
-   	    $urlParams['mode_'.CopixRequest::get('form_id')] = 'view';
-   	    $urlParams['error_'.CopixRequest::get('form_id')]=false;
-	    $form = CopixFormFactory::get (CopixRequest::get('form_id'));
+	    $validUrl  = _request('onValid');
+        $urlParams = array ();
+   	    $urlParams['mode_'._request('form_id')] = 'view';
+   	    $urlParams['error_'._request('form_id')]=false;
+   	    $urlParams['form_id'] = _request('form_id');
+   	    $urlParams['url'] = _request('url');
+	    $form = CopixFormFactory::get (_request('form_id'));
 	    $arPk = array();
 	    try {
-	        $arPk = $form->doRecord();
-	    } catch(CopixFormException $e) {
-            $urlParams['mode_'.CopixRequest::get('form_id')]='edit';
-	        $urlParams['error_'.CopixRequest::get('form_id')]=true;
+	        $form->doValid();
+        	$arPk = $form->doRecord();
+	    	return _arRedirect(_url($validUrl), array_merge($urlParams,$arPk));
+	    } catch(CopixFormCheckException $e) {
+            $urlParams['mode_'._request('form_id')]='edit';
+	        $urlParams['error_'._request('form_id')]=true;
+	        $form->setErrors ($e->getErrors());
+	        return _arRedirect(_url(_request('url'), array_merge($urlParams,$arPk)));
 	    }
-	    if ($validUrl !== null && !$urlParams['error_'.CopixRequest::get('form_id')] ) {
-    	    return _arRedirect(CopixUrl::get($validUrl));	        
-	    } else {
-    	    return _arRedirect(CopixUrl::get(CopixRequest::get('url'), array_merge($urlParams,$arPk)));
-	    }
+	    
 	}
 	
+	/**
+	 * Actiongroup qui permet de gérer la suppression
+	 *
+	 */
 	public function processDelete() {
-	    $form = CopixFormFactory::get (CopixRequest::get('form_id'));
+	    $form = CopixFormFactory::get (_request('form_id'));
 	    $form->delete(CopixRequest::asArray());
-    	$url = CopixRequest::get('url');
-    	return _arRedirect(CopixUrl::get($url));
+    	$url = _request('url');
+    	return _arRedirect(_url($url));
 	}   
 	
 }

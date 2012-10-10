@@ -31,7 +31,7 @@ class CopixTest_CopixSessionObject extends CopixTest {
 	
 	public function testAutoloadedObject (){
 		//Ici ce n'est pas vraiment un objet autoloadé, mais l'effet sera le même pour notre test.
-		$element = new CopixSessionObject ($this, CopixSessionObject::AUTOLOADED);
+		$element = new CopixSessionObject ($this);
 		$serialized = serialize ($element);
 		$elementBack = unserialize ($serialized);
 	}

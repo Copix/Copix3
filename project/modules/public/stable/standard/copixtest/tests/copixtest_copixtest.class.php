@@ -52,7 +52,7 @@ class CopixTest_CopixTest extends CopixTest {
 
 		try {
 			$this->assertFalse (Copix::RequireClass ('SomeFooClass'));
-			$this->assertFalse (true);//Un exception aurait du être générée
+			$this->fail();//Un exception aurait du être générée
 		}catch (Exception $e){
 			$this->assertTrue (true);
 		}

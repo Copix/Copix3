@@ -37,10 +37,11 @@ function smarty_function_copixform_field($params, &$me) {
 	}
 	$form = CopixFormFactory::get ($params['form']);
 	
-	if (!isset($params['field'])) {
-		throw new Exception("You must specify a field");
+	if (!isset($params['name'])) {
+		throw new Exception("You must specify a name");
 	}
-	$toReturn = $form->getField ($params['field'],$params);
+	$type = (isset ($params['type']) ? $params['type'] : 'varchar');
+	$toReturn = $form->getFieldHTML ($type, $params);
 		
 	if (strlen($assign) > 0){
 		$me->assign($assign, $toReturn);

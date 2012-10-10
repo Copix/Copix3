@@ -1,0 +1,66 @@
+/** Don't modify this file, please use theme.css to change or overload settings **/
+
+html, body {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Verdana, Sans;
+	font-size: 9pt;
+}
+#wrapcontent{
+	width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#content{
+	background-color: #FFF;
+	float: left;
+	width: 100%;
+	padding:0;
+}
+
+#banner{
+	width: 100%;
+}
+
+#menu{
+	width: 100%;
+	float: left;
+}
+
+#menu ul li{
+	float: left;
+	list-style-type: none;
+	margin: 2px;
+	margin-top: -5px;
+	margin-right:5px;
+	margin-left:5px;
+}
+
+#maincontent{
+	background-color: #FFF;
+}
+
+#toright{
+	width: 10%;
+	float: left;
+	border-left: 1px solid grey;
+	padding-left: 1%;
+	margin-left: 1%;
+}
+
+.pagecontent{
+	width: 80%;
+	float: left;
+
+	padding-left: 1%;
+}
+#footer{
+	clear: both;
+	border-top: 1px dotted black;
+	text-align: center;
+}
+
+a img{
+	border: 0;
+}

@@ -73,33 +73,28 @@ class CopixDBConnectionPDO_PgSQL extends CopixDBPDOConnection {
 		$results = array ();
 		$arIdx = array ();
 
-		// Requête de récupération des Index
-		$sql = "SELECT c2.relname AS indname, i.indisprimary, i.indisunique, i.indisclustered,
-			pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) AS inddef
-			FROM pg_catalog.pg_class c, pg_catalog.pg_class c2, pg_catalog.pg_index i
-			WHERE c.relname = '{$pTableName}' AND pg_catalog.pg_table_is_visible(c.oid) 
-			AND c.oid = i.indrelid AND i.indexrelid = c2.oid
-		";
-		$result = $this->doQuery ($sql);
-		foreach ($result as $key => $val) {
-			// Une clé primaire à un btree et son indisprimary est à t (true)
-			if(preg_match ('/btree \((.*?)\)/', $val->inddef, $matches) && ($val->indisprimary == 't')){
-				$arIdx[] = $matches[1];
+		// Récupère les n° des colonnes des champs de la clef primaire
+		$sql = "SELECT i.indkey FROM pg_catalog.pg_class c, pg_catalog.pg_index i WHERE c.oid = i.indrelid AND i.indisprimary AND c.relname=:relname";
+		$result = $this->doQuery ($sql, array(':relname' => $pTableName));
+		$pkAttrIndex = array();
+		if($result && count($result) == 1) {
+			foreach(split(' ', $result[0]->indkey) as $index) {
+				$pkAttrIndex[] = (int)$index; 
 			}
-			
 		}
 
 		$sql_get_fields = "SELECT
-        a.attname as Field, t.typname as type, a.attlen as length, a.atttypmod,
+        a.attname as Field, a.attnum as num, t.typname as type, a.attlen as length, a.atttypmod,
         case when a.attnotnull  then 1 else 0 end as notnull,
         a.atthasdef,
-        (SELECT adsrc FROM pg_attrdef adef WHERE a.attrelid=adef.adrelid AND a.attnum=adef.adnum) AS adsrc
+        pg_get_expr(d.adbin, c.oid) as adsrc
         FROM
-            pg_attribute a,
-            pg_class c,
-            pg_type t
+            pg_attribute a
+            join pg_class c on (c.oid = a.attrelid)
+            join pg_type t on (t.oid = a.atttypid)
+            left join pg_attrdef d on (d.adrelid = c.oid and d.adnum = a.attnum)
         WHERE
-          c.relname = '{$pTableName}' AND a.attnum > 0 AND a.attrelid = c.oid AND a.atttypid = t.oid
+          c.relname = '{$pTableName}' AND a.attnum > 0
         ORDER BY a.attnum";
 		$result = $this->doQuery ($sql_get_fields);
 
@@ -109,22 +104,20 @@ class CopixDBConnectionPDO_PgSQL extends CopixDBPDOConnection {
 			$fieldDescription = new CopixDBFieldDescription ($val->field);
 			$fieldDescription->notnull = (bool) $val->notnull;
 			$fieldDescription->type = preg_replace ('/(\D*)\d*/','\\1',$val->type);
-
-			if (in_array($val->field,$arIdx)) {
-				$fieldDescription->pk = true;
-			}
+			$fieldDescription->pk = in_array($val->num, $pkAttrIndex);
 
 			if ($val->type == 'text') {
-				$fieldDescription->type = 'string';
+					$fieldDescription->type = 'string';
 			}
 			
 			if ($val->type == 'timestamp') {
-				$fieldDescription->type = 'datetime';
+					$fieldDescription->type = 'datetime';
 			}
 			
-			// if(preg_match('/nextval\(\'(.*?)\.'.$pTableName.'_'.$val->field.'_seq\'::regclass\)/', $val->adsrc)){
-			if(preg_match ('/'.$pTableName.'_'.$val->field.'_seq/', $val->adsrc)){
+			if($fieldDescription->pk && $val->atthasdef && preg_match("/nextval\('([^']+)'(::regclass)?\)/i", $val->adsrc, $parts)) {
 				$fieldDescription->type = 'autoincrement';
+				$fieldDescription->auto = true;
+				$fieldDescription->sequence = $parts[1];
 			} else {
 				$fieldDescription->auto = false;
 			}

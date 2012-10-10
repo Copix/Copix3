@@ -109,18 +109,22 @@ class CopixDAODefinitionXmlAutoBuilder extends CopixDAODefinitionBuilder {
 		}else{
 			throw new Exception ('Impossible de trouver le fichier XML '.$this->_options['xmlFilePath'].' pour le DAO '.$this->_DAOId);
 		}
+		
 		$pBase = null;
-		if(isset($parsedFile->datasource->base)){
-			$pBase = $parsedFile->datasource->base;
+		
+		if (isset ($parsedFile->datasource->connection)){
+			$connection = $parsedFile->datasource->connection->attributes ();
+			if (isset ($connection['name'])){
+				$definition->setConnectionName ((string) $connection['name']);
+				$pBase = (string)$connection['name'];
+			}
 		}
-
+		
 		if ($pBase == null) {
 			$pBase = CopixConfig::instance ()->copixdb_getDefaultProfileName ();
 		}
 
 		$ct = CopixDB::getConnection ($pBase);
-		$definition->setConnectionName ($pBase);
-
 		$listTable = array ();
 		$listTable = $ct->getTableList ();
 
@@ -136,13 +140,6 @@ class CopixDAODefinitionXmlAutoBuilder extends CopixDAODefinitionBuilder {
 
 		if ($definition->getPrimaryTableName () === null){
 			throw new Exception (_i18n ('copix:dao.error.definitionfile.table.primary.missing '));
-		}
-
-		if (isset ($parsedFile->datasource->connection)){
-			$connection = $parsedFile->datasource->connection->attributes ();
-			if (isset ($connection['name'])){
-				$definition->setConnectionName ((string) $connection['name']);
-			}
 		}
 
 		$fields = $ct->getFieldList ($pTableName);

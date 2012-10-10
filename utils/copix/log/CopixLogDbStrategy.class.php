@@ -1,16 +1,16 @@
 <?php
 /**
-* @package   copix
-* @subpackage log
-* @author    Landry Benguigui
-* @copyright 2001-2006 CopixTeam
-* @link      http://copix.org
-* @license  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
-*/
+ * @package   copix
+ * @subpackage log
+ * @author    Landry Benguigui
+ * @copyright 2001-2008 CopixTeam
+ * @link      http://copix.org
+ * @license  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ */
 
 /**
  * Log en base de données
- * 
+ *
  * @package   copix
  * @subpackage log
  */
@@ -57,13 +57,27 @@ class CopixLogDbStrategy implements ICopixLogStrategy {
 	}
 	
 	/**
-	 * Retourne les logs sous forme d'itérateur
-	 * @return Iterator
+	 * Retourne les logs sous forme d'idérateur
+	 *
+	 * @param 	string	$pProfil	Nom du profil dont on souhaite afficher le contenu
+	 * @param 	int 	$pNbItems	Nombres d'items à afficher
+	 * @return 	Iterator
 	 */
-	public function getLog ($pProfil){
-		$arrayObject = new ArrayObject (_ioDAO ('copixlog')->findBy (_daoSP ()->addCondition ('profile', '=', $pProfil)
-																			  ->orderBy (array ('date', 'DESC'))));
-        return $arrayObject->getIterator ();
+	public function getLog ($pProfil, $pNbItems = 20){
+		// Mise en place des limites
+		$page = CopixSession::get('log|numpage')-1;
+		$start = $page * $pNbItems;
+
+		// Création du Search Params
+		$sp = _daoSP ()->addCondition ('profile', '=', $pProfil)
+		               ->orderBy (array ('date', 'DESC'));
+
+		$dbNbLines = _ioDAO ('copixlog')->countBy ($sp);
+		CopixSession::set ('log|nbpage', ceil ($dbNbLines/$pNbItems));
+		$sp = $sp ->setLimit ($start, $pNbItems);
+
+		return _ioDAO ('copixlog')->findBy ($sp);
 	}
+    
 }
 ?>

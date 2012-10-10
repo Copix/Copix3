@@ -2,28 +2,15 @@
 /**
  * @package 	copix
  * @subpackage	smarty_plugins
-* @author		Croës Gérald
-* @copyright	2001-2006 CopixTeam
-* @link			http://copix.org
-* @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
-*/
+ * @author		Salleyron Julien
+ * @copyright	2001-2008 CopixTeam
+ * @link		http://www.copix.org
+ * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ */
 
 /**
-* Plugin smarty type fonction
-* Purpose:  generation of a copixed url
-*
-* Input:    dest=module|desc|action
-*           complete syntax will be:
-*           desc|action for current module, desc and action
-*           [action or |action] default desc, action
-*           [|desc|action] project, desc and action
-*           [||action] action in the project
-*           [module||action] action in the default desc for the module
-*           [|||] the only syntax for the current page
-*
-*           * = any extra params will be used to generate the url
-*
-*/
+ * Plugin smarty type fonction
+ */
 function smarty_function_copixlist_list($params, &$me) {
 	$assign = '';
 	if(isset($params['assign'])){
@@ -32,23 +19,23 @@ function smarty_function_copixlist_list($params, &$me) {
 	}
 
 	if (!isset($params['tplvars'])) {
-        $params['tplvars'] = array ();
-    }
-    
-    $params['tplvars'] = array_merge ($params['tplvars'],$me->_tpl_vars);
-	
-	if (!isset($params['list'])) {
-        $params['list'] = null;
+		$params['tplvars'] = array ();
 	}
-	
+
+	$params['tplvars'] = array_merge ($params['tplvars'],$me->_tpl_vars);
+
+	if (!isset($params['list'])) {
+		$params['list'] = null;
+	}
+
 	$list = CopixListFactory::get ($params['list']);
-	
+
 	if (!isset($params['datasource'])) {
 		$params['datasource'] = 'dao';
 	}
-	
+
 	$toReturn = $list->getList ($params['datasource'],$params);
-	
+
 	if (strlen($assign) > 0){
 		$me->assign($assign, $toReturn);
 		return '';

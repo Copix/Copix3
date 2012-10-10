@@ -125,9 +125,9 @@ class CopixList {
     public function start ($pUrl = null) {
         $this->_url = $pUrl;
         if ($pUrl === null) {
-            return '<form id="searchform'.$this->_id.'" name="searchform'.$this->_id.'" method="POST" action="" >'."\n";
+            return '<form id="searchform'.$this->_id.'" name="searchform'.$this->_id.'" method="post" action="" >'."\n";
         } else {
-            return '<form id="searchform'.$this->_id.'" name="searchform'.$this->_id.'" method="POST" action="'._url ('generictools|copixlist|getTable',array('table_id'=>$this->_id,'url'=>$pUrl)).'" >'."\n";
+            return '<form id="searchform'.$this->_id.'" name="searchform'.$this->_id.'" method="post" action="'._url ('generictools|copixlist|getTable',array('table_id'=>$this->_id,'url'=>$pUrl)).'" >'."\n";
         }
     }
     
@@ -224,56 +224,9 @@ class CopixList {
             }
         }
                
-        $field = $this->_conditions[$id]; 
-        
-        //Voir la gestion des values
-        $html = '';
-        switch($field->getType ()) {
-            case 'bool':
-             	$html .= _tag('select',array('class'=>'searchField'.$this->_id.'', 'values'=>array('OUI'=>'OUI','NON'=>'NON'),'name'=>$field->name,'selected'=>$field->value));
-                break;
-            case 'varchar':
-                $extra = isset($pParams['extra']) ? $pParams['extra'] : '';
-                $html .= '<input class="searchField'.$this->_id.'" type="text" name="'.$field->name.'" value="'._copix_utf8_htmlentities($field->value).'" '.$extra.' />';
-                break;
-            case 'autocomplete':
-				$pParams['field'] = $field->field;
-				if (!isset($pParams['datasource'])) {
-				    $pParam['datasource']='dao';
-				}
-			    $pParams['name'] = $field->name;
-                $html .= _tag('autocomplete',$pParams);
-                break;
-            case 'select':
-                $html .= _tag('select',array('class'=>'searchField'.$this->_id.'', 'values'=>$pParams['arValues'] ,'objectMap'=>( isset($pParams['objectMap']) ? $pParams['objectMap'] : null) ,'name'=>$field->name,'selected'=>$field->value));
-                break;
-            case 'multipleselect':
-                $html .= _tag('multipleselect',array('class'=>'searchField'.$this->_id.'', 'values'=>$pParams['arValues'] ,'objectMap'=>( isset($pParams['objectMap']) ? $pParams['objectMap'] : null) ,'name'=>$field->name,'selected'=>$field->value));
-                break;
-           case 'checkbox':
-                $html .= _tag('checkbox',array('class'=>'searchField'.$this->_id.'', 'values'=>$pParams['arValues'] ,'objectMap'=>( isset($pParams['objectMap']) ? $pParams['objectMap'] : null) ,'name'=>$field->name,'selected'=>$field->value));
-                break;
-            case 'hidden':
-            case 'hiddendif':
-                //$html .= '<input type="hidden" name="'.$field->name.'" value="'._copix_utf8_htmlentities($field->value).'"/>';
-	            $field->value = $pParams['value'];
-                break;
-            case 'sup':
-            case 'inf':
-            case 'default':
-                $html .= '<input class="searchField'.$this->_id.'" type="text" name="'.$field->name.'" value="'._copix_utf8_htmlentities($field->value).'"/>';
-                break;
-            default:
-                $arClasses = explode('::',$field->getType ());
-                if (count($arClasses)==2) {
-                    $Class = _class ($arClasses[0]);
-                    $method = $arClasses[1].'HTML';
-                    $html .= $Class->$method($field);
-                } else {
-                    throw new CopixListException(_i18n('copix:copixlist.message.unknownType',$field->getType ()));
-                }
-        }
-        return $html;
+        $field = $this->_conditions[$id];         
+
+        return $field->getHTML();
     }
     
     private function _makeConditions () {
@@ -283,7 +236,9 @@ class CopixList {
         	        case 'bool':
                     case 'select':
                     case 'hidden':
-        	            $this->_datasource->addCondition ($field->field, '=', $field->value);
+                        if ($field->value != null) {
+        	                $this->_datasource->addCondition ($field->field, '=', $field->value);
+                        }
         		        break;
                     case 'multipleselect':        		        
                     case 'checkbox':
@@ -368,6 +323,22 @@ class CopixList {
               $this->_tplvars['mapping'] = 'all';
         }        
         
+        if (isset ($pParams['more'])) {
+              $arMore = explode('|',$pParams['more']);
+              if (count($arMore)>1) {
+                  $this->_tplvars['more'] = $arMore[1];
+                  $this->_tplvars['moretitle'] = $arMore[0];
+              } else {
+                  $this->_tplvars['moretitle'] = '';
+                  $this->_tplvars['more'] = $pParams['more'];
+              }
+        }
+        
+        if (isset ($pParams['moreLink'])) {
+            $arMore = explode('@',$pParams['moreLink']);
+            $this->_tplvars['moreLink'] = $arMore[1];
+            $this->_tplvars['moreLinkTitle'] = $arMore[0];
+        }
         //Indique si l'on souhaite que la recherche soit lancée au premier affichage
 		//@TODO trouver un nom explicite
         if (isset ($pParams['startupSearch'])) {
@@ -530,35 +501,9 @@ class CopixList {
         }
         $tpl->assignTemplateVars ($this->_tplvars);
         
-        $javascript = "
-			window.addEvent ('domready', function () {
-    			$$('.next_$this->_id').each(function (el) {
-				  el.setStyle('cursor','pointer');  
-			      el.addEvent('click', function () {
-    				javascripts$this->_id.goToPage(".($this->_page+2).");
-    			});});
-    
-    			$$('.previous_$this->_id').each(function (el) {
-                    el.setStyle('cursor','pointer');  
-					el.addEvent('click', function () {
-    				javascripts$this->_id.goToPage($this->_page);
-    			});});
-    
-    			$$('.first_$this->_id').each(function (el) { 
-					el.setStyle('cursor','pointer'); 
-					el.addEvent('click', function () {
-    				javascripts$this->_id.goToPage(1);
-    			});});
-    
-    			$$('.last_$this->_id').each(function (el) {
-					el.setStyle('cursor','pointer');  
-					el.addEvent('click', function () {
-    				javascripts$this->_id.goToPage(".$this->_datasource->getNbPage ().");
-    			});});
-			});";
-
+        CopixHTMLHeader::addJSLink(_resource('js/taglib/copixlist.js'));
+        CopixHTMLHeader::addJSDomReadyCode ("copixlist_event_pager ('$this->_id','"._url ('generictools|copixlist|getTable',array('table_id'=>$this->_id,'submit'=>'false'))."','$this->_page','".($this->_page+2)."',".$this->_datasource->getNbPage ().")");
         
-        CopixHTMLHeader::addJSCode ($javascript);
         if ($this->_pagerTpl!==null) {
             $pager = $this->getPager ($this->_pagerTpl);
         } else {
@@ -587,184 +532,12 @@ class CopixList {
             return true;
         }
         $this->_jsLoad = true;
-        _tag ('mootools');
-        if ($this->_url === null) {
-            $javascript = "
-				var loader = {
-				divloader: null,
-				divfond: null,
-				load: function () {
-				    if (loader.divloader == null) {
-    					loader.divloader = new Element('div');
-    					loader.divloader.setStyles({'vertical-align':'bottom','background-color':'white','border':'1px solid black','width':'100px','height':'100px','top': window.getScrollTop().toInt()+window.getHeight ().toInt()/2-50+'px','left':window.getScrollLeft().toInt()+window.getWidth ().toInt()/2-50+'px','position':'absolute','text-align':'center','background-image':'url(".CopixUrl::getResource('img/tools/load.gif').")','background-repeat':'no-repeat','background-position':'center','zIndex':999});
-    					loader.divloader.injectInside(document.body);
-						cancel = new Element('input');
-						cancel.setProperty('type','button');
-						cancel.setProperty('value','Annuler');
-						cancel.setStyle('margin-top','75px');
-						cancel.addClass('copixlist_cancel');
-						cancel.injectInside(loader.divloader);
-						cancel.addEvent('click', function () {
-    						if (javascripts$this->_id.currentAjax != null) {
-    							javascripts$this->_id.currentAjax.cancel();
-								javascripts$this->_id.currentAjax = null;
-    							loader.unload();
-            					$('submit_$this->_id').setOpacity(1);
-    						}
-						});
-						loader.divfond = new Element('div');
-						loader.divfond.setStyles({'width':window.getWidth(),'height':window.getHeight(),'top': window.getScrollTop(),'left':window.getScrollLeft(),'position':'absolute','text-align':'center','background-color':'black','zIndex':998});
-						loader.divfond.setOpacity(0.5);
-						loader.divfond.injectInside(document.body);
-    				} else {
-						loader.divloader.setStyles({'background-color':'white','border':'1px solid black','width':'100px','height':'100px','top': window.getScrollTop().toInt()+window.getHeight ().toInt()/2-50+'px','left':window.getScrollLeft().toInt()+window.getWidth ().toInt()/2-50+'px','position':'absolute','text-align':'center','background-image':'url(".CopixUrl::getResource('img/tools/load.gif').")','background-repeat':'no-repeat','background-position':'center','zIndex':999});
-						loader.divfond.setStyles({'width':window.getWidth(),'height':window.getHeight(),'top': window.getScrollTop(),'left':window.getScrollLeft(),'position':'absolute','text-align':'center','background-color':'black','zIndex':998});
-    					loader.divloader.setStyle('visibility','');
-						loader.divfond.setStyle('visibility','');
-    				}
-					loader.divfond.fixdivShow();
-				},
-				unload: function () {
-					if (loader.divloader != null) {
-				    	loader.divloader.setStyle('visibility','hidden');
-						loader.divfond.setStyle('visibility','hidden');
-				   	}
-					loader.divfond.fixdivHide();
-				}
-				
-				};
-        		var javascripts$this->_id = {
-					currentAjax: null,
-        			gettable : function () {
-						try {
-        					$$('#searchform$this->_id input, #searchform$this->_id select ').each(function (el) { el.fireEvent('formsubmit'); });
-						} catch (e) {}
-						try {
-        					$('submit_$this->_id').setOpacity(0);
-						} catch (e) {}
-						loader.load();
-        				this.currentAjax = new Ajax('"._url ('generictools|copixlist|getTable',array('table_id'=>$this->_id))."', {
-        					method: 'post',
-        					postBody: $('searchform$this->_id'),
-        					update: $('divlist_$this->_id'),
-        					evalScripts : true,
-        					onComplete: function () {
-								javascripts$this->_id.currentAjax = null;
-								loader.unload();
-        						$('submit_$this->_id').setOpacity(1);
-    							todo_$this->_id.doEvent ();
-        					}
-        				});
-						this.currentAjax.request();
-        			},
-					goToPage : function (page) {
-						loader.load();
-						new Ajax('"._url ('generictools|copixlist|getTable',array('table_id'=>$this->_id,'submit'=>'false'))."', {
-        					method: 'post',
-        					update: $('divlist_$this->_id'),
-        					evalScripts : true,
-							data : { 'page_$this->_id':page },
-        					onComplete: function () {
-								loader.unload();
-								todo_$this->_id.doEvent ();
-        					}
-        				}).request();
-					},
-					 orderby : function (champ,el) {
-						loader.load();
-					    new Ajax('"._url ('generictools|copixlist|getTable',array('table_id'=>$this->_id,'submit'=>'false'))."', {
-        					method: 'post',
-        					update: $('divlist_$this->_id'),
-        					evalScripts : true,
-							data : { 'order_$this->_id':champ },
-        					onComplete: function () {
-								loader.unload();
-								todo_$this->_id.doEvent ();
-        					}
-        				}).request();
-					}
-        		};
-
-				
-			";            
-        } else {
-            $javascript = "
-				var javascripts$this->_id = {
-        			gettable : function () {
-						try {
-						$('searchform$this->_id').submit ();
-						} catch (e) {}
-					},
-					goToPage : function (page) {
-						document.location.href = '"._url('#',array('submit'=>'false'))."&page_$this->_id=page';
-					},
-					orderby : function (champ,el) {
-						document.location.href = '"._url('#',array('submit'=>'false'))."&order_$this->_id=champ';
-					}
-
-				};
-			";
+        _tag ('mootools', array('plugin'=>'overlayfix'));
+        CopixHTMLHeader::addJSLink(_resource('js/taglib/copixlist.js'));
+        if ($this->_url !== null) {
+        	CopixHTMLHeader::addJSDOMReadyCode('copixlist_setnonajax ("'.$this->_id.'","'._url('#',array('submit'=>'false')).'");');
         }
-        CopixHTMLHeader::addJSCode($javascript);
-
-        
-        $domready = "
-		var todo_$this->_id = {
-					doEvent: function () {
-						$$('.copixlistorder$this->_id').each(function (el) {
-							var rel = el.getProperty('rel'); 
-								el.setStyle('cursor','pointer');
-								el.addEvent('click', function () {
-								javascripts$this->_id.orderby(rel,el);
-							});});
-					   }
-					};
-		window.addEvent('domready',function() {
-			// Lance toutes les inscriptions d'événements
-			/*$$('#searchform$this->_id input').each(function (el) {
-				el.addEvent('keydown', function (e) {
-					var e = new Event (e);
-					if (e.code == 13) {
-						//javascripts$this->_id.gettable();
-					}
-				});
-			});*/
-			$$('#submit_$this->_id').each(function (el) {
-			  el.setStyle('cursor','pointer'); 
-			  el.addEvent('click', function () {
-				javascripts$this->_id.gettable();
-			});});
-			
-			$$('#reset_$this->_id').each (function (el) {
-				el.setStyle('cursor','pointer');
-				el.addEvent('click', function () {
-					$('searchform$this->_id').fireEvent('reset');
-				});
-			});
-
-			var el = $('searchform$this->_id');
-				if (el != null) {
-        			el.addEvent('reset', function (e) {
-						try {
-        				var e = new Event(e);
-        				e.stop();
-        				e.stopPropagation();
-						} catch (e) {}
-        				$$('#searchform$this->_id input').each( function (el) {
-        					if (el.getProperty('type')!='button' && el.getProperty('type')!='submit' && el.getProperty('type')!='reset' && el.getProperty('type')!='checkbox') {
-        						el.value = '';
-        					} else if (el.getProperty('type') == 'checkbox') {
-        						el.checked = false;
-        					}
-        					el.fireEvent('reset');
-    					});
-    				});
-				}
-			todo_$this->_id.doEvent ();
-		});
-		";
-        CopixHTMLHeader::addJSCode($domready);
-        
+		CopixHTMLHeader::addJSDOMReadyCode('copixlist_launch ("'.$this->_id.'")');
     }
 }
 

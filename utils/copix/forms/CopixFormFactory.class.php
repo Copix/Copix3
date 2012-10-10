@@ -2,14 +2,50 @@
 /**
 * @package		copix
 * @subpackage	forms
-* @author		Croës Gérald
+* @author		Croës Gérald, Salleyron Julien
 * @copyright	CopixTeam
 * @link			http://copix.org
 * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
 * @experimental
 */
  
-class CopixFormException extends Exception {}
+class CopixFormCheckException extends CopixException {
+	
+	private $_arErrors = array ();
+	
+	public function __construct ($pMessage, $pField = null) {
+		if (is_array($pMessage)) {
+			$this->_arErrors = $this->_arErrors + $pMessage; 
+		} else {
+			if ($pField != null) {
+			    $this->_arErrors[$pField] = $pMessage;
+			} else {
+				$this->_arErrors[] = $pMessage;
+			}
+		}
+		parent::__construct ($this->getErrorMessage());
+	}
+	
+	public function getErrors () {
+		return $this->_arErrors;
+	}
+	
+	public function getErrorMessage () {
+		$toReturn = '';
+		foreach ($this->_arErrors as $key=>$error) {
+			if (is_array($error)) {
+				foreach ($error as $errorMessage) {
+					$toReturn .= $key.' : '.$errorMessage."\n";
+				}
+			} else {
+				$toReturn .= $key.' : '.$error."\n";
+			}
+		}
+		return $toReturn;
+	}
+}
+
+class CopixFormException extends CopixException {} 
 
 /**
  * Classe principale pour CopixForm
@@ -38,7 +74,7 @@ class CopixFormFactory {
 		if ($pId === null){
 		    if (CopixFormFactory::getCurrentId () === null) {
 		    	//@TODO I18N
-		    	throw new CopixException ("Aucun ID en cours, vous devez en spécifier un pour votre formulaire");
+		    	throw new CopixFormException ("Aucun ID en cours, vous devez en spécifier un pour votre formulaire");
 		    } else {
 		        $pId = CopixFormFactory::getCurrentId ();
 		    }
@@ -47,18 +83,18 @@ class CopixFormFactory {
 		CopixFormFactory::setCurrentId ($pId);
 
 		//le formulaire existe ?
-		if (isset ($_SESSION['COPIX']['FORMS'][$pId])){
-			return $_SESSION['COPIX']['FORMS'][$pId];
+		
+		$form = CopixSession::get($pId, 'COPIXFORM');
+		if ($form === null){
+			$form = new CopixForm ($pId);
+			CopixSession::set($pId, $form, 'COPIXFORM');
 		}
-
-		//Création du nouveau formulaire
-		return $_SESSION['COPIX']['FORMS'][$pId] = new CopixForm ($pId);
+		return $form;
+		
 	}
 	
 	public static function delete ($pId) {
-	    if (isset ($_SESSION['COPIX']['FORMS'][$pId])){
-	        unset($_SESSION['COPIX']['FORMS'][$pId]);
-	    }
+	    CopixSession::set($pId, null, 'COPIXFORM');
 	}
 }
 ?>

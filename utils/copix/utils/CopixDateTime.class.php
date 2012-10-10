@@ -9,6 +9,16 @@
 */
 
 /**
+ * Gestion des exceptions pour CopixDateTime 
+ * 
+ * @package		copix
+ * @subpackage	utils
+ */
+class CopixDateTimeException extends CopixException {
+	
+}
+
+/**
  * Classe de manipulation des dates
  * @package copix
  * @subpackage utils
@@ -280,11 +290,16 @@ class CopixDateTime {
 	 * @param string $separator Separateur
 	 * @return int Un timestamp
 	 */
-	public static function dateToTimestamp($date, $separator='/') {
-	    $yyyymmdd = self::dateToYYYYMMDD ($date, $separator);
-	    return self::yyyymmddToTimestamp ($yyyymmdd);
+	public static function dateToTimestamp ($pParam, $separator='/') {
+	    if (($pParam !== false) && (($pParam === null) || (strlen ($pParam = trim ($pParam)) === 0))){
+			return null;
+		}
+		if (($yyyymmdd = self::dateToYYYYMMDD ($pParam, $separator)) === false){
+			return false;
+		}
+		return self::yyyymmddToTimestamp ($yyyymmdd); 
 	}
-
+	
 	/**
 	 * Convertit yyyymmddhhiiss en DateTime
 	 *
@@ -346,6 +361,16 @@ class CopixDateTime {
 		}
         return strftime ('%Y%m%d%H%M%S', $timestamp);
     }
+    
+    /**
+     * Converti un timestamp en DateTime 
+     * @param	int	$pTimestamp	le timestamp à convertir
+     * @param	int	$pSeparator	le séparateur à utiliser	
+     * @return string
+     */
+    public static function timestampToDateTime ($pTimestamp, $pSeparator = '/'){
+    	return self::yyyymmddhhiissToDateTime (self::timeStampToyyyymmddhhiiss ($pTimestamp), $pSeparator);
+    }
 	
     /**
      * Convertit yyyymmddhhiiss en timestamp
@@ -385,7 +410,7 @@ class CopixDateTime {
 	 * @param string $pParam	l'heure à convertir
 	 * @return	string / false en cas d'erreur
 	 */
-	function hhiissToTimeStamp ($pParam){
+	public static function hhiissToTimeStamp ($pParam){
 	    //On vérifie que la date donnée est remplie
 		if (($pParam !== false) && (($pParam === null) || (strlen ($pParam = trim ($pParam)) === 0))){
 			return null;
@@ -554,6 +579,85 @@ class CopixDateTime {
 	 */
 	public static function timeToHHMMSS ($pHHIISS, $pSeparator=':'){
 		return self::timeToHHIISS ($pHHIISS, $pSeparator);
+	}
+	
+	/**
+	 * Retourne la différence entre $pBaseDate et $pToDate
+	 * Cette méthode n'utilisant pas de timestamp, on peut avoir des dates antérieures au 01/01/1970
+	 *
+	 * @param string $pBaseDate Date de départ, format yyyymmdd
+	 * @param string $pToDate Date d'arrivée, format yyyymmdd (date du jour par défaut ou si = null)
+	 * @return CopixPpo
+	 */
+	static public function getDiff ($pBaseDate, $pToDate = null) {
+		// si $pToTimestamp est null, on prend la date du jour
+		if (is_null ($pToDate)) {
+			$pToDate = date ('Ymd');
+		}
+		
+		if (strlen ($pBaseDate) != 8) {
+			throw new CopixDateTimeException (_i18n ('copix:copixdatetime.getdiff.invalidBaseDate', $pBaseDate));
+		}
+		if (strlen ($pToDate) != 8) {
+			throw new CopixDateTimeException (_i18n ('copix:copixdatetime.getdiff.invalidToDate', $pToDate));
+		}
+		
+		$baseYear = substr ($pBaseDate, 0, 4);
+		$baseMonth = substr ($pBaseDate, 4, 2);
+		$baseDay = substr ($pBaseDate, 6, 2);
+		
+		$toYear = substr ($pToDate, 0, 4);
+		$toMonth = substr ($pToDate, 4, 2);
+		$toDay = substr ($pToDate, 6, 2);
+		
+		if (!checkdate ($baseMonth, $baseDay, $baseYear)) {
+			throw new CopixDateTimeException (_i18n ('copix:copixdatetime.getdiff.invalidBaseDate', $pBaseDate));
+		}
+		if (!checkdate ($toMonth, $toDay, $toYear)) {
+			throw new CopixDateTimeException (_i18n ('copix:copixdatetime.getdiff.invalidToDate', $pToDate));
+		}
+		
+		// calcul du nombre d'années
+		$diffYear = $toYear - $baseYear;
+		
+		// calcul du nombre de mois
+		if ($baseMonth > $toMonth) {
+			$diffYear = ($diffYear > 0) ? $diffYear - 1 : $diffYear;
+			$diffMonth = (12 + $toMonth) - $baseMonth;
+		} else {
+			$diffMonth = $toMonth - $baseMonth;
+		}
+		
+		// calcul du nombre de jours
+		if ($baseDay > $toDay) {
+			if ($diffMonth > 0) {
+				$diffMonth--;
+			} else {
+				$diffMonth = 11;
+				$diffYear--;
+			}
+			$base1970 = mktime (0, 0, 0, $baseMonth, $baseDay, 1970); 
+			$to1970 = mktime (0, 0, 0, ($baseMonth + 1), $baseDay, 1970);
+			$diffDay = ($to1970 - $base1970) / (24 * 3600);
+		} else {
+			$diffDay = $toDay - $baseDay;
+		}
+		return new CopixPpo (array ('year' => $diffYear, 'month' => $diffMonth, 'day' => $diffDay));
+	}
+	
+	/**
+	 * Vérifie que $pMonth, $pDay et $pYear sont des chiffres uniquement, et effectue un checkdate PHP
+	 *
+	 * @param int $pMonth
+	 * @param int $pDay
+	 * @param int $pYear
+	 * @return boolean
+	 */
+	static public function checkDate ($pMonth, $pDay, $pYear) {
+		if (!preg_match ('/^[0-9]{1,2}$/', $pMonth) || !preg_match ('/^[0-9]{1,2}$/', $pDay) || !preg_match ('/^[0-9]{1,4}$/', $pYear)) {
+			return false;
+		}
+		return checkdate ($pMonth, $pDay, $pYear);
 	}
 }
 ?>

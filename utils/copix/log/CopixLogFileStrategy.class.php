@@ -37,7 +37,7 @@ class CopixLogFileStrategy implements ICopixLogStrategy {
      */
     public function log ($pProfil, $pType, $pLevel, $pDate, $pMessage, $pArExtra){
         $csvLogFile = new CopixCsv($this->_getFileName($pProfil));
-        $csvLogFile->addLine($this->_getArInfosLog ($pType, $pDate, $pMessage, $pLevel, $pArExtra));
+        return $csvLogFile->addLine($this->_getArInfosLog ($pType, $pDate, $pMessage, $pLevel, $pArExtra));
     }
 
     /**
@@ -101,55 +101,52 @@ class CopixLogFileStrategy implements ICopixLogStrategy {
         if (file_exists ($fileName = $this->_getFileName ($pProfil))){
             unlink ($fileName);
         }
+        // Suppression des variables de sessions
+        CopixSession::set ('log|numpage', 1);
+        CopixSession::set ('log|nbpage', 1);
     }
 
     /**
      * Retourne les logs sous forme d'itérateur
      */
-    public function getLog ($pProfil){
+    public function getLog ($pProfil, $pNbItems = 20){
         $page = CopixSession::get('log|numpage')-1;
-        $nbItemsByPage = 20;
          
         if (file_exists ($this->_getFileName ($pProfil))){
-
             // Création d'un objet CopixCSV pour contenir le contenu du fichier
             $csvLog = new CopixCsv($this->_getFileName ($pProfil));
-            $time_start = microtime(true);
-            $csvLines      = $csvLog->getIterator();
+
             
-            $csvNbLines    = $csvLines->count();
-            
+            // Récupération de l'itérateur et compte du nombre de ligne
+            $csvLines = $csvLog->getIterator();
+            $csvNbLines = $csvLines->count();
             
             // Calcul de la position et des offset
-            $pPosition     = ($csvNbLines - ($page*$nbItemsByPage))-$nbItemsByPage;
+            $pPosition = ($csvNbLines - ($page*$pNbItems))-$pNbItems;
             
-            
-            // Attention dans le cas des logs on parcourt le fichier à rebours
+            // Calcul de la position de départ pour parcourir la portion du fichier à afficher
             if ($pPosition < 0) {
-                $pOffset = $nbItemsByPage + $pPosition;
+                $pOffset = $pNbItems + $pPosition;
                 $pPosition = 0; 
             } else {
-                $pOffset = $nbItemsByPage;
+                $pOffset = $pNbItems;
+                $pPosition -= 1;
             }
             
             $csvLines->seek($pPosition);
-            
+            $content = array();
             for ($i = 0 ; $i < $pOffset ; $i++) {
-                $content[] = $csvLines->next();
+                $content[] = $csvLines->current ();
+                $csvLines->next ();
             }
 
             $content = array_reverse ($content);
-            // Bug sur l'itérateur	
-            // array_shift($content);
-            CopixSession::set ('log|nbpage', ceil($csvNbLines/$nbItemsByPage));
-            	
-            $time_end = microtime(true);
-            $time = $time_end-$time_start;
-            _log("Temps de récupérations des lignes CSV:".$time,"performance",CopixLog::INFORMATION);
 
+            CopixSession::set ('log|nbpage', ceil($csvNbLines/$pNbItems));
+            	
             $arrayObject = new ArrayObject (array_map (array ($this, 'toObject'), $content));
             return $arrayObject->getIterator ();
-        }
+        } 
         return new ArrayObject ();
     }
 

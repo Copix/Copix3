@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0"?>
 <moduledefinition>
  <general>
   <default name="chart" description="Chart" longdescription="Chart" icon="chart.png" />

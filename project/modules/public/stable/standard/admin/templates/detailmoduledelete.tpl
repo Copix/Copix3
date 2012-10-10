@@ -31,14 +31,13 @@
 			{i18n key='install.module.description'}
 		</td>
 		<td>
-		    {if $info->longdescription}
-				{$info->longdescription}
+		    {if $info->longDescription}
+				{$info->longDescription}
 			{else}
 				{$info->description}
 			{/if}
 		</td>
 	</tr>
-	
     <tr>
         <td>
             {i18n key='install.module.dependency'}
@@ -51,7 +50,10 @@
             {/foreach}
         </td>
     </tr>
-    
+	<tr>
+	 <td>{i18n key="install.module.path"}</td>
+	 <td>{$path}</td>
+	</tr>
     <tr>
     	<td colspan="2" align="center">
     	<br />

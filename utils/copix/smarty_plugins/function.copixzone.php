@@ -24,7 +24,10 @@ function smarty_function_copixzone ($params, &$me) {
 	if (isset ($params['assign'])){
 		$assign = $params['assign'];
 		unset ($params['assign']);
+	}else{
+		$assign = null;
 	}
+
 	$toReturn = _tag ('copixzone', $params);
 	if (strlen ($assign) > 0) {
 		$me->assign ($assign, $toReturn);

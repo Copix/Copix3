@@ -5,7 +5,7 @@ CREATE TABLE `bench_news` (
   `datetime_bench_news` varchar(14) NOT NULL,
   `author_bench_news` varchar(20) NOT NULL,
   PRIMARY KEY  (`id_bench_news`)
-) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+) CHARACTER SET utf8;
 
 INSERT INTO `bench_news` (`id_bench_news`, `title_bench_news`, `content_bench_news`, `datetime_bench_news`, `author_bench_news`) VALUES (1, 'Copix & Jelix Benchmark', '<p>Enfin un vrai comparatif de performances entre les deux framework issus du même tronc commun.</p>\r\n\r\n</p>La table bench_news est destinée à contenir des informations "foo" histoire d''avoir des choses à comparer.</p>', '20070104140000', 'Gérald & Laurent'),
 (2, 'Jelix plus rapide que Copix  ?', '<p>D''après Laurent, c''est sûr, Jelix est plus rapide que Copix.</p>\r\n\r\n<p>C''est ce que ce test va tenter de démontrer avec plusieurs pages tests représentatives, avec les mêmes templates et les mêmes données.</p>\r\n\r\n<p>Que le meilleur gagne !</p>', '20070104140000', 'Laurent'),

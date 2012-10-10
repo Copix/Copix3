@@ -12,7 +12,7 @@
 * @package		copix
 * @subpackage	taglib
 */
-class TemplateTagCopixLogo {
+class TemplateTagCopixLogo extends CopixTemplateTag {
     
     public function process($pParams) {
     extract ($pParams);

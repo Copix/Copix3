@@ -4,7 +4,7 @@ CREATE TABLE `news_3` (
 `summary_news` TEXT NOT NULL ,
 `content_news` TEXT NOT NULL ,
 `date_news` DATE NOT NULL
-);
+) CHARACTER SET utf8;
 
 INSERT INTO `news_3` (
 `id_news` ,

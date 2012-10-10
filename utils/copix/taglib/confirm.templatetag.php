@@ -19,7 +19,7 @@ class TemplateTagConfirm extends CopixTemplateTag {
         $toReturn = '    '.$pContent.'<br /><br />';
         $toReturn .= '    <a href="'.CopixUrl::get($pParams['yes']).'">'._i18n('copix:common.buttons.yes').'</a>';
         $toReturn .= '    <a href="'.CopixUrl::get($pParams['no']).'">'._i18n('copix:common.buttons.no').'</a>';
-        
+        _tag('mootools');
         CopixHTMLHeader::addJsCode ("
 		window.addEvent('domready', function () {
 			var elem = new Element('div');

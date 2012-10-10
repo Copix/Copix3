@@ -15,7 +15,7 @@
  * @subpackage	utils
  */
 class CopixFile {
-	
+
 	const DIRMOD=0755;
 	const FILEMOD=0770;
 
@@ -56,11 +56,9 @@ class CopixFile {
 		if(!@is_writable ($_dirname)) {
 			// cache_dir not writable, see if it exists
 			if(!@is_dir ($_dirname)) {
-				trigger_error (CopixI18N::get ('copix:copix.error.cache.directoryNotExists', array ($_dirname)));
-				return false;
+				throw new Exception (_i18n ('copix:copix.error.cache.directoryNotExists', array ($_dirname)));
 			}
-			trigger_error (CopixI18N::get ('copix:copix.error.cache.notWritable', array ($file, $_dirname)));
-			return false;
+			throw new Exception (_i18n ('copix:copix.error.cache.notWritable', array ($file, $_dirname)));
 		}
 
 		// write to tmp file, then rename it to avoid
@@ -70,8 +68,7 @@ class CopixFile {
 		if (!($fd = @fopen ($_tmp_file, 'wb'))) {
 			$_tmp_file = $_dirname . '/' . uniqid('wrt');
 			if (!($fd = @fopen ($_tmp_file, 'wb'))) {
-				trigger_error(CopixI18N::get ('copix:copix.error.cache.errorWhileWritingFile', array ($file, $_tmp_file)));
-				return false;
+				throw new Exception (_i18n ('copix:copix.error.cache.errorWhileWritingFile', array ($file, $_tmp_file)));
 			}
 		}
 
@@ -85,7 +82,7 @@ class CopixFile {
 			if (file_exists ($file)) {
 				@unlink ($file);
 			}
-			@copy($_tmp_file, $file);//Sur certaines configuration bien particulières, il arrive que 
+			@copy($_tmp_file, $file);//Sur certaines configuration bien particulières, il arrive que
 			//windows echoue sur le rename... ?
 			@unlink($_tmp_file);
 		}else{
@@ -96,10 +93,42 @@ class CopixFile {
 	}
 
 	/**
+	 * Effacer un fichier
+	 *
+	 * @param	string	$pFilename	Le chemin du fichier à effacer
+	 * @return 	boolean 	si le fichier est effacé
+	 * <code>
+	 *    $isDeleted = CopixFile::delete (COPIX_VAR_PATH.'fichier_de_donnees.dat');
+	 * </code>
+	 */
+	public function delete ($pFilename) {
+		$_dirname = dirname ($pFilename);
+
+		// On vérifie si on n'a pas un fichier
+		if ((($lastChar = substr ($pFilename, -1)) == '/') || ($lastChar == '\\')){
+			return false;
+		}
+
+		if(!@is_writable ($_dirname)) {
+			// On ne dispose pas des droits d'écriture, vérifions si le répertoire existe
+			if(!@is_dir ($_dirname)) {
+				throw new Exception (_i18n ('copix:copix.error.cache.directoryNotExists', array ($_dirname)));
+			}
+			throw new Exception (_i18n ('copix:copix.error.cache.notWritable', array ($file, $_dirname)));
+		}
+
+		if (@unlink($pFilename)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Création d'une arborescence de répertoires
 	 *
 	 * @param	string	$dir	La structure à créer
-	 * @return	bool 	si le repertoire est créé ou existe on retourne vrai, faux sinon 
+	 * @return	bool 	si le repertoire est créé ou existe on retourne vrai, faux sinon
 	 * @access private
 	 */
 	private static function _createDir ($dir){
@@ -144,7 +173,7 @@ class CopixFile {
 					$_make_new_dir = false;
 					foreach ($_open_basedirs as $_open_basedir) {
 						if (substr($_new_dir, 0, strlen($_open_basedir)) == $_open_basedir) {
-							return$_make_new_dir = true;
+							$_make_new_dir = true;
 							break;
 						}
 					}
@@ -153,8 +182,7 @@ class CopixFile {
 				}
 
 				if ($_make_new_dir && !file_exists($_new_dir) && !@mkdir($_new_dir, self::DIRMOD) && !is_dir($_new_dir)) {
-					trigger_error(CopixI18N::get ("copix:copix.error.cache.creatingDirectory", array ($_new_dir)));
-					return false;
+					throw new Exception (_i18n ("copix:copix.error.cache.creatingDirectory", array ($_new_dir)));
 				}
 				$_new_dir .= '/';
 			}
@@ -216,73 +244,155 @@ class CopixFile {
 	}
 
 	/**
-	 * Supression d'une arborescence à partir d'un répertoire donné 
-	 * (récursivement permet donc de supprimer tout les sous repertoire) 
-	 * @param string $pDirectory le nom du répertoire que l'on souhaites supprimer.
-	 * @param boolean $pStopOnFailure indique si l'on doit s'arrêter en cas d'échec de suppression d'un élément
-	 *        (par défaut false) 
-	 * @return true si suppression correcte, array of string si échec de supression.
-	 *    Le tableau contient l'ensemble des fichiers qui ne sont pas supprimés.
+	 * Permet de supprimer ou nettoyer une arborescence de fichiers.
+	 *
+	 * @param string $pDirectory Répertoire cible.
+	 * @param array $pFailedList Liste des fichiers/répertoires en erreur.
+	 * @param boolean $pRemoveDirectory true: supprimer le répertoire à la fin de l'opération, false: ne faire que supprimer les fichiers.
+	 * @param boolean $pStopOnFailure true: s'arrêter à la première erreur, false: continuer en cas d'erreur,
+	 * @param ICopixFileFilter $pFileFilter Filtre à appliquer sur le contenu du répertoire.
+	 * @return boolean true si l'opération s'est déroulée normalement, false s'il y a eu une erreur.
 	 */
-	public static function removeDir ($pDirectory, $pStopOnFailure = false){
-	    $pRep = false;
-	    if (substr($pDirectory,strlen($pDirectory)-1)!='/') {
-	        $pDirectory .= '/';
-	        $pRep = true;
-	    }
-		$pDirectoryMask = $pDirectory."*";
-		$failed  = array ();
-		foreach (glob ($pDirectoryMask) as $file) {
-			if (is_dir ($file)) {
-				$response = self::removeDir ($file,$pStopOnFailure);
-				if (!$response && $pStopOnFailure) return $response;
-				if (!$response) $failed = array_merge ($failed, $response);
-			} else {
-				if (! @unlink ($file)){
-					$failed[] = $file;
-					if ($pStopOnFailure){
-						return array ($failed);
-					}
-				}
+	private static function _deleteDirectory($pPath, &$pFailed, $pRemoveDirectory, $pStopOnFailure, $pFilterCallback) {
+		// Initialidation de $toReturn
+		$toReturn = true;
+	  
+		// Récupère le contenu du répertoire
+		$entries = glob(self::trailingSlash($pPath).'*');
+
+		// Compte le nombre d'entrées (avant filtrage)
+		$remaining = count($entries);
+
+		// Applique le filter
+		if($pFilterCallback) {
+			$entries = array_filter($entries, $pFilterCallback);
+		}
+
+		// Traite les entrées
+		foreach($entries as $entry) {
+				
+			if(is_dir($entry)) {
+				// Répertoire : suppresion récursive
+				$toReturn = self::_deleteDirectory($entry, $pFailed, $pRemoveDirectory, $pStopOnFailure, $pFilterCallback);
+
+			} elseif(!($toReturn = (@unlink($entry) ? true : false))) {
+				// Fichier : simple suppression
+				$pFailed[] = $entry;
+			}
+			// Gère le code de retour
+			if($toReturn) {
+				// Entrée supprimée : on réduit le nombre restant
+				$remaining--;
+			} elseif($pStopOnFailure) {
+				// Erreur avec demande d'arrêt : on stop
+				break;
 			}
 		}
-		if ($pRep) 	rmdir(substr($pDirectory,0,strlen($pDirectory)-1));
-		return count ($failed) ? $failed : true;
-	}
 
-	/**
-	 * Supression de tout les fichier d'une arborescence à partir d'un répertoire donné 	
-	 * @param string $pDirectory le nom du répertoire que l'on parser pour la suppression.
-	 * @param boolean $pStopOnFailure indique si l'on doit s'arrêter en cas d'échec de suppression d'un élément
-	 *        (par défaut false) 
-	 * @return true si suppression correcte, array of string si échec de supression.
-	 *    Le tableau contient l'ensemble des fichiers qui ne sont pas supprimés.
-	 */
-	public static function removeFileFromPath ($pDirectory, $pStopOnFailure = false){
-		$pDirectoryMask =$pDirectory."*";
-		$failed  = array ();
-		$files = glob ($pDirectoryMask);
-		if (! $files) {
-			$files = array ();
-		}
-
-		foreach ($files as $file) {
-			if (is_dir($file)) {
-				$response=self::removeFileFromPath ($file.'/');
-				if (!$response && $pStopOnFailure) return $failed;
-				if (!$response) $failed = array_merge ($failed, $response);
-				//rmdir($file);
+		// Supprime le répertoire lui-même si demandé et s'il est vide
+		if($toReturn && $pRemoveDirectory) {
+			if($remaining > 0) {
+				// S'il reste des entrées, on ne pourra pas supprimer de toute façon
+				$toReturn = false;
 			} else {
-				if (! @unlink ($file)){
-					$failed[] = $file;
-					if ($pStopOnFailure){
-						return $failed;
-					}
-				}
+				// Tente la suppression
+				$toReturn = @rmdir($pPath) ? true : false;
 			}
 		}
 			
-		return count ($failed) ? $failed : true;
+		// Retourne le résultat de l'opération
+		if(!$toReturn) {
+			$pFailed[] = $pPath;
+		}
+		return $toReturn;
+
+	}
+
+	/**
+	 * Supression d'une arborescence à partir d'un répertoire donné
+	 * (récursivement permet donc de supprimer tout les sous repertoire)
+	 * @param string $pDirectory le nom du répertoire que l'on souhaites supprimer.
+	 * @param boolean $pStopOnFailure indique si l'on doit s'arrêter en cas d'échec de suppression d'un élément
+	 *        (par défaut false)
+	 * @param callback $pFilterCallback Callback utilisé pour savoir si on doit supprimer un fichier ou un répertoire;
+	 *                                  paramètres du callback : chemin du fichier.
+	 * 	 * @return true si suppression correcte, array of string si échec de supression.
+	 *    Le tableau contient l'ensemble des fichiers qui ne sont pas supprimés.
+	 */
+	public static function removeDir ($pDirectory, $pStopOnFailure = false, $pFilterCallback = null){
+		$failed = array();
+		$success = self::_deleteDirectory($pDirectory, $failed, true, $pStopOnFailure, $pFilterCallback);
+		return $success ? true : $failed;
+	}
+
+	/**
+	 * Supression de tout les fichier d'une arborescence à partir d'un répertoire donné
+	 * @param string $pDirectory le nom du répertoire que l'on parser pour la suppression.
+	 * @param boolean $pStopOnFailure indique si l'on doit s'arrêter en cas d'échec de suppression d'un élément
+	 *        (par défaut false)
+	 * @param callback $pFilterCallback Callback utilisé pour savoir si on doit supprimer un fichier ou un répertoire;
+	 *                                  paramètres du callback : chemin du fichier.
+	 * @return true si suppression correcte, array of string si échec de supression.
+	 *    Le tableau contient l'ensemble des fichiers qui ne sont pas supprimés.
+	 */
+	public static function removeFileFromPath ($pDirectory, $pStopOnFailure = false, $pFilterCallback = null){
+		$failed = array();
+		$success = self::_deleteDirectory($pDirectory, $failed, false, $pStopOnFailure, $pFilterCallback);
+		return $success ? true : $failed;
+	}
+
+	/**
+	 * Implémentation de la recherche de fichiers.
+	 *
+	 * @param array $result Liste en cours de construction
+	 * @param string $basePath Chemin de base parcouru.
+	 * @param string $relativePath Chemin relatif par rapport au chemin de base.
+	 * @param integer $depth Profondeur par rapport au chemin de base.
+	 * @param callback $entryFilter Callback utilisé pour déterminer si un fichier ou un répertoire doit être listé.
+	 * @param callback $recurseFilter Callback utilisé pour déterminer si on doit descendre dans un répertoire
+	 */
+	private static function _findFiles(&$result, $basePath, $relativePath, $depth, $entryFilter, $recurseFilter) {
+
+		$entries = glob($basePath.$relativePath.'*');
+		foreach($entries as $entry) {
+			$entryRelativePath = $relativePath.basename($entry);
+			$entryFullPath = $basePath.$entryRelativePath;
+			$entryDepth = $depth+1;
+			// Si c'est un répertoire, détermine si on doit entrer dedans
+			$doRecurse = is_dir($entry) && (!$recurseFilter || call_user_func($recurseFilter, $entryFullPath, $entryRelativePath, $basePath, $entryDepth));
+			// Dans tous les cas, demande si on le liste
+			if(!$entryFilter || call_user_func($entryFilter, $entryFullPath, $entryRelativePath, $basePath, $entryDepth)) {
+				$result[] = $entry;
+			}
+			// Appel récursif quand nécessaire.
+			if($doRecurse) {
+				self::_findFiles($result, $basePath, $entryRelativePath.'/', $entryDepth, $entryFilter, $recurseFilter);
+			}
+		}
+	}
+
+	/**
+	 * Recherche des fichiers et répertoires répondant à des critères spécifiés.
+	 *
+	 * Les deux callbacks que l'on peut passer en paramètres doit avoir la forme :
+	 * function($fullPath, $relativePath, $basePath, $depth).
+	 *
+	 * @param array $basePaths Une liste des répertoires dans lesquels chercher.
+	 * @param callback $entryFilter Callback utilisé pour déterminer si un fichier ou un répertoire doit être listé.
+	 * @param callback $recurseFilter Callback utilisé pour déterminer si on doit descendre dans un répertoire
+	 * @return array Liste des fichiers et répertoires trouvés.
+	 */
+	public static function findFiles($basePaths, $entryFilter = null, $recurseFilter = null) {
+
+		if(!is_array($basePaths)) {
+			$basePaths = array($basePaths);
+		}
+		$result = array();
+		foreach($basePaths as $basePath) {
+			$basePaths = self::trailingSlash($basePath);
+			self::_findFiles($result, $basePath, '', 0, $entryFilter, $recurseFilter);
+		}
+		return $result;
 	}
 
 	/**
@@ -313,7 +423,110 @@ class CopixFile {
 	 */
 	public static function extractFileExt ($pFileName){
 		$pFileName = self::extractFileName ($pFileName);
-		return substr ($pFileName, strrpos ($pFileName, '.'));
+		if (($pos = strrpos ($pFileName, '.')) !== false){
+			return substr ($pFileName, $pos);
+		}
+		return null;
 	}
+
+	/**
+	 * Retourne l'icone associée au fichier
+	 * @param	string	$pFileName	le nom du fichier
+	 * @return string	le chemin de l'icone
+	 */
+	public static function getIcon ($pFileName){
+		switch (self::extractFileExt ($pFileName)){
+			case '.gif':
+			case '.png':
+			case '.jpg':
+			case '.jpeg':
+			case '.bmp':
+				return 'img/mimetypes/image.png';
+			case '.doc':
+			case '.odt':
+				return 'img/mimetypes/office-document.png';
+			case '.txt':
+				return 'img/mimetypes/text.png';
+			case '.sh':
+				return 'img/mimetypes/script.png';
+			case '.xls':
+				return 'img/mimetypes/office-speadshit.png';
+			case '.ppt':
+			case '.pps':
+			case '.odp':
+			case '.sxi':
+			case '.fodp':
+				return 'img/mimetypes/office-presentation.png';
+			case '.odg':
+			case '.sxd':
+				return 'img/mimetypes/office-drawing.png';
+			case '.zip':
+			case '.gz':
+			case '.bz2':
+			case '.rar':
+				return 'img/mimetypes/archive.png';
+			case '.php':
+			case '.php5':
+			case '.php4':
+			case '.php3':
+			case '.ptpl':
+				return 'img/mimetypes/php.png';
+			case '.html':
+			case '.xhtml':
+			case '.htm':
+				return 'img/mimetypes/html.png';
+			case '.tpl':
+				return 'img/mimetypes/text-template.png';
+			case '.avi':
+			case '.mpg':
+			case '.wmv':
+			case '.mp4':
+				return 'img/mimetypes/video.png';
+			case '.wav':
+			case '.mp3':
+			case '.ogg':
+			case '.wma':
+				return 'img/mimetypes/audio.png';
+			case '.exe':
+				return 'img/mimetypes/executable.png';
+			default :
+				return 'img/mimetypes/unknown.png';
+		}
+	}
+
+	/**
+	 * Liste des préfixes COPIX_*_PATH du plus spécifique au moins spécifique.
+	 *
+	 * @var array
+	 */
+	private static $_copixPathPrefixes = array(
+		'COPIX_CACHE_PATH',
+		'COPIX_LOG_PATH',
+		'COPIX_TEMP_PATH',
+		'COPIX_VAR_PATH',
+		'COPIX_PROJECT_PATH',
+		'COPIX_SMARTY_PATH',
+		'COPIX_UTILS_PATH',
+		'COPIX_CORE_PATH',
+		'COPIX_PATH',	
+	);
+
+	/**
+	 * Détermine si un chemin peut-être défini relativement à l'une des constantes COPIX_*_PATH.
+	 *
+	 * @param string $pPath Chemin à analyser.
+	 * @return array Un tableau array($prefixe, $cheminRelatif), si aucun préfixe ne correspond $prefixe == null
+	 */
+	public static function getCopixPathPrefix($pPath) {
+		foreach(self::$_copixPathPrefixes as $key) {
+			@list(,$relativePath) = explode(constant($key), $pPath);
+			if($relativePath) {
+				return array($key, $relativePath);
+			}
+		}
+		return array(null, $pPath);
+	}
+
 }
+
 ?>

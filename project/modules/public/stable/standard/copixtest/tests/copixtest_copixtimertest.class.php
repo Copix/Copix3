@@ -3,7 +3,7 @@
 * @package		standard
 * @subpackage	copixtest
 * @author		Croës Gérald
-* @copyright	2001-2006 CopixTeam
+* @copyright	2001-2008 CopixTeam
 * @link			http://copix.org
 * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
 */
@@ -13,25 +13,40 @@
  * @subpackage	copixtest
  */
 class CopixTest_CopixTimerTest extends CopixTest {
+
 	/**
 	 * Test des fonctionnalités simples de timing
 	 */
 	function testSimple (){
 		$timer = new CopixTimer ();
+
+		// Test du timer
 		$timer->start ();
 		usleep (100000);
 		$result = $timer->stop ();
-		$this->assertTrue ($result > 0.1);
-		$this->assertTrue ($result < 0.2);
+		$this->assertTrue ($result >= 0.1);
+		$this->assertTrue ($result <= 0.2);
+
+
+		// Test de la récupération d'un intervalle
+		$timer->start ();
+		usleep (100000);
+		$result = $timer->getInter();
+		$this->assertTrue ($result >= 0.1);
+		$this->assertTrue ($result <= 0.2);
+		usleep (100000);
+		$result = $timer->stop ();
+		$this->assertTrue ($result >= 0.2);
+		$this->assertTrue ($result <= 0.3);
 	}
-	
+
 	/**
 	 * Test d'appels multiples
 	 */
 	public function notestNestedCalls (){
 		ob_start ();
 		$results = array ();
-		
+
 		$timer = new CopixTimer ();
 		$arrayOfWaitingTime = array (100000, 200000, 300000, 400000);
 		$sumWaitingTime = array ();
@@ -50,10 +65,11 @@ class CopixTest_CopixTimerTest extends CopixTest {
 		}
 		$this->assertTrue ($totalTime > (array_sum ($arrayOfWaitingTime) / 1000000));
 		$buff = ob_end_clean ();
-		$this->assertEquals ($buff, '');	
+		$this->assertEquals ($buff, '');
 	}
 
 	public function testShow (){
+		// Test d'affichage d'un timer
 		ob_start ();
 		$timer = new CopixTimer ();
 		$timer->start ();
@@ -63,7 +79,18 @@ class CopixTest_CopixTimerTest extends CopixTest {
 		$this->assertTrue ($result <= 0.2);
 		$buff = ob_end_clean ();
 		$this->assertNotEquals ($buff, '');
-	} 
-	
+
+		// Test d'affichage d'un intervalle
+		ob_start ();
+		$timer->start ();
+		usleep (100000);
+		$result = $timer->getInter(true);
+		$this->assertTrue ($result >= 0.1);
+		$this->assertTrue ($result <= 0.2);
+		$buff = ob_end_clean ();
+		$this->assertNotEquals ($buff, '');
+
+	}
+
 }
 ?>

@@ -13,6 +13,21 @@
  * @subpackage	copixtest
  */
 class CopixTest_CopixDBProfileTest extends CopixTest {
+	/**
+	 * Test de connexion à toutes les connexions définies
+	 * On dois faire ce test avant les autres car les autres tests peuvent créer des profils incorrects
+	 */
+	function testAllDefinedProfiles (){
+		foreach (CopixConfig::instance ()->copixdb_getProfiles () as $name){
+			try {
+				CopixDB::getConnection ($name);
+				$this->assertTrue (true);//ok
+			}catch (Exception $exception){
+				$this->assertTrue ($exception->getMessage ());//n'a pas fonctionné 
+			}
+		}
+	}
+
 	public function testMain (){
 		//compte le nombre de profils au départ
 		$nbStart = count (CopixConfig::instance ()->copixdb_getProfiles ());
@@ -43,20 +58,6 @@ class CopixTest_CopixDBProfileTest extends CopixTest {
 		$this->assertEquals ($nbStart+2, count (CopixConfig::instance ()->copixdb_getProfiles ()));
 		$this->assertEquals (CopixConfig::instance ()->copixdb_getProfile ('test2')->getName (),
 		'test2');
-	}
-	
-	/**
-	 * Test de connexion à toutes les connexions définies
-	 */
-	function testAllDefinedProfiles (){
-		foreach (CopixConfig::instance ()->copixdb_getProfiles () as $name){
-			try {
-				CopixDB::getConnection ($name);
-				$this->assertTrue (true);//ok
-			}catch (Exception $exception){
-				$this->assertTrue (false);//n'a pas fonctionné 
-			}
-		}
 	}
 }
 ?>

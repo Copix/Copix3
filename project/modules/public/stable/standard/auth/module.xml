@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <moduledefinition>
+
  <general>
   <default name="auth" longdescriptioni18n="auth.longdescription" descriptioni18n="auth.description" icon="auth.png" />
  </general>
+
  <admin>
   <link captioni18n="auth.adminUsers" url="auth|users|" credentials="basic:admin" />
   <link captioni18n="auth.adminGroups" url="auth|groups|" credentials="basic:admin" />
+  <link captioni18n="auth.adminUserHandlers" url="auth|admin|userHandlers" credentials="basic:admin" />
+  <link captioni18n="auth.adminGroupHandlers" url="auth|admin|groupHandlers" credentials="basic:admin" />
+  <link captioni18n="auth.adminCredentialHandlers" url="auth|admin|credentialHandlers" credentials="basic:admin" />
  </admin>
+
  <parameters>
  	<group captioni18n="auth.group.createUser">
   		<parameter name="createUser" captioni18n="auth.createUser" default="0" type="bool" />
@@ -17,4 +23,20 @@
   		<parameter name="cryptPassword" captioni18n="auth.cryptPassword" type="select" default="md5" listValues="md5=>MD5;sha1=>SHA1;SHA256=>SHA256" />
   	</group>  
  </parameters>
+
+ <userhandlers>
+ 	<userhandler name='dbuserhandler' required='false' />
+ </userhandlers>
+
+ <grouphandlers>
+ 	<grouphandler name='dbgrouphandler' />
+ </grouphandlers>
+ 
+ <credentialhandlers>
+ 	<credentialhandler name='dbcredentialhandler' stopOnSuccess='true' stopOnFailure='false' />
+ 	<credentialhandler name='dbmodulecredentialhandler' stopOnSuccess='true' stopOnFailure='false'>
+ 		<handle name='module' />
+ 	</credentialhandler>
+ </credentialhandlers>
+ 
 </moduledefinition>

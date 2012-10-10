@@ -6,4 +6,4 @@ create table rss_feeds(
 	rss_link varchar(255) not null,
 	rss_category varchar(255) not null,
 	PRIMARY KEY (rss_id)
-);
+) CHARACTER SET utf8;

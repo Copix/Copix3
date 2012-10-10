@@ -34,13 +34,13 @@ function smarty_function_copixlist_field($params, &$me) {
 	if (!isset($params['list'])) {
         $params['list'] = null;
 	}
+	$list = CopixListFactory::get ($params['list']);
 	
-	$list = CopixListFactory::get ($params['id']);
-	
-	if (!isset($params['field'])) {
-		throw new Exception("You must specify a field");
+	if (!isset($params['name'])) {
+		throw new Exception("You must specify a name");
 	}
-	$toReturn = $list->getField($params['field'],$params);
+	$type = (isset ($params['type']) ? $params['type'] : 'varchar');
+	$toReturn = $list->getField ($type, $params);
 
 	
 	if (strlen($assign) > 0){

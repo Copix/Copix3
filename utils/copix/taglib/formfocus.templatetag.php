@@ -12,7 +12,7 @@
  * @package		copix
  * @subpackage	taglib
  */
-class TemplateTagFormFocus {
+class TemplateTagFormFocus extends CopixTemplateTag {
     public function process ($pParams) {
         extract ($pParams);
         if (empty ($id)){

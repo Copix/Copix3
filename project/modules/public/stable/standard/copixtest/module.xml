@@ -4,7 +4,7 @@
   <default name="copixtest" description="Tests unitaires" longdescription="Module de test des classes Copix" icon="copixtest.gif" />
  </general>
  <admin>
-  <link url="copixtest||launch" captioni18n="copixtest.messages.unittest" credentials="basic:admin" />
+  <link url="copixtest|unittest|launch" captioni18n="copixtest.messages.unittest" credentials="basic:admin" />
  </admin>
  <parameters>
   <parameter name="test" caption="Paramètre de test" default="0" />

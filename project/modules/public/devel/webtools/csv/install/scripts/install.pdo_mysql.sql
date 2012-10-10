@@ -3,4 +3,4 @@ CREATE TABLE `csvfile` (
 	`date_csvfile` VARCHAR (14) NOT NULL,
 	`heure_csvfile` VARCHAR ( 6 ) NOT NULL ,
 	`nomfichier_csvfile` VARCHAR ( 50 ) NOT NULL
-) ENGINE = MYISAM ;
+) CHARACTER SET utf8;

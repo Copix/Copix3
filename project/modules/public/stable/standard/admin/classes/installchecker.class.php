@@ -20,16 +20,16 @@ class installChecker {
      *
      * @return boolean
      */
-    public function isValidDefaultDatabase() {
-        try {
+	public function isValidDefaultDatabase() {
+		try {
 			$profilName=CopixConfig::instance ()->copixdb_getDefaultProfileName ();
 			if ($profilName===null) return false;
-	        $ct=CopixDb::getConnection($profilName);
-    	    return true;
-        } catch (Exception $e) {
-            return false;
-        }
-    }
+			$ct = CopixDb::getConnection($profilName);
+		} catch (Exception $e) {
+			return false;
+		}
+		return true;
+	}
     
     /**
      * Retourne vrai ou faux selon que l'admin est possible ou pas

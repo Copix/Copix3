@@ -14,13 +14,28 @@
  * @subpackage admin 
  */
 class AdminTemp {
-    
+	
+	/**
+	 * Détermine si un fichier doit être enlevé du répertorie temp.
+	 *
+	 * @param string $path
+	 * @return boolean true : le fichier doit être enlevé
+	 */
+	public function _tempFileFilter($path) {
+		$basename = basename($path);
+		if(is_dir($path) && ($basename == '.svn' || $basename == 'CVS')) {
+			return false;
+		}
+		return true;		
+	}
+	
+
     /**
      * Pour vider le répertoire temp
      *
      */
     public function clearTemp() {
-        CopixFile::removeFileFromPath(COPIX_TEMP_PATH);
+        CopixFile::removeFileFromPath(COPIX_TEMP_PATH, false, array($this, '_tempFileFilter'));
     }
     
     /**

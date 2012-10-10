@@ -17,5 +17,6 @@ error_reporting (E_ALL);
 set_time_limit (null);
 $testController = new CopixTestController ();
 $testController->process (array ('report_path'=>COPIX_TEMP_PATH.'testreport/', 
-						'config'=>'../project/config/copix.conf.php'));
+						'config'=>'../project/config/copix.conf.php', 
+						'xml'=>isset ($_REQUEST['xml']) ? $_REQUEST['xml'] : false));
 ?>

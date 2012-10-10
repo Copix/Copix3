@@ -1,4 +1,109 @@
-<?php/******************************************************************************** Software: FPDF                                                               ** Version:  1.52(modified)                                                     ** Date:     2003-12-30                                                         ** Author:   Olivier PLATHEY                                                    ** License:  Freeware                                                           **                                                                              ** You may use, modify and redistribute this software as you wish.              ********************************************************************************/// Modified by Renato A.C. [html2fpdf.sf.net]// Modified by Patrice Ferler [www.copix.org]// (look for 'EDITEI' in the code)if (!class_exists('FPDF')) {	define('FPDF_VERSION', '1.52');	class FPDF {		//Private properties		var $DisplayPreferences = ''; //EDITEI - added		var $outlines = array (); //EDITEI - added		var $OutlineRoot; //EDITEI - added		var $flowingBlockAttr; //EDITEI - added		var $page; //current page number		var $n; //current object number		var $offsets; //array of object offsets		var $buffer; //buffer holding in-memory PDF		var $pages; //array containing pages		var $state; //current document state		var $compress; //compression flag		var $DefOrientation; //default orientation		var $CurOrientation; //current orientation		var $OrientationChanges; //array indicating orientation changes		var $k; //scale factor (number of points in user unit)		var $fwPt, $fhPt; //dimensions of page format in points		var $fw, $fh; //dimensions of page format in user unit		var $wPt, $hPt; //current dimensions of page in points		var $w, $h; //current dimensions of page in user unit		var $lMargin; //left margin		var $tMargin; //top margin		var $rMargin; //right margin		var $bMargin; //page break margin		var $cMargin; //cell margin		var $x, $y; //current position in user unit for cell positioning		var $lasth; //height of last cell printed		var $LineWidth; //line width in user unit		var $CoreFonts; //array of standard font names		var $fonts; //array of used fonts		var $FontFiles; //array of font files		var $diffs; //array of encoding differences		var $images; //array of used images		var $PageLinks; //array of links in pages		var $links; //array of internal links		var $FontFamily; //current font family		var $FontStyle; //current font style		var $underline; //underlining flag		var $CurrentFont; //current font info		var $FontSizePt; //current font size in points		var $FontSize; //current font size in user unit		var $DrawColor; //commands for drawing color		var $FillColor; //commands for filling color		var $TextColor; //commands for text color		var $ColorFlag; //indicates whether fill and text colors are different		var $ws; //word spacing		var $AutoPageBreak; //automatic page breaking		var $PageBreakTrigger; //threshold used to trigger page breaks		var $InFooter; //flag set when processing footer		var $ZoomMode; //zoom display mode		var $LayoutMode; //layout display mode		var $title; //title		var $subject; //subject		var $author; //author		var $keywords; //keywords		var $creator; //creator		var $AliasNbPages; //alias for total number of pages		/*******************************************************************************		*                                                                              *		*                               Public methods                                 *		*                                                                              *		*******************************************************************************/		function FPDF($orientation = 'P', $unit = 'mm', $format = 'A4') {				//Some checks	$this->_dochecks();			//Initialization of properties			$this->page = 0;			$this->n = 2;			$this->buffer = '';			$this->pages = array ();			$this->OrientationChanges = array ();			$this->state = 0;			$this->fonts = array ();			$this->FontFiles = array ();			$this->diffs = array ();			$this->images = array ();			$this->links = array ();			$this->InFooter = false;			$this->lasth = 0;			$this->FontFamily = '';			$this->FontStyle = '';			$this->FontSizePt = 12;			$this->underline = false;			$this->DrawColor = '0 G';			$this->FillColor = '0 g';			$this->TextColor = '0 g';			$this->ColorFlag = false;			$this->ws = 0;			//Standard fonts			$this->CoreFonts = array ('courier' => 'Courier', 'courierB' => 'Courier-Bold', 'courierI' => 'Courier-Oblique', 'courierBI' => 'Courier-BoldOblique', 'helvetica' => 'Helvetica', 'helveticaB' => 'Helvetica-Bold', 'helveticaI' => 'Helvetica-Oblique', 'helveticaBI' => 'Helvetica-BoldOblique', 'times' => 'Times-Roman', 'timesB' => 'Times-Bold', 'timesI' => 'Times-Italic', 'timesBI' => 'Times-BoldItalic', 'symbol' => 'Symbol', 'zapfdingbats' => 'ZapfDingbats');
+<?php
+/*******************************************************************************
+* Software: FPDF                                                               *
+* Version:  1.52(modified)                                                     *
+* Date:     2003-12-30                                                         *
+* Author:   Olivier PLATHEY                                                    *
+* License:  Freeware                                                           *
+*                                                                              *
+* You may use, modify and redistribute this software as you wish.              *
+*******************************************************************************/
+// Modified by Renato A.C. [html2fpdf.sf.net]
+// Modified by Patrice Ferler [www.copix.org]
+// (look for 'EDITEI' in the code)
+if (!class_exists('FPDF')) {
+	define('FPDF_VERSION', '1.52');
+	class FPDF {
+		//Private properties
+		var $DisplayPreferences = ''; //EDITEI - added
+		var $outlines = array (); //EDITEI - added
+		var $OutlineRoot; //EDITEI - added
+		var $flowingBlockAttr; //EDITEI - added
+		var $page; //current page number
+		var $n; //current object number
+		var $offsets; //array of object offsets
+		var $buffer; //buffer holding in-memory PDF
+		var $pages; //array containing pages
+		var $state; //current document state
+		var $compress; //compression flag
+		var $DefOrientation; //default orientation
+		var $CurOrientation; //current orientation
+		var $OrientationChanges; //array indicating orientation changes
+		var $k; //scale factor (number of points in user unit)
+		var $fwPt, $fhPt; //dimensions of page format in points
+		var $fw, $fh; //dimensions of page format in user unit
+		var $wPt, $hPt; //current dimensions of page in points
+		var $w, $h; //current dimensions of page in user unit
+		var $lMargin; //left margin
+		var $tMargin; //top margin
+		var $rMargin; //right margin
+		var $bMargin; //page break margin
+		var $cMargin; //cell margin
+		var $x, $y; //current position in user unit for cell positioning
+		var $lasth; //height of last cell printed
+		var $LineWidth; //line width in user unit
+		var $CoreFonts; //array of standard font names
+		var $fonts; //array of used fonts
+		var $FontFiles; //array of font files
+		var $diffs; //array of encoding differences
+		var $images; //array of used images
+		var $PageLinks; //array of links in pages
+		var $links; //array of internal links
+		var $FontFamily; //current font family
+		var $FontStyle; //current font style
+		var $underline; //underlining flag
+		var $CurrentFont; //current font info
+		var $FontSizePt; //current font size in points
+		var $FontSize; //current font size in user unit
+		var $DrawColor; //commands for drawing color
+		var $FillColor; //commands for filling color
+		var $TextColor; //commands for text color
+		var $ColorFlag; //indicates whether fill and text colors are different
+		var $ws; //word spacing
+		var $AutoPageBreak; //automatic page breaking
+		var $PageBreakTrigger; //threshold used to trigger page breaks
+		var $InFooter; //flag set when processing footer
+		var $ZoomMode; //zoom display mode
+		var $LayoutMode; //layout display mode
+		var $title; //title
+		var $subject; //subject
+		var $author; //author
+		var $keywords; //keywords
+		var $creator; //creator
+		var $AliasNbPages; //alias for total number of pages
+		/*******************************************************************************
+		*                                                                              *
+		*                               Public methods                                 *
+		*                                                                              *
+		*******************************************************************************/
+		function FPDF($orientation = 'P', $unit = 'mm', $format = 'A4') {
+				//Some checks
+	$this->_dochecks();
+			//Initialization of properties
+			$this->page = 0;
+			$this->n = 2;
+			$this->buffer = '';
+			$this->pages = array ();
+			$this->OrientationChanges = array ();
+			$this->state = 0;
+			$this->fonts = array ();
+			$this->FontFiles = array ();
+			$this->diffs = array ();
+			$this->images = array ();
+			$this->links = array ();
+			$this->InFooter = false;
+			$this->lasth = 0;
+			$this->FontFamily = '';
+			$this->FontStyle = '';
+			$this->FontSizePt = 12;
+			$this->underline = false;
+			$this->DrawColor = '0 G';
+			$this->FillColor = '0 g';
+			$this->TextColor = '0 g';
+			$this->ColorFlag = false;
+			$this->ws = 0;
+			//Standard fonts
+			$this->CoreFonts = array ('courier' => 'Courier', 'courierB' => 'Courier-Bold', 'courierI' => 'Courier-Oblique', 'courierBI' => 'Courier-BoldOblique', 'helvetica' => 'Helvetica', 'helveticaB' => 'Helvetica-Bold', 'helveticaI' => 'Helvetica-Oblique', 'helveticaBI' => 'Helvetica-BoldOblique', 'times' => 'Times-Roman', 'timesB' => 'Times-Bold', 'timesI' => 'Times-Italic', 'timesBI' => 'Times-BoldItalic', 'symbol' => 'Symbol', 'zapfdingbats' => 'ZapfDingbats');
 			//Scale factor
 			if ($unit == 'pt')
 				$this->k = 1;
@@ -2059,8 +2164,34 @@
 		function _parsegif($file) //EDITEI - GIF support is now included
 		{
 			//Function by Jérôme Fenal
-			Copix::RequireOnce (RELATIVE_PATH.'gif.php'); //GIF class in pure PHP from Yamasoft (http://www.yamasoft.com/php-gif.zip)			$h = 0;			$w = 0;			$gif = new CGIF();			if (!$gif->loadFile($file, 0))				$this->Error("GIF parser: unable to open file $file");
-			if ($gif->m_img->m_gih->m_bLocalClr) {				$nColors = $gif->m_img->m_gih->m_nTableSize;				$pal = $gif->m_img->m_gih->m_colorTable->toString();				if ($bgColor != -1) {					$bgColor = $this->m_img->m_gih->m_colorTable->colorIndex($bgColor);				}				$colspace = 'Indexed';			}			elseif ($gif->m_gfh->m_bGlobalClr) {				$nColors = $gif->m_gfh->m_nTableSize;				$pal = $gif->m_gfh->m_colorTable->toString();				if ((isset ($bgColor)) and $bgColor != -1) {					$bgColor = $gif->m_gfh->m_colorTable->colorIndex($bgColor);				}				$colspace = 'Indexed';			} else {				$nColors = 0;				$bgColor = -1;				$colspace = 'DeviceGray';				$pal = '';			}			$trns = '';
+			Copix::RequireOnce (RELATIVE_PATH.'gif.php'); //GIF class in pure PHP from Yamasoft (http://www.yamasoft.com/php-gif.zip)
+			$h = 0;
+			$w = 0;
+			$gif = new CGIF();
+			if (!$gif->loadFile($file, 0))
+				$this->Error("GIF parser: unable to open file $file");
+			if ($gif->m_img->m_gih->m_bLocalClr) {
+				$nColors = $gif->m_img->m_gih->m_nTableSize;
+				$pal = $gif->m_img->m_gih->m_colorTable->toString();
+				if ($bgColor != -1) {
+					$bgColor = $this->m_img->m_gih->m_colorTable->colorIndex($bgColor);
+				}
+				$colspace = 'Indexed';
+			}
+			elseif ($gif->m_gfh->m_bGlobalClr) {
+				$nColors = $gif->m_gfh->m_nTableSize;
+				$pal = $gif->m_gfh->m_colorTable->toString();
+				if ((isset ($bgColor)) and $bgColor != -1) {
+					$bgColor = $gif->m_gfh->m_colorTable->colorIndex($bgColor);
+				}
+				$colspace = 'Indexed';
+			} else {
+				$nColors = 0;
+				$bgColor = -1;
+				$colspace = 'DeviceGray';
+				$pal = '';
+			}
+			$trns = '';
 			if ($gif->m_img->m_bTrans && ($nColors > 0)) {
 				$trns = array ($gif->m_img->m_nTrans);
 			}
@@ -2088,8 +2219,32 @@
 			$i += ord(fread($f, 1));
 			return $i;
 		}
-		function _textstring($s) {			//Format a text string			return '('.$this->_escape($s).')';		}
-		function _escape($s) {			//Add \ before \, ( and )			return str_replace(')', '\\)', str_replace('(', '\\(', str_replace('\\', '\\\\', $s)));
-		}		function _putstream($s) {			$this->_out('stream');   			$this->_out($s);			$this->_out('endstream');		}
-		function _out($s) {			//Add a line to the document			if ($this->state == 2)				$this->pages[$this->page] .= $s."\n";			else				$this->buffer .= $s."\n";    	}	} //End of class 
-    //Handle special IE contype request	if (isset ($HTTP_SERVER_VARS['HTTP_USER_AGENT']) and $HTTP_SERVER_VARS['HTTP_USER_AGENT'] == 'contype') {		Header('Content-Type: application/pdf');		exit;	}} //end of 'if(!class_exists('FPDF'))''?>
+		function _textstring($s) {
+			//Format a text string
+			return '('.$this->_escape($s).')';
+		}
+		function _escape($s) {
+			//Add \ before \, ( and )
+			return str_replace(')', '\\)', str_replace('(', '\\(', str_replace('\\', '\\\\', $s)));
+		}
+		function _putstream($s) {
+			$this->_out('stream');
+   			$this->_out($s);
+			$this->_out('endstream');
+		}
+		function _out($s) {
+			//Add a line to the document
+			if ($this->state == 2)
+				$this->pages[$this->page] .= $s."\n";
+			else
+				$this->buffer .= $s."\n";
+    	}
+	} //End of class
+ 
+    //Handle special IE contype request
+	if (isset ($HTTP_SERVER_VARS['HTTP_USER_AGENT']) and $HTTP_SERVER_VARS['HTTP_USER_AGENT'] == 'contype') {
+		Header('Content-Type: application/pdf');
+		exit;
+	}
+} //end of 'if(!class_exists('FPDF'))''
+?>

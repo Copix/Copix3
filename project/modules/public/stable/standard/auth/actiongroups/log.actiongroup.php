@@ -29,7 +29,6 @@ class ActionGroupLog extends CopixActionGroup {
 		if (CopixAuth::getCurrentUser ()->login (array ('login'=>CopixRequest::get ('login'),
 													'password'=>CopixRequest::get ('password')))){
 		    
-		
 		    //insert token for remember_me plugin
 		    $response = CopixAuth::getCurrentUser()->getResponses();
 		    foreach ($response as $key=>$r){

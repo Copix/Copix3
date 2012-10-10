@@ -39,7 +39,7 @@ class TemplateTagRadioButton extends CopixTemplateTag {
 	   	   $values = array ();
 	   }
 	   
-	   if ((!is_array ($values)) || ! ($values instanceof Iterator)){
+	   if ((!is_array ($values)) && ! ($values instanceof Iterator)){
 	   	$values = (array) $values;
 	   }
 	   
@@ -75,7 +75,7 @@ class TemplateTagRadioButton extends CopixTemplateTag {
 	      }
 	   }else{
 	      //if given an object mapping request.
-	      foreach ((array) $values  as $object) {
+	      foreach ($values  as $object) {
 	         $selectedString = ((array_key_exists('selected', $pParams)) && ($object->$idProp == $selected)) ? ' checked="checked" ' : '';
 	         $idRadio = $id.'_'.$object->$idProp;
 	         $toReturn .= '<input type="radio" id="'.$idRadio.'" name="'.$name.'" '.$extra.' value="'.$object->$idProp.'"'.$selectedString.' /><label for="'.$idRadio.'">'.  _copix_utf8_htmlentities ($object->$captionProp).'</label>'.$separator;

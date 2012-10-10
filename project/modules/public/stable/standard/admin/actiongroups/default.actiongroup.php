@@ -14,15 +14,18 @@
  * @subpackage admin 
  */
 class ActionGroupDefault extends CopixActionGroup {
+
 	/**
 	 * Vérifie que l'on est bien administrateur
+	 * 
 	 */
-	public function beforeAction (){
+	public function beforeAction ($pActionName){
 		CopixAuth::getCurrentUser ()->assertCredential ('basic:registered');
 	}
 
     /**
-     * Ecran d'acceuil des opérations d'administration
+     * Ecran d'accueil des opérations d'administration
+     * 
      */
 	function processDefault (){
         //Inclusion de la classe checker pour tester les pré-requis
@@ -68,26 +71,23 @@ class ActionGroupDefault extends CopixActionGroup {
 			if (count ($moduleInformations->admin_links) > 0) {
 				$groupid = (!is_null ($moduleInformations->admin_links_group->id)) ? $moduleInformations->admin_links_group->id : uniqid ();
 				
-				$ppo->links[$groupid]['groupcaption'] = $moduleInformations->admin_links_group->caption;
-				$ppo->links[$groupid]['icon'] = (!is_null ($moduleInformations->admin_links_group->icon)) ? $moduleInformations->admin_links_group->icon : $moduleInformations->icon;
-
 				foreach ($moduleInformations->admin_links as $linkInformations){
 					if (($linkInformations['credentials'] == null) || CopixAuth::getCurrentUser ()->testCredential ($linkInformations['credentials'])){
 						$ppo->links[$groupid]['modules'][][$linkInformations['url']] = $linkInformations['caption'];
 						$ppo->links[$groupid]['caption'] = $moduleInformations->description;
+						$ppo->links[$groupid]['groupcaption'] = $moduleInformations->admin_links_group->caption;
+						$ppo->links[$groupid]['icon'] = (!is_null ($moduleInformations->admin_links_group->icon)) ? $moduleInformations->admin_links_group->icon : $moduleInformations->icon;
 					}
 				}
 			}
 		}
-		
-		//echo '<pre><div align="left">';
-		//var_dump ($ppo->links);
 		
 		return _arPPO ($ppo, 'admin.tpl');
 	}
 	
 	/**
 	 * Supression des répertoires temporaires
+	 * 
 	 */
 	public function processClearTemp (){
 		CopixAuth::getCurrentUser ()->assertCredential ('basic:admin');
@@ -96,7 +96,18 @@ class ActionGroupDefault extends CopixActionGroup {
 	}
 	
 	/**
+	 * Réécriture du chemin des classes
+	 * 
+	 */
+	public function processRebuildClassPath() {
+		CopixAuth::getCurrentUser ()->assertCredential ('basic:admin');
+		CopixAutoloader::getInstance()->rebuildClassPath();
+		return _arRedirect (_url ('admin||'));
+	}
+	
+	/**
 	 * Retourne le tableau de tips
+	 * 
 	 */
 	private function _getTips() {
 	    $checker = _class ('InstallChecker');
@@ -142,6 +153,37 @@ class ActionGroupDefault extends CopixActionGroup {
 		$ppo->phpinfo = preg_replace('%^.*<body>(.*)</body>.*$%ms', '$1', $info);
 
 		return _arPpo ($ppo, 'phpinfo.tpl');
+	}
+	
+	/**
+	 * Function de parse de XML
+	 *
+	 * @param object $data
+	 * @return string
+	 */
+	public function parseXML($data) {
+		$toReturn = "";
+		foreach($data as $module => $nodes) {
+			$toReturn .= "$module:\n";
+			foreach($nodes as $node) {
+				$toReturn .= $node->asXML()."\n";
+			}
+		}
+		return $toReturn;
+	}
+	/**
+	 * Affichage des informations récupérés en modules
+	 *
+	 */
+	public function processTestRegistry() {
+		
+		echo "<pre>".htmlentities(CopixModule::getParsedModuleInformation(
+			'test',
+			'/moduledefinition/admin/link',
+			array($this, 'parseXML')
+		))."</pre>";
+		
+		exit;
 	}
 }
 ?>

@@ -133,7 +133,7 @@ abstract class CopixDBPDOConnection extends CopixDBConnection {
 
 		@$stmt->setFetchMode(PDO::FETCH_CLASS, 'StdClass');
 		if ($resultsOfQueryParsing['offset'] && $resultsOfQueryParsing['count']){
-			return new CopixDBResultSetIterator ($stmt);
+			return new CopixDBPDOResultSetIterator ($stmt);
 		}else{
 			$results = array ();
 

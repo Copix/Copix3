@@ -74,9 +74,7 @@ class CopixLdapFactory {
 		if (isset ($pluginLdap->config->profils[$named])){
 		   return $pluginLdap->config->profils[$named];
 		}
-		trigger_error(CopixI18N::get('copix:copix.ldap.error.profil.unknow', $named),E_USER_ERROR);
-		$return = null;
-		return $return;
+		throw new CopixException (_i18n ('copix:ldap.error.unknowProfil', $named));
 	}
 
 	/**

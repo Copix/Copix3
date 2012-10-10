@@ -31,6 +31,17 @@ class CopixTest_CopixClassesFactory extends CopixTest {
 
 		$this->assertTrue ($foo !== $foo2);
 	}
+	
+	public function testFileInclude (){
+		$array = _classInclude ('copixtest|');
+		$array2 = array ('cachetestadaptator', 'fooclass', 
+						'fooconstructedclass', 'testuserhandler',
+						'validatorconstructnointerface', 'validatormod', 
+						'validatormod2', 'validatornointerface');
+		sort ($array);
+		sort ($array2);
+		$this->assertEquals ($array, $array2);
+	}
 
 	/**
 	 * Test d'instance unique

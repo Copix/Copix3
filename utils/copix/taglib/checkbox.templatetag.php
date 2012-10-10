@@ -29,7 +29,7 @@ class TemplateTagCheckBox extends CopixTemplateTag {
 	   if (empty ($values)){
 	   	   $values = array ();
 	   }
-	   if ((!is_array ($values)) || ! ($values instanceof Iterator)){
+	   if ((!is_array ($values)) && ! ($values instanceof Iterator)){
 	   	$values = (array) $values;
 	   }
 	   if(empty ($id)){
@@ -38,6 +38,10 @@ class TemplateTagCheckBox extends CopixTemplateTag {
 	   
 	   if (empty ($selected)){
 	   	   $selected = null;
+	   }
+	   
+       if (empty ($encoding)){
+	      $encoding = null;
 	   }
 	
 	   if (!empty ($objectMap)){
@@ -52,8 +56,8 @@ class TemplateTagCheckBox extends CopixTemplateTag {
 	      $extra = '';
 	   }
 	   
-	   if (empty($separation)) {
-	       $separation = '';
+	   if (empty($separator)) {
+	       $separator = '';
 	   }
 	   
 	   //each of the values.
@@ -62,14 +66,14 @@ class TemplateTagCheckBox extends CopixTemplateTag {
 	         $selectedString = ((array_key_exists('selected', $pParams)) && (in_array($key,(is_array($selected) ? $selected : array($selected))))) ? ' checked="checked" ' : '';
 	         $classString = (!empty($class)) ? ' class="'.$class.'"' : '';
 	         $checkid = $id.'_'.$key;
-	         $toReturn .= '<input'.$classString.' id="'.$checkid.'" type="checkbox" name="'.$name.'[]" '.$extra.' value="'.$key.'"'.$selectedString.' /><label id="'.$checkid.'_label" for="'.$checkid.'" >'._copix_utf8_htmlentities($caption).'</label>'.$separation;
+	         $toReturn .= '<input'.$classString.' id="'.$checkid.'" type="checkbox" name="'.$name.'[]" '.$extra.' value="'.$key.'"'.$selectedString.' /><label id="'.$checkid.'_label" for="'.$checkid.'" >'._copix_utf8_htmlentities($caption, $encoding).'</label>'.$separator;
 	      }
 	   }else{
 	      //if given an object mapping request.
-	      foreach ((array) $values  as $key=>$object) {
+	      foreach ($values  as $key=>$object) {
 	         $selectedString = ((array_key_exists('selected', $pParams)) && ($object->$idProp == $selected)) ? ' checked="checked" ' : '';
 	         $checkid = $id.'_'.$object->$idProp;
-	         $toReturn .= '<input'.$classString.' id="'.$checkid.'" type="checkbox" name="'.$name.'[]" '.$extra.' value="'.$object->$idProp.'"'.$selectedString.' /><label id="'.$checkid.'_label" for="'.$checkid.'" >' . _copix_utf8_htmlentities($object->$captionProp).'</label>'.$separation;
+	         $toReturn .= '<input'.$classString.' id="'.$checkid.'" type="checkbox" name="'.$name.'[]" '.$extra.' value="'.$object->$idProp.'"'.$selectedString.' /><label id="'.$checkid.'_label" for="'.$checkid.'" >' . _copix_utf8_htmlentities($object->$captionProp, $encoding).'</label>'.$separator;
 	      }
 	   }
        return $toReturn;

@@ -98,8 +98,8 @@ class CopixI18N {
 	* @param	string	$separator	le séparateur à utiliser
 	* @return string
 	*/
-	public static function getDateFormat($separator) {
-		switch ($lang = self :: getLang()) {
+	public static function getDateFormat ($separator = '/') {
+		switch ($lang = self::getLang ()) {
 			case 'fr' :
 				$format = "d" . $separator . "m" . $separator . "Y";
 				break;
@@ -107,17 +107,20 @@ class CopixI18N {
 				$format = "m" . $separator . "d" . $separator . "Y";
 				break;
 			default :
-				$country = self :: getCountry();
-				trigger_error(self :: get('copix:copix.error.i18n.unknowDateFormat', array (
-					$lang,
-					$country
-				)), E_USER_ERROR);
+				$country = self::getCountry ();
+				throw new CopixException (self::get ('copix:copix.error.i18n.unknowDateFormat', array ($lang, $country)));
 		}
 		return $format;
 	}
-
-	public static function getDateTimeFormat($separator) {
-		switch ($lang = self :: getLang()) {
+	
+	/**
+	 * Récupération du format de date et heure en fonction de la langue
+	 * 
+	 * @param string $separator Le séparateur à utiliser
+	 * @return string
+	 */
+	public static function getDateTimeFormat ($separator) {
+		switch ($lang = self::getLang ()) {
 			case 'fr' :
 				$format = "d" . $separator . "m" . $separator . "Y H:i:s";
 				break;
@@ -125,16 +128,19 @@ class CopixI18N {
 				$format = "m" . $separator . "d" . $separator . "Y h:i:s a";
 				break;
 			default :
-				$country = self :: getCountry();
-				trigger_error(self :: get('copix:copix.error.i18n.unknowDateFormat', array (
-					$lang,
-					$country
-				)), E_USER_ERROR);
+				$country = self::getCountry ();
+				throw new CopixException (self::get('copix:copix.error.i18n.unknowDateFormat', array ($lang, $country)));
 		}
 		return $format;
 	}
-
-	public static function getDateTimeMask($separator) {
+	
+	/**
+	 * Récupère le masque pour la date et l'heure, en fonction de la langue
+	 * 
+	 * @param string $separator Le séparateur à utiliser
+	 * @return object Propriétés : mask et format
+	 */
+	public static function getDateTimeMask ($separator) {
 		$toReturn = new stdClass ();
 		switch ($lang = self :: getLang()) {
 			case 'fr' :
@@ -161,11 +167,8 @@ class CopixI18N {
 				);
 				break;
 			default :
-				$country = self :: getCountry();
-				trigger_error(self :: get('copix:copix.error.i18n.unknowDateFormat', array (
-					$lang,
-					$country
-				)), E_USER_ERROR);
+				$country = self::getCountry ();
+				throw new CopixException (self::get ('copix:copix.error.i18n.unknowDateFormat', array ($lang, $country)));
 		}
 		$toReturn->mask = $mask;
 		$toReturn->format = $format;
@@ -227,7 +230,7 @@ class CopixI18N {
 			//if the message was not found, we're gonna
 			//use the default language and country.
 			if (($lang == CopixConfig :: instance()->default_language) && ($country == CopixConfig :: instance()->default_country)) {
-				if (CopixConfig :: instance()->missingKeyTriggerErrorLevel !== null) {
+				if (CopixConfig :: instance()->i18n_missingKeyLaunchException === true) { 
 					if ($key === 'copix.error.i18n.keyNotExists') {
 						$msg = 'Can\'t find message key (which should actually be THIS message): ' . $key;
 					} else {
@@ -235,7 +238,6 @@ class CopixI18N {
 							$key,
 						CopixContext :: get()));
 					}
-					//trigger_error($msg, CopixConfig :: instance()->missingKeyTriggerErrorLevel);
 					throw new CopixException ($msg);
 				}
 				return $key;

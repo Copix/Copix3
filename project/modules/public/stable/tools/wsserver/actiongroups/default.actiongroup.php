@@ -32,7 +32,7 @@ class ActionGroupDefault extends CopixActionGroup {
 			$this ->_wsname = $pServiceName;
 			$arRes = _ioDAO ('wsservices')->findBy (_daoSP ()->addCondition ('name_wsservices', '=', $pServiceName));
 			if (count ($arRes) == 0) {
-				throw new CopixException ('Service introuvable '.html_entities ($pServiceName));
+				throw new CopixException ('Service introuvable '.htmlentities ($pServiceName));
 			}
 			$wsServiceInfo = $arRes[0];
 			$this ->_exportModule = $wsServiceInfo->module_wsservices;							

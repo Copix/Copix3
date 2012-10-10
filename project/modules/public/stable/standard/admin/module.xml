@@ -17,8 +17,12 @@
   <link url="admin|install|selectHomePage" captioni18n="install.messages.homePage" credentials="basic:admin" />
   <!--<link url="admin|default|phpinfo" caption="phpinfo" credentials="basic:admin" />-->
   <link url="admin|email|create" captioni18n="email.link" credentials="basic:admin" />
+  <link url="admin||rebuildClassPath" captioni18n="install.button.rebuildClassPath" credentials="basic:admin" />
  </admin>
  <parameters>
   <parameter name="defaultThemeId" captioni18n="themes.parameters.defaultThemeId" default="default" />
  </parameters>
+ <credentialhandlers>
+ 	<credentialhandler name='installcredentialhandler' stopOnSuccess='true' stopOnFailure='false' />
+ </credentialhandlers>
 </moduledefinition>

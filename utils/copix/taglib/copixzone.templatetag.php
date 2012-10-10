@@ -1,181 +1,129 @@
 <?php
 /**
-* @package		copix
-* @subpackage	taglib
-* @author		Gérald Croës, Salleyron Julien
-* @copyright	CopixTeam
-* @link			http://www.copix.org
-* @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
-*/
+ * @package		copix
+ * @subpackage	taglib
+ * @author		Gérald Croës, Salleyron Julien, Guillaume Perréal
+ * @copyright	CopixTeam
+ * @link			http://www.copix.org
+ * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ */
 
 /**
-* Pour afficher une zone Copix 
-* @package		copix
-* @subpackage	taglib
-*/
+ * Pour afficher une zone Copix
+ * @package		copix
+ * @subpackage	taglib
+ */
 class TemplateTagCopixZone extends CopixTemplateTag  {
+
 	public function process ($pParams, $pContent=null){
-		if (!isset ($pParams['process'])){
-			throw new CopixTemplateTagException ('[copixzone smarty tag] - missing required process parameter'); 
-		}else{
-			$zone = $pParams['process'];
-			unset ($pParams['process']);
-		}
-	
-		$fileInfo = new CopixModuleFileSelector ($zone);
-		if (! CopixModule::isEnabled ($fileInfo->module)) {
-			if (isset ($pParams['required']) && $pParams['required'] == false) {
-				return "";
+		
+		// Récupère les paramètres
+		$zone       = $this->requireParam('process');
+		$required   = $this->getParam('required');
+		$ajax       = $this->getParam('ajax', false);
+		$id         = $this->getParam('id');
+		$idClick    = $this->getParam('idClick');
+		$text       = $this->getParam('text', '');
+		$extra      = $this->getParam('extra', '');
+		$handlers   = array_filter($this->getParam(array('onDisplay', 'onHide', 'onComplete'), null, 'string'));
+		$auto       = $this->getParam('auto', false);		
+		$zoneParams = array_merge(
+			$this->getParam('zoneParams', array()),
+			$this->getExtraParams()
+		);		
+		
+		// Valide les paramètres
+		$this->validateParams();
+		
+		// Supprime le préfixe "zoneParams_" des paramètres de la zone
+		// Cela peut servir à passer des paramètres supplémentaires au niveau du tag
+		// qui rentrent en conflit avec les noms des paramètres standard.  
+		foreach($zoneParams as $key=>$value) {
+			if(preg_match('/^zoneParams_(.+)$/i', $key, $parts)) {
+				unset($zoneParams[$key]);
+				$zoneParams[$parts[1]] = $value;
 			}
-	    }
-	    
-	    if (isset ($pParams['ajax']) && $pParams['ajax']) {
-	    	return $this->_ajaxZone ($zone, $pParams);
-	    } else {
-			return CopixZone::process ($zone, $pParams);
-	    }
-	}
-	
-	private function _ajaxZone($pZone, $pParams) {
-		   
-        _tag ('mootools');
-        
-	   $toReturn = '';
-	   
-	   if (!isset($pParams['id'])) {
-           $id = uniqid('id');
-	   } else {
-           $id = $pParams['id'];
-           unset($pParams['id']);
-	   }
-	   
-	   $extra = '';
-	   if (isset($pParams['extra'])) {
-	       $extra = $pParams['extra'];
-	       unset($pParams['extra']);
-	   }
-	   
-       $onDisplay = '';
-	   if (isset($pParams['onDisplay'])) {
-	       $onDisplay = $pParams['onDisplay'];
-	       unset($pParams['onDisplay']);
-	   }
-	   
-	   $onHide = '';
-	   if (isset($pParams['onHide'])) {
-	       $onHide = $pParams['onHide'];
-	       unset($pParams['onHide']);
-	   }
-	   
-	   if (isset($pParams['idClick'])) {
-	       $id_click = $pParams['idClick'];
-	       unset($pParams['idClick']);
-	   }
-	   
-	   if (isset($pParams['text'])) {
-	       $id_click = uniqid('clicker');
-	       $toReturn .= '<span id="'.$id_click.'">'.$pParams['text'].'</span>';
-	       unset($pParams['text']);
-	   }
-	   
-	   if (isset($id_click)) {
-	   	       CopixHTMLHeader::addJSCode("
-window.addEvent('domready', function () {
-	var div = $('$id');
-	$('$id_click').addEvent('display', function () {
-		$onDisplay
-	});
-
-	$('$id_click').addEvent('hide', function () {
-		$onHide
-	});
-
-
-	div.addEvent('display', function () {
-		div.setStyle('display','');
-		div.fireEvent('load');
-		$('$id_click').fireEvent('display');
-	});
-
-	div.addEvent('hide', function () {
-		div.setStyle('display','none');
-		$('$id_click').fireEvent('hide');
-	});
-
-
-	$('$id_click').addEvent ('click', function () {
-		if ($('$id').getStyle('display') == 'none') {
-			$('$id').fireEvent('display');
-		} else {
-			$('$id').fireEvent('hide');
 		}
-	});
-});
-			");
-	   } else {
-	   	CopixHTMLHeader::addJSCode("
-window.addEvent('domready', function () {
-	var div = $('$id');
-	div.addEvent('display', function () {
-		div.setStyle('display','');
-		div.fireEvent('load');
-		$onDisplay
-	});
+		
+		// Vérifie l'existence du module
+		$fileInfo = new CopixModuleFileSelector ($zone);
+		if (! CopixModule::isEnabled ($fileInfo->module) && ($required === false)) {
+			return "";
+		}
 
-	div.addEvent('hide', function () {
-		div.setStyle('display','none');
-		$onHide
-	});
-});
-	");
-	   }
-	   
-	   $onComplete = '';
-	   if (isset($pParams['onComplete'])) {
-	       $onComplete = $pParams['onComplete'];
-	       unset($pParams['onComplete']);
-	   }
-	   
-	   $toReturn .= '<div style="display:none;" id="'.$id.'" '.$extra.' ></div>';
-	   
-	   $sessionVar = uniqid();
-	   $sessionZone = uniqid();
-	   
-	   CopixSession::set($sessionZone,$pZone);
-	   
-	   CopixSession::set($sessionVar,$pParams);
-
-	   $jsCode = "
-		window.addEvent('domready', function () {
-			var div = $('$id');
-    			div.addEvent('load', function () {
-					if (div.innerHTML == '') {
-						div.setHTML('<img src=\"".CopixUrl::getResource('img/tools/load.gif')."\" />');
-        				new Ajax('"._url ('generictools|ajax|getZone',array('ajaxreturn'=>'true'))."', {
-                			method: 'post',
-                			update: div,
-                			evalScripts : true,
-                			data: {'zone':'$sessionZone','sessionvar':'$sessionVar'},
-							onComplete: function () {
-								$onComplete
-							}
-
-                		}).request();
-					} else {
-						$onComplete
-					}
-			    });";
-	   if (isset($pParams['auto']) && $pParams['auto']) {
-	       $jsCode .= "div.fireEvent('display');";
-	   }
-	   $jsCode.= "
-		});
-		";
-	   
-        CopixHTMLHeader::addJSCode($jsCode);	   
-	   
-       return $toReturn;
-	}
+		// Génère un identifiant si nécessaire
+		$idProvided = ($id !== null);
+		if(!$idProvided) {
+			$id = uniqid('copixzone');
+		}
+		
+		$toReturn = array();
+		
+		// On a spécifié un texte : on l'ajoute comme trigger
+		if($text) {
+			if($idClick === null) {
+				$idClick = $id.'_trigger';
+			}
+			$toReturn[] = '<span id="'.$idClick.'">'.$text.'</span>';
+		}
+		
+		// Zone javascript si on a un clicker, de l'AJAX ou des gestionnaires d'événéments
+		if($idProvided || $ajax || count($handlers) || $idClick) {
+			
+			// Initialise le Javascript
+			CopixHTMLHeader::addJSFramework();
+			CopixHTMLHeader::addJSLink(_resource('js/taglib/copixzone.js'), array('id' => 'taglib_copixzone_js'));
 	
-}	
+			$js = new CopixJSWidget();
+			
+			// Options de la zone
+			$options = array('zoneId' => $id);	
+						
+			// Met en session AJAX les paramètres de la zone
+			if($ajax) {
+				$options['instanceId'] = $instanceId = uniqid();
+				CopixAJAX::getSession()->set($instanceId, array($zone, $zoneParams));
+			}
+			
+			if($auto) {
+				$options['auto'] = true;
+			}
+	
+			// Ajoute les handlers
+			foreach($handlers as $name=>$code) {
+				$options[$name] = $js->function_(null,"div,trigger",$code);
+			}
+			
+			// Identifiant du trigger
+			if($idClick) {
+				$options['triggerId'] = $idClick;
+			}
+			
+			// Initialise la zone 
+			$js->Copix->registerZone($options);
+			
+			// Ajoute le code
+			CopixHTMLHeader::addJSDOMReadyCode($js, "tag_copixzone_".$id);
+		}
+		
+		// Contenu de la zone
+		if($ajax) {
+			$zoneContent = '';
+			$style = 'style="display:none;" ';
+		} else {
+			$zoneContent = CopixZone::process ($zone, $zoneParams);
+			$style = '';
+		}
+		
+		if($idProvided || $style || $extra || $ajax || count($handlers) || $idClick) {
+			$toReturn[] = '<div id="'.$id.'" '.trim($style.$extra).'>'.$zoneContent.'</div>';
+		} else {
+			$toReturn[] = $zoneContent;
+		}
+
+		return join('', $toReturn);
+	}
+
+}
+
 ?>

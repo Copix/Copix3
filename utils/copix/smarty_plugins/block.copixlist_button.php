@@ -2,7 +2,7 @@
 /**
  * @package 	copix
  * @subpackage 	smarty_plugins
-* @author		Bertrand Yan
+* @author		Salleyron Julien
 * @copyright	2001-2006 CopixTeam
 * @link			http://copix.org
 * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file

@@ -6,4 +6,4 @@ CREATE TABLE `copixheadings` (
   `description_head` varchar(255) NOT NULL default '',
   `url_head` varchar(255) NULL,
   PRIMARY KEY  (`id_head`)
-)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+) CHARACTER SET utf8;

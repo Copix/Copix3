@@ -35,12 +35,13 @@ function smarty_function_copixform_start($params, &$me) {
 	if (!isset($params['form'])) {
 		$params['form'] = null;
 	}
-	$form = CopixFormFactory::get ($params['form']);
+	$form = CopixFormFactory::get ($params['form'], $params);
 	
-	if (!isset($params['datasource'])) {
+	if (!isset($params['datasource']) && isset($params['dao'])) {
 	    $params['datasource'] = 'dao';
 	}
-	$toReturn = $form->start($params['datasource'],$params);
+	
+	$toReturn = $form->getHTMLHeader ();
 	
 	if (strlen($assign) > 0){
 		$me->assign($assign, $toReturn);

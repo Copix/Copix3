@@ -26,8 +26,10 @@ class DatabaseConfigurationFile {
 	    $generator = new CopixPHPGenerator ();
 	    $pDefault = ($pDefault=='nodefault') ? null : (substr($pDefault,7));
 	    $str = $generator->getPHPTags ($generator->getVariableDeclaration ('$_db_profiles', $pData)."\n\n".$generator->getVariableDeclaration ('$_db_default_profile', $pDefault ));
-		$file = new CopixFile ();
-		return $file->write ($this->getPath (), $str);
+		if($toReturn = CopixFile::write ($this->getPath (), $str)) {
+			CopixConfig::reload ();
+		}
+		return $toReturn;
 	}
 	
 	/**

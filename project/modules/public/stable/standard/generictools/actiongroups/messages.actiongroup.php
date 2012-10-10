@@ -19,10 +19,10 @@ class ActionGroupMessages extends CopixActionGroup {
     */
 	public function processGetError () {
 		$tpl = new CopixTpl ();
-
+		$back = _request ('back', 'javascript: history.back ();');
 		$tpl->assign ('TITLE_PAGE', _request ('TITLE_PAGE', _i18n ('messages.titlePage.error')));
 		$tpl->assignZone ('MAIN', 'PassThrough', array    ('message'=>_request ('message'),
-		'back'=>_request ('back'),
+		'back'=>$back,
 		'template'=>'messages.error.tpl')
 		);
 
@@ -88,7 +88,8 @@ class ActionGroupMessages extends CopixActionGroup {
 		$ppo->file = $e->getFile ();
 		$ppo->line = $e->getLine ();
 		$ppo->trace = $e->getTrace ();
-		switch (CopixConfig::getMode ()) {
+		$ppo->id = uniqid();
+		switch (CopixConfig::instance ()->getMode ()) {
 			case CopixConfig::DEVEL : $ppo->mode = 'DEVEL'; break;
 			case CopixConfig::PRODUCTION : $ppo->mode = 'FORCE_INITIALISATION'; break;
 			case CopixConfig::FORCE_INITIALISATION : $ppo->mode = 'FORCE_INITIALISATION'; break;

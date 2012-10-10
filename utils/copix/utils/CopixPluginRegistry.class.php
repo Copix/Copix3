@@ -80,7 +80,7 @@ class CopixPluginRegistry {
 	 */
 	public static function get ($pPluginName, $pRequired = false){
 		$pPluginName = strtolower ($pPluginName);
-
+    	
 		if (!self::isRegistered ($pPluginName)){
 			if ($pRequired){
 				throw new Exception ('Plugin '.$pPluginName.' requis');
@@ -119,27 +119,98 @@ class CopixPluginRegistry {
     private static function _create ($name){
     	$fic  = new CopixModuleFileSelector ($name);
     	$nom  = strtolower ($fic->fileName);
-
+    	
     	$path = $fic->getPath (COPIX_PLUGINS_DIR) .$nom.'/';
     	$path_plugin = $path . $nom . '.plugin.php';
-   		$path_config = $path . $nom . '.plugin.conf.php';
-   		if (file_exists ($path_config)){
-   			Copix::RequireOnce ($path_config);
-	    	$configClassName = 'PluginConfig'.$fic->fileName; //nom de la classe de configuration.
-    	}else{
-    		$configClassName = null;
-    		$config = null;
-    	}
     	if (!Copix::RequireOnce ($path_plugin)){
 			throw new Exception ($path_plugin);    		
-    	}
-		if ($configClassName !== null){
-			$config    = new $configClassName ();//en deux étapes, impossible de mettre la ligne dans les paramètres du constructeur.		
-		}
+    	}    	
+    	
+    	$config = self::_loadConfig($name);
     	$pluginClassName = 'Plugin'.$fic->fileName;
     	return new $pluginClassName ($config);//nouvel objet plugin, on lui passe en paramètre son objet de configuration.
     }
+    
+    /**
+     * Charge la configuration d'un plugin.
+     * 
+     * S'il n'existe pas de configuration par défaut, renvoie null. Sinon:
+     * 
+     * Cherche le fichier de configuration dans var/config/plugins/MODULE/PLUGIN.plugin.conf.php.
+     * Si le fichier n'existe pas il est crée avec un contenu par défaut.
+     *
+     * @param string $pluginName Sélecteur du plugin.
+     * @return mixed L'objet configuration ou NULL si le plugin n'a pas de configuration.
+     */
+    static private function _loadConfig($pluginName) {
+		$fic  = new CopixModuleFileSelector ($pluginName);
+		$nom  = strtolower ($fic->fileName);
+		
+		$config_class = "PluginConfig".$fic->fileName; 
+		
+		// Vérifie la présence d'une configuration "old school"
+		$old_config_path = $fic->getPath (COPIX_PLUGINS_DIR) .$nom. '/' . $nom . '.plugin.conf.php';
+		if(file_exists($old_config_path)) {
+			// Ce plugin utilise l'ancien système de configuration
+			_log($pluginName." utilise un fichier de configuration dans les sources !", "plugin", CopixLog::WARNING);
+			Copix::RequireOnce($old_config_path);
+			$config = new $config_class();
+			return $config;
+		}
+	
+		// Vérifie la présence d'une configuration par défaut
+		$default_config_path = self::_getDefaultConfigPath($pluginName);
+		$default_config_class = "PluginDefaultConfig".$fic->fileName; 
+		if(!file_exists($default_config_path)) {
+			// Pas de configuration
+			return null;
+		}
+	    	
+	    // Cherche la configuration actuelle  
+		$config_path = $fic->getOverloadedPath(COPIX_VAR_PATH.'config/plugins/') . $nom . '.plugin.conf.php';
+		if(!file_exists($config_path)) {
+			// Génère une configuration par défaut
+			_log($pluginName.": création de la configuration par défaut ($config_path)", "plugin");			
+			CopixFile::write($config_path, 
+				"<?php\n".
+				"CopixPluginRegistry::requireDefaultConfig('$pluginName');\n".
+				"class $config_class extends $default_config_class {\n".
+				"\t// Surchargez la configuration ici.\n".
+				"}\n".
+				"?>"
+			);
+		}
+	    	
+		// Charge la configuration
+		Copix::RequireOnce($config_path);
+		$config = new $config_class ();
 
+		return $config;
+    }
+    
+    /**
+     * Charge la configuration par défaut d'un plugin.
+     * 
+     * Cette méthode est surtout destinée à être appelée depuis les fichiers de configuration réels.
+     * 
+     * @param string $pluginName Sélecteur du plugin.
+     */
+    static public function requireDefaultConfig($pluginName) {
+	Copix::RequireOnce(self::_getDefaultConfigPath($pluginName));
+    }
+    
+    /**
+     * Calcule le chemin de la configuration par défaut d'un plugin.
+     * 
+     * @param string $pluginName Sélecteur du plugin.
+     * @return Le chemin de la configuration par défaut, généralement MODULE/plugins/PLUGIN/PLUGIN.pluigin.default.conf.php.
+     */
+    static private function _getDefaultConfigPath($pluginName) {
+	    $fic  = new CopixModuleFileSelector ($pluginName);
+	    $nom  = strtolower ($fic->fileName);    	
+	    return $fic->getPath (COPIX_PLUGINS_DIR) . $nom. '/' . $nom . '.plugin.default.conf.php';    
+    }
+    
     /**
      * Retourne la liste des plugins enregistrés.
      * @return array of CopixPlugin
@@ -171,6 +242,7 @@ class CopixPluginRegistry {
 		$conf = CopixConfig::instance ();
 		$toReturn = array ();
 		
+		/* TODO: arPluginsPath désactivé jusqu'à ce qu'on l'implémente vraiment, cf #151.
 		//recherche des plugins dans les répertoires configurés à cet effet.
    		foreach ($conf->arPluginsPath as $path){
    		    if (substr ($path, -1) != '/') {
@@ -180,6 +252,7 @@ class CopixPluginRegistry {
 				$toReturn[] = $pluginName;
    			}
 		}
+		*/
 		
 		//recherche des plugins configurés dans les répertoires de modules
 		foreach (CopixModule::getList () as $moduleName) {

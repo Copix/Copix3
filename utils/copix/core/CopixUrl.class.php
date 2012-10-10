@@ -208,7 +208,7 @@ class CopixUrl {
     * @return string
 	*/
 	public static function getRequestedDomain (){
-		return $_SERVER ['HTTP_HOST'];
+		return (!empty($_SERVER ['HTTP_X_FORWARDED_HOST']) ? $_SERVER ['HTTP_X_FORWARDED_HOST'] : $_SERVER ['HTTP_HOST']);
 	}
 
 	/**
@@ -742,14 +742,18 @@ class CopixUrl {
 
     /**
     * Supprime les champs spéciaux (irréversible, utilisable a de simples fin de présentation)
-    * @param string $pString la chaine dont on veut supprimer les caractères spéciaux
+    * @param	string	$pString la chaine dont on veut supprimer les caractères spéciaux
+    * @param	boolean	$pCompressUnderscores (false) si oui, les underscores en doubles sont supprimés
     * @return string
     */
-	public static function escapeSpecialChars ($pString){
-		$pString = str_replace (array ('\\', '/', ',', '?', '.', '\$'), array (), $pString);
-		$pString = str_replace (array ('à', 'â', 'ä', 'é', 'è', 'ê', 'ë', 'î', 'ï', 'ÿ', 'ô', 'ö', 'ù', 'ü', 'ç', 'ñ', 'À', 'Â', 'Ä', 'É', 'È', 'Ê', 'Ë', 'Î', 'Ï', 'Ÿ', 'Ô', 'Ö', 'Ù', 'Ü', 'Ç', 'Ñ'), 
-								array ('a', 'a', 'a', 'e', 'e', 'e', 'e', 'i', 'i', 'y', 'o', 'o', 'u', 'u', 'c', 'n', 'A', 'A', 'A', 'E', 'E', 'E', 'E', 'I', 'I', 'Y', 'O', 'O', 'U', 'U', 'C', 'N'), $pString);
-		return preg_replace('/[^a-zA-Z0-9]/', '_', $pString); 
+	public static function escapeSpecialChars ($pString, $pCompressUnderscores = false){
+	      $pString = str_replace (array ('\\', '/', ',', '?', '.', '\$'), array (), $pString);
+	      $pString = str_replace (array ('à', 'â', 'ä', 'é', 'è', 'ê', 'ë', 'î', 'ï', 'ÿ', 'ô', 'ö', 'ù', 'ü', 'ç', 'ñ', 'À', 'Â', 'Ä', 'É', 'È', 'Ê', 'Ë', 'Î', 'Ï', 'Ÿ', 'Ô', 'Ö', 'Ù', 'Ü', 'Ç', 'Ñ'),
+	                             array ('a', 'a', 'a', 'e', 'e', 'e', 'e', 'i', 'i', 'y', 'o', 'o', 'u', 'u', 'c', 'n', 'A', 'A', 'A', 'E', 'E', 'E', 'E', 'I', 'I', 'Y', 'O', 'O', 'U', 'U', 'C', 'N'), $pString);
+	
+	      $pString = preg_replace('/[^a-zA-Z0-9]/', '_', $pString);
+	      //Added to break double underscores
+	      return $pCompressUnderscores ? preg_replace('/_+/s','_', $pString) : $pString;
 	}
 
 	/**
@@ -806,6 +810,29 @@ class CopixUrl {
 	}
 	
 	/**
+	 * Analyse et découpe une sélecteur de ressource.
+	 * 
+	 * Accepte les deux formes suivantes :
+	 * - chemin/vers/ressource.txt
+	 * - module|chemin/vers/ressource.txt
+	 * 
+	 * Le '/' initial du chemin est supprimé.
+	 *
+	 * @param unknown_type $pResourcePath Sélecteur de la ressource.
+	 * @return array Tableau de la forme (chemin, nom_du_module ou null, chemin_du_module ou null)
+	 */
+	private static function _parseResourcePath($pResourcePath) {
+		if(!preg_match('@^((\w+)?\|)?/?(.+)$@', $pResourcePath, $parts)) {
+			throw new CopixException(_i18n("copix:copix.error.resource.invalidResource", $pResourcePath));
+		}
+		list(, $modulePrefix, $moduleName, $resourcePath) = $parts;
+		if(!empty($modulePrefix) && empty($moduleName)) {
+			$moduleName = CopixContext::get();
+		}
+		return array($resourcePath, $moduleName, empty($moduleName) ? null : CopixModule::getPath($moduleName));
+	}
+	
+	/**
 	 * Récupère un chemin de ressource (situé dans www)
 	 * 
 	 * Ira chercher dans l'ordre de priorité dans 
@@ -828,7 +855,32 @@ class CopixUrl {
 	 * @return	string	le $ressourcePath complet en fonction des thèmes
 	 */
 	public static function getResource ($pResourcePath){
-    	return self::_resourceUrl ('./'.self::getResourcePath ($pResourcePath));
+		static $calculated = array ();
+		
+		$theme = CopixTpl::getTheme ();
+		$i18n = CopixConfig::instance ()->i18n_path_enabled;
+		$lang = CopixI18N::getLang ();
+		$country = CopixI18N::getCountry ();
+		
+		$key = $theme.$i18n.$lang.$country.$pResourcePath;
+		
+		if (isset ($calculated[$key])){
+			return $calculated[$key]; 
+		}
+		
+		list($resourcePath, $moduleName, $modulePath) = self::_parseResourcePath($pResourcePath);
+
+        // Utilise CopixResource pour trouver la ressource
+    	return $calculated[$key] = 
+    		CopixResource::findResourceUrl(
+    			$resourcePath,
+    			$moduleName,
+    			$modulePath,
+    			$theme,
+    			$i18n,
+    			$lang,
+    			$country
+    		);
 	}
 	
 	/**
@@ -855,48 +907,33 @@ class CopixUrl {
 	 */
 	public static function getResourcePath ($pResourcePath) {
 		static $calculated = array ();
-		if (isset ($calculated[$pResourcePath])){
-			return $calculated[$pResourcePath]; 
-		}
-
-		//On enlève le premier slash au cas ou l'utilisateur l'a saisi
-        if (strpos ($pResourcePath, '/') === 0){
-        	$pResourcePath = substr ($pResourcePath, 1);
-        }
-        $pResourceDir = dirname($pResourcePath);
-        $pResourceName = basename($pResourcePath);
-        
-        $config = CopixConfig::instance ();
 		
-    	$resourceBasePath ='./themes/';
+		$theme = CopixTpl::getTheme ();
+		$i18n = CopixConfig::instance ()->i18n_path_enabled;
+		$lang = CopixI18N::getLang ();
+		$country = CopixI18N::getCountry ();
+		
+		$key = $theme.$i18n.$lang.$country.$pResourcePath;
+		
+		if (isset ($calculated[$key])){
+			return $calculated[$key]; 
+		}
+		
+		list($resourcePath, $moduleName, $modulePath) = self::_parseResourcePath($pResourcePath);
 
-		if ($config->i18n_path_enabled && file_exists ($resourceFilePath = $resourceBasePath.CopixTpl::getTheme ().'/'.$pResourceDir.'/'.CopixI18N::getLang ().'_'.CopixI18N::getCountry().'/'.$pResourceName)){
-    		return $calculated[$pResourcePath] = $resourceFilePath;
-    	}elseif ($config->i18n_path_enabled && file_exists ($resourceFilePath = $resourceBasePath.CopixTpl::getTheme ().'/'.$pResourceDir.'/'.CopixI18N::getLang ().'/'.$pResourceName)){
-    		return $calculated[$pResourcePath] = $resourceFilePath;
-    	}elseif (file_exists ($resourceFilePath = $resourceBasePath.CopixTpl::getTheme ().'/'.$pResourceDir.'/'.$pResourceName)){
-    		return $calculated[$pResourcePath] = $resourceFilePath;
-    	}       	
-    	if (CopixTpl::getTheme () !== "default"){
-        	if ($config->i18n_path_enabled && file_exists ($resourceFilePath = $resourceBasePath.'default/'.$pResourceDir.'/'.CopixI18N::getLang ().'_'.CopixI18N::getCountry().'/'.$pResourceName)){
-        		return $calculated[$pResourcePath] = $resourceFilePath;
-        	}elseif ($config->i18n_path_enabled && file_exists ($resourceFilePath = $resourceBasePath.'default/'.$pResourceDir.'/'.CopixI18N::getLang ().'/'.$pResourceName)){
-        		return $calculated[$pResourcePath] = $resourceFilePath;
-        	}elseif (file_exists ($resourceFilePath = $resourceBasePath.'default/'.$pResourceDir.'/'.$pResourceName)){
-        		return $calculated[$pResourcePath] = $resourceFilePath;
-        	}       	        		
-    	}
-    	
-    	return $calculated[$pResourcePath] = $pResourcePath;
+        // Utilise CopixResource pour trouver la ressource
+    	return $calculated[$key] = 
+    		CopixResource::findResourcePath(
+    			$resourcePath,
+    			$moduleName,
+    			$modulePath,
+    			$theme,
+    			$i18n,
+    			$lang,
+    			$country
+    		);			
+		
 	}
 	
-	/**
-	 * Transforme un chemin "fichier" en chemin URL pour les ressources
-	 * @param	string	$pFilePath	le chemin obtenu par la fonction getResource ();
-	 * @return	string	le chemin url (http://)
-	 */
-	private static function _resourceUrl ($pFilePath){
-		return self::getRequestedBaseUrl ().substr ($pFilePath, 2);
-	}  
 }
 ?>

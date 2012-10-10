@@ -18,13 +18,16 @@ class DBGroupHandler implements ICopixGroupHandler {
 	/**
 	 * Récupération des groupes pour un identifiant d'utilisateur donné
 	 *
-	 * @param	string	$pUserId	l'identifiant de l'utilisateur
+	 * @param	string	$pUserId	l'identifiant de l'utilisateur, null si on test pour un utilisateur non connecté
 	 * @return array of groups
 	 */
 	public function getUserGroups ($pUserId, $pUserHandler){
 		if ($pUserId !== null){
 			$registered = ' or g.registered_dbgroup=1  ';
+		}else{
+			$registered = '';
 		}
+
 		$arGroup = array ();
 		foreach (CopixDB::getConnection ()->doQuery ('select g.id_dbgroup, g.caption_dbgroup from dbgroup g, dbgroup_users gu where ((g.public_dbgroup=1 
           '.$registered.') or (gu.user_dbgroup=:user_dbgroup and gu.id_dbgroup=g.id_dbgroup)) and gu.userhandler_dbgroup=:userhandler_dbgroup', 

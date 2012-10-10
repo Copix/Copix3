@@ -1,57 +1,77 @@
 <?php
 /**
-* @package   copix
-* @subpackage log
-* @author    Gérald Croës
-* @copyright CopixTeam
-* @link      http://copix.org
-* @license  http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
-*/
+ * @package		copix
+ * @subpackage	log
+ * @author		Steevan BARBOYON
+ * @copyright	CopixTeam
+ * @link		http://copix.org
+ * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ */
 
 /**
- * Log en mémoire pour affichage sur la page
+ * Log affiché directement via un echo, et sauvegardés en internet pour pouvoir les relire
  * 
- * @package   copix
- * @subpackage log
+ * @package		copix
+ * @subpackage	log
  */
 class CopixLogPageStrategy implements ICopixLogStrategy {
 	/**
-	 * Tableau des logs générés sur la page
+	 * Tableau des logs affichés
 	 *
 	 * @var array
 	 */
-	private static $_logs = array ();
+	static private $_logs = array ();
 	
 	/**
-	 * Sauvegarde les logs dans le fichier
+	 * Affiche directement le log via un echo
 	 *
-	 * @param String $pMessage log à sauvegarder
-	 * @param String $tab tableau d'option
+	 * @param string $pProfil
+	 * @param string $pType Type de log
+	 * @param int $pLevel Niveau du log
+	 * @param string $pDate Date au format YYYYMMDDHHMMSS
+	 * @param string $pMessage Message à logger
+	 * @param array $pArExtra Informations supplémentaires
 	 */
-	public function log ($pProfil, $pType, $pLevel, $pDate, $pMessage, $pArExtra){
-		$log = array ('date'=>$pDate, 'message'=>$pMessage, 'level'=>$pLevel, 'type'=>$pType);
-		$log = $log + $pArExtra;
-		if (!isset (self::$_logs[$pProfil])){
-			self::$_logs[$pProfil] = array ();
+	public function log ($pProfil, $pType, $pLevel, $pDate, $pMessage, $pArExtra) {
+		echo '<div style="background-color: white; border: solid red 1px; padding: 5px; margin: 5px;">';
+		echo '<font color="#969696">' . _i18n (
+			'copix:log.page.title',
+			array (
+				'CopixLogPageStrategy',
+				CopixLog::getLevel ($pLevel),
+				$pType
+			)
+		) . '<br />';
+		if (isset ($pArExtra['file'])) {
+			echo _i18n ('copix:log.page.file', $pArExtra['file']);
+			if (isset ($pArExtra['line'])) {
+				echo ' | ' . _i18n ('copix:log.page.line', $pArExtra['line']);
+			}
+			echo '<br />';
 		}
-		self::$_logs[$pProfil][] = $log;
+		echo '</font>';
+		echo '<b>' . $pMessage . '</b>';
+		echo '</div>';
 	}
 	
 	/**
-	 * Supprimer tous les log de ce profil
-	 * @param	string	$pProfil	Le nom du profil dont on souhaite supprimer les contenus
-	 * @return int	nombre de logs supprimés 
+	 * Supprime le contenu du log pour le profil demandé
+	 * 
+	 * @param string $pProfil Nom du profil dont on souhaite supprimer lee contenu
+	 * @throws CopixLogException
 	 */
-	public function deleteProfile ($pProfil){
-		self::$_logs[$pProfil] = array (); 		
+	public function deleteProfile ($pProfil) {
+		throw new CopixLogException (_i18n ('copix:log.error.cantDelete')); 		
 	}
 	
 	/**
 	 * Retourne les logs sous forme d'itérateur
-	 * @return Iterator
+	 * 
+	 * @param string $pProfil Profil dont on veut retourner les logs
+	 * @throws CopixLogException
 	 */
-	public function getLog ($pProfil){
-		return isset (self::$_logs[$pProfil]) ? new ArrayObject (self::$_logs[$pProfil]) : new ArrayObject (array ());
+	public function getLog ($pProfil) {
+		throw new CopixLogException (_i18n ('copix:log.error.cantGet'));
 	}
 }
 ?>

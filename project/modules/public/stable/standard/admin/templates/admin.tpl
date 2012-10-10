@@ -4,7 +4,7 @@
 			<td width="100%">
 				<h2>
 					{if ($groupInfos.icon)}
-						<img src="{$groupInfos.icon}" alt="{$moduleInfos.name}" title="{$moduleInfos.name}" />
+						<img src="{$groupInfos.icon}" alt="" />
 					{/if}  
 					{if $groupInfos.groupcaption}
 						{$groupInfos.groupcaption}
@@ -29,7 +29,7 @@
 						</td>
 						<td>
 							<a href="{$linkUrl}" title="{i18n key="copix:common.buttons.select"}"
-								><img src="{copixresource path="img/tools/select.png"}" alt="{i18n key="copix:common.buttons.select"}"
+								><img src="{copixresource path="img/tools/select.png"}" alt="{i18n key="copix:common.buttons.select"}" border="0"
 							/></a>
 						</td>
 					</tr>

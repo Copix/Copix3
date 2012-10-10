@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title><?=$TITLE_BAR?></title>
+<title><?php echo $TITLE_BAR; ?></title>
 <?php
 	/**
 	 * This template is a sample to create a blog
@@ -37,14 +37,14 @@
 
 
 ?>
-<?=$HTML_HEAD?>
+<?php echo $HTML_HEAD; ?>
 </head>
 <body>
 <div id="wrapcontent">
 	<div id="content">
 		<div id="banner">
 			<!-- Banner, use background image on CSS -->
-			<h1><?=$TITLE_BAR?></h1>
+			<h1><?php echo $TITLE_BAR;?></h1>
 			<span>Subtitle for your blog</span>
 		</div>
 		<div id="menu">
@@ -62,7 +62,7 @@
 		<div id="maincontent">
 			<div class="pagecontent">
 				<!-- Here the page content -->
-				<?=$MAIN?>
+				<?php echo $MAIN;?>
 			</div>
 		<div id="toright">
 			<!-- This have to be on right -->

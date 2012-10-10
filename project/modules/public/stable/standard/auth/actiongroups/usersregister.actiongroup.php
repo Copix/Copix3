@@ -75,7 +75,8 @@ class ActionGroupUsersRegister extends CopixActionGroup {
      * Validation des modifications apportées sur un utilisateur
      */
     public function processValid (){
-        $user = new stdClass ();
+        //$user = new stdClass ();
+        $user = _record('dbuser');
         
         $user->login_dbuser = _request ('login_dbuser', '');
         $user->email_dbuser = _request ('email_dbuser');

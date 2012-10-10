@@ -51,7 +51,7 @@ class TemplateTagAjax_gethttpobject extends CopixTemplateTag {
      }
   }
   return xmlhttp;
-}');
+}', 'getHTTPObject');
 			$called = true;
 		}
 	}

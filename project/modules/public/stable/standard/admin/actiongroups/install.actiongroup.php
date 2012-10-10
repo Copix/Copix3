@@ -92,12 +92,12 @@ class ActionGroupInstall extends CopixActionGroup {
 
 		return _arDisplay ($tpl);
 	}
-
+    
 	/**
-    * Set the home page of the web site
-    */
+     * Set the home page of the web site
+     */
 	function processsetHomePage () {
-		if (($id = CopixRequest::get ('id')) !== null) {
+		if ((_request ('id')) !== null) {
 			CopixConfig::set ('|homePage', _url ('cms|default|get', array('id'=>CopixRequest::get ('id'), 'online'=>'true')));
 		}elseif (($url = CopixRequest::get ('urlinput')) !== null){
 			CopixConfig::set ('|homePage', $url);

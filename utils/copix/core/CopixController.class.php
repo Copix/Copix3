@@ -73,8 +73,10 @@ class CopixController {
 		// creating CopixConfig Object and includes the asked configuration file.
 		$config = CopixConfig::instance ();
 		require ($configFile);
-
-		CopixRequest::setRequest (CopixUrl::parse (CopixUrl::getRequestedPathInfo (), false, true));
+		if ($config->copixerrorhandler_enabled){
+			Copix::setErrorHandler(new CopixErrorHandler($config));
+		}
+		CopixRequest::setRequest (array_merge (array ('module'=>'default', 'group'=>'default', 'action'=>'default'), CopixUrl::parse (CopixUrl::getRequestedPathInfo (), false, true)));
 
 		// do what we need for each plugin before starting the session
 		$this->_beforeSessionStart ();
@@ -162,9 +164,6 @@ class CopixController {
 			   break;
 			case 'copixactionredirect':
    				return new CopixActionReturn (CopixActionReturn::REDIRECT, $pAction->url);
-   			case 'copixactionstatic':
-				//page statiques.
-				return new CopixActionReturn (CopixActionReturn::STATIC_FILE, $pAction->useFile, $action->more);
 			case 'copixactionzone':
 				//implémenter l'action zone.
 				$tpl = new CopixTpl ();
@@ -230,7 +229,9 @@ class CopixController {
 			break;
 
 			case CopixActionReturn::DISPLAY:
-			header("Content-Type: text/html");
+			$charset = CopixI18N::getCharset ();
+			header("Content-Type: text/html;charset=".$charset);
+
 			$this->_processStandard ($toProcess->data);//appel de la méthode de préparation de la page standard.
 			$toProcess->data->assign ('HTML_HEAD', '<$HTML_HEAD />'); 
 			//Par ex, bandeaux de pub, menus dynamiques, ... (propres aux projets.)
@@ -241,6 +242,9 @@ class CopixController {
 			break;
 
 			case CopixActionReturn::DISPLAY_IN:
+			$charset = CopixI18N::getCharset ();
+			header("Content-Type: text/html;charset=".$charset);
+								
 			$this->_processStandard ($toProcess->data);//appel de la méthode de préparation de la page standard.
 			$toProcess->data->assign ('HTML_HEAD', '<$HTML_HEAD />'); 
 			//Par ex, bandeaux de pub, menus dynamiques, ... (propres aux projets.)
@@ -249,24 +253,6 @@ class CopixController {
 			echo $content;
 			break;
 
-			case CopixActionReturn::STATIC_FILE :
-			$tpl = new CopixTpl ();
-			$tpl->assign ('MAIN', self::includeStatic ($toProcess->data));
-			$waitForMore = array ('TITLE_PAGE', 'TITLE_BAR');
-			foreach ($waitForMore as $key){
-				if (isset ($toProcess->more[$key])){
-					$tpl->assign ($key, $toProcess->more[$key]);
-				}
-			}
-			$this->_processStandard ($tpl);
-			$tpl->assign ('HTML_HEAD', '<$HTML_HEAD />'); 
-			//Affichage dans le template principal.
-			CopixContext::clear ();
-			$content = $tpl->fetch ($config->mainTemplate);
-			$this->_beforeDisplay($content);
-			echo $content;
-			break;
-							
 			case CopixActionReturn::FILE:
 			case CopixActionReturn::CONTENT:
 			$contentDisposition = 'inline';
@@ -401,10 +387,11 @@ class CopixController {
 		$execParam->action = CopixRequest::get ('action', 'default');
 
 		$config = CopixConfig::instance ();
-		if($config->checkTrustedModules){
+		if($config->checkTrustedModules) {
 			$a = isset($config->trustedModules[$execParam->module]);
-			if (!$a ||( $a && !$config->trustedModules[$execParam->module]))
-			trigger_error(_i18n('copix:copix.error.module.untrusted',$execParam->module), E_USER_ERROR);
+			if (!$a ||( $a && !$config->trustedModules[$execParam->module])) {
+				throw new CopixException (_i18n('copix:copix.error.module.untrusted',$execParam->module));
+			}
 		}
 		return $execParam;
 	}
@@ -425,11 +412,11 @@ class CopixController {
     */
 	protected function _doNotExistsAction (){
 		if (CopixConfig::instance ()->invalidActionTriggersError){
-			trigger_error(_i18n('copix:copix.error.load.module',$param->module), E_USER_ERROR);
+			throw new CopixException (_i18n('copix:copix.error.load.module',$param->module));
 		}
 		header("HTTP/1.0 404 Not Found");
 		header("Status: 404 Not found");
-		echo "Page introuvable";
+		echo "Page not found";
 		exit;
 	}
 	

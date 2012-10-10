@@ -14,16 +14,16 @@ CREATE TABLE `wikipages` (
   `lock_wiki` varchar(1) NOT NULL default '0',
   `deleted_wiki` varchar(1) NOT NULL default '0',
    PRIMARY KEY(`title_wiki`,`lang_wiki`,`modificationdate_wiki`)
-);
+) CHARACTER SET utf8;
 
 CREATE TABLE `wikiimages` (
    `title_wikiimage` VARCHAR( 255 ) NOT NULL ,
    `file_wikiimage` VARCHAR( 255 ) NOT NULL ,
    `page_wikiimage` VARCHAR( 50 ) NOT NULL,
    PRIMARY KEY ( `title_wikiimage` )
-);
+) CHARACTER SET utf8;
 
 CREATE TABLE `wikiheadings` (
    `heading_wikihead` VARCHAR( 255 ) NOT NULL,
    PRIMARY KEY (`heading_wikihead`) 
-);
+) CHARACTER SET utf8;

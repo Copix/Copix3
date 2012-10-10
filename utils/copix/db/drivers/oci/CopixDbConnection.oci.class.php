@@ -32,6 +32,20 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 	private $_autoCommitMode = null;
 	
 	/**
+	 * Longueur par défaut des paramètres à lier.
+	 *
+	 * @var integer
+	 **/
+	private $_defaultBindLength = -1;
+
+	/**
+	 * Type par défaut des paramètres à lier.
+	 *
+	 * @var integer
+	 **/
+	private $_defaultBindType = CopixDBQueryParam::DB_AUTO;
+	
+	/**
 	 * Constante pour demander l'autocommit
 	 */
 	const OCI_AUTO_COMMIT = 1;
@@ -50,11 +64,26 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 		$this->_autoCommitMode = self::OCI_AUTO_COMMIT; 
 
 		$parts = $this->_profil->getConnectionStringParts ();
-		$funcName = $this->_profil->getOption (CopixDBProfile::PERSISTENT) ? 'oci_connect' : 'oci_pconnect';
+		$funcName = $this->_profil->getOption (CopixDBProfile::PERSISTENT) ? 'oci_pconnect' : 'oci_connect';
 		if (($this->_ct = $funcName ($this->_profil->getUser (), $this->_profil->getPassword (), $parts['dbname'], isset ($parts['charset']) ? $parts['charset'] : null)) === false){
     		throw new CopixDBException ('Impossible de se connecter');
     	}
-   }
+    	
+		// Récupère la longueur par défuat
+		if(isset($parts['default_bind_length']) && is_numeric($parts['default_bind_length'])) {
+			$this->_defaultBindLength = intval($parts['default_bind_length']);
+		}
+		
+		// Récupère le type de paramètre par défaut
+		switch(isset($parts['default_bind_type']) ? strtolower($parts['default_bind_type']) : null) {
+			case 'db_string': case 'string': 
+				$this->_defaultBindType = CopixDBQueryParam::DB_STRING;
+				break;
+			case 'db_int': case 'int': 
+				$this->_defaultBindType = CopixDBQueryParam::DB_INT;
+				break;				
+		}		
+	}
 
    /**
     * Analyse la requète pour qu'elle passe sans encombre dans le driver PDO_OCI
@@ -107,14 +136,14 @@ class CopixDBConnectionOCI extends CopixDBConnection {
     public function getFieldList ($pTableName) {
     	$toReturn = array ();
 
-        $arType = array('LONG'=>'float','NUMBER'=>'float', 'CHAR'=>'varchar', 'VARCHAR2'=>'varchar', 'NVARCHAR2'=>'varchar', 'NCHAR'=>'varchar', 'CLOC'=>'varchar', 'NCLOB'=>'varchar', 'BLOB'=>'blob', 'DATE'=>'datetime');
+        $arType = array('FLOAT'=>'float', 'LONG'=>'float','NUMBER'=>'float', 'CHAR'=>'varchar', 'VARCHAR2'=>'varchar', 'NVARCHAR2'=>'varchar', 'NCHAR'=>'varchar', 'CLOC'=>'varchar', 'NCLOB'=>'varchar', 'BLOB'=>'blob', 'DATE'=>'datetime');
  
         $query = "SELECT   a.column_name AS name, " .
                  "         decode (a.nullable, 'Y', 0, 'N', 1) AS not_null, " .
                  "         a.data_type AS col_type, " .
                  "         a.data_length AS col_size, " .
                  "         a.data_default AS default_val " .
-                 "FROM     user_tab_columns a ".
+                 "FROM     all_tab_columns a ".
                  "WHERE    upper(a.table_name) = UPPER('$pTableName') " .
                  "ORDER BY a.column_id";
 
@@ -165,6 +194,8 @@ class CopixDBConnectionOCI extends CopixDBConnection {
     public function iDoQuery ($pQueryString, $pParams = array (), $pOffset = null, $pCount = null){
    		CopixLog::log ($pQueryString.var_export ($pParams, true), 'query', CopixLog::INFORMATION);
 
+   		$this->_prepareEnvironment ();   		
+
    		$resultsOfQueryParsing = $this->_parseQuery ($pQueryString, $pParams, $pOffset, $pCount);
         $pQueryString = $resultsOfQueryParsing['query'];
         
@@ -179,12 +210,17 @@ class CopixDBConnectionOCI extends CopixDBConnection {
         $arVariables = array ();
         foreach ($pParams as $name=>$param){
             $variableName = substr ($name, 1);
-        	if (! is_array ($param)){
-               $$variableName = $param;
-               if (!OCI_Bind_By_Name ($stmt, $name, $$variableName, -1)){
-                  throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
-               }
-               $arVariables[$variableName]['type'] = 'AUTO';        		
+			if (! is_array ($param)){
+				$$variableName = $param;
+				if (!OCI_Bind_By_Name ($stmt, $name, $$variableName, $this->_defaultBindLength)){
+					throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
+				}
+				$arVariables[$variableName]['type'] = $this->_defaultBindType;
+				
+//               if (!OCI_Bind_By_Name ($stmt, $name, $$variableName, -1)){
+//                  throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
+//               }
+//               $arVariables[$variableName]['type'] = 'AUTO';        		
                $arVariables[$variableName]['value'] = $param;        		
         	}else{
         		if (!isset ($$variableName)){
@@ -192,12 +228,19 @@ class CopixDBConnectionOCI extends CopixDBConnection {
         		}
         	   $arVariables[$variableName] = $param;
 
-        	   if (! isset ($arVariables[$variableName]['type'])){
-        	   	$arVariables[$variableName]['type'] = CopixDBQueryParam::DB_AUTO; 
-        	   }
-        	   if (! isset ($arVariables[$variableName]['maxlength'])){
-        	   	$arVariables[$variableName]['maxlength'] = -1;
-        	   }
+				if (! isset ($arVariables[$variableName]['type'])){
+					$arVariables[$variableName]['type'] = $this->_defaultBindType;
+				}
+				if (! isset ($arVariables[$variableName]['maxlength'])){
+					$arVariables[$variableName]['maxlength'] = $this->_defaultBindLength;
+				}
+				
+//				if (! isset ($arVariables[$variableName]['type'])){
+//        	   	$arVariables[$variableName]['type'] = CopixDBQueryParam::DB_AUTO; 
+//        	   }
+//        	   if (! isset ($arVariables[$variableName]['maxlength'])){
+//        	   	$arVariables[$variableName]['maxlength'] = -1;
+//        	   }
 
            	   if ($arVariables[$variableName]['type'] === CopixDBQueryParam::DB_CURSOR){
            	   	$$variableName = oci_new_cursor ($this->_ct);
@@ -232,7 +275,7 @@ class CopixDBConnectionOCI extends CopixDBConnection {
 		}
         return $results;
     }
-    
+
     /**
      * Exécution d'une requête de base de données en utilisant
      * 
@@ -244,10 +287,32 @@ class CopixDBConnectionOCI extends CopixDBConnection {
      */
     public function doQuery ($pQueryString, $pParams = array (), $pOffset = null, $pCount = null){
    		CopixLog::log ($pQueryString.var_export ($pParams, true), 'query', CopixLog::INFORMATION);
-
+   		$this->_prepareEnvironment ();
+   		return $this->_doQuery ($pQueryString, $pParams, $pOffset, $pCount);
+    }
+    
+    /**
+     * Préparation de l'environnement
+     */
+    private function _prepareEnvironment (){
+   		$this->_doQuery ("ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'");
+   		$this->_doQuery ("ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY'");
+    }
+    
+    
+    /**
+     * Exécution d'une requête de base de données en utilisant
+     * 
+     * @param	string 	$pQueryString	la requête à exécuter
+     * @param 	string	$pParameters	les paramètres à donner à la requête
+     * @param 	int		$pOffset		la ligne à partir de laquelle on veut récupérer les donénes
+     * @param	int 	$pCount 		le nombre d'enregistrements que l'on souhaite récupérer à partir de l'offset
+     * @return  array
+     */
+    private function _doQuery ($pQueryString, $pParams = array (), $pOffset = null, $pCount = null){
    		$resultsOfQueryParsing = $this->_parseQuery ($pQueryString, $pParams, $pOffset, $pCount);
         $pQueryString = $resultsOfQueryParsing['query'];
-
+        
     	//Préparation de la requête
     	$stmt = ociparse ($this->_ct, $pQueryString);
     	if ($stmt === false){
@@ -264,20 +329,28 @@ class CopixDBConnectionOCI extends CopixDBConnection {
                if (!OCI_Bind_By_Name ($stmt, $name, $$variableName, -1)){
                   throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
                }
-               $arVariables[$variableName]['type'] = 'AUTO';        		
-               $arVariables[$variableName]['value'] = $param;        		
+				$arVariables[$variableName]['type'] = $this->_defaultBindType;
+				$arVariables[$variableName]['value'] = $param;
+//               $arVariables[$variableName]['type'] = 'AUTO';        		
+//               $arVariables[$variableName]['value'] = $param;        		
         	}else{
         		if (!isset ($$variableName)){
         	       $$variableName = isset ($param['value']) ? $param['value'] : null;        			
         		}
         	   $arVariables[$variableName] = $param;
-
-        	   if (! isset ($arVariables[$variableName]['type'])){
-        	   	$arVariables[$variableName]['type'] = CopixDBQueryParam::DB_AUTO; 
-        	   }
-        	   if (! isset ($arVariables[$variableName]['maxlength'])){
-        	   	$arVariables[$variableName]['maxlength'] = -1;
-        	   }
+				
+				if (! isset ($arVariables[$variableName]['type'])){
+					$arVariables[$variableName]['type'] = $this->_defaultBindType;
+				}
+				if (! isset ($arVariables[$variableName]['maxlength'])){
+					$arVariables[$variableName]['maxlength'] = $this->_defaultBindLength;
+				}
+//        	   if (! isset ($arVariables[$variableName]['type'])){
+//        	   	$arVariables[$variableName]['type'] = CopixDBQueryParam::DB_AUTO; 
+//       	   }
+//        	   if (! isset ($arVariables[$variableName]['maxlength'])){
+//        	   	$arVariables[$variableName]['maxlength'] = -1;
+//        	   }
 
            	   if ($arVariables[$variableName]['type'] === CopixDBQueryParam::DB_CURSOR){
            	   	$$variableName = oci_new_cursor ($this->_ct);
@@ -382,10 +455,9 @@ class CopixDBConnectionOCI extends CopixDBConnection {
      */   
     public function iDoProcedure ($pProcedure, $pParams){
    		CopixLog::log ($pProcedure.var_export ($pParams, true), 'query', CopixLog::INFORMATION);
-   		
-   		$this->doQuery ("ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'");
-   		$this->doQuery ("ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY'");
-   		
+
+   		$this->_prepareEnvironment ();   		
+
     	//Préparation de la requête
     	$stmt = ociparse ($this->_ct, $pProcedure);
     	if ($stmt === false){
@@ -398,10 +470,15 @@ class CopixDBConnectionOCI extends CopixDBConnection {
             $variableName = substr ($name, 1);
         	if (! is_array ($param)){
                $$variableName = $param;
-               if (!oci_bind_by_name ($stmt, $name, $$variableName, -1)){
-                  throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
-               }
-               $arVariables[$variableName]['type'] = 'AUTO';        		
+               if (!oci_bind_by_name ($stmt, $name, $$variableName, $this->_defaultBindLength)){
+					throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
+				}
+				$arVariables[$variableName]['type'] = $this->_defaultBindType;
+				
+//               if (!oci_bind_by_name ($stmt, $name, $$variableName, -1)){
+//                  throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
+//               }
+//               $arVariables[$variableName]['type'] = 'AUTO';        		
                $arVariables[$variableName]['value'] = $param;        		
         	}else{
         		if (!isset ($$variableName)){
@@ -409,12 +486,18 @@ class CopixDBConnectionOCI extends CopixDBConnection {
         		}
         	   $arVariables[$variableName] = $param;
 
-        	   if (! isset ($arVariables[$variableName]['type'])){
-        	   	$arVariables[$variableName]['type'] = CopixDBQueryParam::DB_AUTO; 
-        	   }
-        	   if (! isset ($arVariables[$variableName]['maxlength'])){
-        	   	$arVariables[$variableName]['maxlength'] = -1;
-        	   }
+				if (! isset ($arVariables[$variableName]['type'])){
+					$arVariables[$variableName]['type'] = $this->_defaultBindType;
+				}
+				if (! isset ($arVariables[$variableName]['maxlength'])){
+					$arVariables[$variableName]['maxlength'] = $this->_defaultBindLength;
+				}
+//        	   if (! isset ($arVariables[$variableName]['type'])){
+//        	   	$arVariables[$variableName]['type'] = CopixDBQueryParam::DB_AUTO; 
+//        	   }
+//        	   if (! isset ($arVariables[$variableName]['maxlength'])){
+//        	   	$arVariables[$variableName]['maxlength'] = -1;
+//        	   }
 
            	   if ($arVariables[$variableName]['type'] === CopixDBQueryParam::DB_CURSOR){
            	   	$$variableName = oci_new_cursor ($this->_ct);
@@ -464,9 +547,8 @@ class CopixDBConnectionOCI extends CopixDBConnection {
     public function doProcedure ($pProcedure, $pParams){
    		CopixLog::log ($pProcedure.var_export ($pParams, true), 'query', CopixLog::INFORMATION);
    		
-   		$this->doQuery ("ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'");
-   		$this->doQuery ("ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/YYYY'");
-   		
+   		$this->_prepareEnvironment ();
+
     	//Préparation de la requête
     	$stmt = ociparse ($this->_ct, $pProcedure);
     	if ($stmt === false){
@@ -479,23 +561,34 @@ class CopixDBConnectionOCI extends CopixDBConnection {
             $variableName = substr ($name, 1);
         	if (! is_array ($param)){
                $$variableName = $param;
-               if (!oci_bind_by_name ($stmt, $name, $$variableName, -1)){
-                  throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
-               }
-               $arVariables[$variableName]['type'] = 'AUTO';        		
+               if (!oci_bind_by_name ($stmt, $name, $$variableName, $this->_defaultBindLength)){
+					throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
+				}
+				$arVariables[$variableName]['type'] = $this->_defaultBindType;
+				
+//               if (!oci_bind_by_name ($stmt, $name, $$variableName, -1)){
+//                  throw new CopixDBException ("Bind ['$name'] - [".$$variableName."] taille [".$arVariables[$variableName]['maxlength']."] type [".$this->_convertProcedureParam ($arVariables[$variableName]['type'])."]");
+//               }
+//               $arVariables[$variableName]['type'] = 'AUTO';        		
                $arVariables[$variableName]['value'] = $param;        		
         	}else{
         		if (!isset ($$variableName)){
         	       $$variableName = isset ($param['value']) ? $param['value'] : null;        			
         		}
         	   $arVariables[$variableName] = $param;
-
-        	   if (! isset ($arVariables[$variableName]['type'])){
-        	   	$arVariables[$variableName]['type'] = CopixDBQueryParam::DB_AUTO; 
-        	   }
-        	   if (! isset ($arVariables[$variableName]['maxlength'])){
-        	   	$arVariables[$variableName]['maxlength'] = -1;
-        	   }
+				
+				if (! isset ($arVariables[$variableName]['type'])){
+					$arVariables[$variableName]['type'] = $this->_defaultBindType;
+				}
+				if (! isset ($arVariables[$variableName]['maxlength'])){
+					$arVariables[$variableName]['maxlength'] = -1;
+				}
+//        	   if (! isset ($arVariables[$variableName]['type'])){
+//        	   	$arVariables[$variableName]['type'] = CopixDBQueryParam::DB_AUTO; 
+//        	   }
+//        	   if (! isset ($arVariables[$variableName]['maxlength'])){
+//        	   	$arVariables[$variableName]['maxlength'] = -1;
+//        	   }
 
            	   if ($arVariables[$variableName]['type'] === CopixDBQueryParam::DB_CURSOR){
            	   	$$variableName = oci_new_cursor ($this->_ct);

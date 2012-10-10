@@ -73,8 +73,7 @@ class CopixTestPrinter extends PHPUnit_Util_Printer implements PHPUnit_Framework
 		$this->printIncompletes ($result);
 		$this->printSkipped ($result);
 		
-		$out = $this->buffer;
-		require_once (COPIX_PATH.'tests/CopixTestResults.template.php');
+		echo $this->buffer;
 	}
 
 	/**
@@ -437,6 +436,14 @@ class CopixTestPrinter extends PHPUnit_Util_Printer implements PHPUnit_Framework
 	 */
 	public function write ($string){
 		$this->buffer .= $string;
+	}
+	
+	public function codeCoverage ($pPath){
+		if ($pPath !== false){
+			$this->write ("<a href='file://".$pPath."index.html'>Code coverage report</a> (file://".$pPath."index.html)<br />");
+		}else{
+			$this->write ("With XDebug, you would see a CodeCoverage report !");
+		}
 	}
 }
 ?>

@@ -20,12 +20,50 @@ class CopixTemplateTagException extends CopixException {}
 * @package		copix
 * @subpackage	taglib
 */
-abstract class CopixTemplateTag {
+abstract class CopixTemplateTag extends CopixParameterHandler {
+	
+	/**
+	 * Nom du tag.
+	 *
+	 * @var string
+	 */
+	private $_tagName;
+	
+	/**
+	 * Initialise le tag.
+	 *
+	 * @param string $pTagName Nom du tag.
+	 */
+	public function __construct($pTagName) {
+		$this->_tagName = $pTagName;
+	}
+	
     /**
      * Fonction qui sera en charge de créer le template
      * @param array $pParams la liste des paramètres envoyés au plugin
      * @return string le contenu de la fonction
      */
-    abstract public function process ($pParams); 
+    abstract public function process ($pParams);
+    
+    /**
+     * Lance une CopixTemplateTagException.
+     * 
+     * @param array $pErrors les erreurs, @see CopixParameterHandler::_errors.
+     */
+    protected function _reportErrors($pErrors) {
+    	$errors = array();
+    	if(isset($pErrors['missing'])) {
+    		$errors[] = _i18n('copix:copix.error.tag.missingParameters', implode(",", array_keys($pErrors['missing'])));
+    	}
+    	if(isset($pErrors['unknown'])) {
+    		$errors[] = _i18n('copix:copix.error.tag.unknownParameters', implode(",", array_keys($pErrors['unknown'])));
+    	}
+    	if(isset($pErrors['invalid'])) {
+    		$errors[] = _i18n('copix:copix.error.tag.invalidValues', implode(",", array_keys($pErrors['invalid'])));
+    	}
+    	throw new CopixTemplateTagException('[tag '.$this->_tagName.']: '.implode("; ", $errors));
+    }
+    
 }
+
 ?>

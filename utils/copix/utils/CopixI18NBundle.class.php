@@ -210,11 +210,11 @@ class CopixI18NBundle {
 							$this->_messages[$country][$key] = $value;
 						}else{
 							if ($match[4] != '' && substr($match[4], 0, 1) != '#'){
-								trigger_error ('Syntaxe error in file properties '.$path.' line '.$linenumber, E_USER_NOTICE);
+								throw new CopixException (_i18n ('copix:copix.error.i18n.syntaxError', array ($path, $linenumber)));
 							}
 						}
 					}else{
-						trigger_error ('Syntaxe error in file properties '.$path.' line '.$linenumber, E_USER_NOTICE);
+						throw new CopixException (_i18n ('copix:copix.error.i18n.syntaxError', array ($path, $linenumber)));
 					}
 				}
 			}

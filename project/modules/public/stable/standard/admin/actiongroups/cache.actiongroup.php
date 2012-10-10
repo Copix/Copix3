@@ -43,7 +43,8 @@ class ActionGroupcache extends CopixActionGroup {
 	 * Modification d'un profil de cache
 	 */
 	public function processEdit (){
-		if ($type = CopixRequest::get ('type')){
+		$type = _request ('type', null);
+		if ($type !== null){
 			if (!in_array ($type, CopixConfig::instance ()->copixcache_getRegistered ())){
 				return _arRedirect (_url ('admin||'));
 			}
@@ -64,7 +65,7 @@ class ActionGroupcache extends CopixActionGroup {
 		}
 		$link = CopixConfig::instance ()->copixcache_getRegistered ();
 		$finalLink = array();
-		foreach ($link as $key => $lien){
+		foreach ($link as $lien){
 			if( !($lien == $ppo->cache['name'] || ( isset($ppo->asLinked) && in_array($lien, $ppo->asLinked))) ){
 				$finalLink[$lien] = $lien;
 			}
@@ -78,7 +79,7 @@ class ActionGroupcache extends CopixActionGroup {
 	 * Création d'un profil de cache
 	 */
 	public function processCreate (){
-		$type = CopixRequest::get ('type', null, true);
+		$type = _request ('type', null, true);
 		if ($type === null ) {
 			return CopixActionGroup::process ('genericTools|Messages::getError',array ('message'=>CopixI18N::get ('cache.error.noname'), 'back'=>_url('admin|cache|admin')));
 		}
@@ -92,7 +93,7 @@ class ActionGroupcache extends CopixActionGroup {
 	}
 	
 	public function processRemoveLink(){
-		if ($linkToRemove = CopixRequest::get ('linkToRemove')){
+		if ($linkToRemove = _request ('linkToRemove')){
 			if ($type = CopixSession::get ('admin|cache|edit')){
 				$tabLink = explode("|", $type['link']);				
 				unset($tabLink[array_search($linkToRemove, $tabLink)]);
@@ -109,25 +110,25 @@ class ActionGroupcache extends CopixActionGroup {
 	 */
 	public function processValid (){
 		$type = CopixSession::get ('admin|cache|edit');
-		if (CopixRequest::get ('enabled')){
+		if (_request ('enabled')){
 			$type['enabled'] = true;
 		}
 		
-		$type['strategy'] = CopixRequest::get ('strategy');
-		if (CopixRequest::get ('strategy_class', null, true)){
-			$type['strategy'] = CopixRequest::get ('strategy_class'); 			
+		$type['strategy'] = _request ('strategy');
+		if (_request ('strategy_class', null, true)){
+			$type['strategy'] = _request ('strategy_class'); 			
 		}
-		if ($dir = CopixRequest::get ('dir')){	
+		if ($dir = _request ('dir')){	
 			$type['dir'] = $dir;
 		}
-		$type['duration'] = CopixRequest::get ('duration');
-		if ($link = CopixRequest::get ('link')){
+		$type['duration'] = _request ('duration');
+		if ($link = _request ('link')){
 			$type['link'] .= ($type['link'] == "") ? $link:"|".$link ;		
 		}
 		
 		CopixSession::set ('admin|cache|edit', $type);
 		
-		if (CopixRequest::get ('save')){
+		if (_request ('save')){
 			$types = CopixConfig::instance ()->copixcache_getRegisteredProfiles ();
 			$types[$type['name']] = $type;
 			_class ('cacheConfigurationFile')->write ($types);
@@ -142,7 +143,7 @@ class ActionGroupcache extends CopixActionGroup {
 	 * Supression d'un cache
 	 */
 	public function processDeleteType (){
-		$type = CopixRequest::get ('type');
+		$type = _request ('type');
 		if (CopixRequest::getInt ('confirm') == 1){
 			if(Copixcache::exists($type)){
 				Copixcache::clear ($type);

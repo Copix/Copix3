@@ -16,10 +16,16 @@
 class ActionGroupDatabase extends CopixActionGroup {
 	/**
 	 * Vérifie que l'on est bien administrateur
+	 *
+	 * @param string $actionName Nom de l'action.
 	 */
 	public function beforeAction ($actionName){
-		if (strtolower ($actionName) !== 'done'){
-			CopixAuth::getCurrentUser ()->assertCredential ('basic:admin');
+		switch (strtolower ($actionName)) {
+			case 'done': case 'checkinstallframework':
+				return;
+			
+			default:
+				CopixAuth::getCurrentUser ()->assertCredential ('basic:admin');				
 		}
 	}
 	
@@ -34,9 +40,10 @@ class ActionGroupDatabase extends CopixActionGroup {
 
 	/**
 	 * Validation du formulaire de configuration des connections
+	 *
+	 * @return CopixActionReturn
 	 */
 	public function processValidForm (){
-		$element = array ();
 		$arConnections = array ();
 		
         $arKeyConnections = array_keys($this->_getConnections());
@@ -73,7 +80,8 @@ class ActionGroupDatabase extends CopixActionGroup {
         }
 		
 		CopixSession::set ('admin|database|configure', $arConnections);
-		CopixSession::set ('admin|database|default', (CopixRequest::get('defaultRadio')=='nodefault') ? 'nodefault' : substr(CopixRequest::get('defaultRadio'),7));
+		$default_db =  (CopixRequest::get('defaultRadio')=='nodefault') ? 'nodefault' : substr(CopixRequest::get('defaultRadio'),7);
+		CopixSession::set ('admin|database|default', $default_db);
 
 		$result = $this->_testConnections ();
 		if ((CopixRequest::get ('btn') == _i18n ('install.database.save')) && ($result && count (CopixSession::get('admin|database|configure')) >= 1)){
@@ -81,11 +89,10 @@ class ActionGroupDatabase extends CopixActionGroup {
 		        CopixSession::set ('admin|database|configure',null);
 		        CopixSession::set ('admin|database|default', null);
 		        if (CopixRequest::get('defaultRadio')=='nodefault') {
-			        $adminTemp = CopixClassesFactory::create('admin|admintemp');
-			        $adminTemp->clearTemp();
+			        _class('admin|admintemp')->clearTemp();
      		        return _arRedirect (_url ('admin||'));
-     		    } else {
-     		        return _arRedirect (_url ('admin|database|checkInstallFramework'));
+     		    } else {	
+     		        return _arRedirect ($this->_checkInstallFramework($default_db));
      		    }
 		    }
 		}
@@ -100,6 +107,8 @@ class ActionGroupDatabase extends CopixActionGroup {
 
 	/**
 	 * Affichage du formulaire de configuration des connections
+	 *
+	 * @return CopixActionReturn
 	 */
 	public function processConfigurationForm (){
 
@@ -123,7 +132,8 @@ class ActionGroupDatabase extends CopixActionGroup {
    		}
    		
 		// Tout les profils de connexion existant
-        $allConnectionsName = CopixConfig::instance()->copixdb_getProfiles();
+		// Mise en commentaire car non utilisé.
+        // $allConnectionsName = CopixConfig::instance()->copixdb_getProfiles();
 
 		//Les connexions en dur
         $ppo->nodefault = ($currentDefault == 'nodefault');
@@ -163,9 +173,11 @@ class ActionGroupDatabase extends CopixActionGroup {
 	
 	/**
 	 * Récupération des connexions
+	 *
+	 * @return array liste des connections
 	 */
 	private function _getConnections (){
-		if (($ct = CopixSession::get ('admin|database|configure')) === null){
+		if ((CopixSession::get ('admin|database|configure')) === null){
 			CopixSession::set ('admin|database|configure', _ioClass ('DatabaseConfigurationFile')->getConnections ());
 		}
 		return CopixSession::get ('admin|database|configure');
@@ -173,6 +185,8 @@ class ActionGroupDatabase extends CopixActionGroup {
 	
 	/**
 	 * Marque les tests de connection pour les connections configurées en session
+	 *
+	 * @return boolean Vrai si les connections sont toutes accessibles
 	 */
 	private function _testConnections (){
 		$toReturn = true;
@@ -204,6 +218,8 @@ class ActionGroupDatabase extends CopixActionGroup {
 	
 	/**
 	 * Confirmation de l'installation et affichage des infos login / mot de passe
+	 *
+	 * @return CopixActionReturn 
 	 */
 	public function processDone (){
 		_currentUser ()->logout ();
@@ -219,17 +235,29 @@ class ActionGroupDatabase extends CopixActionGroup {
 
 	/**
 	 * Vérifie si le framework est installé sur la base par défaut.
+	 *
+	 * @return 	CopixActionReturn Redirige l'utilisateur vers l'administration si le framework est installé, vers l'installation sinon
 	 */
 	public function processCheckInstallFramework () {
-	    $ct     = CopixDb::getConnection();
+        return _arRedirect ($this->_checkInstallFramework ());
+    }
+    
+    /**
+     * Vérifie si le framework est installé sur la connection passée en paramètre 
+     *
+     * @param 	string $pConnection
+     * @return 	string url à utiliser
+     */
+    private function _checkInstallFramework ($pConnection = null) {
+    	$ct     = CopixDb::getConnection($pConnection);
 	    $tables = $ct->getTableList();
         $adminTemp = _class ('admin|admintemp');
-	    if (!in_array ('copixmodule', $tables) || !in_array ('copixconfig', $tables) || !in_array ('copixconfig', $tables)) {
+	    if (!in_array ('copixmodule', $tables) || !in_array ('copixconfig', $tables) || !in_array ('copixlog', $tables)) {
 	        $adminTemp->clearTemp();
-	        return _arRedirect (_url ('admin|install|installFramework')); 
+	        return _url ('admin|install|installFramework'); 
         }
         $adminTemp->clearTemp();
-        return _arRedirect (_url ('admin||'));
+        return _url ('admin||');
     }
 }
 ?>

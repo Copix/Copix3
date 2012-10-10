@@ -38,9 +38,9 @@ class dbModuleCredentialHandler implements ICopixCredentialHandler {
 	 * @param CopixUser $pUser	l'utilisateur dont on teste les droits
 	 */
 	private function _module ($pString, $pUser){
-	    foreach ($pUser->getGroups () as $handler=>$arGroupForHandler) {
+	    _classInclude('auth|dbmodulegrouphandler');
+		foreach ($pUser->getGroups () as $handler=>$arGroupForHandler) {
 	    	foreach ($arGroupForHandler as $id=>$groupCaption){
-	            _classInclude('auth|dbmodulegrouphandler');
 	            $handlerCredential = new dbModuleGroupHandler ($handler,$id);
 	            if ($handlerCredential->isOk ($pString)) {
 	                return true;

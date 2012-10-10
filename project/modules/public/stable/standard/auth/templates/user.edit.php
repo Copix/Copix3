@@ -55,7 +55,7 @@
         </th>
         <td>
             <input type="text" name="confirmcode_dbuser" value="" />
-            <input type="hidden" name="idcode_dbuser" value="<?php echo $id;?>" /></td>
+            <input type="hidden" name="idcode_dbuser" value="<?php echo $id;?>" />
         </td>
     </tr>
     <?php } ?>

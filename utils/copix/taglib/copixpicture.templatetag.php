@@ -12,7 +12,7 @@
  * @package		copix
  * @subpackage	taglib
  */
-class TemplateTagCopixPicture {
+class TemplateTagCopixPicture extends CopixTemplatetag {
     public function process($pParams) {
         $size='';
         if (isset ($pParams['width'])) {

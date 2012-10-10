@@ -1,176 +1,310 @@
 <?php
 /**
-* @package		copix
-* @subpackage	lists
-* @author		Salleyron Julien
-* @copyright	CopixTeam
-* @link			http://copix.org
-* @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
-* @experimental
-*/
+ * @package		copix
+ * @subpackage	datasource
+ * @author		Salleyron Julien
+ * @copyright	CopixTeam
+ * @link		http://copix.org
+ * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
+ */
 
 /**
+ * Source de données pour un DAO
  * 
+ * @package		copix
+ * @subpackage	datasource
  */
 class CopixDaoDatasource {
+	/**
+	 * Connexion si différente de default 
+	 *
+	 * @var string
+	 */
+	private $_ct = null;
 
-    /**
-     * Connexion si différente de default 
-     *
-     * @var string
-     */
-    private $_ct = null;
+	/**
+	 * La dao a créer
+	 *
+	 * @var string
+	 */
+	private $_daoname = null;
 
-    /**
-     * La dao a créer
-     *
-     * @var string
-     */
-    private $_daoname = null;
+	/**
+	 * Le dao
+	 *
+	 * @var object
+	 */
+	private $_dao = null;
 
-    /**
-     * La dao
-     *
-     * @var StdClass
-     */
-    private $_dao = null;
+	/**
+	 * Ordre des champs
+	 *
+	 * @var unknown_type
+	 */
+	private $_fieldOrder = null;
+	
+	/**
+	 * Identifiant du DAO
+	 *
+	 * @var string
+	 */
+	private $_daoid = null;
+	
+	/**
+	 * Liste des champs qui permettent de connaitre les PK
+	 * 
+	 * @var array
+	 */
+	private $_fields = array ();
+	
+	/**
+	 * Contient le SearchParam
+	 * 
+	 * @var CopixDAOSearchParams
+	 */
+	private $_sp = null;
+	
+	/**
+	 * Nombre de d'enregistrements max pour la page
+	 * 
+	 * @var int
+	 */
+	private $_max = null;
+	
+	/**
+	 * Nombre de pages du dernier retour
+	 * 
+	 * @var int
+	 */
+	private $_nbpages = null;
+	
+	/**
+	 * Nombre d'enregistrements
+	 *
+	 * @var int
+	 */
+	private $_nbrecord = null;
+	
+	/**
+	 * Appelée pendant le unserialize
+	 */
+	public function __wakeup () {
+		$this->_dao = $this->_dao->getSessionObject (); 
+	}
+	
+	/**
+	 * Appelée avant le serialize
+	 *
+	 * @return array
+	 */
+	public function __sleep () {
+		$this->_dao = new CopixSessionObject ($this->_dao);
+		return array_keys (get_object_vars ($this)); 
+	}
+	
+	/**
+	 * Constructeur
+	 *
+	 * @param array $pParams Paramètres : ct, dao, max.
+	 */
+	public function __construct ($pParams) {
+		$this->_ct = (isset($pParams['ct'])) ? $pParams['ct'] : null;
+		$this->_daoname = $pParams['dao'];
+		$this->_max = (isset($pParams['max'])) ? $pParams['max'] : null;
+		$this->_dao = _dao ($this->_daoname, $this->_ct);
+		$this->_sp = _daoSP ();
+		$this->_fields = $this->_dao->getFieldsDescription ();
+	}
 
-    private $_fieldOrder = null;
-    
-    private $_daoid = null;
-    
-    /**
-     * Liste des champs (type champ de dao)
-     * qui permet de connaitre les pk
-     */
-    private $_fields = array ();
-    
-    /**
-     * Contient le SearchParam
-     */
-    private $_sp = null;
-    
-    /**
-     * Nombre de max d'enregistrement pour la pager
-     */
-    private $_max = null;
-    
-    /**
-     * Nombre de page du dernier retour
-     */
-    private $_nbpages = null;
-    
-    private $_nbrecord = null;
-    
-    public function __wakeup () {
-        $this->_dao = $this->_dao->getSessionObject (); 
-    }
-    
-    public function __sleep () {
-	    $this->_dao = new CopixSessionObject ($this->_dao);
-	    return array_keys (get_object_vars ($this)); 
-    }
-    
-    public function __construct ($pParams) {
-        $this->_ct      = isset($pParams['ct']) ? $pParams['ct'] : null;
-        $this->_daoname = $pParams['dao'];
-        $this->_max     = isset($pParams['max']) ? $pParams['max'] : null;
-        $this->_dao     = _dao ($this->_daoname,$this->_ct);
-        $this->_sp      = _daoSP ();
-        $this->_fields  = $this->_dao->getFieldsDescription ();
-    }
+	/**
+	 * Ajoute une condition
+	 *
+	 * @param string $pFieldID Nom du champ de la dao sur lequel on ajoute la condition
+	 * @param string $pCondition Condition à appliquer (=, !=, <>, <, > like, ...)
+	 * @param mixed $pValue Valeur de recherche (inutile de quotter les chaines)
+	 * @param string $pKind Type de condition : AND ou OR
+	 * @return CopixDAOSearchparams
+	 */
+	public function addCondition ($pFieldID, $pCondition, $pValue, $pKind = 'and') {
+		$this->_sp->addCondition ($pFieldID, $pCondition, $pValue, $pKind);
+		return $this;
+	}
 
-    public function addCondition ($pField, $pCond, $pValue, $pType = 'and') {
-        $this->_sp->addCondition ($pField, $pCond, $pValue, $pType);
-    }
+	/**
+	 * Permet de rajouter directement du SQL dans la recherche
+	 * 
+	 * @param string $pSQL SQL à intégrer dans la requête
+	 * @param array $pParams Tableau de paramètres relatifs à la chaine
+	 * @param string $pKind Type de condition : AND ou OR
+	 * @return CopixDAOSearchParams
+	 */
+	public function addSQL ($pSql, $pParams = array (), $pType = 'and') {
+		$this->_sp->addSQL ($pSql, $pParams, $pType);
+		return $this;
+	}
 
-    public function startGroup () {
-        $this->_sp->startGroup ();
-    }
+	/**
+	 * Début d'un groupe de conditions
+	 *
+	 * @return CopixDAOSearchparams
+	 */
+	public function startGroup ($pKind = 'AND') {
+		$this->_sp->startGroup ($pKind);
+		return $this;
+	}
 
-    public function endGroup () {
-        $this->_sp->endGroup ();
-    }
-    
-    public function addOrderBy ($pField, $pOrder = 'ASC') {
-        $this->_sp->orderBy(array($pField,$pOrder));
-    }
-    
-    public function find ($page=0, $pOrder=null, $pSens='ASC') {
-        if ($pOrder!=null) {
-            $this->_sp->orderBy(array ($pOrder, $pSens));
-        }
-    	if ($this->_max !== null) {
-    	    if ($this->_max!=0) {
-    	        $this->_nbrecord = $this->_dao->countBy ($this->_sp);
-    	        $this->_nbpages = round ($this->_nbrecord/$this->_max);
-    	    }
-    	    $this->_sp->setLimit($this->_max*$page,$this->_max);
-    	}
-    	
-    	$results = $this->_dao->findBy($this->_sp);
-    	
-    	$this->_sp      = _daoSP ();
-    	
-        return $results->fetchAll();
-    }
+	/**
+	 * Fin d'un groupe de conditions
+	 *
+	 * @return CopixDAOSearchparams
+	 */
+	public function endGroup () {
+		$this->_sp->endGroup ();
+		return $this;
+	}
+	
+	/**
+	 * Ajoute un ordre de tri
+	 *
+	 * @param string $pField
+	 * @param string $pOrder
+	 * @return CopixDAOSearchparams
+	 */
+	public function addOrderBy ($pField, $pOrder = 'ASC') {
+		$this->_sp->orderBy (array ($pField, $pOrder));
+		return $this;
+	}
+	
+	/**
+	 * Effectue une recherche
+	 *
+	 * @param int $pPage Numéro de la page à retourner
+	 * @param string $pOrder Order de tri
+	 * @param string $pSens Type de tri : ASC ou DESC
+	 * @return array
+	 */
+	public function find ($pPage = 0, $pOrder = null, $pSens = 'ASC') {
+		if ($pOrder != null) {
+			$this->_sp->orderBy (array ($pOrder, $pSens));
+		}
+		if ($this->_max !== null) {
+			if ($this->_max!=0) {
+				$this->_nbrecord = $this->_dao->countBy ($this->_sp);
+				$this->_nbpages = ceil ($this->_nbrecord / $this->_max);
+			}
+			$this->_sp->setLimit ($this->_max * $pPage, $this->_max);
+		}
+		$results = $this->_dao->findBy ($this->_sp);		
+		$this->_sp = _daoSP ();
+		return $results->fetchAll ();
+	}
 
-    public function getNbPage () {
-    	return $this->_nbpages;
-    }
-    
-    public function getNbRecord () {
-         return $this->_nbrecord;
-    }
-    
-    public function save ($pRecord) {
-        $daoRecord = CopixDAOFactory::createRecord ($this->_daoname);
-        foreach ($pRecord as $key=>$record) {
-            $daoRecord->$key = $record;
-        }
-        $this->_dao->insert($daoRecord);
-        return $daoRecord;
-    }
+	/**
+	 * Retourne le nombre de pages
+	 *
+	 * @return int
+	 */
+	public function getNbPage () {
+		return $this->_nbpages;
+	}
+	
+	/**
+	 * Retourne le nombre d'enregistrements
+	 *
+	 * @return int
+	 */
+	public function getNbRecord () {
+		 return $this->_nbrecord;
+	}
+	
+	/**
+	 * Sauvegarde le record $pRecord dans la table
+	 *
+	 * @param array $pRecord Tableau des données à sauvegarder : array ('monChamp1' => 12, 'monChamp2' => 'test')
+	 * @return object
+	 */
+	public function save ($pRecord) {
+		$daoRecord = CopixDAOFactory::createRecord ($this->_daoname);
+		foreach ($pRecord as $key => $record) {
+			$daoRecord->$key = $record;
+		}
+		$this->_dao->insert ($daoRecord);
+		return $daoRecord;
+	}
 
-     public function check ($pRecord) {
-        $daoRecord = CopixDAOFactory::createRecord ($this->_daoname);
-        foreach ($pRecord as $key=>$record) {
-            $daoRecord->$key = $record;
-        }
-        return $this->_dao->check($daoRecord);
-    }
-    
-    public function update ($pRecord) {
-        $daoRecord = CopixDAOFactory::createRecord ($this->_daoname);
-        foreach ($pRecord as $key=>$record) {
-            $daoRecord->$key = $record;
-        }
-        $this->_dao->update($daoRecord);
-        return $daoRecord;
-    }
-
-    public function delete () {
-        $pParams = func_get_args ();
-        return call_user_func_array (array($this->_dao,'delete'), $pParams);
-    }
-    
-    public function get () {
-        $pParams = func_get_args ();
-        return call_user_func_array (array($this->_dao,'get'), $pParams);
-    }
-    
-    public function getPk () {
-        $toReturn = array ();
-        foreach ($this->_fields as $field) {
-            if ($field->isPK) {
-                $toReturn[] = $field->fieldName;
-            } 
-        }
-        return $toReturn;
-    }
-    
-    public function getFields () {
-        return $this->_fields;
-    }
+	/**
+	 * Vérifie la validité des informations de $pRecord
+	 *
+	 * @param array $pRecord Tableau des données à vérifier : array ('monChamp1' => 12, 'monChamp2' => 'test')
+	 * @return boolean
+	 */
+	public function check ($pRecord) {
+		$daoRecord = CopixDAOFactory::createRecord ($this->_daoname);
+		foreach ($pRecord as $key => $record) {
+			$daoRecord->$key = $record;
+		}
+		return $this->_dao->check ($daoRecord);
+	}
+	
+	/**
+	 * Mise à jour des données
+	 *
+	 * @param array $pRecord Tableau des données à modifierr : array ('monChamp1' => 12, 'monChamp2' => 'test')
+	 * @return ICopixDAORecord
+	 */
+	public function update ($pRecord) {
+		$daoRecord = CopixDAOFactory::createRecord ($this->_daoname);
+		foreach ($pRecord as $key => $record) {
+			$daoRecord->$key = $record;
+		}
+		$this->_dao->update ($daoRecord);
+		return $daoRecord;
+	}
+	
+	/**
+	 * Supprime un / des enregistrement(s)
+	 *
+	 * @params array Nombre de paramètres non définis, dépendant du delete du DAO
+	 * @return int Nombre d'enregistrements supprimés, ou false si echec
+	 */
+	public function delete () {
+		$pParams = func_get_args ();
+		return call_user_func_array (array ($this->_dao, 'delete'), $pParams);
+	}
+	
+	/**
+	 * Retourne un enregistrement
+	 *
+	 * @params array Nombre de paramètres non définis, dépendant du get du DAO
+	 * @return ICopixDAORecord
+	 */
+	public function get () {
+		$pParams = func_get_args ();
+		return call_user_func_array (array ($this->_dao,'get'), $pParams);
+	}
+	
+	/**
+	 * Retourne la clef primaire
+	 *
+	 * @return array Tableau de type array (0 => 'clefPrimaire1', 1 => 'clefPrimaire2')
+	 */
+	public function getPk () {
+		$toReturn = array ();
+		foreach ($this->_fields as $field) {
+			if ($field->isPK) {
+				$toReturn[] = $field->fieldName;
+			} 
+		}
+		return $toReturn;
+	}
+	
+	/**
+	 * Retourne les champs du DAO
+	 *
+	 * @return array
+	 */
+	public function getFields () {
+		return $this->_fields;
+	}
 }
 ?>

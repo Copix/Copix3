@@ -17,7 +17,7 @@ CREATE TABLE `cmspage` (
   `content_cmsp` text,
   PRIMARY KEY  (`id_cmsp`),
   KEY `publicid_cmsp` (`publicid_cmsp`)
-)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+) CHARACTER SET utf8;
 
 
 INSERT INTO `copixcapabilitypath` (`name_ccpt`, `description_ccpt`) VALUES ('modules|cms|portlet', 'Portlets disponibles');

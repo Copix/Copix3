@@ -121,7 +121,13 @@ class HTTPRequest{
          
         // redirection?
         if(isset($headers['location'])){
-            $http = new HTTPRequest($headers['location']);
+        	
+        	$url = $headers['location'];
+        	if(!strpos($headers['location'],$this->_protocol.'://'.$this->_host)){
+        		//we are in same domain
+        		$url = $this->_protocol.'://'.$this->_host.$headers['location'];
+        	}
+            $http = new HTTPRequest($url);
             return($http->DownloadToString($http));
         }
         else{

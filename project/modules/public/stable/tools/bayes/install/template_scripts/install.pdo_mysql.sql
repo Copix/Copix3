@@ -5,6 +5,6 @@ create table %TABLENAME% (
 	numdatas_bayes integer default 0,
 	dataset_bayes varchar (55) not null,
 	primary key(id_bayes)
-);
+) CHARACTER SET utf8;
 
 

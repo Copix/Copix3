@@ -13,7 +13,7 @@
 * @package		copix
 * @subpackage	taglib
 */
-class TemplateTagCsv {
+class TemplateTagCsv  extends CopixTemplateTag  {
     
     public function process($pParams) {
 	    extract ($pParams);

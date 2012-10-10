@@ -6,9 +6,6 @@ $ExpStr = "Expires: " .
 gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
 header($ExpStr);
 
-$root = $_GET['copixurl'];
-$tplPath = $root . 'themes/bluelines/';
-$imgPath = $tplPath . 'img/';
 ?>
 @CHARSET "UTF-8";
 
@@ -22,7 +19,7 @@ body{
 	font-variant:normal; 
 	font-weight:normal; 
 	line-height:normal;
-	background-image:url(<?php echo $imgPath ?>background.png);
+	background-image:url(../img/background.png);
 	margin: 0;
     padding: 0;
     cursor: default;
@@ -30,38 +27,38 @@ body{
 
 td.block_top_left {
 	width: 6px;
-	background-image: url(<?php echo $imgPath; ?>block_top_left.png);
+	background-image: url(../img/block_top_left.png);
 }
 
 td.block_top {
 	height: 5px;
-	background-image: url(<?php echo $imgPath; ?>block_top.png);	
+	background-image: url(../img/block_top.png);	
 }
 
 td.block_top_right {
-	background-image: url(<?php echo $imgPath; ?>block_top_right.png);
+	background-image: url(../img/block_top_right.png);
 }
 
 td.block_right {
 	width: 8px;
-	background-image: url(<?php echo $imgPath; ?>block_right.png);
+	background-image: url(../img/block_right.png);
 }
 
 td.block_bottom_right {
 	height: 5px;
-	background-image: url(<?php echo $imgPath; ?>block_bottom_right.png);
+	background-image: url(../img/block_bottom_right.png);
 }
 
 td.block_bottom {
-	background-image: url(<?php echo $imgPath; ?>block_bottom.png);
+	background-image: url(../img/block_bottom.png);
 }
 
 td.block_bottom_left {
-	background-image: url(<?php echo $imgPath; ?>block_bottom_left.png);
+	background-image: url(../img/block_bottom_left.png);
 }
 
 td.block_left {
-	background-image: url(<?php echo $imgPath; ?>block_left.png);
+	background-image: url(../img/block_left.png);
 }
 
 td.block_content {
@@ -70,7 +67,7 @@ td.block_content {
 
 td.title {	
 	background-repeat: repeat-x;
-	background-image: url(<?php echo $imgPath ?>title_center.png);
+	background-image: url(../img/title_center.png);
 	width: 100%;
 }
 
@@ -115,7 +112,7 @@ input[type=text]:hover,input[type=password]:hover,input[type=listbox]:hover{
 }
 
 h2 {
-	background-image: url(<?php echo $imgPath ?>title_underline.png);
+	background-image: url(../img/title_underline.png);
 	background-repeat: no-repeat;
 	background-position: bottom left;
 	font-size: 11pt;

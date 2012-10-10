@@ -46,17 +46,12 @@ class CopixDBFieldDescription {
     public $name;
     
     /**
-     * Clé primaire
-     */
-    public $primarykey;
-    
-    /**
      * Est ce que le champ accepte les valeurs null
      */
     public $notnull;
     
     /**
-     * Auto increment
+     * Clé primaire
      */
     public $pk;
     
@@ -447,7 +442,7 @@ class CopixDB {
 		return self::_getDrivers (false);
    }
    
-   private function _getDrivers  ($pGetOnlyAvailables) {
+   private static function _getDrivers  ($pGetOnlyAvailables) {
    		$arDrivers   = array ();
    		$arAvailable = array ();
 

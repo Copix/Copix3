@@ -30,14 +30,24 @@ class CopixTestController {
 	public function process ($pParams){
 		if (@include_once ('PHPUnit/Framework.php')){
 			require_once (COPIX_PATH.'tests/CopixTest.class.php');
+			require_once (COPIX_PATH.'tests/CopixDBTest.class.php');
 			require_once (COPIX_PATH.'tests/CopixTestRunner.class.php');
 			require_once (COPIX_PATH.'tests/CopixTestPrinter.class.php');
-				
+			require_once (COPIX_PATH.'tests/CopixTestXMLPrinter.class.php');
+
+			// Ignore les fichiers de framework de test
+			PHPUnit_Util_Filter::addDirectoryToFilter(dirname(__FILE__));
+			PHPUnit_Util_Filter::addDirectoryToFilter(dirname(__FILE__).'/framework');
+
 			$this->_configFile = isset ($pParams['conf']) ? $pParams['conf'] : '../project/config/copix.conf.php';
 			if (!isset ($_REQUEST['tests'])){
 				$this->testWelcome ();
 			}else {
-				CopixTestRunner::run ($this->_getSuite (), array ('reportDirectory'=>isset ($pParams['report_path']) ? $pParams['report_path'] : COPIX_TEMP_PATH));
+				if (!isset ($pParams['xml']) || ($pParams['xml'] == false)){
+					$options['reportDirectory'] = COPIX_TEMP_PATH;
+				}
+				$options['xml'] = isset ($pParams['xml']) && $pParams['xml']; 
+				CopixTestRunner::run ($this->_getSuite (), $options);
 			}
 		}else{
 			$this->showRequiredPHPUnit ();
@@ -51,19 +61,16 @@ class CopixTestController {
 	private function _getSuite (){
     	$suite = new PHPUnit_Framework_TestSuite ('Tests');
 
-    	//Ajout des tests du framework si on ne spécifie pas le contraire
-    	if (isset ($_REQUEST['framework']) || $_REQUEST['tests'] == 'all'){
-			require_once (COPIX_PATH.'tests/CopixFrameworkTestSuite.class.php');
-			$suite->addTestSuite (CopixFrameworkTestSuite::getSuite ());
-		}else{
-			require_once (COPIX_PATH.'tests/framework/Copix_ControllerTest.class.php');
-			$frameworkSuite = new PHPUnit_Framework_TestSuite ('Framework');
-			$frameworkSuite->addTestSuite ('Copix_ControllerTest');
-			$suite->addTestSuite ($frameworkSuite);
-		}
-		
+		// Charge la config (nécessaire pour CopixModule)
+    	$config = CopixConfig::instance ();
+		$config->copixerrorhandler_enabled = false;
+    	//On instancie un controlleur
+		new ProjectController ($this->_configFile);
+
+    	//----
 		$subSuites = array ();
 		$arToTest = array ();
+		
 		
 		//on parcours l'ensemble des tests disponibles et on les ajoute
 		//si on les trouve dans l'url.

@@ -71,7 +71,7 @@ class CopixLDAPConnection {
 	    $this->_applyProfile ($profile);
 		
 		if ($this->_host === null){
-			trigger_error ('No host defined', E_USER_ERROR);
+			throw new CopixException (_i18n ('copix:ldap.error.hostUndefined'));
 		}
 
 		$this->_connection = ldap_connect ($this->_host);
@@ -152,12 +152,7 @@ class CopixLDAPConnection {
 			echo $this->_lastQuery;
 		}
 
-		if ($this->_connection === false) {
-			trigger_error ('not connected', E_USER_ERROR);
-		}
-		if ($this->_baseDn === null){
-			trigger_error ('no given base dn', E_USER_ERROR);
-		}
+		$this->_assertConnexion ();
 
 		if (($search = @ldap_search ($this->_connection, $this->_baseDn, $searchString, array(), 0, $maxResults)) !== false){
 			if ($sortFilter !== null){
@@ -177,12 +172,7 @@ class CopixLDAPConnection {
 	* @return le résultat corespondant au dn.
 	*/
 	public function get ($dn) {
-		if ($this->_connection === false) {
-			trigger_error ('not connected', E_USER_ERROR);
-		}
-		if ($this->_baseDn === null){
-			trigger_error ('no given base dn', E_USER_ERROR);
-		}
+		$this->_assertConnexion ();
 		if (($search = @ldap_read ($this->_connection, $dn, '(objectClass=*)')) !== false){
 			$resultSet = new CopixLDAPResultSet ($this, $search);
 		}else{
@@ -201,12 +191,7 @@ class CopixLDAPConnection {
 	* @param array   $entry valeurs à insérer
 	*/
 	public function insert ($dn, $entry) {
-		if ($this->_connection === false) {
-			trigger_error ('not connected', E_USER_ERROR);
-		}
-		if ($this->_baseDn === null){
-			trigger_error ('no given base dn', E_USER_ERROR);
-		}
+		$this->_assertConnexion ();
 
 		return (ldap_add ($this->_connection, $dn, $this->_cleanArrayForOperations ($entry->asArray ())) !== false);
 	}
@@ -217,12 +202,7 @@ class CopixLDAPConnection {
 	* @param string  $dn  le nom distingué de l'entrée à supprimer
 	*/
 	public function delete ($dn) {
-		if ($this->_connection === false) {
-			trigger_error ('not connected', E_USER_ERROR);
-		}
-		if ($this->_baseDn === null){
-			trigger_error ('no given base dn', E_USER_ERROR);
-		}
+		$this->_assertConnexion ();
 
 		if ((@ldap_delete ($this->_connection, $dn)) !== false){
 			return true;
@@ -238,12 +218,7 @@ class CopixLDAPConnection {
     * @param CopixLdapEntry  $entry valeurs à insérer
     */
 	public function update ($dn, $entry) {
-		if ($this->_connection === false) {
-			trigger_error ('not connected', E_USER_ERROR);
-		}
-		if ($this->_baseDn === null){
-			trigger_error ('no given base dn', E_USER_ERROR);
-		}
+		$this->_assertConnexion ();
 
 		//first we delete empty elements.
 		$toDelete = array ();
@@ -267,12 +242,7 @@ class CopixLDAPConnection {
 	 * Renomage d'une entrée de l'annuaire
 	 */
 	public function rename ($entry,$newdn,$parent){
-		if ($this->_connection === false) {
-			trigger_error ('not connected', E_USER_ERROR);
-		}
-		if ($this->_baseDn === null){
-			trigger_error ('no given base dn', E_USER_ERROR);
-		}
+		$this->_assertConnexion ();
 		//$parent = 'ou=Salaries,ou=Annuaire,dc=intranet-kse,dc=net';
 		$res = @ldap_rename($this->_connection, $entry->dn, $newdn, $parent,false);
 		return $res;
@@ -298,12 +268,7 @@ class CopixLDAPConnection {
 				$first = false;
 			}
 		}
-		if ($this->_connection === false) {
-			trigger_error ('not connected', E_USER_ERROR);
-		}
-		if ($this->_baseDn === null){
-			trigger_error ('no given base dn', E_USER_ERROR);
-		}
+		$this->_assertConnexion ();
 
 		if (($search = @ldap_read ($this->_connection, $searchDn, '(objectClass=*)')) !== false){
 			$resultSet = new CopixLDAPResultSet ($this, $search);
@@ -349,12 +314,7 @@ class CopixLDAPConnection {
     * @return array An array of DN strings listing the immediate children of the specified entry.
     */
 	public function getContainerContents( $dn, $size_limit=0, $filter='(objectClass=*)', $deref=LDAP_DEREF_ALWAYS ) {
-		if ($this->_connection === false) {
-			trigger_error ('not connected', E_USER_ERROR);
-		}
-		if ($this->_baseDn === null){
-			trigger_error ('no given base dn', E_USER_ERROR);
-		}
+		$this->_assertConnexion ();
 
 		//	echo "get_container_contents( $server_id, $dn, $size_limit, $filter, $deref )\n";
 		$search = @ldap_list( $this->_connection, $dn, $filter, array( 'dn' ), 1, $size_limit, 0, $deref );
@@ -376,6 +336,18 @@ class CopixLDAPConnection {
 			}
 		}
 		return $return;
+	}
+	
+	/**
+	 * Vérifie que les infos de connexion ont bien été remplis, le cas échéant, génère une CopixException
+	 */
+	private function _assertConnexion () {
+		if ($this->_connection === false) {
+			throw new CopixException (_i18n ('copix:ldap.error.notConnected'));
+		}
+		if ($this->_baseDn === null){
+			throw new CopixException (_i18n ('copix:ldap.error.dnNotGiven'));
+		}
 	}
 }
 ?>

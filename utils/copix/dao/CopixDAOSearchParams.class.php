@@ -448,10 +448,22 @@ class CopixDAOSearchParams {
 	                   $r .= $prefixNoCondition.' IS NOT NULL';
 	                } else {
 	                	$fieldsForQueryParams[$variableName] = $this->_variableValue ($pFields[$conditionDescription['field_id']][1], $conditionDescription['value'], $pConnection ? $pConnection->getProfile ()->getDriverName () : null);
-	                	if ($pFields[$conditionDescription['field_id']][1] == 'datetime' && $pConnection !== null && $pConnection->getProfile ()->getDriverName () == 'oci'){
-							$r .= 'to_char('.$prefixNoCondition.', \'YYYYMMDDHH24MISS\') '.$conditionDescription['condition'].' '.$variableName; 	                		
+	                	if (($pConnection !== null && $pConnection->getProfile ()->getDriverName () == 'oci') && in_array ($pFields[$conditionDescription['field_id']][1], array ('datetime', 'date', 'time'))) {
+	                		if ($pFields[$conditionDescription['field_id']][1] == 'datetime'){
+								$r .= 'to_char('.$prefixNoCondition.', \'YYYYMMDDHH24MISS\') '.$conditionDescription['condition'].' '.$variableName;
+	                		}elseif ($pFields[$conditionDescription['field_id']][1] == 'date'){
+	                			$r .= 'to_char('.$prefixNoCondition.', \'YYYYMMDD\') '.$conditionDescription['condition'].' '.$variableName;
+	                		}elseif ($pFields[$conditionDescription['field_id']][1] == 'time'){
+	                			$r .= 'to_char('.$prefixNoCondition.', \'HH24MISS\') '.$conditionDescription['condition'].' '.$variableName;
+	                		}
 	                	}else{
-	                		$r .= $prefix.$variableName;
+	                		$methodDebut = '';
+	            			$methodFin = '';
+	                		if (isset ($pFields[$conditionDescription['field_id']][4])){
+			            		$methodDebut = $pFields[$conditionDescription['field_id']][4].'(';
+			            		$methodFin = ')';
+	                		}
+	                		$r .= $prefix.$methodDebut.$variableName.$methodFin;
 	                	}
 	                    self::$_countParam++;
 	                }
@@ -469,10 +481,22 @@ class CopixDAOSearchParams {
 			                }elseif (($conditionValue === null) && ($conditionDescription['condition'] == '<>')){
 			                   $r .= $prefixNoCondition.' IS NOT NULL';
 			                } else {
-			                	if ($pFields[$conditionDescription['field_id']][1] == 'datetime'  && $pConnection !== null && $pConnection->getProfile ()->getDriverName () == 'oci'){
-			                    	$r .= 'to_char('.$prefixNoCondition.', \'YYYYMMDDHH24MISS\') '.$conditionDescription['condition'].' '.$variableName;
+			                	if (($pConnection !== null && $pConnection->getProfile ()->getDriverName () == 'oci') && in_array ($pFields[$conditionDescription['field_id']][1], array ('datetime', 'date', 'time'))){
+									if ($pFields[$conditionDescription['field_id']][1] == 'datetime'){
+			                			$r .= 'to_char('.$prefixNoCondition.', \'YYYYMMDDHH24MISS\') '.$conditionDescription['condition'].' '.$variableName;
+									}elseif ($pFields[$conditionDescription['field_id']][1] == 'date'){
+										$r .= 'to_char('.$prefixNoCondition.', \'YYYYMMDD\') '.$conditionDescription['condition'].' '.$variableName;
+									}elseif ($pFields[$conditionDescription['field_id']][1] == 'time'){
+										$r .= 'to_char('.$prefixNoCondition.', \'HH24MISS\') '.$conditionDescription['condition'].' '.$variableName;
+									}
 			                	}else{
-			                    	$r .= $prefix.$variableName;
+			                		$methodDebut = '';
+			            			$methodFin = '';
+			                		if (isset ($pFields[$conditionDescription['field_id']][4])){
+					            		$methodDebut = $pFields[$conditionDescription['field_id']][4].'(';
+					            		$methodFin = ')';
+			                		}
+			                		$r .= $prefix.$methodDebut.$variableName.$methodFin;
 			                	}
 			                	$fieldsForQueryParams[$variableName] = $this->_variableValue ($pFields[$conditionDescription['field_id']][1], $conditionValue, $pConnection ? $pConnection->getProfile ()->getDriverName () : null);
 //			                	$fieldsForQueryParams[$variableName] = $conditionValue;

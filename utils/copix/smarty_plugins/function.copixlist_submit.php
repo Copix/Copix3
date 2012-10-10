@@ -34,8 +34,7 @@ function smarty_function_copixlist_submit($params, &$me) {
 	if (!isset($params['list'])) {
         $params['list'] = null;
 	}
-	
-	$list = CopixListFactory::get ($params['id']);
+	$list = CopixListFactory::get ($params['list']);
 	
 	if (!isset($params['button'])) {
 	    $params['button'] = true;

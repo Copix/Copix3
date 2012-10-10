@@ -12,7 +12,7 @@
  * @package		copix
  * @subpackage	taglib
  */
-class TemplateTagLinkBar {
+class TemplateTagLinkBar extends CopixTemplateTag {
     public function process($pParams) {
         extract($pParams);
         if (empty ($pageNum)){

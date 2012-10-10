@@ -5,4 +5,4 @@ CREATE TABLE `languageslocks` (
 	`module_lock` VARCHAR( 40 ) NOT NULL ,
 	`file_lock` VARCHAR( 40 ) NOT NULL ,
 	`time_lock` INT( 11 ) NOT NULL
-) ENGINE = MYISAM ;
+) CHARACTER SET utf8;

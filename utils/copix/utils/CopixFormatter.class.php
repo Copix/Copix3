@@ -231,7 +231,7 @@ class CopixFormatter {
 	 * @param int		$pMaxChars		Nombre maximum de caractères autorisés
 	 * 	 * @return unknown
 	 */
-	public function getReduced ($pVarContent, $pMaxChars = 30){
+	static public function getReduced ($pVarContent, $pMaxChars = 30){
 		//Tableau contenant la liste des séparateurs à supprimer de la chaine
 		static $separators = array ("-", "_", '|', '@', '.');
 

@@ -21,6 +21,12 @@
         <th><?php echo _i18n('auth|auth.password'); ?></th>
         <td><input type="password" name="password" id="password" size="9" /></td>
        </tr>
+       <?php if($ppo->ask_rememberme){ ?>
+       <tr>
+        <th><?php echo _i18n('auth|auth.rememberme'); ?></th>
+        <td><input type="checkbox" name="rememberme" id="rememberme" value="yes" /></td>
+       </tr>
+       <?php } ?>
        </table>
        <?php if ($ppo->auth_url_return) { ?>
           <input type="hidden" value="<?php echo htmlentities ($ppo->auth_url_return); ?>" name="auth_url_return" />

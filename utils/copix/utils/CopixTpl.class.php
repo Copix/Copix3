@@ -135,6 +135,20 @@ class CopixTpl {
         return $toReturn;
     }
     
+    /**
+     * Cache interne des chemins de templates.
+     *
+     * @var array
+     */
+    static private $_tplFilePathCache = array();
+    
+    /**
+     * Vide le cache de chemins.
+     *
+     */
+    static public function clearFilePathCache() {
+    	self::$_tplFilePathCache = array();
+    }
     
     /**
      * Récupère le chemin du fichier template qui sera utilisé pour l'identifiant donné
@@ -142,39 +156,39 @@ class CopixTpl {
      * @return string 	le chemin du fichier qui sera utilisé pour l'identifiant donnée
      */
     public function getFilePath ($pTplName){
+    	if(isset(self::$_tplFilePathCache[$pTplName])) {
+    		return self::$_tplFilePathCache[$pTplName];
+    	}
+    	
         //Using a selector to find out the fileName
         $fileSelector = CopixSelectorFactory::create ($pTplName);
         $fileName     = $fileSelector->fileName;
         $config = CopixConfig::instance ();
         
+        $toReturn = false;
+        
         //On a donné un chemin complet direct, on retourne directement
         if ($fileSelector->type !== 'module'){
         	if (file_exists ($templateFilePath = $fileSelector->getPath() . $fileName)){
-        		return $templateFilePath;
+        		$toReturn = $templateFilePath;
         	}
-        }else{
-        	$templateBasePath = COPIX_PROJECT_PATH.'themes/';
-        	if ($config->i18n_path_enabled && file_exists ($templateFilePath = $templateBasePath.self::getTheme ().'/'.$fileSelector->module.'/'.CopixI18N::getLang ().'_'.CopixI18N::getCountry().'/'.$fileSelector->fileName)){
-        		return $templateFilePath;
-        	}elseif ($config->i18n_path_enabled && file_exists ($templateFilePath = $templateBasePath.self::getTheme ().'/'.$fileSelector->module.'/'.CopixI18N::getLang ().'/'.$fileSelector->fileName)){
-        		return $templateFilePath;
-        	}elseif (file_exists ($templateFilePath = $templateBasePath.self::getTheme ().'/'.$fileSelector->module.'/'.$fileSelector->fileName)){
-        		return  $templateFilePath;
-        	}       	
-        	if (self::getTheme () !== "default"){
-	        	if ($config->i18n_path_enabled && file_exists ($templateFilePath = $templateBasePath.'default/'.$fileSelector->module.'/'.CopixI18N::getLang ().'_'.CopixI18N::getCountry().'/'.$fileSelector->fileName)){
-	        		return $templateFilePath;
-	        	}elseif ($config->i18n_path_enabled && file_exists ($templateFilePath = $templateBasePath.'default/'.$fileSelector->module.'/'.CopixI18N::getLang ().'/'.$fileSelector->fileName)){
-	        		return  $templateFilePath;
-	        	}elseif (file_exists ($templateFilePath = $templateBasePath.'default/'.$fileSelector->module.'/'.$fileSelector->fileName)){
-	        		return  $templateFilePath;
-	        	}      	        		
-        	}
-        	if (file_exists ($templateFilePath = $fileSelector->getPath (COPIX_TEMPLATES_DIR) . $fileName)){
-	        	return $templateFilePath;
-	        }        	
+        } else {
+        	$toReturn = CopixResource::findThemeTemplate (
+	        	$fileSelector->fileName, 
+	        	$fileSelector->module,
+	        	$fileSelector->getPath(),
+	        	self::getTheme (),
+	        	$config->i18n_path_enabled,
+	        	CopixI18N::getLang (),
+	        	CopixI18N::getCountry()
+	        );
         }
-        return false;
+        
+        // Met en cache le résultat
+        self::$_tplFilePathCache[$pTplName] = $toReturn;
+        self::$_tplFilePathCache[$fileSelector->getSelector()] = $toReturn;
+        
+        return $toReturn;
     }
 
     /**
@@ -194,10 +208,21 @@ class CopixTpl {
     * @param string  $tplName    nom du fichier template
     */
     private function _smartyPass ($tplName){
+    	//Smarty gère les variables qui n'existent pas en masquant les notices.
+    	//Comme le error handler de Copix ne tient pas compte de la valeur configurée dans error_reporting (), 
+    	//on force la variable E_NOTICE à "aucune réaction" le temps d'afficher le template
+    	$config = CopixConfig::instance (); 
+    	$oldNoticeValue = $config->copixerrorhandler_actions[E_NOTICE];
+		$config->copixerrorhandler_actions[E_NOTICE] = new CopixErrorHandlerAction (false, null);    	
+
     	$tpl = $this->_createSmartyTpl ();
         // dirty, because we use private member, but improves speed
         $tpl->_tpl_vars  = $this->_vars;
-        return $tpl->fetch ('file:'.$this->templateFile);
+        $toReturn =  $tpl->fetch ('file:'.$tplName);
+
+		//restauration de la valeur originale pour les notices
+        $config->copixerrorhandler_actions[E_NOTICE] = $oldNoticeValue;    	
+        return $toReturn;
     }
     
     /**
@@ -406,8 +431,9 @@ class CopixTpl {
     static public function tag ($pTagName, $pParams = array (), $pContent = null){
 	   Copix::RequireOnce (COPIX_PATH.'taglib/CopixTemplateTag.class.php');
 	   Copix::RequireOnce (COPIX_PATH.'taglib/'.strtolower ($pTagName).'.templatetag.php');
-	   $pTagName = 'TemplateTag'.$pTagName;
-	   $tag = new $pTagName ();
+	   $className = 'TemplateTag'.$pTagName;
+	   $tag = new $className ($pTagName);
+	   $tag->setParams($pParams);
 	   return $tag->process ($pParams, $pContent);
     } 
 }

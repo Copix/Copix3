@@ -74,14 +74,12 @@
 	value="<?php _etag ('i18n', 'install.database.save'); ?>" />
 <?php } ?>
 </form>
-
+<a href="<?php echo CopixURL::get ("admin||");?>"> <input type="button" value="<?php _eTag ('i18n', "copix:common.buttons.back"); ?>" /></a>
 
 <?php _etag('copixtips',array('warning'=>$ppo->importantTips,'tips'=>$ppo->tips,'titlei18n'=>'install.tips.title')); ?>
 
-
-
-<?php _eTag('mootools'); ?>
 <?php 
+_eTag('mootools');  
 $jsCode = "
 
 window.addEvent('domready', function () {
@@ -93,6 +91,5 @@ window.addEvent('domready', function () {
 });
 
 ";
-
 CopixHTMLHeader::addJSCode($jsCode); 
 ?>

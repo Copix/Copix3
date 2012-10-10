@@ -28,6 +28,7 @@ CREATE TABLE "dbuser" (
   UNIQUE ("login_dbuser")
 ) ;
 
+
 INSERT INTO "dbuser" ("login_dbuser", "password_dbuser", "email_dbuser", "enabled_dbuser") VALUES ('admin', '21232f297a57a5a743894a0e4a801fc3', 'root@localhost', 1);
 
 

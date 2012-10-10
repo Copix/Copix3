@@ -1,6 +1,6 @@
 <?php
 
-class TemplateTagWikiEditor {
+class TemplateTagWikiEditor extends CopixTemplateTag {
     public function process($pParams,$content) {
         
         extract($pParams);

@@ -123,7 +123,7 @@ class EmailServices {
 		}else{
 			$arrTmp = explode(",",$mail['from']);
 			try{
-				foreach($arrTmp as $key=>$tmpMail) {
+				foreach($arrTmp as $tmpMail) {
 					if($tmpMail != "") {
 						CopixFormatter::getMail($tmpMail);
 					}
@@ -138,8 +138,6 @@ class EmailServices {
 		}
 		
 		if(count($arrErrors) == 0) {
-			require_once (COPIX_UTILS_PATH.'CopixEMailer.class.php');
-			
 			$monMail = new CopixTextEMail ($mail['dest'], $mail['cc'], $mail['cci'], utf8_decode($mail['subject']), utf8_decode($mail['msg']));
 			$monMail->send ($mail['from'], $mail['fromname']);
 			CopixSession::set ('admin|email|donnees', $this->newMail());

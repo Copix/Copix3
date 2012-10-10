@@ -2,9 +2,9 @@
 /**
  * @package		standard
  * @subpackage	copixtest
- * @author		Croës Gérald
+ * @author		2001-2008 Croës Gérald
  * @copyright	CopixTeam
- * @link			http://copix.org
+ * @link		http://copix.org
  * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
  */
 
@@ -15,7 +15,11 @@
  */
 class CopixTest_CopixUrlTest extends CopixTest {
 
-    function testValues () {
+	function setUp (){
+		CopixContext::push('default');	
+	}
+	
+	function testValues () {
         CopixConfig::instance ()->url_requestedscript_variable = 'PHP_SELF';
         // Verifions que l'on retourne le bon hote
         $this->assertEquals ($_SERVER ['HTTP_HOST'], CopixUrl::getRequestedDomain());
@@ -103,6 +107,10 @@ class CopixTest_CopixUrlTest extends CopixTest {
     function testEscapeSpecialChars (){
         $pString = 'àéïöùy';
         $this->assertEquals (CopixUrl::escapeSpecialChars($pString), 'aeiouy');
+        
+        $this->assertEquals (CopixUrl::escapeSpecialChars('Une ville du sud'), 'Une_ville_du_sud');
+		$this->assertEquals (CopixUrl::escapeSpecialChars('Une ville / Un Village'), 'Une_ville__Un_Village');
+		$this->assertEquals (CopixUrl::escapeSpecialChars('Une ville / Un Village', true), 'Une_ville_Un_Village');		
     }
 
     function testParams (){
@@ -134,6 +142,10 @@ class CopixTest_CopixUrlTest extends CopixTest {
         $this->assertEquals (CopixUrl::appendToUrl ($pUrl, array('param'=>'value')), $pUrlParam);
         $this->assertEquals (CopixUrl::appendToUrl ($pUrl, array('param1'=>'1','param2'=>'2','param3'=>'3')), $pUrlParams);
         $this->assertEquals (CopixUrl::appendToUrl ($pUrl, array('param1'=>'1','param2'=>'2','param3'=>'3'), true), $pUrlParamsXml);
+    }
+    
+    function tearDown (){
+    	CopixContext::pop ();
     }
 }
 ?>

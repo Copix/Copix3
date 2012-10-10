@@ -20,11 +20,12 @@ class CopixTest_CopixSession extends CopixTest {
 	public function tearDown (){
 		CopixContext::pop ();
 	}
-	public function testDAO (){
-	}
-	public function testRecord (){
-	}
-	public function testClass (){
+	
+	public function testShortcut (){
+		_sessionSet ('copixtest|key', 'value');
+		$this->assertEquals (_sessionGet ('copixtest|key'), 'value');
+		_sessionSet ('copixtest|key', null);
+		$this->assertEquals (_sessionGet ('copixtest|key'), null);
 	}
 }
 ?>

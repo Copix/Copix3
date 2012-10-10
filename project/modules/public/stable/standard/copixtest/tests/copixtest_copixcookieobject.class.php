@@ -31,7 +31,7 @@ class CopixTest_CopixCookieObject extends CopixTest {
 	
 	public function testAutoloadedObject (){
 		//Ici ce n'est pas vraiment un objet autoloadé, mais l'effet sera le même pour notre test.
-		$element = new CopixCookieObject ($this, CopixCookieObject::AUTOLOADED);
+		$element = new CopixCookieObject ($this);
 		$serialized = serialize ($element);
 		$elementBack = unserialize ($serialized);
 	}

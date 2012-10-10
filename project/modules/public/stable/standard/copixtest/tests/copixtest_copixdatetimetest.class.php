@@ -61,12 +61,13 @@ class CopixTest_CopixDateTimeTest extends CopixTest {
 		$this->assertEquals (220352466,CopixDateTime::yyyymmddhhiissToTimestamp('19761225100106'));
 		$this->assertEquals (880930866, CopixDateTime::yyyymmddhhiissToTimestamp ('19971201000106'));
 		CopixI18N::setLang ('fr');
+		$this->assertEquals (CopixDateTime::dateTotimestamp (false), null);
+		$this->assertFalse (CopixDateTime::dateTotimestamp ('19761225100106'));
 		/*
-		
-		
 		$this->assertEquals ('19761225000000',CopixDateTime::DateTimeToyyyymmddhhiiss('25/12/1976'));
 		timeStampToyyyymmddhhiiss
-		yyyymmddhhiissToTimeStamp*/
+		yyyymmddhhiissToTimeStamp
+		*/
 	}
 	
 	function testTime (){

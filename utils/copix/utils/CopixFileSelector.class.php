@@ -256,8 +256,7 @@ class CopixSelectorFactory {
 					break;
 
 				default:
-					trigger_error (CopixI18N::get ('copix:copix.error.unknownSelector', $id), E_USER_ERROR);
-					return null;
+					throw new CopixException (_i18n ('copix:copix.error.unknownSelector', $id));
 			}
 		}else{
 			if (strpos($id, '|') === false){
@@ -386,7 +385,7 @@ class CopixModuleFileSelector extends CopixFileSelector {
 			$this->module = CopixContext::get ();
 			$this->fileName = $tab[0];
 		}else{
-			throw new Exception ('Invalid Selector '.$selector);
+			throw new Exception (_i18n ('copix:copix.error.fileselector.invalidSelector', $selector));
 		}
 		$this->module = strtolower ($this->module);
 	}
@@ -453,7 +452,7 @@ class CopixPluginFileSelector extends CopixFileSelector {
 			$this->pluginName=$match[1];
 			$this->fileName=$match[4];
 		}else{
-			throw new Exception ('invalid selector '.$selector);
+			throw new Exception (_i18n ('copix:copix.error.fileselector.invalidSelector', $selector));
 		}
 	}
 
@@ -491,7 +490,7 @@ class CopixCopixFileSelector extends CopixFileSelector {
 		if (($pos = strpos ($selector, 'copix:')) === 0){
 			$this->fileName = substr ($selector, 6);//we know 'copix:' len is 6.
 		}else{
-			throw new Exception ('Invalid selector '.$selector);
+			throw new Exception (_i18n ('copix:copix.error.fileselector.invalidSelector', $selector));
 		}
 	}
 	protected function _getPath($directory){
@@ -516,7 +515,7 @@ class CopixVarFileSelector extends CopixFileSelector {
 		if (($pos = strpos ($selector, 'var:')) === 0){
 			$this->fileName = substr ($selector, 4);//we know 'var:' len is 4.
 		}else{
-			throw new Exception ('Invalid selector '.$selector);
+			throw new Exception (_i18n ('copix:copix.error.fileselector.invalidSelector', $selector));
 		}
 	}
 	protected function _getPath($directory){
@@ -550,7 +549,7 @@ class CopixFileFileSelector extends CopixFileSelector {
 			$this->fileName = basename (substr ($selector, 5));
 			$this->dirName  = dirname (substr ($selector, 5)).'/';
 		}else{
-			throw new Exception ('Invalid selector '.$selector);
+			throw new Exception (_i18n ('copix:copix.error.fileselector.invalidSelector', $selector));
 		}
 	}
 

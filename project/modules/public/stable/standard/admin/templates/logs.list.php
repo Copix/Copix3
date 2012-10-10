@@ -19,21 +19,16 @@ if (!function_exists ('logLevelToCaption')){
 	}
 }
 ?>
+<center>
+<a href="<?php echo _url ('log|delete', array ('profile'=>$profil)); ?>">
+	<img src="<?php echo _resource ('/img/tools/delete.png'); ?>" alt="<?php echo _i18n ('logs.action.emptyLog'); ?>" />
+	<?php echo _i18n ('logs.action.emptyLog'); ?>
+</a>
+</center>
+<br />
+		
 <table class="CopixTable" width="100%">
 <thead>
- <tr>
-	<th><a
-		href="<?php echo _url ('log|delete', array ('profile'=>$profil)); ?>">
-		<img
-		src="<?php echo _resource ('/img/tools/delete.png'); ?>"
-		alt="<?php echo _i18n ('logs.action.emptyLog'); ?>" /></a>
-	</th>
-	<th colspan="4"><a
-		href="<?php echo _url ('log|delete', array ('profile'=>$profil)); ?>">
-		<?php echo _i18n ('logs.action.emptyLog'); ?>
-		</a>
-	</th>
- </tr>
  <tr>
 	<th>&nbsp;</th>
 	<th><?php echo _i18n ('logs.type'); ?></th>
@@ -73,7 +68,7 @@ $numPage = CopixSession::get ('log|numpage');
 
 for ($i = 1; $i <= $nbPage ; $i++) {
      if ($i != $numPage ) {
-        echo ' <a href="'._url("admin|log|show", array("page"=>$i, 'profile'=>$profil)).'">'.$i.'</a> ';
+        echo ' <a href="'._url("admin|log|show", array("page"=>$i, 'profile'=>$profil, 'nbitems'=>$nbitems)).'">'.$i.'</a> ';
      } else {
         echo '&nbsp;'.$i.'&nbsp;';
      }

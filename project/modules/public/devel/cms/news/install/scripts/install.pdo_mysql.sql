@@ -13,4 +13,4 @@ CREATE TABLE news (
   author_news varchar(50) default NULL,
   editionKind_news varchar(50) NOT NULL,
   PRIMARY KEY  (id_news)
-) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+) CHARACTER SET utf8;

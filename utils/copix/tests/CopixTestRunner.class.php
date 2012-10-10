@@ -127,11 +127,7 @@ class CopixTestRunner extends PHPUnit_Runner_BaseTestRunner {
         $result = $this->createTestResult();
 
         if ($this->printer === NULL) {
-            if (isset($parameters['printer']) && $parameters['printer'] instanceof CopixTestPrinter) {
-                $this->printer = $parameters['printer'];
-            } else {
-                $this->printer = new CopixTestPrinter (NULL, $parameters['verbose']);
-            }
+           $this->printer = $parameters['xml'] ? new CopixTestXMLPrinter (NULL, $parameters['verbose']) : new CopixTestPrinter (NULL, $parameters['verbose']) ;
         }
 
         $result->addListener($this->printer);
@@ -155,7 +151,7 @@ class CopixTestRunner extends PHPUnit_Runner_BaseTestRunner {
         }
 
         if (isset($parameters['graphvizLogfile'])) {
-            if (class_exists('Image_GraphViz', FALSE)) {
+            if (class_exists('Image_GraphViz', FALSE) && class_exists('PHPUnit_Util_Log_GraphViz', FALSE)) {
                 $result->addListener(
                   new PHPUnit_Util_Log_GraphViz($parameters['graphvizLogfile'])
                 );
@@ -164,7 +160,7 @@ class CopixTestRunner extends PHPUnit_Runner_BaseTestRunner {
 
         if (isset($parameters['reportDirectory']) &&
             extension_loaded('xdebug')) {
-            if (class_exists('Image_GraphViz', FALSE)) {
+            if (class_exists('Image_GraphViz', FALSE) && class_exists('PHPUnit_Util_Report_GraphViz', FALSE)) {
                 $result->addListener(
                   new PHPUnit_Util_Report_GraphViz($parameters['reportDirectory'])
                 );
@@ -195,15 +191,15 @@ class CopixTestRunner extends PHPUnit_Runner_BaseTestRunner {
 
         $result->flushListeners();
 
-        if (isset($parameters['reportDirectory']) &&
+        if (isset ($parameters['reportDirectory']) &&
             extension_loaded('xdebug')) {
-            	$this->printer->write("<br /><a href='file://".$parameters['reportDirectory']."index.html'>Code coverage report</a> (file://".$parameters['reportDirectory']."index.html)<br />");
+            	$this->printer->codeCoverage ($parameters['reportDirectory']);
             PHPUnit_Util_Report::render($result, $parameters['reportDirectory']);
         }else{
-        	$this->printer->write("<br />With XDebug, you would see a CodeCoverage report !<br />");
+        	$this->printer->codeCoverage (false);
         }
 
-        if ($this->printer instanceof CopixTestPrinter) {
+        if ($this->printer) {
         	$this->printer->printResult($result);
         }
 

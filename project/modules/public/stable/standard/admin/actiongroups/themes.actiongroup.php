@@ -44,7 +44,7 @@ class ActionGroupThemes extends CopixActionGroup {
 	* Définition du thème à utiliser
 	*/
 	function processDoSelectTheme (){
-		$theme = CopixRequest::get ('id_ctpt', null, true);
+		$theme = _request ('id_ctpt', null, true);
 		CopixConfig::set ('defaultThemeId', $theme);
 		return _arRedirect (_url ('admin|themes|'));
 	}
@@ -56,8 +56,8 @@ class ActionGroupThemes extends CopixActionGroup {
 	 * @param name nom de l'image à utiliser
 	 */
 	function processGetImage (){
-		$id = CopixRequest::get('id',null,true);
-		$name = CopixRequest::get('name',null,true);
+		$id = _request ('id',null,true);
+		$name = _request ('name',null,true);
 		if ($id != null && $name != null) {
 			echo file_get_contents (COPIX_PROJECT_PATH.'themes/'.$id.'/'.$name);
 		}

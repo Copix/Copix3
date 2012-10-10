@@ -19,20 +19,19 @@ class ZoneCustomisedInstall extends CopixZone {
     /**
      * Création du contenu de la page
      */
-    function _createContent (&$toReturn) {
-      $tpl = new CopixTpl ();
-      $tpl->assign ('arModulesPath', CopixConfig::instance ()->arModulesPath);
-      $tpl->assign ('arModules', $this->_getModuleOrderByDescription ());
-      $tpl->assign ('arGroupsUninstalled', CopixModule::getGroupList ());
-      $toReturn = $tpl->fetch ('modules.list.tpl');
-    }
+	function _createContent (&$toReturn) {
+		$tpl = new CopixTpl ();
+		$tpl->assign ('arModulesPath', CopixConfig::instance ()->arModulesPath);
+		$tpl->assign ('arModules', $this->_getModuleOrderByDescription ());
+		$toReturn = $tpl->fetch ('modules.list.tpl');
+	}
     
     /**
     * Récupération des modules dans l'ordre de leur description
     * @todo a trier comme avant
     */
     function _getModuleOrderByDescription ($pGroupId = null){
-    	return _class ('InstallService')->getModules ($pGroupId);
+		return _class ('InstallService')->getModules ($pGroupId);
     }
 }
 ?>

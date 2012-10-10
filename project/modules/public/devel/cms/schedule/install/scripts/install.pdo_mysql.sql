@@ -16,7 +16,7 @@ CREATE TABLE scheduleevents (
   editionkind_evnt varchar(50) NOT NULL,
   subscribeenabled_evnt int(1) default 0,
   PRIMARY KEY  (id_evnt)
-) CHARACTER SET utf8 COLLATE utf8_unicode_ci; 
+) CHARACTER SET utf8; 
 
 # --------------------------------------------------------
 INSERT INTO copixcapability (name_ccpb, description_ccpb, name_ccpt, values_ccpb) VALUES ('schedule', 'Gestion Agenda', 'modules|copixheadings', '0;30;40;50;60;70');

@@ -2,10 +2,11 @@
 	<thead>
 	<tr>
 <?php 
-     foreach ($mapping as $field) { ?>
-			<th>
+     foreach ($mapping as $key=>$field) { ?>
+			<th class="copixlistorder<?php echo $idlist; ?>" rel="<?php echo $key; ?>" ?>
 			<?php echo $field; ?>
 			</th>
+			<?php if (isset($more)) { echo '<th>'.$moretitle.'</th>'; } ?>
 <?php } ?>
 <?php	if (isset($editLink)) { echo "<th></th>"; } ?> 
 	</tr>
@@ -18,6 +19,7 @@
     <?php foreach ($mapping as $key=>$field) { ?>
     				<td><?php echo $result->$key; ?></td>
     <?php } ?>
+    <?php if (isset($more)) { echo '<td>'.$more.'</td>'; } ?>
 <?php
         if (isset($editLink)) {
         $params = array ();
@@ -32,7 +34,11 @@
                 echo '<a href="';
                 echo _url($editLink,array_merge($params,array('delete'=>true)));
                 echo '" ><img src="'._resource('img/tools/delete.png').'" /></a>';
-            }            
+                
+            }
+            if (isset($moreLink)) {
+                echo '<a href="'._url($moreLink,$params).'">'.$moreLinkTitle.'</a>';    
+            }
             echo "</td>";
         }
 ?>

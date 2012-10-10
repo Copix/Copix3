@@ -11,19 +11,29 @@
 
 /**
  * Alias à CopixI18N::get
+ * 
  * @see CopixI18N::get
+ * @param string $pKey Clef i18n
+ * @param mixed $pArgs Paramètres à remplacer dans $pKey. Pour une seule valeur, $pArgs = string, sinon $pArgs = array ('maValeur', 'maValeur2')
+ * @param string $pLocale Information sur la langue à rechercher, de la forme lang_COUNTRY (exemple : fr_FR, en_US)
+ * @param boolean $pTrigger Paramètre inutilisé
  * @return string
  */
-function _i18n ($key, $args = null, $locale = null, $trigger = true) {
-   return CopixI18N::get ($key, $args, $locale, $trigger);
+function _i18n ($pKey, $pArgs = null, $pLocale = null, $pTrigger = true) {
+	return CopixI18N::get ($pKey, $pArgs, $pLocale, $pTrigger);
 }
 
 /**
  * Une fonction pour echapper les caractères HTML d'une chaine UTF8
- * @param string $pString
+ * 
+ * @param string $pString Chaine à transformer
+ * @param string $pEncoding Encoding à utiliser
  * @return string
  */
-function _copix_utf8_htmlentities ($pString){
+function _copix_utf8_htmlentities ($pString, $pEncoding = null) {	
+	if ($pEncoding !== null) {
+		return htmlentities ($pString, null, $pEncoding);
+	}
 	if (CopixI18N::getCharset () == 'UTF-8'){
    		return htmlentities ($pString, null, 'UTF-8');
    	}
@@ -32,7 +42,8 @@ function _copix_utf8_htmlentities ($pString){
 
 /**
  * Décode uniquement si nous sommes en mode différent de UTF8
- * @param string $pString
+ * 
+ * @param string $pString Chaine à décoder
  * @return string
  */
 function _copix_utf8_decode ($pString){
@@ -44,6 +55,7 @@ function _copix_utf8_decode ($pString){
 
 /**
  * Alias à CopixURL::get
+ * 
  * @see CopixURL::get
  * @param	string	$pDest	sélecteur pour l'url destination
  * @param	array	$pParams	tableau des paramètres supplémentaires
@@ -109,7 +121,7 @@ function _classInclude ($pClassId){
  * Alias à CopixDAOFactory::create
  * @param	string	$pDAOid 	identifiant de la DAO à créer
  * @param 	string	$pConnectionName	identifiant de la connection à utiliser pour la DAO à créer.
- * @return  CopixDAO
+ * @return 	ICopixDAO
  * @see CopixDAOFactory::create
  */
 function _dao ($pDAOid, $pConnectionName = null){
@@ -121,15 +133,15 @@ function _dao ($pDAOid, $pConnectionName = null){
  * @param 	string	$pDAOId	l'identifiant de la DAO que l'on souhaites connaitre dans les sources de l'application
  * @return bool
  */
-function _daoInclude ($pDAOId){
-	CopixDAOFactory::fileInclude ($pDAOId);
+function _daoInclude ($pDAOId, $pConnectionName = null){
+	CopixDAOFactory::fileInclude ($pDAOId, $pConnectionName);
 }
 
 /**
  * Alias à CopixDAOFactory::getInstanceOf
  * @param 	string	$pDAOid	identifiant de la DAO à instancier de façon unique
  * @param 	string	$pConnectionName
- * @return CopixDAO	
+ * @return	ICopixDAO	
  * @see CopixDAOFactory::instanceOf
  */
 function _ioDAO ($pDAOid, $pConnectionName = null) {
@@ -307,5 +319,104 @@ function _request ($pVarName, $pDefaultValue = null, $pDefaultIfEmpty = true){
 */
 function _currentUser (){
    return CopixAuth::getCurrentUser ();
+}
+
+/**
+ * Alias pour CopixDebug::var_dump ()
+ * @param var $pVar Variable
+ * @param bool $pReturn False : affiche le résultat avec echo, true : renvoie le résultat sous forme de chaine
+ * @param bool $pFormatReturn Formater le résultat retourné, avec des couleurs et un affichage moins "lourd"
+ */
+function _dump ($pVar, $pReturn = false, $pFormatReturn = true) {
+	return CopixDebug::var_dump ($pVar, $pReturn, $pFormatReturn);
+}
+
+/**
+ * Alias pour CopixSession::get
+ * @param	string	$pPath	le chemin de l'élément en session que l'on souhaite récupérer
+ * @param	string	$pNamespace	le nom du namespace de session dans lequel on souhaite récupérer l'élément
+ * @return mixed 
+ */
+function _sessionGet ($pPath, $pNamespace = 'default'){
+	return CopixSession::get ($pPath, $pNamespace);
+}
+
+/**
+ * Alias à CopixSession::set ()
+ * @param	string	$pPath	le chemin de l'élément en session que l'on souhaite récupérer
+ * @param	mixed	$pValue	la valeur de l'élément à définir
+ * @param	string	$pNamespace	le nom du namespace de session dans lequel on souhaite récupérer l'élément
+ * @return void
+ */
+function _sessionSet ($pPath, $pValue, $pNamespace = 'default'){
+	CopixSession::set ($pPath, $pValue, $pNamespace);
+}
+
+/**
+ * Racourcis pour new CopixPPO ()
+ * 
+ * @param array $pParams tableau a passer au constructeur de CopixPPO 
+ * @return CopixPPO
+ */
+function _ppo ($pParams = array ()){
+	return new CopixPPO ($pParams);
+}
+
+/**
+ * Racourcis pour new CopixRPPO ()
+ * 
+ * @param array $pParams tableau a passer au constructeur de CopixRPPO 
+ * @return CopixRPPO
+ */
+function _rppo ($pParams = array ()){
+	return new CopixRPPO ($pParams);
+}
+
+if(version_compare(PHP_VERSION, '5.2.0', '>=')) {
+	/**
+	 * Convertit une valeur en chaîne, en utilisant __toString si possible (comportement PHP 5.2.0).
+	 *
+	 * @param mixed $pValue Valeur à convertir.
+	 * @return string
+	 */
+	function _toString ($pValue) {
+		return (string)$pValue;
+	}
+} else {
+	/** @ignore */
+	function _toString ($pValue) {
+		return method_exists ($pValue, '__toString') ? $pValue->__toString() : (string)$pValue;
+	}
+}
+
+/**
+ * Racourcis pour la création d'un validateur
+ *
+ * @param string $pName		le nom du validateur à créer
+ * @param array	 $pParams	les paramètres à passer au validateur
+ * @param string $pMessage	Le message d'erreur à afficher en cas de problème	
+ * @return ICopixValidator
+ */
+function _validator ($pName, $pParams = array (), $pMessage = null){
+	return CopixValidatorFactory::create ($pName, $pParams, $pMessage);
+}
+
+/**
+ * Racourcis pour la création d'un validateur composite
+ *
+ * @param	array	$pParams	les paramètres à passer au validateur
+ * @param	string	$pMessage	l'erreur à afficher en cas de problème
+ * @return ICopixCompositeValidator
+ */
+function _cValidator ($pMessage = null){
+	return CopixValidatorFactory::createComposite ($pMessage);
+}
+
+/**
+ * 
+ * @return IComplexTypeValidator
+ */
+function _ctValidator ($pMessage = null){
+	return CopixValidatorFactory::createComplexType ($pMessage);
 }
 ?>

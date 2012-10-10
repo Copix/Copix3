@@ -24,8 +24,10 @@ class cacheConfigurationFile {
 	public function write ($pData){
 	    $generator = new CopixPHPGenerator ();
 	    $str = $generator->getPHPTags ($generator->getVariableDeclaration ('$_cache_types', $pData));
-		$file = new CopixFile ();
-		return $file->write ($this->getPath (), $str);
+		if($toReturn = CopixFile::write ($this->getPath (), $str)) {
+			CopixConfig::reload ();
+		}
+		return $toReturn;
 	}
 	
 	/**

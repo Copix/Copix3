@@ -4,4 +4,4 @@ create table if not exists tutorial_event2 (
     dtcreation date,
 	information varchar(30),
  	PRIMARY KEY  (event_id)
-);
+) CHARACTER SET utf8;

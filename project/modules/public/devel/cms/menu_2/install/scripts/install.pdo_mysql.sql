@@ -17,7 +17,7 @@ CREATE TABLE menu_2 (
   var_name_menu varchar(50),
   id_head INTEGER NULL,
   tpl_menu varchar(255)
-)CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+) CHARACTER SET utf8;
 
 INSERT INTO copixcapability (name_ccpb, description_ccpb, name_ccpt, values_ccpb) VALUES ('menu_2', 'Menu', 'modules|menu_2', '0;20;70');
 INSERT INTO copixcapabilitypath VALUES ('modules|menu_2', 'Menu');

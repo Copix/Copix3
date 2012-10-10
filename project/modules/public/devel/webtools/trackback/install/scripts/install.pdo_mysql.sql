@@ -9,5 +9,5 @@ create table trackbacks (
 	date_tb varchar(14) not null,
 	spam_tb int not null default -1,
 	PRIMARY KEY (id_tb)
-);
+) CHARACTER SET utf8;
 

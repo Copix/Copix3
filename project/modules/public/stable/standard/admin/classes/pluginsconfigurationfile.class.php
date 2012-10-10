@@ -25,8 +25,10 @@ class PluginsConfigurationFile {
 	public function write ($pPluginsList){
 	    $generator = new CopixPHPGenerator ();
 	    $str = $generator->getPHPTags ($generator->getVariableDeclaration ('$_plugins', $pPluginsList));
-		$file = new CopixFile ();
-		return $file->write ($this->getPath (), $str);
+		if($toReturn = CopixFile::write ($this->getPath (), $str)) {
+			CopixConfig::reload ();			
+		}
+		return $toReturn;		
 	}
 
 	/**

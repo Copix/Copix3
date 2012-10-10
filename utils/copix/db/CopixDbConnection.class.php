@@ -13,7 +13,7 @@
  * @package copix
  * @subpackage db
  */
-class CopixDBConnectionException extends CopixException {}	
+class CopixDBConnectionException extends CopixDBException {}	
 
 /**
  * Classe de base pour représenter des connections
@@ -232,6 +232,6 @@ abstract class CopixDBConnection {
      * Indique si le driver est disponible
      * @return bool
      */
-    abstract public static function isAvailable ();
+    public static function isAvailable (){return false;}
 }
 ?>

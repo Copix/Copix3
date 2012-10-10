@@ -56,7 +56,6 @@ class ActionGroupCopix extends CopixActionGroup {
 		$sections[$section]['COPIX_DESC_DIR'] = COPIX_DESC_DIR;
 		$sections[$section]['COPIX_ZONES_DIR'] = COPIX_ZONES_DIR;
 		$sections[$section]['COPIX_TEMPLATES_DIR'] = COPIX_TEMPLATES_DIR;
-		$sections[$section]['COPIX_STATIC_DIR'] = COPIX_STATIC_DIR;
 		$sections[$section]['COPIX_CLASSES_DIR'] = COPIX_CLASSES_DIR;
 		$sections[$section]['COPIX_RESOURCES_DIR'] = COPIX_RESOURCES_DIR;
 		$sections[$section]['COPIX_PLUGINS_DIR'] = COPIX_PLUGINS_DIR;

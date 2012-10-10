@@ -17,10 +17,10 @@
 			{i18n key='install.module.version'}
         </td>
         <td>
-        	{if $info->version != $version}
-        		{i18n key='install.module.installVersion'} : {if $version}{$version}{else}{i18n key='install.module.noVersion'}{/if} / <span style="color:red;">{i18n key='install.module.updateVersion'} : {$info->version}</span>
-        	{else}
-        		{if $version}{$version}{else}{i18n key='install.module.noVersion'}{/if}
+       		{if $info->version}
+				{$info->version}
+			{else}
+				{i18n key='install.module.noVersion'}
         	{/if}
         </td>
     </tr>
@@ -69,7 +69,12 @@
                 {/if}
             {/foreach}
         </td>
-    </tr>  
+    </tr>
+    <tr>
+	 <td>{i18n key="install.module.path"}</td>
+	 <td>{$path}</td>
+	</tr>
+      
     <tr>
     	<td colspan="2" align="center">
     	<br />

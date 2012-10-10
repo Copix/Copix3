@@ -13,7 +13,7 @@
  * @package copix
  * @subpackage db 
  */
-class CopixDBPDOResultSetIterator implements Iterator, ArrayAccess {
+class CopixDBPDOResultSetIterator implements Iterator, ArrayAccess, Countable {
 	/**
 	 * Le statement que l'on est en train de lire 
 	 */
@@ -262,6 +262,10 @@ class CopixDBPDOResultSetIterator implements Iterator, ArrayAccess {
 	 		$toReturn[] = $element;
 	 	}
 	 	return $toReturn;
+	 }
+	 
+	 public function count (){
+	 	return count ($this->fetchAll ());
 	 }
 }
 ?>

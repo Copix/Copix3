@@ -12,7 +12,7 @@
  * @package		copix
  * @subpackage	taglib
  */
-class TemplateTagJSSubmitForm {
+class TemplateTagJSSubmitForm extends CopixTemplateTag {
     public function process($params) {
         static $_init = false;
 

@@ -3,7 +3,7 @@
 * @package		standard
 * @subpackage	copixtest
 * @author		Croës Gérald
-* @copyright	2001-2006 CopixTeam
+* @copyright	2001-2008 CopixTeam
 * @link			http://copix.org
 * @license		http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public Licence, see LICENCE file
 */
@@ -13,6 +13,13 @@
  * @subpackage	copixtest
  */
 class CopixTest_CopixContextTest extends CopixTest {
+	private $_context;
+	
+	function setUp (){
+		$this->_context = CopixContext::get ();
+		CopixContext::clear ();
+	}
+	
 	/**
 	 * Tests sur les contextes
 	 */
@@ -52,13 +59,18 @@ class CopixTest_CopixContextTest extends CopixTest {
 		//on vérifie que l'on est bien retourné en default
 		$this->assertEquals (CopixContext::get (), 'default');
 		
-		//on repousse le tableau pour controller la méthode clear.
+		//on repousse le tableau pour contrôler la méthode clear.
 		foreach ($push as $pushMe){
 			CopixContext::push ($pushMe);
 			$this->assertEquals ($pushMe, CopixContext::get ());
 		}
+		// On efface les contextes
 		CopixContext::clear ();
 		$this->assertEquals (CopixContext::get (), 'default');
+	}
+	
+	function tearDown (){
+		CopixContext::push ($this->_context);
 	}
 }
 ?>

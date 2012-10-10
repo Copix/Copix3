@@ -5,4 +5,4 @@ CREATE TABLE wsservices (
   file_wsservices varchar(32) NOT NULL,
   class_wsservices varchar(32) NOT NULL,
   PRIMARY KEY  (id_wsservices)
-) ENGINE=MyISAM ;
+) CHARACTER SET utf8;

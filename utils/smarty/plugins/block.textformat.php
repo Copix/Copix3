@@ -49,7 +49,7 @@ function smarty_block_textformat($params, $content, &$smarty)
             case 'indent_char':
             case 'wrap_char':
             case 'assign':
-                $$_key = (string)$_val;
+                $$_key = _toString($_val);
                 break;
 
             case 'indent':

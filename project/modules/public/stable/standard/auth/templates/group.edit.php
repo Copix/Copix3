@@ -81,7 +81,7 @@ function doUrl (pUrl) {
    <img
 	src="<?php echo _resource ('img/tools/update.png'); ?>"
 	alt="<?php echo _etag ('i18n', "copix:common.buttons.new"); ?>" /><?php _etag ('i18n', 'auth.group.editModuleCredential'); ?></a>
-   </a></p>
+   </p>
 	<?php }
 	if (CopixConfig::instance()->copixauth_isRegisteredCredentialHandler ('auth|dbdynamiccredentialhandler')) {
 	    ?>
@@ -89,7 +89,7 @@ function doUrl (pUrl) {
    <img
 	src="<?php echo _resource ('img/tools/update.png'); ?>"
 	alt="<?php echo _etag ('i18n', "copix:common.buttons.new"); ?>" /><?php _etag ('i18n', 'auth.group.editDynamicCredential'); ?></a>
-   </a></p>
+   </p>
    <?php } ?>
    
 		<input type="submit"

@@ -58,12 +58,19 @@ class TemplateTagSelect extends CopixTemplateTag {
 	      $id = $name;
 	   }
 	   
+	   if (empty ($encoding)) {
+	      $encoding = null;
+	   }	   
+	   
 	   if (empty ($values)){
 	   	   $values = array ();
 	   }
-   	   if ((!is_array ($values)) || ! ($values instanceof Iterator)){
-	   	$values = (array) $values;
-	   }	
+   	   if ((!is_array ($values)) && ! ($values instanceof Iterator)){
+	   	   $values = (array) $values;
+	   } elseif ($values instanceof Iterator) {
+	       $values = iterator_to_array ($values);	
+	   }
+
 	   //proceed
 	   $toReturn  = '<select name="'.$name.'" id="'.$id.'" '.$extra.'>';
 	   if ((!isset ($emptyShow)) || $emptyShow == true){
@@ -77,13 +84,13 @@ class TemplateTagSelect extends CopixTemplateTag {
 	   if (empty ($objectMap)){
 	      foreach ($values  as $key=>$caption) {
 	         $selectedString = ((!empty($selected)) && ($key == $selected)) ? ' selected="selected" ' : '';
-	         $toReturn .= '<option value="'.$key.'"'.$selectedString.'>' . _copix_utf8_htmlentities ($caption) . '</option>';
+	         $toReturn .= '<option value="'.$key.'"'.$selectedString.'>' . _copix_utf8_htmlentities ($caption, $encoding) . '</option>';
 	      }
 	   }else{
 	      //if given an object mapping request.
-	      foreach ((array) $values  as $object) {
+	      foreach ($values  as $object) {
 	         $selectedString = ((!empty($selected)) && ($object->$idProp == $selected)) ? ' selected="selected" ' : '';
-	         $toReturn .= '<option value="'.$object->$idProp.'"'.$selectedString.'>' . _copix_utf8_htmlentities ($object->$captionProp) . '</option>';
+	         $toReturn .= '<option value="'.$object->$idProp.'"'.$selectedString.'>' . _copix_utf8_htmlentities ($object->$captionProp, $encoding) . '</option>';
 	      }
 	   }
 	   $toReturn .= '</select>';

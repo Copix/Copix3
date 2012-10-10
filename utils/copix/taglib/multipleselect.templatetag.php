@@ -56,7 +56,7 @@ class TemplateTagMultipleSelect extends CopixTemplateTag {
 	   if (empty ($values)){
 	   	   $values = array ();
 	   }
-	   if ((!is_array ($values)) || ! ($values instanceof Iterator)){
+	   if ((!is_array ($values)) && ! ($values instanceof Iterator)){
 	   	$values = (array) $values;
 	   }
 	   if (empty ($height)) {
@@ -92,7 +92,7 @@ class TemplateTagMultipleSelect extends CopixTemplateTag {
 	   }else{
 	       //if given an object mapping request.
            $compteur=0;
-	       foreach ((array) $values  as $object) {
+	       foreach ($values  as $object) {
 	           $arValues[$object->$idProp]=$object->$captionProp;
                $currentId = uniqid ('check');
    	           $compteur++;
@@ -104,72 +104,8 @@ class TemplateTagMultipleSelect extends CopixTemplateTag {
 	   
 	   _tag('mootools', array('plugin'=>array ('zone','overlayfix')));
 	   
-	   $jsCode = "
-		window.addEvent('domready', function () {
-			$$('.multipleselect_id').each(function (elementDiv) {
-				var id = elementDiv.getProperty('rel');
-    			var input = $('input_'+id);
-    			var divinput = $('div_'+id);
-    			var div   = $('divdata_'+id);
-    			div.injectInside(document.body);
-				if (!window.ie) {
-					divinput.setStyle('border-top','1px solid transparent');
-				}
-    			divinput.addEvent('click', function () {
-    				if (div.getStyle('visibility') != 'visible') {
-        				div.setStyles({
-        					'visibility':'visible',
-        					'position':'absolute',
-        					'top':input.getTop ()+input.getSize().size.y,
-        					'left':input.getLeft (),
-        					'height':$('height_'+id).getProperty('rel'),
-        					'overflow':'auto'
-        				});
-    					if (div.getSize().size.x < divinput.getSize().size.x) {
-    						div.setStyle('width',divinput.getSize().size.x);
-    					}
-    					div.fixdivShow();
-        				input.testZone ( divinput.getTop()-5, divinput.getLeft()-5, divinput.getSize().size.y+div.getSize().size.y+10,div.getSize().size.x+10 );
-    				} else {
-    					div.setStyles({
-        			    	'visibility':'hidden'
-        				});
-    					div.fixdivHide();
-    				}
-    			});
-    			
-    			input.addEvent('reset' , function () {
-    				$$('.multipleselect_check_'+id).each ( function (el) {
-    					el.checked = false;
-    				});
-    				$('hidden_'+id).setHTML ('');
-    			});
-    
-    			input.addEvent('mouseleavezone', function () {
-    				div.fixdivHide();
-    				div.setStyles({
-        			    'visibility':'hidden'
-        			});
-    			});
-    			$$('.multipleselect_checker_'+id).each (function (el) {
-    				el.addEvent ('click', function () {
-    					var value = '';
-    					$('hidden_'+id).setHTML(''); 
-    					$$('.multipleselect_check_'+id).each ( function (elem) {
-    						if (elem.checked) {
-    							if (value!='') {
-    								value += ',';
-    							}
-    							value += $('label_'+elem.getProperty('id')).innerHTML;
-    							$('hidden_'+id).setHTML ($('hidden_'+id).innerHTML+'<input type=\"hidden\" name=\"'+$('name_'+id).getProperty('rel')+'[]\" value=\"'+elem.value+'\" />');
-    						}
-    					});
-    					input.value = value;
-    				});
-    			});
-			});
-		});";
-	   CopixHTMLHeader::addJsCode($jsCode,'multipleselect');
+	   CopixHTMLHeader::addJSLink(_resource('js/taglib/multipleselect.js'));
+	   CopixHTMLHeader::addJsDomReadyCode('multipleselect ();','multipleselect');
 	   //proceed
 	   $value = '';
 	   $hidden = '';
@@ -186,8 +122,12 @@ class TemplateTagMultipleSelect extends CopixTemplateTag {
 	    }
 	    //Div caché pour avoir des paramètres disponible dans le DOM
         $toReturn = '<div style="display:none;" class="multipleselect_id" rel="'.$id.'"></div><div style="display:none;" id="name_'.$id.'" rel="'.$name.'"></div><div style="display:none;" id="height_'.$id.'" rel="'.$height.'"></div>';
-        //Commence par un &nbsp; car bug d'alignement dans certains nav       
-   	    $toReturn .= '<span id="div_'.$id.'" style="width:'.$width.';vertical-align:center;" ><input type="text" id="input_'.$id.'" name="input_'.$name.'" value="'.$value.'" '.$extra.' style="width:'.$width.'" readonly="readonly" /><img src="'.CopixUrl::getResource($img).'" align="absbottom" vspace="1" alt="" /></span>';
+        //Commence par un &nbsp; car bug d'alignement dans certains nav
+	    $noreset = false;
+	    if (isset($pParams['noreset']) && $pParams['noreset']) {
+	        $noreset = true;
+	    }
+   	    $toReturn .= '<span id="div_'.$id.'" style="width:'.$width.';vertical-align:center;" ><input type="text" id="input_'.$id.'" name="input_'.$name.'" value="'.$value.'" '.$extra.' style="width:'.$width.'" readonly="readonly" noreset="'.$noreset.'"/><img src="'.CopixUrl::getResource($img).'" align="absbottom" vspace="1" alt="" /></span>';
 	    //Div contenant la liste
    	    $toReturn .= '<div id="'.$idDiv.'" style="margin:auto;visibility:hidden;position:absolute;z-index:9999;background-color:white;border:1px solid #bbbbbb">'.$toReturnValue.'</div>';
    	    //Div contenant les champs hidden permettant de passer les valeurs sélectionner

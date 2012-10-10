@@ -256,7 +256,7 @@ class CopixModuleConfig {
 			//Saves changes in the PHP File
 			$this->_writeInPHPCache();
 		}else{
-			trigger_error ('unknow variable '.$id.' not set.');
+			throw new CopixException (_i18n ('copix.error.module.unknowParameter', array ($id, $this->module)));
 		}
 	}
 
@@ -291,7 +291,7 @@ class CopixModuleConfig {
 				foreach ($xml->parameters->group as $groupKey => $groupChild) {
 					$attributes = $groupChild->attributes ();
 					if (isset ($attributes['caption'])) {
-						$groupName = $attributes['caption'];
+						$groupName = (string)$attributes['caption'];
 					} else if (isset ($attributes['captioni18n'])) {
 						CopixContext::push ($module);
 						$groupName = _i18n ((string)$attributes['captioni18n']);

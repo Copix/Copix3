@@ -5,7 +5,7 @@
 	<a href="{$ppo->urlBack}">{i18n key="generictools|messages.action.backLong"}</a>
 </div>
 
-{if ($ppo->mode == 'DEVEL' || $ppo->mode == 'UNKNOW')}
+{if ($ppo->mode == 'DEVEL' || $ppo->mode == 'UNKNOWN')}
 	<br />
 	<div class="errorMessage" style="text-align: left">
 		<h1>{i18n key="generictools|messages.titlePage.debugInformation"}</h1>
@@ -15,9 +15,9 @@
 		
 		<br /><br />
 		<center>
-			{showdiv id="debug" show="false" captioni18n="generictools|messages.action.debugMoreInfos"}
+			{showdiv id=`$ppo->id` show="false" captioni18n="generictools|messages.action.debugMoreInfos"}
 		</center>
-		<div id="debug" style="display:none">
+		<div id="{$ppo->id}" style="display:none">
 			<br />
 			{if count ($ppo->trace)}
 				<table class="CopixTable">
@@ -29,7 +29,8 @@
 						 	<th>Arguments</th>
 						</tr>
 					</thead>
-					{foreach from=$ppo->trace item=item }
+					<tbody>
+					{foreach from=$ppo->trace item=item key=index}
 						<tr {cycle values='class="alternate",'}>
 			 				<td>
 			 					{popupinformation}
@@ -38,10 +39,11 @@
 			 						{i18n key="generictools|messages.file"} : {$item.file}
 			 					{/popupinformation}
 			 				</td>
-			 				<td>{$item.class}</td>
+			 				<td>{if isset($item.class)}{$item.class}{/if}</td>
 			 				<td><b>{$item.function}</b></td>
-			 				<td><pre>{$item.args|@var_export:true}</pre></td>
+			 				<td><pre style="overflow: auto; max-width: 640px; max-height: 400px">{$item.args|@var_export:true}</pre></td>
 						</tr>
+					</tbody>
 					{/foreach}
 				</table>
 			{/if}
