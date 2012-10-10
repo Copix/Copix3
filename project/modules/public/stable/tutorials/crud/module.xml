@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="crud" longdescription="Tutorial pour expliquer comment faire du CRUD (Create Read Update Delete) avec Copix." description="Tutorial sur le CRUD avec Copix" icon="help.gif" />
+ </general>
+</moduledefinition>

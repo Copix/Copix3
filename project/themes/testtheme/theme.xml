@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<themedefinition>
+	<name>Tests unitaires</name>
+	<author>Gérald Croës - Salleyron Julien</author>
+	<website>http://www.gcroes.com</website>
+	<description>Thème à n'utiliser que pour les tests unitaires</description>
+	<image>testtheme.png</image>
+</themedefinition>

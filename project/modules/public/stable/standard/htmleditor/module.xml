@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="htmleditor" descriptioni18n="htmleditor.description" longdescriptioni18n="htmleditor.longdescription" icon="htmleditor.gif" />
+ </general>
+ <parameters>
+  <parameter name="height" captioni18n="htmleditor.parameter.height" default="450" />
+  <parameter name="width" captioni18n="htmleditor.parameter.width" default="480" />
+ </parameters>
+</moduledefinition>

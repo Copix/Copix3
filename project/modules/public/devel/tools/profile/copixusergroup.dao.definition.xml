@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<daodefinition>
+ <datasource>
+   <tables>
+      <table name="copixusergroup"  primary="yes"/>
+   </tables>
+ </datasource>
+
+ <properties>
+  <property name="id_cgrp"
+         captioni18n="copix:profile.dao.CopixGroup.fields.id_cgrp"
+         pk="true"
+         required="yes"
+         type="numeric"
+         />
+
+  <property name="login_cusr"
+         captioni18n="copix:profile.dao.CopixUser.fields.login_cusr"
+         type="varchar"
+         maxlength="50"
+         required="yes"
+         pk="true"
+         />
+ </properties>
+ <methods>
+    <method type="select" name="findByLogin">
+        <parameters>
+            <parameter name="login" />
+        </parameters>
+        <conditions>
+            <condition property="login_cusr" operator="=" value="$login" />
+        </conditions>
+    </method>
+    <method type="select" name="findByGroup">
+        <parameters>
+            <parameter name="id" />
+        </parameters>
+        <conditions>
+            <condition property="id_cgrp" operator="=" value="$id" />
+        </conditions>
+    </method>
+   <method name="removeGroup" type="delete">
+
+      <parameters>
+         <parameter name="id" />
+      </parameters>
+
+      <conditions>
+         <condition property="id_cgrp" operator="=" value="$id" />
+      </conditions>
+   </method>
+   <method name="removeUser" type="delete">
+
+      <parameters>
+         <parameter name="login" />
+      </parameters>
+
+      <conditions>
+         <condition property="login_cusr" operator="=" value="$login" />
+      </conditions>
+   </method>
+ </methods>
+</daodefinition>

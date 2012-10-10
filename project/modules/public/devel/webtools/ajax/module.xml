@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="ajax" descriptioni18n="ajax.moduledescription"
+			longdescriptioni18n="ajax.longdescription" />
+	</general>
+</moduledefinition>

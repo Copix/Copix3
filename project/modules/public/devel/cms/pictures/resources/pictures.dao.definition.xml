@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<daodefinition version="2">
+   <datasource>
+      <tables>
+         <table name="pictures" primary="yes" />
+         <table name="picturesheadings" join="left" />
+      </tables>
+   </datasource>
+ <properties>
+  <property name="id_pict"
+         captioni18n="dao.pictures.fields.id_pict"
+         type="numeric"
+         pk="true"
+         required="yes"
+        />
+
+  <property name="name_pict"
+         captioni18n="dao.pictures.fields.name_pict"
+         type="string"
+         maxlength="50"
+         required="yes"
+         />
+         
+ <property name="last_consultation_pict"
+         captioni18n="dao.pictures.fields.last_consultation_pict"
+         type="varchardate"
+         maxlength="10"
+         required="no"
+         />
+         
+ <property name="id_head"
+         captioni18n="dao.pictures.fields.id_head"
+         type="numeric"
+         fkTable="picturesheadings"
+         fkFieldName="id_head"
+         />
+
+  <property name="x_pict"
+         captioni18n="dao.pictures.fields.x_pict"
+         type="numeric"
+         required="yes"
+         />
+
+  <property name="y_pict"
+         captioni18n="dao.pictures.fields.y_pict"
+         type="numeric"
+         required="yes"
+         />
+   <property name="weight_pict"
+         captioni18n="dao.pictures.fields.weight_pict"
+         type="numeric"
+         required="yes"
+         />
+
+  <property name="format_pict"
+         captioni18n="dao.pictures.fields.format_pict"
+         type="string"
+         maxlength="50"
+         required="yes"
+         />
+
+  <property name="desc_pict"
+         captioni18n="dao.pictures.fields.desc_pict"
+         type="string"
+         maxlength="250"
+         required="no"
+         />
+         
+  <property name="url_pict"
+         captioni18n="dao.pictures.fields.url_pict"
+         type="string"
+         maxlength="250"
+         required="no"
+         />
+         
+  <property name="status_pict"
+         captioni18n="dao.pictures.fields.status_pict"
+         type="int"
+         required="yes"
+         />
+         
+  <property name="nameindex_pict"
+         captioni18n="dao.pictures.fields.nameindex_pict"
+         type="int"
+         required="yes"
+         />
+         
+  <property name="statusdate_pict"
+         captioni18n="copixheadings|workflow.messages.statusDate"
+         type="varchardate"
+         maxlength="8"
+         required="yes"
+         />
+
+  <property name="statusauthor_pict"
+         captioni18n="copixheadings|workflow.messages.statusAuthor"
+         type="string"
+         maxlength="50"
+         required="yes"
+         />
+
+  <property name="statuscomment_pict"
+         captioni18n="copixheadings|workflow.messages.statusComment"
+         type="string"
+         maxlength="255"
+         />
+
+  <property name="author_pict"
+         captioni18n="copix:common.messages.author"
+         type="string"
+         maxlength="50"
+         required="yes"
+         />
+ </properties>
+</daodefinition>

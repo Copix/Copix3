@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="comments" longdescriptioni18n="comments.longdescription" descriptioni18n="comments.description" />
+ </general>
+ <parameters>
+ 	<parameter name="captcha" captioni18n="comments.parameter.captcha" default="0" />
+ 	<parameter name="adminitemsperpage" captioni18n="comments.parameter.admin.perpage" default="10" />
+ </parameters>
+ <admin>
+  <link url="comments|admin|" captioni18n="comments.admin.description" credentials="basic:admin"></link>
+  <link url="comments|admin|listcaptcha" captioni18n="comments.admin.listcaptcha" credentials="basic:admin"></link>
+ </admin>
+</moduledefinition>

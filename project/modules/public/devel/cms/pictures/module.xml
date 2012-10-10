@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="pictures" descriptioni18n="browser.moduleDescription" />
+ </general>
+ <dependencies>
+  <dependency name="cms" kind="module"/>
+  <dependency name="parameters" kind="module"/>
+  <dependency name="profile" kind="module"/>
+ </dependencies>
+ <parameters>
+  <parameter name="maxX" captioni18n="browser.parameter.maxX" default="100" />
+  <parameter name="maxXDetail" captioni18n="browser.parameter.maxXDetail" default="300" />
+  <parameter name="maxYDetail" captioni18n="browser.parameter.maxYDetail" default="300" />
+  <parameter name="maxY" captioni18n="browser.parameter.maxY" default="100" />
+  <parameter name="nbLink" captioni18n="browser.parameter.nbLink" default="5" />
+  <parameter name="nbCols" captioni18n="browser.parameter.nbCols" default="4" />
+  <parameter name="nbRows" captioni18n="browser.parameter.nbRows" default="5" />
+  <parameter name="path" captioni18n="browser.parameter.path" default="../var/data/pictures/" />
+  <parameter name="format" captioni18n="browser.parameter.format" default="jpg;jpeg;png;gif;bmp" />
+  <parameter name="easyWorkflow" captioni18n="browser.parameter.easyWorkflow" default="1" />
+  <parameter name="importDirectory" captioni18n="browser.parameter.importDirectory" default="/" />
+ </parameters>
+ <events>
+  <launch>
+   <event name="PicturePropose">
+    <params>
+     <param name="picture" /><!-- the picture dao object-->
+    </params>
+   </event>
+   <event name="PictureValid">
+    <params>
+     <param name="picture" /><!-- the picture dao object-->
+    </params>
+   </event>
+   <event name="PictureRefuse">
+    <params>
+     <param name="picture" /><!-- the picture dao object-->
+    </params>
+   </event>
+  </launch>
+  <listeners>
+   <listener name="ContribPictures">
+    <event name="HeadingAdminBrowsing" />
+    <event name="HasContentRequest" />
+    <event name="QuickAdminBrowsing" />
+    <event name="HeadingCreated" />
+    <event name="HeadingDeleted" />
+   </listener>
+  </listeners>
+ </events>
+</moduledefinition>

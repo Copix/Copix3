@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="cms" descriptioni18n="cms.description" longdescriptioni18n="cms.longdescription" />
+ </general>
+ <dependencies>
+  <dependency name="copixheadings" kind="module"/>
+  <dependency name="parameters" kind="module"/>
+  <dependency name="profile" kind="module"/>
+ </dependencies>
+ <parameters>
+  <parameter name="portletAutoSave" captioni18n="cms.parameter.portletAutoSave" default="1" />
+  <parameter name="easyWorkflow" captioni18n="cms.parameter.easyWorkflow" default="1" />
+  <parameter name="multipleDraftForPageEnable" captioni18n="cms.parameter.multipleDraftForPageEnable" default="0" />
+  <parameter name="useCache" captioni18n="cms.parameter.useCache" default="0" />
+  <parameter name="cacheDuration"  captioni18n="cms.parameter.cacheDuration" default="0" />
+ </parameters>
+ <events>
+  <launch>
+   <event name="HeadingFrontBrowsing">
+    <params>
+     <param name="id" /><!-- the CopixHeading id we currently browse -->
+    </params>
+   </event>
+   <event name="HeadingThemeRequest">
+    <params>
+     <param name="id" /><!-- the CopixHeading id we wants to apply the theme of -->
+    </params>
+   </event>
+   <event name="DeletePortlet">
+    <params>
+     <param name="id_cmsp" /><!-- the page id containing the portlet -->
+     <param name="portlet" /><!-- the portlet to delete -->
+    </params>
+   </event>
+   <event name="CMSPageShow">
+    <params>
+     <param name="id" /><!-- the CopixCMSPage id we currently browse -->
+     <param name="id_head" /><!-- the CopixHeading id we currently browse -->
+    </params>
+   </event>
+   <event name="CMSPageDelete">
+    <params>
+     <param name="id" /><!-- the CopixCMSPage id we currently delete -->
+    </params>
+   </event>
+   <event name="CMSPagePublish">
+    <params>
+     <param name="page" /><!-- the CopixCMSPage-->
+     <param name="is_new" /><!-- flag wich tell if it s a new page or not -->
+    </params>
+   </event>
+   <event name="CMSPagePropose">
+    <params>
+     <param name="draft" /><!-- the CopixCMSDraft we currently propose-->
+    </params>
+   </event>
+   <event name="CMSPageRefuse">
+    <params>
+     <param name="draft" /><!-- the CopixCMSDraft we currently propose-->
+    </params>
+   </event>
+   <event name="CMSPageValid">
+    <params>
+     <param name="draft" /><!-- the CopixCMSDraft we currently propose-->
+    </params>
+   </event>
+   <event name="HeadingModelRequest">
+    <params>
+     <param name="id" /><!-- the CopixHEading id we wants the model of -->
+    </params>
+    <response>
+     <information name="model" type="CMSPortletPage" />
+    </response>
+   </event>
+   <event name="CMSPageDeleted">
+    <params>
+     <param name="id" /><!-- the page id we are deleting -->
+    </params>
+   </event>
+  </launch>
+  <listeners>
+   <listener name="ContribHeading">
+    <event name="HeadingAdminBrowsing" />
+    <event name="HeadingBrowsing" />
+    <event name="HeadingMoveContent" />
+    <event name="HasContentRequest" />
+    <event name="QuickAdminBrowsing" />
+   </listener>
+  </listeners>
+ </events>
+</moduledefinition>

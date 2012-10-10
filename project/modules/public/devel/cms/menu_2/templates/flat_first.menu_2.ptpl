@@ -1,0 +1,32 @@
+<?php
+/**
+ * display a menu
+ */
+if (!function_exists('showMenu_flat')) {
+   function showMenu_flat (& $arMenu,$currentNode,$level, $arSelectedMenu){
+      if (! is_array($arMenu[$currentNode])) {
+         return '';
+      }
+      $result='<table width="100%" height="30" border="0" cellspacing="0" ><tr  height="30" style="background-color: #669999"><td width="*"></td>';
+      foreach ($arMenu[$currentNode] as $key=>$menu) {
+         if (in_array ($menu->id_menu, $arSelectedMenu)){
+	    $styleString = 'style="background-color: #cccccc;"';
+	 }else{
+	    $styleString = '';
+	 }
+         $result .= '<td width="80" '.$styleString.'><a style="font-size: 0.9em; vertical-align: top;color: #ffffff;" '.$menu->htmlLink.' title="'.$menu->tooltip_menu.'">';
+         $result .= $menu->caption_menu.'</a>';
+         if (isset($arMenu[$menu->id_menu])) {
+            $result .= showMenu($arMenu,$menu->id_menu,$level+1, $arSelectedMenu);
+         }
+         $result .= '</td>';
+      }
+      $result .= '</table></tr>';
+      return $result;
+   }
+}
+
+if (count ($arMenu)){
+   echo showMenu_flat ($arMenu, $startNode, 1, $arSelectedMenu);
+}
+?>

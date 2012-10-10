@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+    <general>
+        <default name="cms_portlet_wysiwygcontent" descriptioni18n="wysiwyg.description" longdescriptioni18n="wysiwyg.longdescription"/>
+    </general>
+    <dependencies>
+     <dependency name="cms" kind="module"/>
+     <dependency name="pictures" kind="module"/>
+     <dependency name="profile" kind="module"/>
+    </dependencies>
+</moduledefinition>

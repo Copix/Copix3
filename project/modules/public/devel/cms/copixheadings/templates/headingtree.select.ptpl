@@ -1,0 +1,46 @@
+<script language="javascript">
+	function fcAffiche(obDivAAfficher){
+	if (document.getElementById(obDivAAfficher).style.display == "none") {
+		document.getElementById(obDivAAfficher).style.display = "block";
+		document.getElementById("rep_"+obDivAAfficher).src="<?php echo CopixUrl::getResource('img/tools/expand.png'); ?>";
+	}
+	else
+	{
+		document.getElementById(obDivAAfficher).style.display = "none";
+		document.getElementById("rep_"+obDivAAfficher).src="<?php echo CopixUrl::getResource('img/tools/collapse.png'); ?>";
+	}
+ 	}
+</script>
+<?php
+echo '<h2>Rubriques</h2>';
+echo showHeadingsTree($arHeadings, $select);
+echo '<p><input type="button" onclick="document.location.href=\'' . $back . '\'" value="' . Copixi18n::get("copix:common.buttons.back") . '" /></p>';
+
+function showHeadingsTree ($Tree, $select) {
+   $result = '';
+   //Ajout PGU pour plier/déplier l'arborescence
+   if (!is_null($Tree->id_head)){
+      $result .= '<li style="list-style:none;padding-top:5px;"><a href="javascript:fcAffiche('.$Tree->id_head.')"><img id="rep_'.$Tree->id_head.'" src="'.CopixUrl::getResource('img/tools/collapse.png').'" /></a>';
+      $result .= '&nbsp;<span style="font-weight:bold;">'.$Tree->caption_head.'</span>';
+      $result .= '<a href="'.CopixUrl::appendToUrl ($select, array('id_head'=>$Tree->id_head), true).'">';
+      $result .= '<img src="'.CopixUrl::getResource('img/tools/valid.png').'" width="16" height="16" alt="'. Copixi18n::get("copix:common.buttons.select") . '" /></a><br />';
+      $result .= '<div id="'.$Tree->id_head.'" style="display:none;">';
+   }else{
+      $result .= '<li style="list-style: none;"><img id="rep_'.$Tree->id_head.'" src="'.CopixUrl::getResource('img/tools/expand.png').'" /><span style="font-weight:bold">&nbsp;'.$Tree->caption_head.'</span>';
+      $result .= '<a href="'.CopixUrl::appendToUrl ($select, array('id_head'=>$Tree->id_head), true).'">';
+      $result .= '<img src="'.CopixUrl::getResource('img/tools/valid.png').'" width="16" height="16" alt="'. Copixi18n::get("copix:common.buttons.select") . '" /></a><br />';
+      $result .= '<div id="'.$Tree->id_head.'" style="display:block;">';
+   }
+   //Fin ajout PGU
+
+   if (count($Tree->childs)>0) {
+      $result .= '<ul>';
+      foreach ($Tree->childs as $key=>$subTree) {
+         $result .= showHeadingsTree($subTree, $select);
+      }
+      $result .= '</ul>';
+   }
+   $result .= '</div></li>';
+   return $result;
+}
+?>

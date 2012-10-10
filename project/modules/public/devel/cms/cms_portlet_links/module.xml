@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="cms_portlet_links" descriptioni18n="links.description" longdescriptioni18n="links.longdescription" />
+ </general>
+ <dependencies>
+  <dependency name="cms" kind="module"/>
+  <dependency name="profile" kind="module"/>
+ </dependencies>
+</moduledefinition>

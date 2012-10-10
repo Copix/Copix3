@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<daodefinition version="2">
+   <datasource>
+      <tables>
+         <table name="copixheadings" primary="yes" />
+      </tables>
+   </datasource>
+
+ <properties>
+  <property name="id_head"
+         captioni18n="copixheadings.fields.id_head"
+         pk="true"
+         required="yes"
+         type="bigautoincrement"
+         sequence="SEQ_copixheadings"
+         />
+
+  <property name="caption_head"
+         captioni18n="copixheadings.fields.caption_head"
+         required="yes"
+         type="string"
+         maxlength="200"
+         />
+
+  <property name="description_head"
+         captioni18n="copixheadings.fields.description_head"
+         required="no"
+         type="string"
+         maxlength="255"
+         />
+
+  <property name="father_head"
+         captioni18n="copixheadings.fields.father_head"
+         required="no"
+         type="numeric"
+         />
+
+  <property name="position_head"
+         captioni18n="copixheadings.fields.position_head"
+         required="no"
+         type="int"
+         />
+  
+  <property name="url_head"
+         captioni18n="copixheadings.fields.url_head"
+         required="no"
+         type="varchar"
+         maxlength="255"
+         />         
+ </properties>
+</daodefinition>

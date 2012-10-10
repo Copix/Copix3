@@ -1,0 +1,5 @@
+<?php foreach ($ppo->arNews as $newsElement) { ?>
+<h1><?php echo $newsElement->title_bench_news; ?></h1>
+<h2>Le <?php echo CopixDateTime::yyyymmddhhiissToDateTime ($newsElement->datetime_bench_news); ?> par <?php echo $newsElement->author_bench_news; ?></h2>
+<div><?php echo $newsElement->content_bench_news; ?></div>
+<?php } ?>

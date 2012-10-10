@@ -1,0 +1,4 @@
+CREATE TABLE modulecredentials (id_mc INT(11) AUTO_INCREMENT, module_mc VARCHAR(255), name_mc VARCHAR(255) NOT NULL, parent_name_mc VARCHAR(255), primary key(id_mc) );
+CREATE TABLE modulecredentialsvalues ( id_mcv INT(11) AUTO_INCREMENT, value_mcv VARCHAR(255) NOT NULL, id_mc INT NOT NULL, level_mcv INT, primary key (id_mcv) );
+CREATE TABLE modulecredentialsoverpass (id_mco INT(11) AUTO_INCREMENT, id_mc INT(11), overpass_id_mc INT(11),overpath_id_mc INT(11) , primary key(id_mco));
+CREATE TABLE modulecredentialsgroups (id_mcg INT(11) AUTO_INCREMENT, id_mc INT NOT NULL, id_mcv INT(11), handler_group VARCHAR(255), id_group VARCHAR(255), primary key(id_mcg) );

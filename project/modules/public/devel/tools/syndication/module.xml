@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="syndication" longdescriptioni18n="global.module.longdescription" descriptioni18n="global.module.description" />
+	</general>
+	<admin>
+		<link url="syndication|adminflux|" captioni18n="admin.link.flux" credentials="basic:admin"></link>
+	</admin>
+</moduledefinition>

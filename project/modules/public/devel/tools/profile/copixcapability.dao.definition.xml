@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<daodefinition version="3">
+ <datasource>
+   <tables>
+      <table name="copixcapability" primary="yes" />
+      <!--    DDT 06/09/2006 tablename mis entierement en minuscule -->
+      <table name="path" tablename="copixcapabilitypath" join="left" />
+   </tables>
+</datasource>
+
+ <properties>
+  <property name="name_ccpb"
+         captioni18n="copix:profile.dao.CopixCapability.fields.name_ccpb"
+         pk="true"
+         required="yes"
+         type="varchar"
+         maxlength="50"
+         />
+
+  <property name="description_ccpb"
+         captioni18n="copix:profile.dao.CopixCapability.fields.description_ccpb"
+         type="varchar"
+         maxlength="255"
+         required="yes"
+         />
+
+  <property name="name_ccpt"
+         captioni18n="copix:profile.dao.CopixCapabilityPath.fields.name_ccpt"
+         type="varchar"
+         maxlength="255"
+         required="yes"
+         fkTable="path"
+         fkFieldName="name_ccpt"
+         />
+
+  <property name="description_ccpt"
+         type="varchar"
+         table="path"
+         />
+
+  <property name="values_ccpb"
+         captioni18n="copix:profile.dao.CopixCapability.fields.values_ccpb"
+         type="varchar"
+         maxlength="30"
+         required="yes"
+         />
+ </properties>
+  <methods>
+    <method type="select" name="findOrderByName">
+       <order>
+         <orderitem property="name_ccpb" way="asc" />
+      </order>
+    </method>
+ </methods>
+</daodefinition>

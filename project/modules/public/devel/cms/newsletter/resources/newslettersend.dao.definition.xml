@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<daodefinition version="2">
+
+<datasource>
+   <tables>
+      <table name="newslettersend" primary="yes" />
+   </tables>
+</datasource>
+
+<properties>
+   <property
+      name="id_cmsp"
+      captionI18N="dao.newslettersend.fields.id_cmsp"
+      pk="true"
+      type="numeric"
+      required="no"
+      maxlength="20"
+   />
+
+   <property
+      name="date_nls"
+      captionI18N="dao.newslettersend.fields.date_nls"
+      pk="true"
+      type="string"
+      required="no"
+      maxlength="8"
+   />
+   <property
+      name="id_nlg"
+      captionI18N="dao.newslettersend.fields.id_nlg"
+      pk="false"
+      type="string"
+      required="no"
+      maxlength="255"
+   />
+   <property
+      name="id_cgrp"
+      captionI18N="dao.newslettersend.fields.id_nlg"
+      pk="false"
+      type="string"
+      required="no"
+      maxlength="255"
+   />
+   <property
+      name="title_nls"
+      captionI18N="dao.newslettersend.fields.title_nls"
+      pk="false"
+      type="string"
+      required="no"
+      maxlength="150"
+   />
+   <property
+      name="htmlcontent_nls"
+      captionI18N="dao.newslettersend.fields.htmlcontent_nls"
+      pk="false"
+      type="string"
+      required="yes"
+   />
+</properties>
+</daodefinition>

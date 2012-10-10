@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="chart_swf" description="SwfChart" longdescription="SwfChart" />
+ </general> 
+ <dependencies>
+  <dependency name="chart" kind="module"/>
+ </dependencies>
+ <parameters>
+  <parameter name="license" default="" caption="License Id" />
+ </parameters>
+</moduledefinition>

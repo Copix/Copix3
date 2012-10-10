@@ -1,0 +1,180 @@
+<script type="text/javascript">
+//<![CDATA[
+function ajax_refreshBody (){
+   var element;
+   var divToUpdate = document.getElementById ('TemplatePreview');
+   var httpRequest = getHTTPObject ();
+   if (httpRequest){
+         httpRequest.onreadystatechange=function(){
+         if (httpRequest.readyState == 4){
+            if (httpRequest.status == 200){
+               element = httpRequest.responseXML.getElementsByTagName('response')[0];
+               divToUpdate.innerHTML = element.getElementsByTagName('html')[0].firstChild.data;
+            }
+         }
+      }
+   }
+   httpRequest.open("GET", "<?php echo CopixUrl::get ('template|admin|getHtml', array ('editId'=>$editId, 'xml'=>1)); ?>", true);
+   httpRequest.send(null);
+}
+
+function ajax_refreshStructure (){
+   var element;
+   var divToUpdate = document.getElementById ('templateStructureContent');
+   var httpRequest = getHTTPObject ();
+   if (httpRequest){
+         httpRequest.onreadystatechange=function(){
+         if (httpRequest.readyState == 4){
+            if (httpRequest.status == 200){
+               element = httpRequest.responseXML.getElementsByTagName('response')[0];
+               divToUpdate.innerHTML = element.getElementsByTagName('html')[0].firstChild.data;
+            }
+         }
+      }
+   }
+   httpRequest.open("GET", "<?php echo CopixUrl::get ('template|admin|getStructure', array ('editId'=>$editId)); ?>", true);
+   httpRequest.send(null);	
+}
+
+function ajax_submitProperties (pForm, pElementId){
+   var httpRequest = getHTTPObject ();
+   if (httpRequest){
+         httpRequest.onreadystatechange=function(){
+         if (httpRequest.readyState == 4){
+            if (httpRequest.status == 200){
+            	ajax_refreshProperties (pElementId);
+            	ajax_refreshBody ();
+            }
+         }
+      }
+   }
+
+   httpRequest.open ("POST", pForm.action, true);
+   httpRequest.setRequestHeader ("Content-Type","application/x-www-form-urlencoded; charset=UTF-8");
+   httpRequest.send (getFormValues(pForm, "validate"));
+}
+
+function ajax_refreshProperties (pElementId){
+   var element;
+   var divToUpdate = document.getElementById ('templatePropertiesContent');
+
+   var httpRequest = getHTTPObject ();
+   if (httpRequest){
+         httpRequest.onreadystatechange=function(){
+         if (httpRequest.readyState == 4){
+            if (httpRequest.status == 200){
+            	element = httpRequest.responseXML.getElementsByTagName('response')[0];
+            	divToUpdate.innerHTML = element.getElementsByTagName('html')[0].firstChild.data;
+            }
+         }
+      }
+   }
+   httpRequest.open("GET", "<?php echo CopixUrl::get ('template|admin|getProperties', array ('editId'=>$editId)); ?>&elementId="+pElementId, true);
+   httpRequest.send(null);
+}
+
+function ajax_structureAdd (classname, to){
+   var element;
+   var httpRequest = getHTTPObject ();
+   if (httpRequest){
+         httpRequest.onreadystatechange=function(){
+         if (httpRequest.readyState == 4){
+            if (httpRequest.status == 200){
+               element = httpRequest.responseXML.getElementsByTagName('response')[0];
+               ajax_refreshProperties (element.getElementsByTagName('id')[0].firstChild.data);
+               ajax_refreshStructure ();
+               ajax_refreshBody ();
+            }
+         }
+      }
+   }
+   httpRequest.open("GET", "<?php echo CopixUrl::get ('template|admin|getAddElement', array ('editId'=>$editId)); ?>&classname="+classname+"&elementId="+to, true);
+   httpRequest.send(null);	
+}
+    
+function ajax_removeElement (pElementId){
+   var httpRequest = getHTTPObject ();
+   if (httpRequest){
+         httpRequest.onreadystatechange=function(){
+         if (httpRequest.readyState == 4){
+            if (httpRequest.status == 200){
+               ajax_refreshStructure ();
+               ajax_refreshBody ();
+            }
+         }
+      }
+   }
+   httpRequest.open("GET", "<?php echo CopixUrl::get ('template|admin|doRemoveElement', array ('editId'=>$editId)); ?>&elementId="+pElementId, true);
+   httpRequest.send(null);
+}
+
+function getFormValues(fobj, valFunc) {
+	var str = "";
+	var valueArr = null;
+	var val = "";
+	var cmd = "";
+	for(var i = 0;i < fobj.elements.length;i++) {
+		switch(fobj.elements[i].type) {
+			case "text":
+				str += fobj.elements[i].name +
+				 "=" + escape(fobj.elements[i].value) + "&";
+				 break;
+			case "select-one":
+				str += fobj.elements[i].name +
+				"=" + fobj.elements[i].options[fobj.elements[i].selectedIndex].value + "&";
+				break;
+		}
+	}
+	str = str.substr(0,(str.length - 1));
+	return str;
+}
+
+ajax_refreshStructure ();
+	
+//]]>
+</script>
+
+<?php
+Copix::RequireOnce (COPIX_PATH.'taglib/CopixTagLibDraggableDiv.class.php');
+Copix::RequireOnce (COPIX_PATH.'taglib/CopixTagLibAjaxGetHttpObject.class.php');
+CopixTagLibAjaxGetHttpObject::doDeclare ();
+
+echo '<div id="TemplatePreview">'.$template->getHtml ().'</div>';
+
+$htmlProperties = '';
+
+$templateDiv   = new CopixTagLibDraggableDiv ('', 'Structure');
+$templateDiv->setId ('templateStructure');
+
+$propertiesDiv = new CopixTagLibDraggableDiv ($htmlProperties, 'Propriétés de l\'élément sélectionné');
+$propertiesDiv->setId ('templateProperties');
+
+$templateDiv->setStyles ('   text-align: left;
+   position: absolute; 
+   top: 2px; 
+   left: 2px; 
+   border: 2px solid #000000; 
+   background-color: #ffffee; 
+   width: 200px; 
+   overflow: auto; 
+   height: 400px;');
+
+$propertiesDiv->setStyles ('   text-align: left;
+   position: absolute; 
+   top: 2px; 
+   left: 2px; 
+   border: 2px solid #000000; 
+   background-color: #ffffee; 
+   width: 200px; 
+   overflow: auto; 
+   height: 400px;');
+
+echo $templateDiv->getHtml ();
+echo $propertiesDiv->getHtml ();
+?>
+
+<script type="text/javascript" defer="1">
+//<[CDATA[
+ajax_refreshStructure ();
+//]]>
+</script>

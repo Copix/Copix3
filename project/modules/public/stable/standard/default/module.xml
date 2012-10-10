@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+   <general>
+    <default name="default" description="Default" icon="default.gif" />
+   </general>
+   <parameters>
+      <parameter name="homePage"       captioni18n="parameter.homePage"  default="index.php?module=default&amp;action=welcome" />
+      <parameter name="titlePage"      captioni18n="parameter.titlePage" default="Copix Framework" />
+      <parameter name="titleBar"       captioni18n="parameter.titleBar"  default="[Copix] {$TITLE_PAGE}"  />
+      <parameter name="mailEnabled"    captioni18n="parameter.mailEnabled"  default="0" type="bool"  />
+      <parameter name="mailFrom"       captioni18n="parameter.mailFrom"  default="webmaster"  />
+      <parameter name="mailFromName"   captioni18n="parameter.mailFromName"  default="webmaster"  />
+      <parameter name="mailMethod"     captioni18n="parameter.mailMethod"  default="smtp" type="select" listValues="mail=>Fonction mail () PHP;smtp=>Serveur SMTP" />
+      <parameter name="mailSmtpHost"   captioni18n="parameter.mailSmtpHost"  default="localhost"  />
+      <parameter name="mailSmtpAuth"     captioni18n="parameter.mailAuth"  default=""  />
+      <parameter name="mailSmtpPass"     captioni18n="parameter.mailPass"  default=""  />
+   </parameters>
+</moduledefinition>

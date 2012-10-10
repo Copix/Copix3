@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="moocms" descriptioni18n="moocms.moduledescription"
+			longdescriptioni18n="moocms.longdescription" />
+	</general>
+	<dependencies>
+		<dependency name="wikirender" kind="module" />
+	</dependencies>
+</moduledefinition>

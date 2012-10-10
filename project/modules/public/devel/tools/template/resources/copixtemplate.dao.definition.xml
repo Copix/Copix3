@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<daodefinition>
+ <datasource>
+   <tables>
+      <table name="copixtemplate" primary="yes" />
+      <table name="copixtemplate_theme" join="left" />      
+   </tables>
+ </datasource>
+
+ <properties>
+  <property name="id_ctpl"
+         captioni18n="template.dao.id_ctpl"
+         pk="true"
+         required="yes"
+         type="autoincrement"
+         sequence="SEQ_COPIXTEMPLATE"
+         />
+  <property name="publicid_ctpl"
+         captioni18n="template.dao.publicid_ctpl"
+         required="no"
+         type="int"
+         />
+  <property name="caption_ctpl"
+         captioni18n="template.dao.caption_ctpl"
+         type="varchar"
+         maxlength="255"
+         required="yes"
+         />
+  <property name="qualifier_ctpl"
+         captioni18n="template.dao.qualifier_ctpl"
+         type="varchar"
+         maxlength="255"
+         required="no"
+         /> 
+  <property name="modulequalifier_ctpl" 
+     captioni18n="template.dao.modulequalifier_ctpl"
+     type="varchar"
+     maxlength="255"
+     required="no"
+  />         
+  <property name="content_ctpl"
+         captioni18n="template.dao.content_ctpl"
+         type="string"
+         required="yes"
+         />
+  <property name="generated_ctpl"
+         captioni18n="template.dao.generated_ctpl"
+         type="string"
+         required="no"
+         />		 
+  <property name="id_ctpt"
+         captioni18n="template.theme.dao.id_ctpt"
+         type="int"
+         fkTable="copixtemplate_theme"
+         fkFieldName = "id_ctpt"
+         />
+  <property name="caption_ctpt"
+         captioni18n="template.theme.dao.caption_ctpt"
+         type="varchar"
+         required="yes"
+         table="copixtemplate_theme"
+         />
+ </properties>
+</daodefinition>

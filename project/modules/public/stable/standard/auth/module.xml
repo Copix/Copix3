@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="auth" longdescriptioni18n="auth.longdescription" descriptioni18n="auth.description" icon="user.gif" />
+ </general>
+ <admin>
+  <link captioni18n="auth.adminUsers" url="auth|users|" credentials="basic:admin" />
+  <link captioni18n="auth.adminGroups" url="auth|groups|" credentials="basic:admin" />
+ </admin>
+ <parameters>
+  <parameter name="createUser" captioni18n="auth.createUser" default="0" type="bool" />
+  <parameter name="typeConfirm" captioni18n="auth.typeConfirm" default="email" type="select" listValues="email=>E-mail" />
+ </parameters>
+</moduledefinition>

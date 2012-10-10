@@ -1,0 +1,1 @@
+<div style="width: auto;">{$Zone1}</div>

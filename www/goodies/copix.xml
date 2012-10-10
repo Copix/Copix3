@@ -1,0 +1,9 @@
+<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
+<ShortName>Copix Documentation</ShortName>
+<Description>Documentation de Copix</Description>
+<InputEncoding>UTF-8</InputEncoding>
+<Url type="text/html" method="POST" template="http://wiki.copix.org/index.php/quicksearch">
+<Param name="criteria" value="{searchTerms}"/>
+</Url>
+<SearchForm>http://www.copix.org</SearchForm>
+</SearchPlugin>

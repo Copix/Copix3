@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+        <general>
+                <default name="daoxmlgenerator" descriptioni18n="daoxmlgenerator|daoxmlgenerator.moduleDescription" longdescriptioni18n="daoxmlgenerator|daoxmlgenerator.longModuleDescription" />
+        </general>
+</moduledefinition>

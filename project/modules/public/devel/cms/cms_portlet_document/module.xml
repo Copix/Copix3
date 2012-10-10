@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="cms_portlet_document" descriptioni18n="document.description" longdescriptioni18n="document.longdescription" />
+ </general>
+ <dependencies>
+  <dependency name="document" kind="module"/>
+ </dependencies>
+</moduledefinition>

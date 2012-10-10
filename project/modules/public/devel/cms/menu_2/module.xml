@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="menu_2" descriptioni18n="menu.description" longdescriptioni18n="menu.longdescription" />
+ </general>
+ <dependencies>
+  <dependency name="parameters" kind="module" />
+  <dependency name="profile" kind="module" />
+  <dependency name="auth" kind="module" />
+ </dependencies>
+ <parameters>
+  <parameter name="template" captioni18n="menu.parameter.template" default="menu_2|menufront.ptpl" />
+  <parameter name="useCache" captioni18n="menu.parameter.useCache" default="0" />
+ </parameters>
+ <events>
+    <listeners>
+        <listener name="Menu">
+	    <event name="HeadingAdminBrowsing" />
+        </listener>
+    </listeners>
+ </events>
+</moduledefinition>

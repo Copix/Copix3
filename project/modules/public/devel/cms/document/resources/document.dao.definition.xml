@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<daodefinition version="2">
+   <datasource>
+      <tables>
+         <table name="document" primary="yes" />
+         <table name="copixheadings" join="left" />
+      </tables>
+   </datasource>
+
+ <properties>
+  <property name="id_doc"
+         captioni18n="dao.document.fields.id_doc"
+         pk="true"
+         required="yes"
+         type="numeric"
+         />
+
+  <property name="id_head"
+         captioni18n="dao.document.fields.id_head"
+         type="numeric"
+         fkTable="copixheadings"
+         fkFieldName="id_head"
+         required="no"
+         />
+         
+  <property name="caption_head"
+            captioni18n="dao.document.fields.caption_head"
+            type="string"
+            table="copixheadings"
+          />
+
+  <property name="title_doc"
+         captioni18n="dao.document.fields.title_doc"
+         type="string"
+         maxlength="50"
+         required="yes"
+         />
+
+  <property name="desc_doc"
+         captioni18n="dao.document.fields.desc_doc"
+         type="string"
+         maxlength="255"
+         required="no"
+         />
+
+  <property name="status_doc"
+         captioni18n="dao.document.fields.status_doc"
+         type="int"
+         required="yes"
+         />
+         
+  <property name="weight_doc"
+         captioni18n="dao.document.fields.weight_doc"
+         type="int"
+         required="yes"
+         />
+         
+  <property name="extension_doc"
+         captioni18n="dao.document.fields.extension_doc"
+         type="string"
+         required="yes"
+         maxlength="10"
+         />
+         
+  <property name="statusdate_doc"
+         captioni18n="copixheadings|workflow.messages.statusDate"
+         type="varchardate"
+         maxlength="8"
+         required="yes"
+         />
+         
+  <property name="statusauthor_doc"
+         captioni18n="copixheadings|workflow.messages.statusAuthor"
+         type="string"
+         maxlength="50"
+         required="yes"
+         />
+         
+  <property name="statuscomment_doc"
+         captioni18n="copixheadings|workflow.messages.statusComment"
+         type="string"
+         maxlength="255"
+         />
+         
+  <property name="author_doc"
+         captioni18n="copix:common.messages.author"
+         type="string"
+         maxlength="50"
+         required="yes"
+         />
+
+   <property name="version_doc"
+         captioni18n="dao.document.fields.version_doc"
+         type="int"
+         required="yes"
+         pk="true"
+         />
+
+ </properties>
+</daodefinition>

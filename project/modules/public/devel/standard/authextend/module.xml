@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+   <general>
+    <default name="authextend" description="Gestion des informations personnalisées des utilisateurs" icon="user.gif" />
+   </general>
+    <dependencies>
+        <dependency name="auth" kind="module" />
+    </dependencies>
+    <admin>
+        <link url="admin|default" caption="Administation des informations utilisateurs personalisées" credentials="basic:admin"></link>
+    </admin>
+</moduledefinition>

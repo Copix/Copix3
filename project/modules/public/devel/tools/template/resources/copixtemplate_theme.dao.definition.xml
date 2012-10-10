@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<daodefinition>
+ <datasource>
+   <tables>
+      <table name="copixtemplate_theme" primary="yes" />
+   </tables>
+ </datasource>
+
+ <properties>
+  <property name="id_ctpt"
+         captioni18n="template.theme.dao.id_ctpt"
+         required="yes"
+         type="autoincrement"
+         pk="true"
+         sequence="SEQ_COPIXTEMPLATE_THEME"
+         />
+  <property name="caption_ctpt"
+         captioni18n="template.theme.dao.caption_ctpt"
+         type="varchar"
+         maxlength="255"
+         required="yes"
+         />
+ </properties>
+</daodefinition>

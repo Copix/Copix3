@@ -1,0 +1,42 @@
+<?php
+/**
+ * display a menu
+ */
+if (!function_exists('showMenu')) {
+   function showMenu (& $arMenu,$arSelectedMenu,$currentNode,$level=1){
+      if (! is_array($arMenu[$currentNode])) {
+         return '';
+      }
+      if (! is_array($arSelectedMenu)) {
+         $arSelectedMenu = array();
+      }
+      $result='<ul>';
+      foreach ($arMenu[$currentNode] as $key=>$menu) {
+         if (in_array($menu->id_menu,$arSelectedMenu)) {
+            $strSelected = ' class="selected" ';
+         }else{
+            $strSelected = '';
+         }
+         $result .= '<li><a '.$menu->htmlLink.$strSelected.' title="'.$menu->tooltip_menu.'">';
+         $result .= $menu->caption_menu.'</a>';
+         if (isset($arMenu[$menu->id_menu])) {
+            $result .= showMenu($arMenu,$arSelectedMenu,$menu->id_menu,$level+1);
+         }
+         $result .= '</li>';
+      }
+      $result .= '</ul>';
+      return $result;
+   }
+}
+
+if (count ($arMenu)){
+   echo '<div id="menu2" class="menudef">';
+   echo showMenu ($arMenu, $arSelectedMenu, $startNode);
+   echo '</div>';
+}
+?>
+<script type="text/javascript">
+//<![CDATA[
+  initmenu('menu2');
+//]]>
+</script>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<moduledefinition>
+	<general>
+		<default name="copixpackager" description="Packager pour les fichiers de Copix" icon="copix.gif"
+			longdescription="Permet de générer des archives des différentes versions de Copix" />
+	</general>
+	<admin>
+  		<link url="copixpackager|packager|" caption="Créer un package" credentials="basic:admin"></link>
+ 	</admin>	
+</moduledefinition>

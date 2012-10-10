@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+ <general>
+  <default name="event_catch2" longdescription="Tutorial pour donner des exemples de récupération des évènements dans Copix" description="Tutorial pour attraper des évènements avec paramètres dans Copix"  icon="help.gif" />
+ </general>
+ <events>
+   <listeners>
+      <listener name="event_catch2">
+        <event name="newEventOnly" />
+        <event name="newEvent" />
+      </listener>
+   </listeners>
+ </events>
+</moduledefinition>

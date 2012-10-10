@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+    <general>
+        <default name="copixheadings" descriptioni18n="copixheadings.description" longdescriptioni18n="copixheadings.longDescription"/>
+    </general>
+    <parameters>
+      <parameter name="moduleLineBreakCount" captioni18n="copixheadings.parameter.moduleLineBreakCount" default="2" />
+      <parameter name="adminHeadingPosition" captioni18n="copixheadings.parameter.adminHeadingPosition" default="v" />
+      <parameter name="rootHeadingDomain" captioni18n="copixheadings.parameter.rootHeadingDomain" default="" />
+      <parameter name="useCache" captioni18n="copixheadings.parameter.useCache" default="0" />
+    </parameters>
+    <dependencies>
+       <dependency name="profile" kind="module" version="1" />
+    </dependencies>
+
+    <versions>
+      <version num="1" date="20051005" />
+    </versions>
+
+    <events>
+	<launch>
+	 <event name="HeadingCreated">
+	  <params>
+	     <param name="id_head" />
+	  </params>
+	 </event>
+	
+	 <event name="HeadingUpdated">
+	    <params>
+	       <param name="id" />
+	       <param name="caption" />
+	       <param name="description" />
+	       <param name="ct" /><!-- Listeners will have to use this connection to be in the current transaction -->
+	    </params>
+	    <response>
+	     <information name="failed" type="boolean" /><!-- if failed, the copixheading will rollback -->
+	     <information name="error" type="string" /><!-- Error message if failed -->
+	    </response>
+	 </event>
+	
+	 <event name="HeadingDeleted">
+	    <params>
+	       <param name="id_head" />
+	    </params>
+	 </event>
+	
+	 <event name="HeadingThemeRequest">
+	  <params>
+	   <param name="id" /><!-- the CopixHeading id we wants to apply the theme of -->
+	  </params>
+	 </event>
+	
+	 <event name="HeadingFrontBrowsing">
+	    <params>
+	       <!-- the id of the browsed element -->
+	       <param name="id" />
+	    </params>
+	
+	    <response>
+	      <!-- content that will be displayed in the browser screen -->
+	      <information name="content" />
+	    </response>
+	 </event>
+	
+	 <event name="HeadingFrontShow">
+	   <params>
+	    <param name="id" />
+	   </params>
+	   <response>
+	    <information name="content" />
+	   </response>
+	 </event>
+	
+	 <event name="HeadingAdminBrowsing">
+	    <params>
+	       <!-- the id of the browsed element -->
+	       <param name="id" />
+	    </params>
+	
+	    <response>
+	      <!-- content that will be displayed in the browser screen -->
+	      <information name="content" />
+	    </response>
+	 </event>
+	
+	 <event name="HeadingBrowsing">
+	    <params>
+	       <!-- the id of the browsed element -->
+	       <param name="id" />
+	    </params>
+	
+	    <response>
+	      <!-- content that will be displayed in the browser screen -->
+	      <information name="content" />
+	    </response>
+	 </event>
+	
+	 <event name="HeadingMove">
+	    <params>
+	       <param name="from" />
+	       <param name="to" />
+	       <param name="id" />
+	    </params>
+	
+	    <response>
+	      <!-- will rollback if true is given -->
+	      <information name="failed" />
+	    </response>
+	 </event>
+	
+	 <!-- We're moving the heading to another location -->
+	 <event name="HeadingMoveContent">
+	    <params>
+	       <param name="from" />
+	       <param name="to" />
+	    </params>
+	
+	    <response>
+	      <!-- will rollback if true is given -->
+	      <information name="failed" />
+	    </response>
+	 </event>
+	
+	 <!-- Asking modules if they have datas related to the given heading -->
+	 <event name="HeadingHasContentRequest">
+	    <params>
+	       <!-- The heading ID -->
+	       <param name="id" />
+	    </params>
+	
+	    <response>
+	       <!-- Says if the heading has content -->
+	       <information name="hasContent" type="boolean" />
+	    </response>
+	 </event>
+	</launch>
+	
+	<listeners>
+	 <listener name="CMS">
+	  <event name="HasContentRequest" />
+	  <event name="HeadingAdminBrowsing" />
+	 </listener>
+	</listeners>
+	</events>
+</moduledefinition>

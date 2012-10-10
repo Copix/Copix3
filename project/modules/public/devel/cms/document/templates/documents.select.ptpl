@@ -1,0 +1,102 @@
+<script language="javascript">
+	function fcAffiche(obDivAAfficher){
+	if (document.getElementById(obDivAAfficher).style.display == "none") {
+		document.getElementById(obDivAAfficher).style.display = "block";
+		document.getElementById("rep_"+obDivAAfficher).src="<? echo CopixUrl::getResource('img/tools/expand.png'); ?>";
+	}
+	else
+	{
+		document.getElementById(obDivAAfficher).style.display = "none";
+		document.getElementById("rep_"+obDivAAfficher).src="<? echo CopixUrl::getResource('img/tools/collapse.png'); ?>";
+	}
+ 	}
+</script>
+<?php if($select=='FCKEDITOR'){?>
+<script type="text/javascript">
+var oEditor = window.parent.InnerDialogLoaded() ;
+function addUrl( strTmp)
+{
+   popup=1;
+	oLink = oEditor.FCK.CreateLink(strTmp);   
+    if(!oLink)
+        return true;
+    if( popup == 1 ){
+		oLink.setAttribute( 'target'	, '_blank', 0);
+	}
+   parent.window.close();
+}
+</script>
+<?php } ?>
+
+<?php
+/**
+* Select online pages.
+*/
+echo '<h2><img src="' . CopixUrl::getResource('img/tools/publish.png') . '" />'.CopixI18N::get('document|document.title.online').'</h2>';
+if (count ($arPublished)>0) {
+   echo '<ul>'.showHeading($arHeadings,$arPublished, $select, $editorName).'</ul>';
+}
+echo '<p><input type="button"';
+if (($select == 'HTMLAREA') || ($select == 'FCKEDITOR')) {
+   echo 'onclick="javascript:window.close();" value="'.CopixI18N::get('copix:common.buttons.back').'" /></p>';
+}else{
+   echo 'onclick="javascript:document.location.href=\'' . $back . '\'" value="'.CopixI18N::get('copix:common.buttons.back').'" /></p>';
+}
+
+
+
+function showHeading ($arHeadings, $arPublished, $select, $editorName) {
+   $result=Null;
+
+   if (!hasContent($arHeadings,$arPublished)) return $result; // On n'affiche pas les branches qui n'ont pas de pages publiées
+
+   //$result .= '<li><strong>'.$arHeadings->caption_head.'</strong><br />';
+
+   //Ajout PGU pour plier/déplier l'arborescence
+   if (!is_null($arHeadings->id_head)){
+      $result .= '<li style="list-style:none;padding-top:5px;"><a href="javascript:fcAffiche('.$arHeadings->id_head.')"><img id="rep_'.$arHeadings->id_head.'" src="' . CopixUrl::getResource('img/tools/collapse.png') . '" /></a>';
+      $result .= '&nbsp;<span style="font-weight:bold;">'.$arHeadings->caption_head.'</span><br />';
+      $result .= '<div id="'.$arHeadings->id_head.'" style="display:none;">';
+   }else{
+      $result .= '<li style="list-style: none;"><img id="rep_'.$arHeadings->id_head.'" src="' . CopixUrl::getResource('img/tools/expand.png') . '" /><span style="font-weight:bold">&nbsp;'.$arHeadings->caption_head.'</span><br />';
+      $result .= '<div id="'.$arHeadings->id_head.'" style="display:block;">';
+   }
+   //Fin ajout PGU
+
+
+
+   // Si on a des liens courants ou si la rubrique parente en possède on affiche la rubrique courante
+   $result.='<ul style="padding-left:15px;">';
+   foreach ((array)$arHeadings->childs as $subHead) {
+      $result .= showHeading($subHead,$arPublished,$select,$editorName);
+   }
+
+   // On teste si la rub actuelle possède des pages publiées
+   if (isset($arPublished[$arHeadings->id_head])) {
+      $tabDocumentFromCurrentHead = $arPublished[$arHeadings->id_head];
+      if (count($tabDocumentFromCurrentHead)>0) {
+         foreach ($tabDocumentFromCurrentHead as $doc) {
+            $result .= $doc->title_doc;
+            if ($select == 'HTMLAREA') {
+               $result .= '<a href="#" onclick="javascript:window.opener.'.$editorName.'._doc.execCommand(\'createlink\', false, \''.CopixUrl::get('document|default|download', array('id_doc'=>$doc->id_doc)).'\');window.close();"><img src="' . CopixUrl::getResource('img/tools/valid.png') . '" alt="'.CopixI18N::get('copix:common.buttons.select').'" /></a><br />';
+            }elseif($select=='FCKEDITOR'){
+               $result .= '<a href="#" onclick="javascript:addUrl(\''.CopixUrl::get('document|default|download', array('id_doc'=>$doc->id_doc)).'\'); parent.window.close();"><img src="' . CopixUrl::getResource('img/tools/valid.png') . '" alt="'.CopixI18N::get('copix:common.buttons.select').'" /></a><br />';
+            }else{
+               $result .= '<a href="'.CopixUrl::appendToUrl ($select, array('id_doc'=>$doc->id_doc), true).'"><img src="' . CopixUrl::getResource('img/tools/valid.png') . '" alt="'.CopixI18N::get('copix:common.buttons.select').'" /></a><br />';
+            }
+         }
+      }
+   }
+   $result.='</div></li>';
+
+   return $result;
+}
+
+function hasContent($treeToScan,$arPublished) {
+   if (isset($arPublished[$treeToScan->id_head]) && count($arPublished[$treeToScan->id_head]) > 0) return true;
+   foreach ($treeToScan->childs as $key=>$subTree) {
+      if (hasContent($subTree,$arPublished)) return true;
+   }
+   return false;
+}
+?>

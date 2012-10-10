@@ -1,0 +1,153 @@
+/**
+* Table
+*/
+
+.popupInformation {
+   background-color: #e5e3d3;
+   border:1px solid #769091;
+   padding:3px;
+   position:absolute;
+}
+.errorMessage {
+   border: 2px solid #aa0000;
+   margin: 5px;
+}
+.errorMessage h1 {
+   background-color: #792206;
+   background-image:url('../img/titre_rouge.gif');
+   background-repeat:no-repeat;
+   background-position: top right;
+   color: #ffffff;
+   text-align: center;
+   font-size: 1em;
+   margin-top: 0;
+}
+
+.CopixTable {
+   margin-left: 5px;
+   width: 98%;
+  
+   border:3px solid #566E79;
+   border-collapse:collapse;
+}
+.CopixVerticalTable {
+   margin-left: 5px;
+   width: 98%;
+   border:3px solid #566E79;
+   border-collapse:collapse;
+}
+
+.CopixTable thead {
+    background-color:#566E79;
+}
+
+.CopixTable thead th {
+   background-color:transparent;
+}
+
+.CopixTable tr th {
+   background-color:#566E79;
+   height:25px;
+   color: #ffffff;
+}
+
+.CopixTable td {
+   height:25px;
+}
+
+.CopixTable th a,.CopixTable th a:visited {
+   color: #ffffff;
+   text-decoration: none;   
+}
+
+.alternate {
+   background-color: #e5e3d3;
+}
+
+/* AutoCompleter */
+div.autocompleter-loading {
+	float:					left;
+	clear:					right;
+	background:				#fff url('../images/spinner.gif') no-repeat center;
+	width:					50px;
+	height:					16px;
+}
+
+ul.autocompleter-choices {
+	position:				absolute;
+	margin:					0;
+	padding:				0;
+	list-style:				none;
+	border:					1px solid #eee;
+	background-color:		white;
+	border-right-color:		#ddd;
+	border-bottom-color:	#ddd;
+	text-align:				left;
+	font-family:			Verdana, Geneva, Arial, Helvetica, sans-serif;
+	z-index:				50;
+	overflow:auto;
+	height:150px;
+}
+
+ul.autocompleter-choices li {
+	position:				relative;
+	padding:				0.1em 1.5em 0.1em 1em;
+	cursor:					pointer;
+	font-weight:			normal;
+	font-size:				1em;
+}
+
+ul.autocompleter-choices li.autocompleter-selected {
+	background-color:		#444;
+	color:					#fff;
+}
+
+ul.autocompleter-choices span.autocompleter-queried {
+	font-weight:			bold;
+}
+
+ul.autocompleter-choices li.autocompleter-selected span.autocompleter-queried {
+	color:					#9FCFFF;
+}
+
+/** Calendar **/
+div.calContainer {
+	width:auto;
+	height:auto;
+	border :0px;
+}
+div.calBackgroud {
+	background-color: #566E79;
+	border: 1px solid #566E79;
+}
+table.calendar  {
+	background-color: #566E79;
+}
+
+.calendar th {
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 8pt;
+	text-align: center;
+}
+.calendar tr {
+	background-color: #e5e3d3;
+}
+.calendar tr.calendar_header {
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 10pt;
+	font-weight: bold;
+	background-color: #566E79;
+}
+
+.calendar td {
+	color: #ffffff;
+	font-family: Arial, Verdana, Helvetica, Sans-Serif;
+	font-size: 8pt;
+}
+.calendar td.calendar_day {
+	background-color: #e5e3d3;
+}
+
+.calendar td.calendar_noday {
+	background-color: #e5e3d3;
+}

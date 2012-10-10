@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moduledefinition>
+	<general>
+		<default name="quicksearch" descriptioni18n="quicksearch.moduleDescription" icon="find.gif" />
+	</general>
+   <parameters>
+      <parameter name="maxChar" captioni18n="quicksearch.parameter.maxChar" default="250" />
+      <parameter name="maxSize" captioni18n="quicksearch.parameter.maxSize" default="50" />
+      <parameter name="keywords_srch" captioni18n="quicksearch.parameter.keywords_srch" default="50" />
+      <parameter name="title_srch" captioni18n="quicksearch.parameter.title_srch" default="30" />
+      <parameter name="resume_srch" captioni18n="quicksearch.parameter.resume_srch" default="20" />
+      <parameter name="content_srch" captioni18n="quicksearch.parameter.content_srch" default="10" />
+      <parameter name="resultsLimit" captioni18n="quicksearch.parameter.resultsLimit" default="20" />
+   </parameters>
+   <events>
+   <listeners>
+      <listener name="quicksearch">
+      	<event name="Visited" />
+        <event name="Content" />
+        <event name="DeletedContent" />
+      </listener>
+   </listeners>
+   </events>
+   <admin>
+   	<link url="admin|" captioni18n="admin.link" credential="basic:admin"></link>
+   </admin>
+</moduledefinition>
